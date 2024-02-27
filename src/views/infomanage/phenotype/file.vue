@@ -1,13 +1,38 @@
 <template>
-  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+  <div class="home">
     <el-button
       style="margin: 20px; margin-left: calc(95% - 30px)"
       @click="exportFile"
       type="primary"
       size="large"
-      class="green-button"
       >导出</el-button
     >
+    <el-form :inline="true" :model="searchForm" class="search-form">
+      <el-form-item label="材料名">
+        <el-select v-model="searchForm.searchMaterialId" multiple filterable clearable placeholder="请选择材料名">
+          <el-option
+            v-for="(item,index) in materialoptions"
+            :key="index"
+            :label="item"
+            :value="item">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="表型名">
+        <el-select v-model="searchForm.searchTraitId" multiple filterable clearable placeholder="请选择表型名">
+          <el-option
+            v-for="(item,index) in traitoptions"
+            :key="index"
+            :label="item"
+            :value="item">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button class="search-button" type="primary" @click="searchSubmit" icon="Search">搜索</el-button>
+        <el-button type="info" @click="reset" icon="refresh">重置</el-button>
+      </el-form-item>
+    </el-form>
     <el-container>
       <el-main>
         <div class="file_form">
@@ -20,7 +45,7 @@
             tooltip-effect="dark"
             class="trait-form-table"
             stripe
-            max-height="100vh - 220px"
+            max-height="100vh - 280px"
           >
             <el-table-column
               label="操作"
@@ -36,7 +61,6 @@
                   icon="Document"
                   link
                   @click="modifFile(scope.row)"
-                  class="table_button"
                   >修改
                 </el-button>
               </template>
@@ -128,11 +152,101 @@ import { onBeforeRouteLeave } from "vue-router";
 
 import {
   listFile,
+  searchBox,
+  traitAndMaterialList,
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,
   endUpdate,
 } from "@/api/infomanage/phenotype";
+
+const traitFileId = ref(60);
+
+const searchForm = reactive({
+  searchMaterialId:[],
+  searchTraitId:[],
+})
+
+function searchSubmit(){
+  searchBox({
+    fileId: traitFileId.value,
+    searchMaterialId:searchForm.searchMaterialId,
+    searchTraitId:searchForm.searchTraitId,
+  }).then((res) => {
+          // console.log(res.rows[0].traits[0].trait_id_0.traitValue, "123");
+          totalPage.value = res.total;
+          updateTableData(mapTraitsToTableData(res.rows)); // 确保传递正确的数据
+          tableColumns.value = [
+
+            { prop: "speciesName", label: "物种名", width: "80px", fixed: "left" },
+            {
+              prop: "populationName",
+              label: "种群名",
+              width: "130px",
+              fixed: "left",
+            },
+            { prop: "location", label: "地区", width: "80px", fixed: "left" },
+            { prop: "repeat", label: "重复试验", width: "120px" },
+            { prop: "kindId", label: "品种ID", width: "120px" },
+            { prop: "kindName", label: "品种名称", width: "200px" },
+            { prop: "materialId", label: "材料ID", width: "120px" },
+            { prop: "fieldId", label: "田间编号", width: "120px" },
+            { prop: "controlType", label: "对照类型", width: "100px" },
+            { prop: "father", label: "父本", width: "100px" },
+            { prop: "mother", label: "母本", width: "100px" },
+            { prop: "remark", label: "备注", width: "380px" },
+
+          ];
+          // 更新tableData
+          for (let j = 0; j < res.rows.length; j++) {
+            traitRes[j] = new Map();
+
+            for (let i = 0; i < res.rows[j].traits.length; i++) {
+              let propertyName = `trait_id_${i}`;
+              let traitIdValue = res.rows[j].traits[i][propertyName];
+              if (traitIdValue) {
+                let traitValue = traitIdValue.traitValue;
+                traitRes[j].set(propertyName, traitValue);
+              }
+
+              tableData[j][propertyName] = traitRes[j].get(propertyName);
+            }
+          }
+          console.log("1");
+          // 更新tableColumns
+          
+          for (let i = 0; i < res.rows[0].traits.length; i++) {
+            let propertyName = `trait_id_${i}`;
+            tableColumns.value.push({
+              prop: `trait_id_${i}`,
+              label: res.rows[0].traits[i][propertyName].traitName,
+              width: '100px'
+            });
+          }
+          console.log(tableColumns.value, "ioio");
+
+          tableLoading.value = false;
+        })
+        .catch((err) => {
+          tableLoading.value = false;
+          console.error(err);
+        });
+}
+
+//重置
+function reset(){
+  searchForm.searchMaterialId=[];
+  searchForm.searchTraitId=[];
+  searchSubmit();
+}
+
+
+const traitoptions = ref([]);
+const materialoptions =ref([]);
+
+
+
+
 
 // vue实例
 const {
@@ -331,7 +445,7 @@ function exportFile() {
 
 const fileList = [];
 
-const traitFileId = ref(60);
+
 
 //获取第一个表格
 const columns = ref([]); // 表头数据
@@ -522,6 +636,13 @@ function updateFileData() {
 
 onMounted(() => {
   chooseForm();
+  tableName.value = route.query.tableName;
+  traitAndMaterialList(tableName.value).then((res)=>{
+    traitoptions.value=res.data.trait;
+    materialoptions.value=res.data.material;
+  }).catch((err)=>{
+    $modal.msgError(res.msg);
+  })
 });
 
 onBeforeRouteLeave(() => {
@@ -535,6 +656,16 @@ onBeforeRouteLeave(() => {
 });
 </script>
 
+<style scoped lang="less"> 
+  .search-form{
+    margin-left: 50px;
+  }
+
+  .search-button{
+    border:#1F4E3D;
+    background: rgb(85, 123, 116);
+  }
+</style>
 <style lang="less" scoped>
 
 .footer{
@@ -555,9 +686,6 @@ onBeforeRouteLeave(() => {
 :deep(.el-main, .el-footer) {
   padding: 0%;
 }
-:deep(.el-input__inner) {
-  margin-right: 30px;
-}
 .scrollbar-wrapper {
   height: 400px; /* 设置容器的高度 */
   overflow-y: auto; /* 启用纵向滚动条 */
@@ -565,184 +693,26 @@ onBeforeRouteLeave(() => {
 
 :deep(.el-dialog__header) {
   margin: 0%;
-  background-color: #0F5C32;
+  background-color: #9abeaf;
   span {
     color: white;
   }
 }
-</style>
 
+:deep(.el-table__header){
+  border-bottom: 1px solid black;
+  border-top: 1px solid #EBEEF5;
 
-<style lang="less" scoped>
-/* 假设 el-checkbox 是表头中的一个子元素 */
-
-:deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
-  color: rgb(255, 255, 255);
+  th{
+    font-weight: 800;
+    font-size: 16PX;
+    background: #FAFAFA !important;
+    letter-spacing: 2px;
+    height: 60px !important;
+  }
 }
-
-/* 修改前后箭头未点击时的背景颜色 */
-:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
-  background-color: #fff !important;
-}
-
-/* 修改未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
-  background-color: #EEEEEE !important;
-}
-
-/* 未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
-  background-color: #fff !important;
-  color: #000;
-}
-
-:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
-  color: #fff;
-}
-
-:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-:deep(.el-pagination ul li:not(:last-child)) {
-  border-right: #DDDDDD 1px solid;
-}
-
-
-:deep(.el-pagination ul) {
-  border: #DDDDDD 1px solid;
-}
-
-:deep(.el-upload) {
-  width: 100%;
-}
-
-:deep(.el-upload .el-upload-dragger) {
-  width: 100%;
-}
-
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-
-.green-button {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.green-button:hover {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.table_button {
-  color: #1FB864;
-}
-
-.table_button:hover {
-  color: #1FB864;
-}
-
-// .el-select-dropdown__item.selected {
-//   color: #1FB864;
-// }
-
-// .el-input {
-//   --el-input-focus-border-color: #1FB864;
-// }
-
-// .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
-// }
-
-/* 开关组件 */
-// :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
-// }
-
-/* 多选组件 */
-// :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
-// }
-
-:deep(.el-table__header .el-checkbox) {
-  /* Your styles here */
-  --el-checkbox-checked-input-border-color: #424F63;
-  --el-checkbox-checked-bg-color: #424F63;
-  --el-checkbox-input-border-color-hover: #424F63;
-}
-
-/* 树结构 */
-.el-aside {
-  background-color: #fff !important;
-}
-
-.el-tree {
-  background-color: #fff !important;
-  margin: 0px !important;
-  color: #000;
-  /* 字体大小在上面的代码中修改 */
-}
-
-.div1 {
-  padding: 15px 20px;
-  background-color: #EEEEEE;
-}
-
-.div2 {
-  padding: 15px 20px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.div3 {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.el-table {
-  background-color: #EEEEEE !important;
-  margin-top: 20px;
-}
-
-.footer {
-  height: fit-content;
+el-main{
+  height: 100px;
+  overflow: auto;
 }
 </style>
-
-<style>
-:root {
-  --el-color-primary: #1FB864;
-}
-</style>
-
-
