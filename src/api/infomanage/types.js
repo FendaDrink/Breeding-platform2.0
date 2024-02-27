@@ -1,4 +1,7 @@
 import request from '@/utils/request';
+import axios from 'axios';
+import { getToken } from '@/utils/auth';
+
 
 export function addImages(imageList) {
   return request({
@@ -50,4 +53,43 @@ export function treeCount(treeId){
       treeId
     }
   })
+}
+
+//图片或文件数据（按日期）统计接口 status 0为文件 1为图片
+export function treeCountDate(treeId, startDate, endDate, status) {
+  return request({
+    url: '/system/picture/selectDateLeaves',
+    method: 'GET',
+    params: {
+      treeId,
+      startDate,
+      endDate,
+      status
+    }
+  })
+}
+
+// 图片下载接口
+export async function downloadImage(pictureId) {
+  try {
+    const response = await axios.get("/system/picture/download", {
+      baseURL: import.meta.env.VITE_APP_BASE_API,
+      timeout: 50000,
+      responseType: "blob",
+      headers: {
+        Authorization: "Bearer " + getToken(),
+      },
+      params: {
+        pictureId: pictureId,
+      },
+    });
+
+    const blob = response.data;
+    const imageName = `img${pictureId}.jpg`;
+
+    return { blob, imageName };
+  } catch (error) {
+    console.error("Error downloading image:", error);
+    throw error;
+  }
 }
