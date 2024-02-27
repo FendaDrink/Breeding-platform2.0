@@ -158,3 +158,13 @@ export function endUpdate(tableName){
     params:{tableName},
   })
 }
+
+//搜索文件
+export function searchFile(query) {
+  return request({
+    url: '/phenotypeFile/oldList',
+    method: 'get',
+    params: query
+  });
+
+}
