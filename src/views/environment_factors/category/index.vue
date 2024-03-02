@@ -2,7 +2,7 @@
   <el-card class="card-container">
     <template #header>
       <div class="card-header">
-        <span>性状管理</span>
+        <span>环境因子分类</span>
       </div>
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
@@ -85,12 +85,10 @@
 
 <script setup>
 import * as echarts from "echarts";
-import { reactive, ref, onMounted, getCurrentInstance, nextTick } from "vue";
-import { getTree } from "@/api/tree";
+import { reactive, ref, onMounted, getCurrentInstance } from "vue";
 import { useRoute } from "vue-router";
 import {
   getTraitFormByFileId,
-  getallTraitByfileId,
   getTraitBytraitId,
   selectTraitColByFileId,
 } from "@/api/data_presentation/trait_management";
@@ -117,27 +115,6 @@ const currentpageNum2 = ref(1); //当前页数
 
 
 const phenotypeData = reactive([
-  {
-    traitId: "B11",
-    traitName: "B11 content",
-    fullName: "B11含量",
-    remark: "45646",
-    abbreviationName: "biochemistry",
-  },
-  {
-    traitId: "B11",
-    traitName: "B11 content",
-    fullName: "B11含量",
-    remark: "45646",
-    abbreviationName: "biochemistry",
-  },
-  {
-    traitId: "B11",
-    traitName: "B11 content",
-    fullName: "B11含量",
-    remark: "45646",
-    abbreviationName: "biochemistry",
-  },
   {
     traitId: "B11",
     traitName: "B11 content",
@@ -238,14 +215,14 @@ const data2 = reactive({
 });
 
 const echartData = reactive({
-  name: "植物性状",
+  name: "环境因子",
   children: [
   ],
 });
 
 const pieOption = {
     title: {
-        text: "文件性状统计",
+        text: "环境因子统计",
     },
     series: [
         {
@@ -642,10 +619,9 @@ onMounted(() => {
 <style lang="less" scoped>
 .card {
   position: relative;
+  margin: 0 auto;
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  margin-left: auto;
-  margin-right: auto;
   box-sizing: border-box;
 }
 
@@ -675,6 +651,7 @@ onMounted(() => {
 
 .card-container {
   width: 95%;
+  margin: 30px auto;
   border-radius: 50px;
 }
 
@@ -703,7 +680,6 @@ onMounted(() => {
 
   th{
     font-weight: 800;
-    //color: 909399;
     font-size: 16PX;
     background: #FAFAFA !important;
     letter-spacing: 2px;
@@ -753,7 +729,7 @@ canvas{
 }
 
 :deep(.el-card__header) {
-  background: #1F4E3D;
+  background: #1FB864;
   height: 60px !important;
   display: flex;
   vertical-align: middle;
