@@ -5,9 +5,8 @@
       min-height: calc(100vh - 84px);
       background-color: #eeeeee;
     ">
-
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
-                  :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-main width="78%" style="padding: 0" class="right-box">
         <div class="phenome-container">
           <!-- 环境因子选择 -->
@@ -279,7 +278,7 @@ import { getTree } from "@/api/tree.js";
 
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
-const chart2Left =35376/viewWidth+'%'
+const chart2Left = 35376 / viewWidth + '%'
 
 
 //柱状图数据
@@ -410,9 +409,9 @@ async function getPictureNumber() {
   arrCount.value = []
   arrName.value = []
 
-  await treeCount(routesData.value.children[0].treeId,1).then(res => {
+  await treeCount(routesData.value.children[0].treeId, 1).then(res => {
     for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName,'')
+      let name = key.replace(routesData.value.children[0].treeName, '')
       arrName.value.push(name);
       arrCount.value.push({
         value: res.data[key],
@@ -493,9 +492,9 @@ async function getPictureNumber() {
       ],
     }
   })
-      .catch(err => {
-        console.log(err);
-      })
+    .catch(err => {
+      console.log(err);
+    })
 
   isLoading1.value = false;
 }
@@ -586,7 +585,7 @@ async function chooseDateHandler() {
   await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 0).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName,'')
+      let name = key.replace(routesData.value.children[0].treeName, '')
       nameArr.value.push(name)
       Reflect.set(option2.value.legend.selected, name, true);
       seriesArr.value.push({
