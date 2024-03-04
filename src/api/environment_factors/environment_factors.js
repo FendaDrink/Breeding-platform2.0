@@ -92,3 +92,11 @@ export function getImagesByUrl(url){
         }
     })
 }
+
+// 获取环境文件列表
+export function getEnvFileList(){
+    return request({
+        url: '/sidebarTreeEnv/envFile/list',
+        method: 'GET'
+    })
+}
