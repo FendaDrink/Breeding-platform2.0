@@ -1,51 +1,14 @@
-<!--环境因子分析-->
 <template>
   <div style="
       width: 100%;
       min-height: calc(100vh - 84px);
       background-color: #eeeeee;
     ">
+
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-main width="78%" style="padding: 0" class="right-box">
         <div class="phenome-container">
-          <!-- 环境因子选择 -->
-          <el-card class="card-container">
-            <template #header>
-              <div class="card-header">
-                <span>环境因子选择</span>
-              </div>
-            </template>
-            <div class="big-wrapper" style="margin-top: 10px">
-              <div class="block" style="display:flex;justify-content: space-between">
-                <!-- 级联选择器 -->
-                  <div class="m-4">
-                    <el-cascader
-                        placeholder="请选择文件"
-                        :options="fileOptions"
-                        filterable
-                        clearable
-                        v-model="fileValue"
-                        @change="fileSelectHandler"
-                        :show-all-levels="false"
-                    />
-                  </div>
-
-                  <div class="m-4">
-                    <el-cascader
-                        placeholder="请选择环境因子"
-                        :options="options"
-                        filterable
-                        clearable
-                        v-model="factorValue"
-                        @change="factorSelectHandler"
-                        :show-all-levels="false"
-                    />
-                  </div>
-              </div>
-            </div>
-          </el-card>
-
           <!-- 日期选择 -->
           <el-card class="card-container">
             <template #header>
@@ -55,14 +18,9 @@
             </template>
             <div class="big-wrapper" style="margin-top: 10px">
               <div class="block">
-                <el-date-picker
-                    v-model="value2"
-                    type="daterange"
-                    unlink-panels range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期" :shortcuts="shortcuts"
-                    :size="size"
-                    style="margin-right: 20px;" @change="chooseDateHandler" />
+                <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至"
+                  start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
+                  style="margin-right: 20px;" @change="chooseDate" />
               </div>
             </div>
           </el-card>
@@ -92,9 +50,9 @@
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus'
 import { reactive, onMounted, getCurrentInstance, nextTick, onBeforeMount } from "vue";
-import {ArrowDown, Select} from '@element-plus/icons-vue';
+
 // 引入echarts
 import { use } from "echarts/core";
 import {
@@ -110,13 +68,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, provide } from "vue";
 import 'echarts/lib/component/dataZoom'
-
-// 引入接口
-import {
-  treeCount, treeCountDate,getEnvFileList
-} from "@/api/environment_factors/environment_factors";
-
-import { getTree } from "@/api/tree.js";
 
 use([
   GridComponent,
@@ -134,134 +85,6 @@ provide(THEME_KEY);
 
 const arrName = ref([])
 const arrCount = ref([])
-
-// 环境因子数据
-const options = [
-  {
-    value: 'guide',
-    label: 'Guide',
-    children: [
-      {
-        value: 'disciplines',
-        label: 'Disciplines',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-    ],
-  },
-  {
-    value: 'component',
-    label: 'Component',
-    children: [
-      {
-        value: 'basic',
-        label: 'Basic',
-      },
-      {
-        value: 'form',
-        label: 'Form',
-      },
-      {
-        value: 'data',
-        label: 'Data',
-      },
-      {
-        value: 'notice',
-        label: 'Notice',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-      {
-        value: 'others',
-        label: 'Others',
-      },
-    ],
-  },
-  {
-    value: 'resource',
-    label: 'Resource',
-    children: [
-      {
-        value: 'axure',
-        label: 'Axure Components',
-      },
-      {
-        value: 'sketch',
-        label: 'Sketch Templates',
-      },
-      {
-        value: 'docs',
-        label: 'Design Documentation',
-      },
-    ],
-  },
-  {
-    value: 'guide',
-    label: 'Guide',
-    children: [
-      {
-        value: 'disciplines',
-        label: 'Disciplines',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-    ],
-  },
-  {
-    value: 'component',
-    label: 'Component',
-    children: [
-      {
-        value: 'basic',
-        label: 'Basic',
-      },
-      {
-        value: 'form',
-        label: 'Form',
-      },
-      {
-        value: 'data',
-        label: 'Data',
-      },
-      {
-        value: 'notice',
-        label: 'Notice',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-      {
-        value: 'others',
-        label: 'Others',
-      },
-    ],
-  }]
-
-// 文件数据
-const fileOptions = ref([])
-
-// 选择环境因子
-const factorValue = ref([options[0].value,options[0].children[0].value])
-
-// 选择文件
-const fileValue = ref();
-
-// 选中环境因子的响应函数
-const factorSelectHandler = () => {
-  console.log('环境因子被选择了',factorValue);
-}
-
-// 选择文件的响应函数
-const fileSelectHandler = () => {
-  console.log('文件被选择了',fileValue.label);
-}
 
 
 
@@ -301,9 +124,16 @@ const shortcuts = [
   },
 ]
 
+
+import {
+  treeCount, treeCountDate,
+} from "@/api/infomanage/types";
+
+import { getTree } from "@/api/tree.js";
+
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
-const chart2Left = 35376 / viewWidth + '%'
+const chart2Left =35376/viewWidth+'%'
 
 
 //柱状图数据
@@ -313,6 +143,7 @@ const nameArr = ref([])
 const dateArr = ref([])
 
 //折线图数据
+//折线图的数据
 const option2 = ref({
   title: {
     text: '文件数量变化统计',
@@ -424,7 +255,7 @@ const getTreeList = async () => {
   getTree(treeType.value, 0, 1).then((res) => {
     routesData.value = res.data;
     getPictureNumber()
-    chooseDateHandler()
+    chooseDate()
   })
 };
 
@@ -433,10 +264,10 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-
-  await treeCount(routesData.value.children[0].treeId, 1).then(res => {
+  
+  await treeCount(routesData.value.children[0].treeId,1).then(res => {
     for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName, '')
+      let name = key.replace(routesData.value.children[0].treeName,'')
       arrName.value.push(name);
       arrCount.value.push({
         value: res.data[key],
@@ -597,7 +428,7 @@ function dateToStr(obj) {
 }
 
 //选择日期以后的操作
-async function chooseDateHandler() {
+async function chooseDate() {
   //清空echarts中的data数据
   seriesArr.value = []
   nameArr.value = []
@@ -610,7 +441,7 @@ async function chooseDateHandler() {
   await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 0).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName, '')
+      let name = key.replace(routesData.value.children[0].treeName,'')
       nameArr.value.push(name)
       Reflect.set(option2.value.legend.selected, name, true);
       seriesArr.value.push({
@@ -630,21 +461,8 @@ async function chooseDateHandler() {
 
 // const curNode = tree.value.getCurrentNode();
 
-
-
 onMounted(async () => {
   value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()]
- await getEnvFileList().then(res=>{
-   res.rows.map(item=>{
-     fileOptions.value.push({
-        label:item.fileName,
-        value:item.fileId
-      })
-   })
-   fileValue.value = fileOptions.value[0].value
- }).catch(err=>{
-   console.log(err);
- })
   // await getTreeList()
 });
 </script>
@@ -1233,5 +1051,232 @@ onMounted(async () => {
   .rightBox {
     width: 50%;
   }
+}
+
+//图片详细信息
+.detailBox {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-content: center;
+  bottom: 0;
+  left: 0;
+  height: 20%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  transition: all ease 0.6s;
+  opacity: 0;
+
+  p {
+    margin: 0;
+    color: #fff;
+    text-align: center;
+    line-height: 220%;
+  }
+}
+
+.image_item:hover .detailBox {
+  opacity: 1;
+}
+
+
+.footer {
+  margin-left: 20px;
+  height: fit-content;
+  padding: 0%;
+}
+
+.buttonsBox {
+  border-radius: 10px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  left: 105%;
+  z-index: 999;
+  transition: all 0.1s ease-in-out;
+  overflow: hidden;
+
+  .delete_button,
+  .edit_button {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    background-color: transparent;
+    width: 40px;
+    height: 40px;
+
+    .el-icon {
+      font-size: 18px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    span {
+      font-size: 12px;
+      color: #555;
+      width: 100%;
+      transition: all 0.2s ease-in-out;
+    }
+  }
+
+  .delete_button:hover {
+
+    span,
+    .el-icon {
+      color: #F56C6C;
+    }
+  }
+
+  .edit_button:hover {
+
+    span,
+    .el-icon {
+      color: #409EFF;
+    }
+  }
+}
+
+.photoDialog {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  flex: auto;
+
+  .leftBox,
+  .rightBox {
+    width: 50%;
+  }
+}
+
+.photoInfo {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  z-index: 9999;
+  width: 350px;
+
+  .item {
+    margin: 15px;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .value {
+    font-size: 16px;
+    color: #555;
+  }
+
+}
+
+.imgBox .el-checkbox {
+  position: absolute;
+  top: 5px; // 设置具体位置
+  left: 10px; // 设置具体位置
+}
+
+:deep(.el-image) {
+  text-align: center;
+  font-size: 40px;
+}
+
+:deep(.el-tree-node__label) {
+  font-size: 16px;
+}
+
+:deep(.el-form-item__label) {
+  width: 110px;
+}
+
+:deep(.el-tree) {
+  background-color: rgb(183, 202, 189);
+}
+
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: #fff !important;
+}
+
+:deep(.el-card) {
+  position: relative;
+  overflow: visible;
+}
+
+:deep(.el-card__body) {
+  padding: 8px 8px 8px 8px !important;
+  object-fit: fill;
+}
+
+.image_item:hover .buttonsBox {
+  width: 40px;
+  height: 80px;
+}
+
+.imgCard_container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.icon-star {
+  color: black;
+  margin: 0 5px;
+}
+
+.card {
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  //background: url(@/assets/img/tree/tree.png) no-repeat center center / cover;
+  opacity: 0.2;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.u-main .el-tag+.el-tag {
+  margin-left: 10px;
+}
+
+.u-main .button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.u-main .input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+
+.u-main .el-form-item {
+  margin: 60px 0;
+}
+
+.u-main .el-form-item__label {
+  font-size: 20px;
 }
 </style>
