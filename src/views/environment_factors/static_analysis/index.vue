@@ -460,6 +460,7 @@ async function chooseDate() {
 
 onMounted(async () => {
   value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
+
   // await getTreeList()
 });
 </script>
