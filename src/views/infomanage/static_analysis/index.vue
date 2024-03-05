@@ -34,8 +34,8 @@
             </template>
             <!-- 文件统计 -->
             <div class="big-wrapper" style="margin-top: 10px;">
-              <v-chart class="chart" :option="option" autoresize v-loading="true" />
-              <v-chart class="chart1" :option="option2" autoresize v-loading="true" style="margin-top:30px" />
+              <v-chart class="chart" :option="option" autoresize v-loading="isLoading1" />
+              <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
 
           </el-card>
@@ -227,8 +227,8 @@ const option2 = ref({
 
 
 //loading
-const isLoading1 = ref(false)
-const isLoading = ref(false)
+const isLoading1 = ref(true)
+const isLoading = ref(true)
 
 const cardContainer = ref(null);
 
@@ -264,7 +264,6 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-  
   await treeCount(routesData.value.children[0].treeId,1).then(res => {
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
@@ -462,7 +461,7 @@ async function chooseDate() {
 // const curNode = tree.value.getCurrentNode();
 
 onMounted(async () => {
-  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()]
+  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
   // await getTreeList()
 });
 </script>

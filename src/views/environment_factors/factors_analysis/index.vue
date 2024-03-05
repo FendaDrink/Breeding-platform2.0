@@ -21,9 +21,11 @@
               <div class="block" style="display:flex;justify-content: space-between">
                 <!-- 级联选择器 -->
                   <div class="m-4">
+                    <span style="font-weight: bold">文件选择：</span>
                     <el-cascader
                         placeholder="请选择文件"
                         :options="fileOptions"
+                        :props="{label:'fileName',value:'fileId'}"
                         filterable
                         clearable
                         v-model="fileValue"
@@ -33,9 +35,11 @@
                   </div>
 
                   <div class="m-4">
+                    <span style="font-weight: bold">环境变量选择：</span>
                     <el-cascader
                         placeholder="请选择环境因子"
-                        :options="options"
+                        :options="envOptions"
+                        :props="{label:'name',value:'id',children:'chidren'}"
                         filterable
                         clearable
                         v-model="factorValue"
@@ -43,42 +47,44 @@
                         :show-all-levels="false"
                     />
                   </div>
+
+                  <div class="block">
+                    <span style="font-weight: bold">日期选择：</span>
+                    <el-date-picker
+                        v-model="value2"
+                        type="daterange"
+                        unlink-panels range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期" :shortcuts="shortcuts"
+                        :size="size"
+                        style="margin-right: 20px;" @change="chooseDateHandler" />
+                  </div>
               </div>
             </div>
           </el-card>
 
           <!-- 日期选择 -->
-          <el-card class="card-container">
-            <template #header>
-              <div class="card-header">
-                <span>日期选择</span>
-              </div>
-            </template>
-            <div class="big-wrapper" style="margin-top: 10px">
-              <div class="block">
-                <el-date-picker
-                    v-model="value2"
-                    type="daterange"
-                    unlink-panels range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期" :shortcuts="shortcuts"
-                    :size="size"
-                    style="margin-right: 20px;" @change="chooseDateHandler" />
-              </div>
-            </div>
-          </el-card>
+<!--          <el-card class="card-container">-->
+<!--            <template #header>-->
+<!--              <div class="card-header">-->
+<!--                <span>日期选择</span>-->
+<!--              </div>-->
+<!--            </template>-->
+<!--            <div class="big-wrapper" style="margin-top: 10px">-->
+
+<!--            </div>-->
+<!--          </el-card>-->
 
           <!-- 可视化 -->
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>可视化</span>
+                <span>分析可视化</span>
               </div>
             </template>
             <!-- 文件统计 -->
-            <div class="big-wrapper" style="margin-top: 10px;">
-              <v-chart class="chart" :option="option" autoresize v-loading="true" />
-              <v-chart class="chart1" :option="option2" autoresize v-loading="true" style="margin-top:30px" />
+            <div class="big-wrapper">
+              <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
 
           </el-card>
@@ -114,7 +120,7 @@ import 'echarts/lib/component/dataZoom'
 
 // 引入接口
 import {
-  treeCount, treeCountDate,getEnvFileList
+  treeCount, treeCountDate,getEnvFileList,getEnvList,getEnvFactorChange
 } from "@/api/environment_factors/environment_factors";
 
 import { getTree } from "@/api/tree.js";
@@ -137,131 +143,29 @@ const arrName = ref([])
 const arrCount = ref([])
 
 // 环境因子数据
-const options = [
-  {
-    value: 'guide',
-    label: 'Guide',
-    children: [
-      {
-        value: 'disciplines',
-        label: 'Disciplines',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-    ],
-  },
-  {
-    value: 'component',
-    label: 'Component',
-    children: [
-      {
-        value: 'basic',
-        label: 'Basic',
-      },
-      {
-        value: 'form',
-        label: 'Form',
-      },
-      {
-        value: 'data',
-        label: 'Data',
-      },
-      {
-        value: 'notice',
-        label: 'Notice',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-      {
-        value: 'others',
-        label: 'Others',
-      },
-    ],
-  },
-  {
-    value: 'resource',
-    label: 'Resource',
-    children: [
-      {
-        value: 'axure',
-        label: 'Axure Components',
-      },
-      {
-        value: 'sketch',
-        label: 'Sketch Templates',
-      },
-      {
-        value: 'docs',
-        label: 'Design Documentation',
-      },
-    ],
-  },
-  {
-    value: 'guide',
-    label: 'Guide',
-    children: [
-      {
-        value: 'disciplines',
-        label: 'Disciplines',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-    ],
-  },
-  {
-    value: 'component',
-    label: 'Component',
-    children: [
-      {
-        value: 'basic',
-        label: 'Basic',
-      },
-      {
-        value: 'form',
-        label: 'Form',
-      },
-      {
-        value: 'data',
-        label: 'Data',
-      },
-      {
-        value: 'notice',
-        label: 'Notice',
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-      },
-      {
-        value: 'others',
-        label: 'Others',
-      },
-    ],
-  }]
+const envOptions = ref([])
 
 // 文件数据
 const fileOptions = ref([])
 
 // 选择环境因子
-const factorValue = ref([options[0].value,options[0].children[0].value])
+const factorValue = ref([])
 
 // 选择文件
 const fileValue = ref();
 
 // 选中环境因子的响应函数
 const factorSelectHandler = () => {
-  console.log('环境因子被选择了',factorValue);
+  console.log('环境因子被选择了',factorValue.value[1]);
+  isLoading.value = true;
+  updateEcharts();
 }
 
 // 选择文件的响应函数
 const fileSelectHandler = () => {
-  console.log('文件被选择了',fileValue.label);
+  console.log('文件被选择了',fileValue.value);
+  isLoading.value = true;
+  updateEcharts();
 }
 
 
@@ -304,64 +208,33 @@ const shortcuts = [
 
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
-const chart2Left =35376/viewWidth+'%'
 
-
-//柱状图数据
+//折线图图数据
 const option = ref();
 const seriesArr = ref([])
 const nameArr = ref([])
 const dateArr = ref([])
+const dataArr = ref([])
 
 //折线图数据
 const option2 = ref({
-  title: {
-    text: '文件数量变化统计',
-  },
+  // title: {
+  //   text: '文件数量变化统计',
+  // },
   tooltip: {
     trigger: 'axis',
   },
-  legend: {
-    data: nameArr,
-    top: '6%',
-    icon: 'circle',
-    orient: 'vertical',
-    left: '0%',
-    bottom: 'bottom',
-    type: 'scroll',
-    height: '90%',
-    show: true,
-    selected: {}
-  },
   grid: {
-    left: chart2Left,
     top: '10%',
     right: '4%',
     bottom: '9%',
+    left:'4%',
     containLabel: true
   },
   toolbox: {
     feature: {
       saveAsImage: {},
-      //全选/取消全选工具
-      myTool1: {
-        show: true,
-        title: '全选/取消全选',
-        icon: 'path://M542.127 8c-277.027 0-502.434 225.407-502.434 502.434s225.371 502.434 502.434 502.434 502.434-225.371 502.434-502.434-225.371-502.434-502.434-502.434zM784.582 427.558l-288.598 291.731c-0.223 0.13-0.406 0.309-0.535 0.524 0.135-0.232 0.135-0.087 0.026-0.014-4.519 3.886-10.065 6.708-16.175 8.006 4.896-0.287 0.769 1.622-3.716 2.559 4.234-1.349-0.426-0.381-5.311-0.377-4.843-0.003-9.531-1-13.795-2.803-5.535-3.328-10.364-7.74-14.155-12.956 4.965 7.769 0.452 3.883-2.896-0.879 5.511 6.135 5.474 5.989 5.401 5.916s-0.219-0.109-0.291-0.219l-141.986-145.823c-6.62-6.539-10.72-15.617-10.72-25.652 0-19.911 16.141-36.052 36.052-36.052 10.394 0 19.761 4.399 26.341 11.436l116.347 119.554 262.783-265.648c6.546-6.666 15.654-10.798 25.727-10.798 19.908 0 36.046 16.138 36.046 36.046 0 9.946-4.028 18.951-10.543 25.473z',
-        onclick: function () {
-          changeSelected()
-        }
-      },
-      myTool2: {
-        show: true,
-        title: '展开/收起图例',
-        icon: 'path://M729.6 931.2l-416-425.6 416-416c9.6-9.6 9.6-25.6 0-35.2-9.6-9.6-25.6-9.6-35.2 0l-432 435.2c-9.6 9.6-9.6 25.6 0 35.2l432 441.6c9.6 9.6 25.6 9.6 35.2 0C739.2 956.8 739.2 940.8 729.6 931.2z',
-        onclick: function () {
-          changeUnfold()
-        }
-      },
     },
-
   },
   xAxis: {
     type: 'category',
@@ -371,25 +244,31 @@ const option2 = ref({
   yAxis: {
     type: 'value',
   },
-  series: seriesArr,
+  series: [
+    {
+      data: dataArr,
+      type: 'line',
+      smooth: true
+    }
+  ],
   //实现下方拉动的数据
   dataZoom: [
     {
       height: 15, //高度
       type: "slider",
       xAxisIndex: [0], //控制第一个x轴
-      left: chart2Left,
+      left: '4%',
       right: '4%',
       bottom: 18, //图表底部距离
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1F4E3D', //滑动条颜色
+      fillerColor: '#1FB864', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
       handleIcon: "arrow",
-      handleSize: "80%",
+      handleSize: "100%",
       showDetail: false,
     }
   ],
@@ -397,8 +276,7 @@ const option2 = ref({
 
 
 //loading
-const isLoading1 = ref(false)
-const isLoading = ref(false)
+const isLoading = ref(true);
 
 const cardContainer = ref(null);
 
@@ -424,8 +302,8 @@ const loadingText = ref("加载中...");
 const getTreeList = async () => {
   getTree(treeType.value, 0, 1).then((res) => {
     routesData.value = res.data;
-    getPictureNumber()
-    chooseDateHandler()
+    // getPictureNumber();
+    chooseDateHandler();
   })
 };
 
@@ -547,36 +425,6 @@ function getDateList() {
   }
 }
 
-//改变图例全选/全不选
-function changeSelected() {
-  let isChooseAll = true;
-  nameArr.value.forEach(key => {
-    if (!option2.value.legend.selected[key]) isChooseAll = false;
-  })
-  nameArr.value.forEach(key => {
-    if (isChooseAll) option2.value.legend.selected[key] = false;
-    else option2.value.legend.selected[key] = true;
-  })
-  if (!isChooseAll) ElMessage({ message: '已全选！', type: 'success' });
-  else ElMessage({ message: '已取消全选！', type: 'success' });
-}
-
-// 改变图例展开/折叠
-function changeUnfold() {
-  if (option2.value.legend.show === true) {
-    option2.value.dataZoom[0].left = '4%'
-    option2.value.grid.left = '4%'
-    option2.value.legend.show = false
-    option2.value.toolbox.feature.myTool2.icon = 'path://M761.6 489.6l-432-435.2c-9.6-9.6-25.6-9.6-35.2 0-9.6 9.6-9.6 25.6 0 35.2l416 416-416 425.6c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0l432-441.6C771.2 515.2 771.2 499.2 761.6 489.6z'
-  } else {
-    option2.value.dataZoom[0].left = chart2Left
-    option2.value.grid.left = chart2Left
-    option2.value.legend.show = true
-    option2.value.toolbox.feature.myTool2.icon = 'path://M729.6 931.2l-416-425.6 416-416c9.6-9.6 9.6-25.6 0-35.2-9.6-9.6-25.6-9.6-35.2 0l-432 435.2c-9.6 9.6-9.6 25.6 0 35.2l432 441.6c9.6 9.6 25.6 9.6 35.2 0C739.2 956.8 739.2 940.8 729.6 931.2z'
-  }
-}
-
-
 //随机生成颜色
 function generateColor() {
   let color = "";
@@ -594,7 +442,7 @@ function dateToStr(obj) {
   let day = obj.getDate();
   month = changeDate(month);
   day = changeDate(day)
-  return '' + year + month + day
+  return year + '-'+ month + '-' + day
 }
 
 //选择日期以后的操作
@@ -603,50 +451,53 @@ async function chooseDateHandler() {
   seriesArr.value = []
   nameArr.value = []
   dateArr.value = []
+  dataArr.value = []
   isLoading.value = true;
   startDate.value = dateToStr(value2.value[0])
   endDate.value = dateToStr(new Date(value2.value[1].getTime() + 3600 * 1000 * 24))
-  getDateList()
+  getDateList();
+  await updateEcharts();
+}
 
-  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 0).then(res => {
+
+// 更新可视化图表
+async function updateEcharts(){
+  await getEnvFactorChange(fileValue.value,54, startDate.value, endDate.value).then(res => {
     //遍历返回的数据列表并加入echarts中data
-    for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName,'')
-      nameArr.value.push(name)
-      Reflect.set(option2.value.legend.selected, name, true);
-      seriesArr.value.push({
-        name: name,
-        type: 'line',
-        data: res.data[key],
-        smooth: true,
-        color: generateColor()
-      })
-    }
-
+    const resData = res.data;
+    resData.forEach(item=>{
+      nameArr.value.push(item.date);
+      dataArr.value.push(item.factor_value_0)
+    })
   }).catch(err => {
     console.log(err);
   })
   isLoading.value = false;
 }
-
 // const curNode = tree.value.getCurrentNode();
 
 
 
 onMounted(async () => {
-  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()]
- await getEnvFileList().then(res=>{
-   res.rows.map(item=>{
-     fileOptions.value.push({
-        label:item.fileName,
-        value:item.fileId
-      })
-   })
-   fileValue.value = fileOptions.value[0].value
+  // value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
+  value2.value = [new Date(2014,4,9),new Date(2014,4,29)];
+  // 请求文件列表
+  await getEnvFileList('475').then(res=>{
+    fileOptions.value = res.rows;
+    fileValue.value = fileOptions.value[0].fileId;
  }).catch(err=>{
    console.log(err);
  })
-  // await getTreeList()
+
+  // 请求环境因子列表
+  await getEnvList().then(res=>{
+    envOptions.value = res.data;
+    factorValue.value = [envOptions.value[0].id,envOptions.value[0].chidren[0].id];
+  }).catch(err=>{
+    console.log(err);
+  })
+
+  await getTreeList()
 });
 </script>
 
@@ -1193,7 +1044,7 @@ onMounted(async () => {
 }
 
 .chart1 {
-  height: 600px;
+  height:580px;
 }
 
 .chart3 {

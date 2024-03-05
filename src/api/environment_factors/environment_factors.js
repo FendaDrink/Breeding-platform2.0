@@ -94,9 +94,34 @@ export function getImagesByUrl(url){
 }
 
 // 获取环境文件列表
-export function getEnvFileList(){
+export function getEnvFileList(treeId){
     return request({
         url: '/sidebarTreeEnv/envFile/list',
-        method: 'GET'
+        method: 'GET',
+        params:{
+            treeId
+        }
+    })
+}
+
+// 获取环境因子列表
+export function getEnvList(){
+    return request({
+        url:'/sidebarTreeEnv/asFactorType/getListByType',
+        method:'GET'
+    })
+}
+
+// 获取环境环境因子变化数据
+export function getEnvFactorChange(fileId,factorId,start,end){
+    return request({
+        url:'/sidebarTreeEnv/environment/getLineChartOfEnvFactor',
+        method:'GET',
+        params:{
+            fileId,
+            factorId,
+            start,
+            end
+        }
     })
 }
