@@ -34,8 +34,8 @@
             </template>
             <!-- 文件统计 -->
             <div class="big-wrapper" style="margin-top: 10px;">
-              <v-chart class="chart" :option="option" autoresize v-loading="true" />
-              <v-chart class="chart1" :option="option2" autoresize v-loading="true" style="margin-top:30px" />
+              <v-chart class="chart" :option="option" autoresize v-loading="isLoading1" />
+              <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
 
           </el-card>
@@ -127,7 +127,7 @@ const shortcuts = [
 
 import {
   treeCount, treeCountDate,
-} from "@/api/infomanage/types";
+} from "@/api/tree";
 
 import { getTree } from "@/api/tree.js";
 
@@ -463,7 +463,7 @@ async function chooseDate() {
 
 onMounted(async () => {
   value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()]
-  // await getTreeList()
+  await getTreeList()
 });
 </script>
 

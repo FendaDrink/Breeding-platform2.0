@@ -6,7 +6,7 @@
     ">
 
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
-      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+                  :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-main width="78%" style="padding: 0" class="right-box">
         <div class="phenome-container">
           <!-- 日期选择 -->
@@ -19,8 +19,8 @@
             <div class="big-wrapper" style="margin-top: 10px">
               <div class="block">
                 <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至"
-                  start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
-                  style="margin-right: 20px;" @change="chooseDate" />
+                                start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
+                                style="margin-right: 20px;" @change="chooseDate" />
               </div>
             </div>
           </el-card>
@@ -34,8 +34,8 @@
             </template>
             <!-- 文件统计 -->
             <div class="big-wrapper" style="margin-top: 10px;">
-              <v-chart class="chart" :option="option" autoresize v-loading="true" />
-              <v-chart class="chart1" :option="option2" autoresize v-loading="true" style="margin-top:30px" />
+              <v-chart class="chart" :option="option" autoresize v-loading="isLoading1" />
+              <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
 
           </el-card>
@@ -126,10 +126,8 @@ const shortcuts = [
 
 
 import {
-  treeCount, treeCountDate,
-} from "@/api/infomanage/types";
-
-import { getTree } from "@/api/tree.js";
+  treeCount, treeCountDate,getTree
+} from "@/api/tree";
 
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
@@ -227,8 +225,8 @@ const option2 = ref({
 
 
 //loading
-const isLoading1 = ref(false)
-const isLoading = ref(false)
+const isLoading1 = ref(true)
+const isLoading = ref(true)
 
 const cardContainer = ref(null);
 
@@ -264,8 +262,7 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-  
-  await treeCount(routesData.value.children[0].treeId,1).then(res => {
+  await treeCount(routesData.value.children[0].treeId,2).then(res => {
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
       arrName.value.push(name);
@@ -348,9 +345,9 @@ async function getPictureNumber() {
       ],
     }
   })
-    .catch(err => {
-      console.log(err);
-    })
+      .catch(err => {
+        console.log(err);
+      })
 
   isLoading1.value = false;
 }
@@ -438,7 +435,7 @@ async function chooseDate() {
   endDate.value = dateToStr(new Date(value2.value[1].getTime() + 3600 * 1000 * 24))
   getDateList()
 
-  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 0).then(res => {
+  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 2).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
@@ -462,7 +459,7 @@ async function chooseDate() {
 // const curNode = tree.value.getCurrentNode();
 
 onMounted(async () => {
-  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()]
+  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
   // await getTreeList()
 });
 </script>
@@ -967,7 +964,7 @@ onMounted(async () => {
 }
 
 :deep(.el-card__header) {
-  background: #1FB864;
+  background: #1fb864;
   height: 60px !important;
   display: flex;
   border-top-left-radius: 50px;
