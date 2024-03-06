@@ -168,3 +168,27 @@ export function searchFile(query) {
   });
 
 }
+
+// 文件详情搜索框
+export function searchBox({fileId,searchMaterialId,searchTraitId}){
+  return request({
+    url:`/phenotypeFile/searchBox`,
+    method:'post',
+    data:{
+      fileId,
+      materialId:searchMaterialId,
+      traitId:searchTraitId,
+    }
+  })
+}
+
+// 文件详情多选材料
+export function traitAndMaterialList(tableName){
+  return request({
+    url:`/phenotypeFile/traitAndMaterialList`,
+    method:'get',
+    params:{
+      tableName,
+    }
+  })
+}
