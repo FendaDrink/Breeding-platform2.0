@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">基因组育种决策平台</h3>
+      <h3 class="title">基因组育种决策平台2.0</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
