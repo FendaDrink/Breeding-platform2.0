@@ -19,7 +19,7 @@ const visualModule = ref('num')
 
 import num from './visual/num.vue'
 import traitAnalysis from './visual/traitAnalysis.vue'
-import traitManage from './visual/traitManage.vue'
+// import traitManage from './visual/traitManage.vue'
 
 </script>
 
