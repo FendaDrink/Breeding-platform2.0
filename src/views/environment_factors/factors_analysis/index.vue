@@ -464,7 +464,7 @@ async function chooseDateHandler() {
 // 更新可视化图表
 async function updateEcharts(){
   console.log(factorValue.value[1]);
-  await getEnvFactorChange(fileValue.value,54, startDate.value, endDate.value).then(res => {
+  await getEnvFactorChange(fileValue.value,factorValue.value[0], startDate.value, endDate.value).then(res => {
     //遍历返回的数据列表并加入echarts中data
     const resData = res.data;
     resData.forEach(item=>{
