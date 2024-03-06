@@ -248,7 +248,8 @@ const option2 = ref({
     {
       data: dataArr,
       type: 'line',
-      smooth: true
+      smooth: true,
+      color:'#1FB864'
     }
   ],
   //实现下方拉动的数据
@@ -462,6 +463,7 @@ async function chooseDateHandler() {
 
 // 更新可视化图表
 async function updateEcharts(){
+  console.log(factorValue.value[1]);
   await getEnvFactorChange(fileValue.value,54, startDate.value, endDate.value).then(res => {
     //遍历返回的数据列表并加入echarts中data
     const resData = res.data;
