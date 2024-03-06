@@ -98,9 +98,7 @@
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
-import { reactive, onMounted, getCurrentInstance, nextTick, onBeforeMount } from "vue";
-import {ArrowDown, Select} from '@element-plus/icons-vue';
+import { onMounted, getCurrentInstance } from "vue";
 // 引入echarts
 import { use } from "echarts/core";
 import {
@@ -119,7 +117,7 @@ import 'echarts/lib/component/dataZoom'
 
 // 引入接口
 import {
-  treeCount, treeCountDate,getEnvFileList,getEnvList,getEnvFactorChange
+  treeCount,getEnvFileList,getEnvList,getEnvFactorChange
 } from "@/api/environment_factors/environment_factors";
 
 import { getTree } from "@/api/tree.js";

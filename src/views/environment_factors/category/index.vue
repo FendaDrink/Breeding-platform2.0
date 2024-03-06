@@ -101,7 +101,8 @@ const {
 //route实例
 const route = useRoute();
 
-const fileId=ref(route.query.id);
+// const fileId=ref(route.query.id);
+const fileId=ref(1051);
 
 //分页
 const pageSize = ref(10);
@@ -241,7 +242,6 @@ const pieOption = {
             focus: "descendant",
         },
         expandAndCollapse: false,
-        data: [],
         itemStyle: {
             normal: {
             color: "transparent",

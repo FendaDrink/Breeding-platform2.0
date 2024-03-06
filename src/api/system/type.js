@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询【请填写功能名称】列表
 export function listType(query) {
   return request({
-    url: '/traitType/list',
+    url: '/Type/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listType(query) {
 // 查询【请填写功能名称】详细
 export function getType(asTraitTypeId) {
   return request({
-    url: '/traitType/' + asTraitTypeId,
+    url: '/Type/' + asTraitTypeId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getType(asTraitTypeId) {
 // 新增【请填写功能名称】
 export function addType(data) {
   return request({
-    url: '/traitType',
+    url: '/Type',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addType(data) {
 // 修改【请填写功能名称】
 export function updateType(data) {
   return request({
-    url: '/traitType',
+    url: '/Type',
     method: 'put',
     data: data
   })
@@ -38,13 +38,13 @@ export function updateType(data) {
 // 删除【请填写功能名称】
 export function delType(asTraitTypeId) {
   return request({
-    url: '/traitType/' + asTraitTypeId,
+    url: '/Type/' + asTraitTypeId,
     method: 'delete'
   })
 }
 export function download(data){
   return request({
-    url:"/traitType/download",
+    url:"/Type/download",
     method:'post',
     responseType:"blob",
     data:data
@@ -52,7 +52,7 @@ export function download(data){
 }
 export function checkout(data){
   return request({
-    url:"/traitType/checkTraitTypeName",
+    url:"/Type/checkTraitTypeName",
     method:'post',
     data:data
   })
