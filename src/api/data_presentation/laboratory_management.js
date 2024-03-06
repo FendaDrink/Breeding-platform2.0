@@ -48,3 +48,16 @@ export function dataAnalysisByMaterilId(id,materialId) {
         timeout: 1000 * 600
     })
 }
+
+//根据性状id查询每个材料下的性状值
+export function getDataByTraitId(fileId,traitId) {
+    return request({
+        url: '/phenotypeFile/getMaterialByPhenotype',
+        method: 'get',
+        params: {
+            fileId,
+            traitId
+        },
+        timeout: 1000 * 600
+    })
+}
