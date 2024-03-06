@@ -45,12 +45,13 @@ export function updateByIp(ip,parentFile,treeId){
 }
 
 //图片数据统计接口
-export function treeCount(treeId){
+export function treeCount(treeId, status) {
   return request({
-    url:'/system/picture/count',
-    method:'get',
-    params:{
-      treeId
+    url: '/system/picture/selectLeaves',
+    method: 'GET',
+    params: {
+      treeId,
+      status
     }
   })
 }
