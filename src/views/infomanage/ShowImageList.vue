@@ -520,7 +520,7 @@ async function chooseDate() {
     },
     legend: {
       data: nameArr,
-      top: '6%',
+      // top: '6%',
       icon: 'circle',
       orient: 'vertical',
       left: '0%',
