@@ -616,7 +616,7 @@ async function chooseDate() {
 const props = defineProps({
   treeType: {
     type: Number,
-    default: 2,
+    default: 4,
   },
 });
 

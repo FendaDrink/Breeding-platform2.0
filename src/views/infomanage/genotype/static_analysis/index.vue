@@ -126,10 +126,8 @@ const shortcuts = [
 
 
 import {
-  treeCount, treeCountDate,
+  treeCount, treeCountDate,getTree
 } from "@/api/tree";
-
-import { getTree } from "@/api/tree.js";
 
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
@@ -227,8 +225,8 @@ const option2 = ref({
 
 
 //loading
-const isLoading1 = ref(false)
-const isLoading = ref(false)
+const isLoading1 = ref(true)
+const isLoading = ref(true)
 
 const cardContainer = ref(null);
 
@@ -245,7 +243,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(4);
+const treeType = ref(5);
 
 // 加载
 const loadingText = ref("加载中...");
@@ -264,8 +262,7 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-  console.log('测试~~~',routesData.value);
-  await treeCount(routesData.value.children[0].treeId,1).then(res => {
+  await treeCount(routesData.value.children[0].treeId,0).then(res => {
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
       arrName.value.push(name);
@@ -438,7 +435,7 @@ async function chooseDate() {
   endDate.value = dateToStr(new Date(value2.value[1].getTime() + 3600 * 1000 * 24))
   getDateList()
 
-  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 0).then(res => {
+  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 1).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
@@ -462,7 +459,7 @@ async function chooseDate() {
 // const curNode = tree.value.getCurrentNode();
 
 onMounted(async () => {
-  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()]
+  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
   await getTreeList()
 });
 </script>

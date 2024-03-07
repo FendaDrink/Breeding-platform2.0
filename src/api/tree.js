@@ -121,7 +121,7 @@ export function getHeatMapFit(tableName) {
   })
 }
 
-//图片数据统计接口
+//数据统计接口
 export function treeCount(treeId, status) {
   return request({
     url: '/system/picture/selectLeaves',
@@ -133,7 +133,7 @@ export function treeCount(treeId, status) {
   })
 }
 
-//图片或文件数据（按日期）统计接口 status 0为文件 1为图片
+//图片或文件数据（按日期）统计接口 status 0为文件 1为图片 2为环境
 export function treeCountDate(treeId, startDate, endDate, status) {
   return request({
     url: '/system/picture/selectDateLeaves',
