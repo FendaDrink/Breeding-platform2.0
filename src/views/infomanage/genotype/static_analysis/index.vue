@@ -1,88 +1,40 @@
-<!--环境因子分析-->
 <template>
   <div style="
       width: 100%;
       min-height: calc(100vh - 84px);
       background-color: #eeeeee;
     ">
+
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-main width="78%" style="padding: 0" class="right-box">
         <div class="phenome-container">
-          <!-- 环境因子选择 -->
+          <!-- 日期选择 -->
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>环境因子选择</span>
+                <span>日期选择</span>
               </div>
             </template>
             <div class="big-wrapper" style="margin-top: 10px">
-              <div class="block" style="display:flex;justify-content: space-between">
-                <!-- 级联选择器 -->
-                  <div class="m-4">
-                    <span style="font-weight: bold">文件选择：</span>
-                    <el-cascader
-                        placeholder="请选择文件"
-                        :options="fileOptions"
-                        :props="{label:'fileName',value:'fileId'}"
-                        filterable
-                        clearable
-                        v-model="fileValue"
-                        @change="fileSelectHandler"
-                        :show-all-levels="false"
-                    />
-                  </div>
-
-                  <div class="m-4">
-                    <span style="font-weight: bold">环境变量选择：</span>
-                    <el-cascader
-                        placeholder="请选择环境因子"
-                        :options="envOptions"
-                        :props="{label:'name',value:'id',children:'chidren'}"
-                        filterable
-                        clearable
-                        v-model="factorValue"
-                        @change="factorSelectHandler"
-                        :show-all-levels="false"
-                    />
-                  </div>
-
-                  <div class="block">
-                    <span style="font-weight: bold">日期选择：</span>
-                    <el-date-picker
-                        v-model="value2"
-                        type="daterange"
-                        unlink-panels range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期" :shortcuts="shortcuts"
-                        :size="size"
-                        style="margin-right: 20px;" @change="chooseDateHandler" />
-                  </div>
+              <div class="block">
+                <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至"
+                  start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
+                  style="margin-right: 20px;" @change="chooseDate" />
               </div>
             </div>
           </el-card>
-
-          <!-- 日期选择 -->
-<!--          <el-card class="card-container">-->
-<!--            <template #header>-->
-<!--              <div class="card-header">-->
-<!--                <span>日期选择</span>-->
-<!--              </div>-->
-<!--            </template>-->
-<!--            <div class="big-wrapper" style="margin-top: 10px">-->
-
-<!--            </div>-->
-<!--          </el-card>-->
 
           <!-- 可视化 -->
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>分析可视化</span>
+                <span>可视化</span>
               </div>
             </template>
             <!-- 文件统计 -->
-            <div class="big-wrapper">
+            <div class="big-wrapper" style="margin-top: 10px;">
+              <v-chart class="chart" :option="option" autoresize v-loading="isLoading1" />
               <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
 
@@ -98,7 +50,9 @@
 </template>
 
 <script setup>
-import { onMounted, getCurrentInstance } from "vue";
+import { ElMessage } from 'element-plus'
+import { reactive, onMounted, getCurrentInstance, nextTick, onBeforeMount } from "vue";
+
 // 引入echarts
 import { use } from "echarts/core";
 import {
@@ -114,13 +68,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, provide } from "vue";
 import 'echarts/lib/component/dataZoom'
-
-// 引入接口
-import {
-  treeCount,getEnvFileList,getEnvList,getEnvFactorChange
-} from "@/api/environment_factors/environment_factors";
-
-import { getTree } from "@/api/tree.js";
 
 use([
   GridComponent,
@@ -138,33 +85,6 @@ provide(THEME_KEY);
 
 const arrName = ref([])
 const arrCount = ref([])
-
-// 环境因子数据
-const envOptions = ref([])
-
-// 文件数据
-const fileOptions = ref([])
-
-// 选择环境因子
-const factorValue = ref([])
-
-// 选择文件
-const fileValue = ref();
-
-// 选中环境因子的响应函数
-const factorSelectHandler = () => {
-  console.log('环境因子被选择了',factorValue.value[1]);
-  isLoading.value = true;
-  updateEcharts();
-  chooseDateHandler();
-}
-
-// 选择文件的响应函数
-const fileSelectHandler = () => {
-  console.log('文件被选择了',fileValue.value);
-  isLoading.value = true;
-  updateEcharts();
-}
 
 
 
@@ -204,36 +124,72 @@ const shortcuts = [
   },
 ]
 
+
+import {
+  treeCount, treeCountDate,getTree
+} from "@/api/tree";
+
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
+const chart2Left =35376/viewWidth+'%'
 
 
-//折线图图数据
+//柱状图数据
 const option = ref();
 const seriesArr = ref([])
 const nameArr = ref([])
 const dateArr = ref([])
-const dataArr = ref([])
 
 //折线图数据
+//折线图的数据
 const option2 = ref({
-  // title: {
-  //   text: '文件数量变化统计',
-  // },
+  title: {
+    text: '文件数量变化统计',
+  },
   tooltip: {
     trigger: 'axis',
   },
+  legend: {
+    data: nameArr,
+    top: '6%',
+    icon: 'circle',
+    orient: 'vertical',
+    left: '0%',
+    bottom: 'bottom',
+    type: 'scroll',
+    height: '90%',
+    show: true,
+    selected: {}
+  },
   grid: {
+    left: chart2Left,
     top: '10%',
     right: '4%',
     bottom: '9%',
-    left:'4%',
     containLabel: true
   },
   toolbox: {
     feature: {
       saveAsImage: {},
+      //全选/取消全选工具
+      myTool1: {
+        show: true,
+        title: '全选/取消全选',
+        icon: 'path://M542.127 8c-277.027 0-502.434 225.407-502.434 502.434s225.371 502.434 502.434 502.434 502.434-225.371 502.434-502.434-225.371-502.434-502.434-502.434zM784.582 427.558l-288.598 291.731c-0.223 0.13-0.406 0.309-0.535 0.524 0.135-0.232 0.135-0.087 0.026-0.014-4.519 3.886-10.065 6.708-16.175 8.006 4.896-0.287 0.769 1.622-3.716 2.559 4.234-1.349-0.426-0.381-5.311-0.377-4.843-0.003-9.531-1-13.795-2.803-5.535-3.328-10.364-7.74-14.155-12.956 4.965 7.769 0.452 3.883-2.896-0.879 5.511 6.135 5.474 5.989 5.401 5.916s-0.219-0.109-0.291-0.219l-141.986-145.823c-6.62-6.539-10.72-15.617-10.72-25.652 0-19.911 16.141-36.052 36.052-36.052 10.394 0 19.761 4.399 26.341 11.436l116.347 119.554 262.783-265.648c6.546-6.666 15.654-10.798 25.727-10.798 19.908 0 36.046 16.138 36.046 36.046 0 9.946-4.028 18.951-10.543 25.473z',
+        onclick: function () {
+          changeSelected()
+        }
+      },
+      myTool2: {
+        show: true,
+        title: '展开/收起图例',
+        icon: 'path://M729.6 931.2l-416-425.6 416-416c9.6-9.6 9.6-25.6 0-35.2-9.6-9.6-25.6-9.6-35.2 0l-432 435.2c-9.6 9.6-9.6 25.6 0 35.2l432 441.6c9.6 9.6 25.6 9.6 35.2 0C739.2 956.8 739.2 940.8 729.6 931.2z',
+        onclick: function () {
+          changeUnfold()
+        }
+      },
     },
+
   },
   xAxis: {
     type: 'category',
@@ -243,21 +199,14 @@ const option2 = ref({
   yAxis: {
     type: 'value',
   },
-  series: [
-    {
-      data: dataArr,
-      type: 'line',
-      smooth: true,
-      color:'#1FB864'
-    }
-  ],
+  series: seriesArr,
   //实现下方拉动的数据
   dataZoom: [
     {
       height: 15, //高度
       type: "slider",
       xAxisIndex: [0], //控制第一个x轴
-      left: '4%',
+      left: chart2Left,
       right: '4%',
       bottom: 18, //图表底部距离
       // handleSize: 10,//左右2个滑动条的大小
@@ -268,7 +217,7 @@ const option2 = ref({
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
       handleIcon: "arrow",
-      handleSize: "100%",
+      handleSize: "80%",
       showDetail: false,
     }
   ],
@@ -276,7 +225,10 @@ const option2 = ref({
 
 
 //loading
-const isLoading = ref(true);
+const isLoading1 = ref(true)
+const isLoading = ref(true)
+
+const cardContainer = ref(null);
 
 // vue实例
 const {
@@ -291,7 +243,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(9);
+const treeType = ref(5);
 
 // 加载
 const loadingText = ref("加载中...");
@@ -300,11 +252,105 @@ const loadingText = ref("加载中...");
 const getTreeList = async () => {
   getTree(treeType.value, 0, 1).then((res) => {
     routesData.value = res.data;
-    // getPictureNumber();
-    chooseDateHandler();
+    getPictureNumber()
+    chooseDate()
   })
 };
 
+//发送请求返回每个节点下的图片数量
+async function getPictureNumber() {
+  isLoading1.value = true;
+  arrCount.value = []
+  arrName.value = []
+  await treeCount(routesData.value.children[0].treeId,0).then(res => {
+    for (let key in res.data) {
+      let name = key.replace(routesData.value.children[0].treeName,'')
+      arrName.value.push(name);
+      arrCount.value.push({
+        value: res.data[key],
+        itemStyle: {
+          color: generateColor(),
+          barBorderRadius: [5, 5, 0, 0]
+        }
+      });
+    }
+
+    option.value = {
+      title: {
+        text: '文件数量统计'
+      },
+      grid: {
+        left: '4%',
+        right: '4%',
+        bottom: '9%',
+        containLabel: true
+      },
+      tooltip: {
+        trigger: 'axis',
+        triggerOn: 'mousemove',
+        confine: true //解决浮窗被遮挡问题
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: arrName,
+        axisLabel: {
+          //inside: false,
+          textStyle: {
+
+          }
+        }
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: arrCount,
+          type: 'bar',
+          showBackground: true,
+          backgroundStyle: {
+            color: 'rgba(180, 180, 180, 0.2)'
+          },
+          label: {
+            show: true,
+            position: 'top',
+            color: 'black'
+          }
+        }
+      ],
+      dataZoom: [
+        {
+          height: 15, //高度
+          type: "slider",
+          xAxisIndex: [0], //控制第一个x轴
+          left: '4%',
+          right: '4%',
+          bottom: 18, //图表底部距离
+          // handleSize: 10,//左右2个滑动条的大小
+          moveHandleSize: 0,
+          borderColor: "#eee", //滑动通道的边框颜色
+          fillerColor: '#1FB864', //滑动条颜色
+          backgroundColor: '#eee',//未选中的滑动条的颜色
+          showDataShadow: true,//是否显示数据阴影 默认auto
+          rangeMode: ['value', 'value'],
+          handleIcon: "arrow",
+          handleSize: "100%",
+          showDetail: false,
+        }
+      ],
+    }
+  })
+    .catch(err => {
+      console.log(err);
+    })
+
+  isLoading1.value = false;
+}
 
 //如果month或day仅有一位，则+1
 function changeDate(num) {
@@ -328,6 +374,46 @@ function getDateList() {
   }
 }
 
+//改变图例全选/全不选
+function changeSelected() {
+  let isChooseAll = true;
+  nameArr.value.forEach(key => {
+    if (!option2.value.legend.selected[key]) isChooseAll = false;
+  })
+  nameArr.value.forEach(key => {
+    if (isChooseAll) option2.value.legend.selected[key] = false;
+    else option2.value.legend.selected[key] = true;
+  })
+  if (!isChooseAll) ElMessage({ message: '已全选！', type: 'success' });
+  else ElMessage({ message: '已取消全选！', type: 'success' });
+}
+
+// 改变图例展开/折叠
+function changeUnfold() {
+  if (option2.value.legend.show === true) {
+    option2.value.dataZoom[0].left = '4%'
+    option2.value.grid.left = '4%'
+    option2.value.legend.show = false
+    option2.value.toolbox.feature.myTool2.icon = 'path://M761.6 489.6l-432-435.2c-9.6-9.6-25.6-9.6-35.2 0-9.6 9.6-9.6 25.6 0 35.2l416 416-416 425.6c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0l432-441.6C771.2 515.2 771.2 499.2 761.6 489.6z'
+  } else {
+    option2.value.dataZoom[0].left = chart2Left
+    option2.value.grid.left = chart2Left
+    option2.value.legend.show = true
+    option2.value.toolbox.feature.myTool2.icon = 'path://M729.6 931.2l-416-425.6 416-416c9.6-9.6 9.6-25.6 0-35.2-9.6-9.6-25.6-9.6-35.2 0l-432 435.2c-9.6 9.6-9.6 25.6 0 35.2l432 441.6c9.6 9.6 25.6 9.6 35.2 0C739.2 956.8 739.2 940.8 729.6 931.2z'
+  }
+}
+
+
+//随机生成颜色
+function generateColor() {
+  let color = "";
+  let r = Math.floor(Math.random() * 256);
+  let g = Math.floor(Math.random() * 256);
+  let b = Math.floor(Math.random() * 256);
+  color = `rgb(${r},${g},${b})`;
+  return color;
+}
+
 //将Date转换为八位字符串的函数
 function dateToStr(obj) {
   let year = obj.getFullYear();
@@ -335,64 +421,46 @@ function dateToStr(obj) {
   let day = obj.getDate();
   month = changeDate(month);
   day = changeDate(day)
-  return year + '-'+ month + '-' + day
+  return '' + year + month + day
 }
 
 //选择日期以后的操作
-async function chooseDateHandler() {
+async function chooseDate() {
   //清空echarts中的data数据
   seriesArr.value = []
   nameArr.value = []
   dateArr.value = []
-  dataArr.value = []
   isLoading.value = true;
   startDate.value = dateToStr(value2.value[0])
   endDate.value = dateToStr(new Date(value2.value[1].getTime() + 3600 * 1000 * 24))
-  getDateList();
-  await updateEcharts();
-}
+  getDateList()
 
-
-// 更新可视化图表
-async function updateEcharts(){
-  await getEnvFactorChange(fileValue.value,factorValue.value[1], startDate.value, endDate.value).then(res => {
+  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 1).then(res => {
     //遍历返回的数据列表并加入echarts中data
-    const resData = res.data;
-    resData.forEach(item=>{
-      nameArr.value.push(item.date);
-      // dataArr.value.push(item.factor_value_0);
-      const arr = Object.values(item)[1];
-      dataArr.value.push(arr);
-    })
+    for (let key in res.data) {
+      let name = key.replace(routesData.value.children[0].treeName,'')
+      nameArr.value.push(name)
+      Reflect.set(option2.value.legend.selected, name, true);
+      seriesArr.value.push({
+        name: name,
+        type: 'line',
+        data: res.data[key],
+        smooth: true,
+        color: generateColor()
+      })
+    }
+
   }).catch(err => {
     console.log(err);
   })
   isLoading.value = false;
 }
+
 // const curNode = tree.value.getCurrentNode();
 
-
-
 onMounted(async () => {
-  // value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
-  value2.value = [new Date(2014,4,10),new Date(2014,4,29)];
-  // 请求文件列表
-  await getEnvFileList('475').then(res=>{
-    fileOptions.value = res.rows;
-    fileValue.value = fileOptions.value[0].fileId;
- }).catch(err=>{
-   console.log(err);
- })
-
-  // 请求环境因子列表
-  await getEnvList().then(res=>{
-    envOptions.value = res.data;
-    factorValue.value = [envOptions.value[0].id,envOptions.value[0].chidren[0].id];
-  }).catch(err=>{
-    console.log(err);
-  })
-
-  await getTreeList();
+  value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
+  await getTreeList()
 });
 </script>
 
@@ -896,7 +964,7 @@ onMounted(async () => {
 }
 
 :deep(.el-card__header) {
-  background: #1FB864;
+  background: #1fb864;
   height: 60px !important;
   display: flex;
   border-top-left-radius: 50px;
@@ -939,7 +1007,7 @@ onMounted(async () => {
 }
 
 .chart1 {
-  height:580px;
+  height: 600px;
 }
 
 .chart3 {
@@ -980,5 +1048,232 @@ onMounted(async () => {
   .rightBox {
     width: 50%;
   }
+}
+
+//图片详细信息
+.detailBox {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-content: center;
+  bottom: 0;
+  left: 0;
+  height: 20%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  transition: all ease 0.6s;
+  opacity: 0;
+
+  p {
+    margin: 0;
+    color: #fff;
+    text-align: center;
+    line-height: 220%;
+  }
+}
+
+.image_item:hover .detailBox {
+  opacity: 1;
+}
+
+
+.footer {
+  margin-left: 20px;
+  height: fit-content;
+  padding: 0%;
+}
+
+.buttonsBox {
+  border-radius: 10px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  left: 105%;
+  z-index: 999;
+  transition: all 0.1s ease-in-out;
+  overflow: hidden;
+
+  .delete_button,
+  .edit_button {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    background-color: transparent;
+    width: 40px;
+    height: 40px;
+
+    .el-icon {
+      font-size: 18px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    span {
+      font-size: 12px;
+      color: #555;
+      width: 100%;
+      transition: all 0.2s ease-in-out;
+    }
+  }
+
+  .delete_button:hover {
+
+    span,
+    .el-icon {
+      color: #F56C6C;
+    }
+  }
+
+  .edit_button:hover {
+
+    span,
+    .el-icon {
+      color: #409EFF;
+    }
+  }
+}
+
+.photoDialog {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  flex: auto;
+
+  .leftBox,
+  .rightBox {
+    width: 50%;
+  }
+}
+
+.photoInfo {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  z-index: 9999;
+  width: 350px;
+
+  .item {
+    margin: 15px;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .value {
+    font-size: 16px;
+    color: #555;
+  }
+
+}
+
+.imgBox .el-checkbox {
+  position: absolute;
+  top: 5px; // 设置具体位置
+  left: 10px; // 设置具体位置
+}
+
+:deep(.el-image) {
+  text-align: center;
+  font-size: 40px;
+}
+
+:deep(.el-tree-node__label) {
+  font-size: 16px;
+}
+
+:deep(.el-form-item__label) {
+  width: 110px;
+}
+
+:deep(.el-tree) {
+  background-color: rgb(183, 202, 189);
+}
+
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: #fff !important;
+}
+
+:deep(.el-card) {
+  position: relative;
+  overflow: visible;
+}
+
+:deep(.el-card__body) {
+  padding: 8px 8px 8px 8px !important;
+  object-fit: fill;
+}
+
+.image_item:hover .buttonsBox {
+  width: 40px;
+  height: 80px;
+}
+
+.imgCard_container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.icon-star {
+  color: black;
+  margin: 0 5px;
+}
+
+.card {
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  //background: url(@/assets/img/tree/tree.png) no-repeat center center / cover;
+  opacity: 0.2;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.u-main .el-tag+.el-tag {
+  margin-left: 10px;
+}
+
+.u-main .button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.u-main .input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+
+.u-main .el-form-item {
+  margin: 60px 0;
+}
+
+.u-main .el-form-item__label {
+  font-size: 20px;
 }
 </style>
