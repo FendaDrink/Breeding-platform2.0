@@ -27,7 +27,7 @@
       </div>
     </el-card>
     <el-card class="card-container">
-      <h1>根据地区搜索性状<i>&nbsp;</i></h1>
+      <h1>根据地区搜索环境因子<i>&nbsp;</i></h1>
       <!-- <template #header>
         <div class="card-header">
           <span>根据地区搜索性状</span>
@@ -84,7 +84,7 @@
     </el-card>
     <!-- 经纬度信息 -->
     <el-card class="card-container">
-      <h1>根据性状搜索地区<i>&nbsp;</i></h1>
+      <h1>根据环境因子搜索地区<i>&nbsp;</i></h1>
       <!-- <template #header>
         <div class="card-header">
           <span>根据性状搜索地区</span>
@@ -93,7 +93,7 @@
       <div class="big-wrapper" style="margin-top: 10px">
         <div class="area_top">
           <div class="search_table">
-            <el-select v-model="traitName" filterable remote reserve-keyword placeholder="请输入性状名"
+            <el-select v-model="factorName" filterable remote reserve-keyword placeholder="请输入环境因子名"
               :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
               <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -158,12 +158,15 @@ const {
 } = getCurrentInstance();
 
 //搜索
-const traitName = ref("");
+const factorName = ref("");
 const location = ref("");
 
 //加载
 const traitLoading = ref(false);
 const cityLoading = ref(false);
+
+const states = ref([]);
+const states2 = ref([]);
 
 //获得地图信息
 function getMaps() {
@@ -172,13 +175,13 @@ function getMaps() {
     if (res.code === 200) {
       const mapData = MapOption.series[0].data;
       res.data.forEach((item) => {
-        const { count, location } = item;
+        const { count, area:location } = item;
         const mapItem = mapData.find((dataItem) => dataItem.name === location);
         if (mapItem) {
           mapItem.value = count;
         }
-        if (item.location !== undefined) {
-          states.value.push(item.location);
+        if (location !== undefined) {
+          states.value.push(location);
           options.value = states.value.map((item) => {
             return { value: item, label: item };
           });
@@ -203,7 +206,7 @@ function getMaps() {
   getAllFactorFromFile().then((res) => {
     console.log(res, "9090");
     res.data.map((item) => {
-      states2.value.push(item.traitName);
+      states2.value.push(item.factorName);
     });
   });
 }
@@ -232,9 +235,6 @@ function remoteMethod(query) {
     options2.value = [];
   }
 }
-
-const states = ref([]);
-const states2 = ref([]);
 
 const listSet = computed(() => {
   return states2.value.map((item) => {
@@ -645,9 +645,9 @@ const areaData = ref([]);
 
 async function search_city() {
   areaData.value = [];
-  if (traitName.value !== "") {
+  if (factorName.value !== "") {
     cityLoading.value = true;
-    const res = await getLocationByFactor(traitName.value);
+    const res = await getLocationByFactor(factorName.value);
     if (res.code === 200) {
       res.data.map((item) => {
         if (item !== null) {
@@ -660,7 +660,7 @@ async function search_city() {
       cityLoading.value = false;
     }
   } else {
-    $modal.msg("请先选择性状！");
+    $modal.msg("请先选择环境因子名！");
   }
 
   cityLoading.value = false;
@@ -758,7 +758,7 @@ onMounted(() => {
   // 在这里更新表格数据或执行其他必要的操作
   totalPage.value = tableData.length;
 
-  traitName.value = 'DTT'
+  factorName.value = ' PTD1'
   search_city()
 });
 
