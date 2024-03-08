@@ -53,19 +53,19 @@
           " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
             <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
             <el-table-column label="序号" width="80" type="index" :index="indexMethod" align="center" />
-            <el-table-column prop="traitName" label="性状名" width="130px" align="center">
+            <el-table-column prop="factorName" label="环境因子名" width="130px" align="center">
               <template #default="scope">
-                {{ formatTableCell(scope.row.traitName) }}
+                {{ formatTableCell(scope.row.factorName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="fullName" label="全称" width="280px" align="center">
+            <el-table-column prop="factorFullName" label="全称" width="280px" align="center">
               <template #default="scope">
-                {{ formatTableCell(scope.row.fullName) }}
+                {{ formatTableCell(scope.row.factorFullName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="abbreviationName" label="缩写" width="120px" align="center">
+            <el-table-column prop="factorAbbreviationName" label="缩写" width="120px" align="center">
               <template #default="scope">
-                {{ formatTableCell(scope.row.abbreviationName) }}
+                {{ formatTableCell(scope.row.factorAbbreviationName) }}
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" align="center">
@@ -132,14 +132,17 @@
 <script setup>
 import * as echarts from "echarts";
 import { reactive, ref, nextTick, onMounted } from "vue";
-import "echarts/map/js/china.js";
+import chinaData from "echarts/map/json/china.json";
 import { FIRST_LAST_KEYS } from "element-plus";
 import {
   getMap,
-  getTraitByCity,
-  selectTraitByLocation,
-  getAllTraitFromFile,
+  getLocationByFactor,
+  selectFactorByLocation,
+  getAllFactorFromFile,
 } from "@/api/data_presentation/area_management";
+
+// 注册中国地图
+echarts.registerMap("china", chinaData);
 
 //城市
 const cityForm = ref({
@@ -197,7 +200,7 @@ function getMaps() {
     });
     console.log("2");
   });
-  getAllTraitFromFile().then((res) => {
+  getAllFactorFromFile().then((res) => {
     console.log(res, "9090");
     res.data.map((item) => {
       states2.value.push(item.traitName);
@@ -613,7 +616,7 @@ function initCharts() {
     location.value = params.name;
     traitLoading.value = true;
     let selectedProvince = location.value;
-    selectTraitByLocation(selectedProvince).then((res) => {
+    selectFactorByLocation(selectedProvince).then((res) => {
       if (res.code === 200) {
         updateTableData2(res.data);
         traitLoading.value = false;
@@ -644,7 +647,7 @@ async function search_city() {
   areaData.value = [];
   if (traitName.value !== "") {
     cityLoading.value = true;
-    const res = await getTraitByCity(traitName.value);
+    const res = await getLocationByFactor(traitName.value);
     if (res.code === 200) {
       res.data.map((item) => {
         if (item !== null) {
@@ -704,7 +707,7 @@ async function search_trait() {
   // 使用全局保存的地图实例进行设置
   /*  mapcharts.setOption(MapOption); */
 
-  selectTraitByLocation(location.value).then((res) => {
+  selectFactorByLocation(location.value).then((res) => {
     if (res.code === 200) {
       updateTableData2(res.data);
       totalPage2.value = res.data.length;
@@ -733,7 +736,7 @@ onMounted(() => {
   location.value = "北京";
   traitLoading.value = true;
   let selectedProvince = location.value;
-  selectTraitByLocation(selectedProvince).then((res) => {
+  selectFactorByLocation(selectedProvince).then((res) => {
     if (res.code === 200) {
       updateTableData2(res.data);
       traitLoading.value = false;
