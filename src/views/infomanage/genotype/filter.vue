@@ -220,7 +220,7 @@ export default {
               data: [data.ratio]
             });
             this.test_series[0].itemStyle = {
-              color: '#409EFF',
+              color: '#1FB864',
               borderWidth: 1, //设置border的宽度有多大
               borderColor: '#fff',
             };
@@ -343,7 +343,7 @@ export default {
         for (let i = 0; i < this.test_series.length; i++) {
           if (i === params.seriesIndex) {
             this.test_series[i].itemStyle = {
-              color: '#409EFF',
+              color: '#1FB864',
             };
           } else {
             this.test_series[i].itemStyle = {

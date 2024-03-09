@@ -1137,7 +1137,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }
