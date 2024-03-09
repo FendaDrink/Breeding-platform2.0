@@ -284,8 +284,11 @@ import {
   getMaterialIdByFileId,
   dataAnalysisByMaterilId
 } from "@/api/data_presentation/laboratory_management";
-import "echarts/map/js/china.js";
+import chinaData from "echarts/map/json/china.json";
 import { FIRST_LAST_KEYS } from "element-plus";
+
+// 注册中国地图
+echarts.registerMap("china", chinaData);
 
 // vue实例
 const {
