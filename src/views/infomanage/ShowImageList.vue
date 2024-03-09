@@ -1953,7 +1953,7 @@ async function rowClick(nodeObj) {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #409eff;
+  background-color: #1FB864;
 }
 
 .progress-text {

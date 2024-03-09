@@ -1,4 +1,3 @@
-<!--环境因子分析-->
 <template>
   <div style="
       width: 100%;
@@ -360,7 +359,6 @@ async function updateEcharts(){
     const resData = res.data;
     resData.forEach(item=>{
       nameArr.value.push(item.date);
-      // dataArr.value.push(item.factor_value_0);
       const arr = Object.values(item)[1];
       dataArr.value.push(arr);
     })

@@ -528,7 +528,6 @@ onMounted(async () => {
   }
 }
 
-
 .echart_wrapper {
   display: flex;
   justify-content: space-between;
@@ -1134,7 +1133,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }

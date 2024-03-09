@@ -1271,7 +1271,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1F4E3D;
+  background: #1fb864;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -1282,7 +1282,7 @@ onMounted(() => {
 :deep(.dialog-footer) {
   .el-button--primary {
     background: rgb(85, 123, 116);
-    border: #1F4E3D;
+    border: #1fb864;
   }
 }
 </style>

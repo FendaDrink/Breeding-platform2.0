@@ -262,7 +262,7 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-  await treeCount(routesData.value.children[0].treeId,0).then(res => {
+  await treeCount(routesData.value.children[0].treeId,3).then(res => {
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
       arrName.value.push(name);
@@ -435,7 +435,7 @@ async function chooseDate() {
   endDate.value = dateToStr(new Date(value2.value[1].getTime() + 3600 * 1000 * 24))
   getDateList()
 
-  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 1).then(res => {
+  await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 3).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
@@ -1134,7 +1134,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }
