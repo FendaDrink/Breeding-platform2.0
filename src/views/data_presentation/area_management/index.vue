@@ -27,7 +27,7 @@
       </div>
     </el-card>
     <el-card class="card-container">
-      <h1>根据地区搜索性状<i>&nbsp;</i></h1>
+      <h1>根据地区搜索环境因子<i>&nbsp;</i></h1>
       <!-- <template #header>
         <div class="card-header">
           <span>根据地区搜索性状</span>
@@ -53,19 +53,19 @@
           " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
             <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
             <el-table-column label="序号" width="80" type="index" :index="indexMethod" align="center" />
-            <el-table-column prop="traitName" label="性状名" width="130px" align="center">
+            <el-table-column prop="factorName" label="环境因子名" width="130px" align="center">
               <template #default="scope">
-                {{ formatTableCell(scope.row.traitName) }}
+                {{ formatTableCell(scope.row.factorName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="fullName" label="全称" width="280px" align="center">
+            <el-table-column prop="factorFullName" label="全称" width="280px" align="center">
               <template #default="scope">
-                {{ formatTableCell(scope.row.fullName) }}
+                {{ formatTableCell(scope.row.factorFullName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="abbreviationName" label="缩写" width="120px" align="center">
+            <el-table-column prop="factorAbbreviationName" label="缩写" width="120px" align="center">
               <template #default="scope">
-                {{ formatTableCell(scope.row.abbreviationName) }}
+                {{ formatTableCell(scope.row.factorAbbreviationName) }}
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" align="center">
@@ -84,7 +84,7 @@
     </el-card>
     <!-- 经纬度信息 -->
     <el-card class="card-container">
-      <h1>根据性状搜索地区<i>&nbsp;</i></h1>
+      <h1>根据环境因子搜索地区<i>&nbsp;</i></h1>
       <!-- <template #header>
         <div class="card-header">
           <span>根据性状搜索地区</span>
@@ -93,7 +93,7 @@
       <div class="big-wrapper" style="margin-top: 10px">
         <div class="area_top">
           <div class="search_table">
-            <el-select v-model="traitName" filterable remote reserve-keyword placeholder="请输入性状名"
+            <el-select v-model="factorName" filterable remote reserve-keyword placeholder="请输入环境因子名"
               :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
               <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -132,14 +132,17 @@
 <script setup>
 import * as echarts from "echarts";
 import { reactive, ref, nextTick, onMounted } from "vue";
-import "echarts/map/js/china.js";
+import chinaData from "echarts/map/json/china.json";
 import { FIRST_LAST_KEYS } from "element-plus";
 import {
   getMap,
-  getTraitByCity,
-  selectTraitByLocation,
-  getAllTraitFromFile,
+  getLocationByFactor,
+  selectFactorByLocation,
+  getAllFactorFromFile,
 } from "@/api/data_presentation/area_management";
+
+// 注册中国地图
+echarts.registerMap("china", chinaData);
 
 //城市
 const cityForm = ref({
@@ -155,12 +158,15 @@ const {
 } = getCurrentInstance();
 
 //搜索
-const traitName = ref("");
+const factorName = ref("");
 const location = ref("");
 
 //加载
 const traitLoading = ref(false);
 const cityLoading = ref(false);
+
+const states = ref([]);
+const states2 = ref([]);
 
 //获得地图信息
 function getMaps() {
@@ -169,13 +175,13 @@ function getMaps() {
     if (res.code === 200) {
       const mapData = MapOption.series[0].data;
       res.data.forEach((item) => {
-        const { count, location } = item;
+        const { count, area:location } = item;
         const mapItem = mapData.find((dataItem) => dataItem.name === location);
         if (mapItem) {
           mapItem.value = count;
         }
-        if (item.location !== undefined) {
-          states.value.push(item.location);
+        if (location !== undefined) {
+          states.value.push(location);
           options.value = states.value.map((item) => {
             return { value: item, label: item };
           });
@@ -197,10 +203,10 @@ function getMaps() {
     });
     console.log("2");
   });
-  getAllTraitFromFile().then((res) => {
+  getAllFactorFromFile().then((res) => {
     console.log(res, "9090");
     res.data.map((item) => {
-      states2.value.push(item.traitName);
+      states2.value.push(item.factorName);
     });
   });
 }
@@ -229,9 +235,6 @@ function remoteMethod(query) {
     options2.value = [];
   }
 }
-
-const states = ref([]);
-const states2 = ref([]);
 
 const listSet = computed(() => {
   return states2.value.map((item) => {
@@ -613,7 +616,7 @@ function initCharts() {
     location.value = params.name;
     traitLoading.value = true;
     let selectedProvince = location.value;
-    selectTraitByLocation(selectedProvince).then((res) => {
+    selectFactorByLocation(selectedProvince).then((res) => {
       if (res.code === 200) {
         updateTableData2(res.data);
         traitLoading.value = false;
@@ -642,9 +645,9 @@ const areaData = ref([]);
 
 async function search_city() {
   areaData.value = [];
-  if (traitName.value !== "") {
+  if (factorName.value !== "") {
     cityLoading.value = true;
-    const res = await getTraitByCity(traitName.value);
+    const res = await getLocationByFactor(factorName.value);
     if (res.code === 200) {
       res.data.map((item) => {
         if (item !== null) {
@@ -657,7 +660,7 @@ async function search_city() {
       cityLoading.value = false;
     }
   } else {
-    $modal.msg("请先选择性状！");
+    $modal.msg("请先选择环境因子名！");
   }
 
   cityLoading.value = false;
@@ -704,7 +707,7 @@ async function search_trait() {
   // 使用全局保存的地图实例进行设置
   /*  mapcharts.setOption(MapOption); */
 
-  selectTraitByLocation(location.value).then((res) => {
+  selectFactorByLocation(location.value).then((res) => {
     if (res.code === 200) {
       updateTableData2(res.data);
       totalPage2.value = res.data.length;
@@ -733,7 +736,7 @@ onMounted(() => {
   location.value = "北京";
   traitLoading.value = true;
   let selectedProvince = location.value;
-  selectTraitByLocation(selectedProvince).then((res) => {
+  selectFactorByLocation(selectedProvince).then((res) => {
     if (res.code === 200) {
       updateTableData2(res.data);
       traitLoading.value = false;
@@ -755,7 +758,7 @@ onMounted(() => {
   // 在这里更新表格数据或执行其他必要的操作
   totalPage.value = tableData.length;
 
-  traitName.value = 'DTT'
+  factorName.value = ' PTD1'
   search_city()
 });
 
