@@ -18,9 +18,16 @@
             </template>
             <div class="big-wrapper" style="margin-top: 10px">
               <div class="block">
-                <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至"
-                                start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
-                                style="margin-right: 20px;" @change="chooseDate" />
+                <el-date-picker v-model="value2"
+                                type="daterange"
+                                unlink-panels range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                :shortcuts="shortcuts"
+                                :size="size"
+                                style="margin-right: 20px;"
+                                popper-class="date-picker"
+                                @change="chooseDate" />
               </div>
             </div>
           </el-card>
@@ -461,7 +468,7 @@ async function chooseDate() {
 onMounted(async () => {
   value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
 
-  // await getTreeList();
+  await getTreeList();
 });
 </script>
 
@@ -1135,7 +1142,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }

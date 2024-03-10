@@ -460,7 +460,7 @@ onMounted(() => {
 }
 
 .card-container {
-  padding: 20px 20px 0px;
+  //padding: 20px 20px 0px;
   background-color: #fff;
   margin: 0px 0px 20px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);

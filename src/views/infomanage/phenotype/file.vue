@@ -152,8 +152,8 @@ import { onBeforeRouteLeave } from "vue-router";
 
 import {
   listFile,
-  searchBox,
-  traitAndMaterialList,
+  // searchBox,
+  // traitAndMaterialList,
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,

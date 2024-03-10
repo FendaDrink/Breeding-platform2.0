@@ -833,4 +833,46 @@ onBeforeRouteLeave(() => {
     color: #424F63;
   }
 }
+ode__expand-icon.is-leaf {
+      display: none;
+    }
+
+    /* / 叶子节点 */
+
+    /* ^ 设置子节点左外边距 */
+    .el-tree-node__content:has(.is-leaf) {
+      // color: #00ffff;
+      margin-left: 12px !important;
+    }
+
+    /* / 设置子节点左外边距 */
+    /* ---- ---- ---- ---- /（新增辅助线）---- ---- ---- ---- */
+
+  :deep(.el-tree-node__content) {
+    border-radius: 5px;
+    margin: 1px;
+    color: black;
+    padding: 0%;
+    height: 20px;
+  }
+
+  :deep(.el-tree-node__label) {
+    font-size: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+
+// 设置高亮颜色
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: rgba(rgb(#424F63), 0.3) !important;
+
+  .el-tree-node__label {
+    color: #424F63;
+  }
+
+  .el-tree-node__expand-icon {
+    color: #424F63;
+  }
+}
 </style>
