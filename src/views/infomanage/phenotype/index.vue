@@ -627,7 +627,7 @@ const createData = async () => {
     await upload.value.submit();
     console.log("2");
     isDisabled.value = true;
-    onsole.log("3");
+    console.log("3");
     console.log("4");
     tableLoading.value = false;
     tableName.value = "";
@@ -778,7 +778,7 @@ const isdisabled3 = ref(false);
 // 请求文件列表
 function getList() {
   tableLoading.value = true;
-  console.log(tree.value.getCurrentNode().children);
+  // console.log(tree.value.getCurrentNode().children);
   if (tree.value.getCurrentNode().children.length != 0) {
     isdisabled3.value = true;
   } else {

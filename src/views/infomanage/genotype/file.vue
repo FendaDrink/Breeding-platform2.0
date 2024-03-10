@@ -335,7 +335,7 @@ function updateFileData() {
       payload[column.prop] = form[column.prop];
     }
   }
-
+  
   modifiFileData(payload)
     .then((res) => {
       console.log(res);
