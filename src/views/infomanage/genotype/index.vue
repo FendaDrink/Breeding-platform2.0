@@ -15,29 +15,29 @@
         <el-main width="78%" style="padding: 0; height: calc(100vh - 150px)" class="right-box">
           <div style="height: auto; margin-bottom: 10px">
             <div class="div1">
-              <el-button type="primary" class="filter-item my-button" @click.prevent="addChildNode"
+              <el-button type="primary" class="filter-item my-button" @click.prevent="addChildNode" plain icon="plus"
                 v-hasPermi="['system:node:add']">
                 添加子节点</el-button>
-              <el-button type="danger" class="filter-item my-button" @click.prevent="deleteNode"
-                v-hasPermi="['system:node:remove']">删除节点</el-button>
-              <el-button type="info" class="filter-item my-button" @click.prevent="updateChildNode"
+              <el-button type="success" class="filter-item my-button" @click.prevent="updateChildNode" plain icon="edit"
                 v-hasPermi="['system:node:update']">修改节点</el-button>
-              <el-button type="info" class="filter-item my-button" @click.prevent="downloadTemplate"
+              <el-button type="danger" class="filter-item my-button" @click.prevent="deleteNode" plain icon="delete"
+                v-hasPermi="['system:node:remove']">删除节点</el-button>
+              <el-button type="info" class="filter-item my-button" @click.prevent="downloadTemplate" plain icon="download"
                 v-hasPermi="['system:node:update']">下载模板文件</el-button>
             </div>
             <div class="div2">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter="handleQuery"
                 class="my-input" style="width: 180px; margin-right: 8px;" />
-              <el-button type="primary" class="search-button my-button green-button" @click="handleQuery">搜索</el-button>
-              <el-button @click="resetQuery" class="my-button white-button">重置</el-button>
+              <el-button type="primary" class="my-button" @click="handleQuery" icon="search">搜索</el-button>
+              <el-button @click="resetQuery" class="my-button white-button" icon="Refresh">重置</el-button>
             </div>
             <div class="div3">
               <!-- 操作部分 -->
-              <el-button type="primary" plain class="addExcel filter-item my-button green-button" @click="handleAdd"
+              <el-button type="primary" plain class="filter-item my-button" @click="handleAdd" icon="plus"
                 v-hasPermi="['system:logininfor:add']">新增</el-button>
-              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
+              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled" icon="delete"
                 v-hasPermi="['system:logininfor:remove']" class="filter-item my-button">删除</el-button>
-              <el-container style="height: calc(100vh - 400px)">
+              <el-container style="min-height: calc(100vh - 400px);padding-bottom: 20px;">
                 <!-- 表格部分 -->
                 <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe fit
                   max-height="100%" class="mytable">
@@ -56,38 +56,45 @@
                     </template>
                   </el-table-column>
                   <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
-                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="480px">
+                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="150px">
                     <template #default="scope">
-                      <el-button size="medium" type="text" icon="View" link @click="openVis(scope.row)"
-                        class="table_button">可视化
-                      </el-button>
+                      <el-tooltip content="可视化" placement="top">
+                        <el-button size="medium" type="text" icon="View" link @click="openVis(scope.row)"
+                          class="table_button">
+                        </el-button></el-tooltip>
+                      <el-tooltip content="基因筛选" placement="top">
+                        <el-button size="medium" type="text" icon="search" link @click="openFilter(scope.row)"
+                          class="table_button">
+                        </el-button></el-tooltip>
+                      <el-tooltip content="基因热力图" placement="top">
+                        <el-button size="medium" type="text" icon="place" link @click="openHeatmap(scope.row)"
+                          class="table_button">
+                        </el-button></el-tooltip>
+                      <el-tooltip content="文件详情" placement="top">
+                        <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
+                          class="table_button">
+                        </el-button></el-tooltip>
+                      <el-tooltip content="删除" placement="top">
+                        <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
+                          v-hasPermi="['system:file:remove']" class="table_button"></el-button></el-tooltip>
+                    </template>
+                  </el-table-column>
 
-                      <el-button size="medium" type="text" icon="search" link @click="openFilter(scope.row)"
-                        class="table_button">基因筛选
-                      </el-button>
-                      <el-button size="medium" type="text" icon="place" link @click="openHeatmap(scope.row)"
-                        class="table_button">基因热力图
-                      </el-button>
-                      <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
-                        class="table_button">文件详情
-                      </el-button>
-                      <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
-                        v-hasPermi="['system:file:remove']" class="table_button">删除</el-button>
+                  <el-table-column icon="timer" label="历史版本" align="center" class-name="small-padding fixed-width"
+                    min-width="auto">
+                    <template #default="scope">
+                      <el-tooltip content="查看历史版本" placement="top">
+                        <el-button icon="timer" type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
+                          class="table_button">
+                        </el-button></el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column label="历史版本" align="center" class-name="small-padding fixed-width" min-width="120px">
+                  <el-table-column label="合并操作" align="center" class-name="small-padding fixed-width" width="auto">
                     <template #default="scope">
-                      <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
-                        class="table_button">查看历史版本
-                      </el-button>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="合并操作" align="center" class-name="small-padding fixed-width" fixed="right"
-                    width="120px">
-                    <template #default="scope">
-                      <el-button icon="Download" :loading="downloadLoading" @click="mergeFile(scope.row)"
-                        class="hebin-button">合并
-                      </el-button>
+                      <el-tooltip content="合并" placement="top">
+                        <el-button icon="set-up" :loading="downloadLoading" @click="mergeFile(scope.row)" type="text"
+                          class="table_button">
+                        </el-button></el-tooltip>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -118,14 +125,14 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click.passive="
+          <el-button type="success" plain @click.passive="
             dialogTreeStatus === 'createNode'
               ? createTreeData()
               : updateTreeData()
           ">
             保存
           </el-button>
-          <el-button @click="dialogTreeFormVisible = false">取消</el-button>
+          <el-button @click="dialogTreeFormVisible = false" type="info" plain>取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -214,7 +221,7 @@
   </div>
 </template>
 
-<script setup name="phenoType">
+<script setup>
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
@@ -473,7 +480,7 @@ const handleBeforeUpload = (file) => {
   const isVcf = fileType === "vcf";
   if (!isVcf) {
     $modal.msgError(
-      "只能上传csv格式的文件！",
+      "只能上传vcf格式的文件！",
       "error",
       "vab-hey-message-error"
     );
@@ -503,7 +510,7 @@ const createData = async () => {
 
     console.log("4");
     tableLoading.value = false;
-    onsole.log("5");
+    console.log("5");
     tableName.value = "";
   }
   dialogFormVisible.value = false;
@@ -577,13 +584,13 @@ const mergeData = async () => {
       await upload.value.submit();
       console.log("2");
       isDisabled2.value = true;
-      onsole.log("3");
+      console.log("3");
     } catch (error) {
       console.error("上传错误: ", error);
     } finally {
       console.log("4");
       tableLoading.value = false;
-      onsole.log("5");
+      console.log("5");
       tableName.value = "";
       getList();
     }
@@ -992,6 +999,7 @@ function updateChildNode() {
     $modal.msgWarning("请选择所要修改节点的父节点");
     return;
   }
+  resetTreeForm();
   dialogTreeStatus.value = "updateNode";
   dialogTreeFormVisible.value = true;
 }
@@ -1081,6 +1089,7 @@ function rowClick(nodeObj) {
   }
 
   queryParams.treeId = nodeObj.treeId;
+  resetQuery();
   getList();
 }
 
@@ -1370,28 +1379,6 @@ onMounted(() => {
   width: 100%;
 }
 
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;
@@ -1449,7 +1436,7 @@ onMounted(() => {
   background-color: #fff !important;
 }
 
-.el-tree {
+:deep(.el-tree) {
   background-color: #fff !important;
   margin: 0px !important;
   color: #000;
@@ -1479,6 +1466,7 @@ onMounted(() => {
   background-color: #EEEEEE !important;
   margin-top: 20px;
 }
+
 .footer {
   height: fit-content;
 }
@@ -1723,6 +1711,211 @@ onMounted(() => {
 
   .el-tree-node__expand-icon {
     color: #424F63;
+  }
+}
+
+:deep(.el-radio) {
+  width: 30%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+}
+
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+}
+
+:deep(.el-card__header) {
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
+
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+
+}
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--warning.is-plain {
+  --el-button-text-color: #e6a23c;
+  --el-button-bg-color: #fdf6ec;
+  --el-button-border-color: #f3d19e;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #e6a23c;
+  --el-button-hover-border-color: #e6a23c;
+  --el-button-active-text-color: #ffffff;
+}
+
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
+}
+
+//一级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #107c10;
+  height: 28px;
+
+  .el-tree-node__label {
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
+
+//二级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
+  height: 26px;
+
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
+
+//三级节点选择器 
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
+
+  .el-tree-node__label {
+    font-size: 14px;
   }
 }
 </style>
