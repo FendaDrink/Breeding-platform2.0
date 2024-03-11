@@ -18,9 +18,16 @@
             </template>
             <div class="big-wrapper" style="margin-top: 10px">
               <div class="block">
-                <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至"
-                                start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
-                                style="margin-right: 20px;" @change="chooseDate" />
+                <el-date-picker v-model="value2"
+                                type="daterange"
+                                unlink-panels range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                :shortcuts="shortcuts"
+                                :size="size"
+                                style="margin-right: 20px;"
+                                popper-class="date-picker"
+                                @change="chooseDate" />
               </div>
             </div>
           </el-card>
@@ -144,7 +151,7 @@ const dateArr = ref([])
 //折线图的数据
 const option2 = ref({
   title: {
-    text: '文件数量变化统计',
+    text: '环境文件数量变化统计',
   },
   tooltip: {
     trigger: 'axis',
@@ -212,7 +219,7 @@ const option2 = ref({
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1F4E3D', //滑动条颜色
+      fillerColor: '#1FB864', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -243,7 +250,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(2);
+const treeType = ref(9);
 
 // 加载
 const loadingText = ref("加载中...");
@@ -277,7 +284,7 @@ async function getPictureNumber() {
 
     option.value = {
       title: {
-        text: '文件数量统计'
+        text: '环境文件数量统计'
       },
       grid: {
         left: '4%',
@@ -334,7 +341,7 @@ async function getPictureNumber() {
           // handleSize: 10,//左右2个滑动条的大小
           moveHandleSize: 0,
           borderColor: "#eee", //滑动通道的边框颜色
-          fillerColor: '#1F4E3D', //滑动条颜色
+          fillerColor: '#1FB864', //滑动条颜色
           backgroundColor: '#eee',//未选中的滑动条的颜色
           showDataShadow: true,//是否显示数据阴影 默认auto
           rangeMode: ['value', 'value'],
@@ -461,7 +468,7 @@ async function chooseDate() {
 onMounted(async () => {
   value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
 
-  // await getTreeList()
+  await getTreeList();
 });
 </script>
 
@@ -1135,7 +1142,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }

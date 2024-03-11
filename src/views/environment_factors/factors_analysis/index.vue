@@ -1,4 +1,3 @@
-<!--环境因子分析-->
 <template>
   <div style="
       width: 100%;
@@ -156,6 +155,7 @@ const factorSelectHandler = () => {
   console.log('环境因子被选择了',factorValue.value[1]);
   isLoading.value = true;
   updateEcharts();
+  chooseDateHandler();
 }
 
 // 选择文件的响应函数
@@ -277,8 +277,6 @@ const option2 = ref({
 //loading
 const isLoading = ref(true);
 
-const cardContainer = ref(null);
-
 // vue实例
 const {
   proxy: { $modal, $download },
@@ -292,7 +290,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(2);
+const treeType = ref(9);
 
 // 加载
 const loadingText = ref("加载中...");
@@ -306,101 +304,6 @@ const getTreeList = async () => {
   })
 };
 
-//发送请求返回每个节点下的图片数量
-async function getPictureNumber() {
-  isLoading1.value = true;
-  arrCount.value = []
-  arrName.value = []
-
-  await treeCount(routesData.value.children[0].treeId, 1).then(res => {
-    for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName, '')
-      arrName.value.push(name);
-      arrCount.value.push({
-        value: res.data[key],
-        itemStyle: {
-          color: generateColor(),
-          barBorderRadius: [5, 5, 0, 0]
-        }
-      });
-    }
-
-    option.value = {
-      title: {
-        text: '文件数量统计'
-      },
-      grid: {
-        left: '4%',
-        right: '4%',
-        bottom: '9%',
-        containLabel: true
-      },
-      tooltip: {
-        trigger: 'axis',
-        triggerOn: 'mousemove',
-        confine: true //解决浮窗被遮挡问题
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: {}
-        }
-      },
-      xAxis: {
-        type: 'category',
-        data: arrName,
-        axisLabel: {
-          //inside: false,
-          textStyle: {
-
-          }
-        }
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: [
-        {
-          data: arrCount,
-          type: 'bar',
-          showBackground: true,
-          backgroundStyle: {
-            color: 'rgba(180, 180, 180, 0.2)'
-          },
-          label: {
-            show: true,
-            position: 'top',
-            color: 'black'
-          }
-        }
-      ],
-      dataZoom: [
-        {
-          height: 15, //高度
-          type: "slider",
-          xAxisIndex: [0], //控制第一个x轴
-          left: '4%',
-          right: '4%',
-          bottom: 18, //图表底部距离
-          // handleSize: 10,//左右2个滑动条的大小
-          moveHandleSize: 0,
-          borderColor: "#eee", //滑动通道的边框颜色
-          fillerColor: '#1F4E3D', //滑动条颜色
-          backgroundColor: '#eee',//未选中的滑动条的颜色
-          showDataShadow: true,//是否显示数据阴影 默认auto
-          rangeMode: ['value', 'value'],
-          handleIcon: "arrow",
-          handleSize: "100%",
-          showDetail: false,
-        }
-      ],
-    }
-  })
-    .catch(err => {
-      console.log(err);
-    })
-
-  isLoading1.value = false;
-}
 
 //如果month或day仅有一位，则+1
 function changeDate(num) {
@@ -422,16 +325,6 @@ function getDateList() {
     theStart = theStart.setDate(theStart.getDate() + 1)
     theStart = new Date(theStart)
   }
-}
-
-//随机生成颜色
-function generateColor() {
-  let color = "";
-  let r = Math.floor(Math.random() * 256);
-  let g = Math.floor(Math.random() * 256);
-  let b = Math.floor(Math.random() * 256);
-  color = `rgb(${r},${g},${b})`;
-  return color;
 }
 
 //将Date转换为八位字符串的函数
@@ -461,13 +354,13 @@ async function chooseDateHandler() {
 
 // 更新可视化图表
 async function updateEcharts(){
-  console.log(factorValue.value[1]);
-  await getEnvFactorChange(fileValue.value,factorValue.value[0], startDate.value, endDate.value).then(res => {
+  await getEnvFactorChange(fileValue.value,factorValue.value[1], startDate.value, endDate.value).then(res => {
     //遍历返回的数据列表并加入echarts中data
     const resData = res.data;
     resData.forEach(item=>{
       nameArr.value.push(item.date);
-      dataArr.value.push(item.factor_value_0)
+      const arr = Object.values(item)[1];
+      dataArr.value.push(arr);
     })
   }).catch(err => {
     console.log(err);
@@ -480,7 +373,7 @@ async function updateEcharts(){
 
 onMounted(async () => {
   // value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
-  value2.value = [new Date(2014,4,9),new Date(2014,4,29)];
+  value2.value = [new Date(2014,4,10),new Date(2014,4,29)];
   // 请求文件列表
   await getEnvFileList('475').then(res=>{
     fileOptions.value = res.rows;
@@ -497,7 +390,7 @@ onMounted(async () => {
     console.log(err);
   })
 
-  await getTreeList()
+  await getTreeList();
 });
 </script>
 

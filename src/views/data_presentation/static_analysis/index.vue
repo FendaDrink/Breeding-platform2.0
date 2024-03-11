@@ -214,7 +214,7 @@ const option2 = ref({
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1F4E3D', //滑动条颜色
+      fillerColor: '#1FB864', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -245,7 +245,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(2);
+const treeType = ref(4);
 
 // 加载
 const loadingText = ref("加载中...");
@@ -264,7 +264,7 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-  
+  console.log('测试~~~',routesData.value);
   await treeCount(routesData.value.children[0].treeId,1).then(res => {
     for (let key in res.data) {
       let name = key.replace(routesData.value.children[0].treeName,'')
@@ -337,7 +337,7 @@ async function getPictureNumber() {
           // handleSize: 10,//左右2个滑动条的大小
           moveHandleSize: 0,
           borderColor: "#eee", //滑动通道的边框颜色
-          fillerColor: '#1F4E3D', //滑动条颜色
+          fillerColor: '#1FB864', //滑动条颜色
           backgroundColor: '#eee',//未选中的滑动条的颜色
           showDataShadow: true,//是否显示数据阴影 默认auto
           rangeMode: ['value', 'value'],
@@ -1137,7 +1137,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }

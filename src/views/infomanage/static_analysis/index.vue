@@ -144,7 +144,7 @@ const dateArr = ref([])
 //折线图的数据
 const option2 = ref({
   title: {
-    text: '文件数量变化统计',
+    text: '图片数量变化统计',
   },
   tooltip: {
     trigger: 'axis',
@@ -212,7 +212,7 @@ const option2 = ref({
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1F4E3D', //滑动条颜色
+      fillerColor: '#1FB864', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -243,7 +243,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(2);
+const treeType = ref(4);
 
 // 加载
 const loadingText = ref("加载中...");
@@ -277,7 +277,7 @@ async function getPictureNumber() {
 
     option.value = {
       title: {
-        text: '文件数量统计'
+        text: '图片数量统计'
       },
       grid: {
         left: '4%',
@@ -334,7 +334,7 @@ async function getPictureNumber() {
           // handleSize: 10,//左右2个滑动条的大小
           moveHandleSize: 0,
           borderColor: "#eee", //滑动通道的边框颜色
-          fillerColor: '#1F4E3D', //滑动条颜色
+          fillerColor: '#1FB864', //滑动条颜色
           backgroundColor: '#eee',//未选中的滑动条的颜色
           showDataShadow: true,//是否显示数据阴影 默认auto
           rangeMode: ['value', 'value'],
@@ -527,7 +527,6 @@ onMounted(async () => {
     // background-image: linear-gradient(to top, #9be15d 0%, #00e3ae 100%);
   }
 }
-
 
 .echart_wrapper {
   display: flex;
@@ -1134,7 +1133,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #409EFF;
+      color: #1FB864;
     }
   }
 }

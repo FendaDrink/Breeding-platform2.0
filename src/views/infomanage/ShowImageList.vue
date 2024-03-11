@@ -520,7 +520,7 @@ async function chooseDate() {
     },
     legend: {
       data: nameArr,
-      top: '6%',
+      // top: '6%',
       icon: 'circle',
       orient: 'vertical',
       left: '0%',
@@ -577,10 +577,10 @@ async function chooseDate() {
         left: chart2Left,
         right: '4%',
         bottom: 18, //图表底部距离
-        handleSize: 10,//左右2个滑动条的大小
+        // handleSize: 10,//左右2个滑动条的大小
         moveHandleSize: 0,
         borderColor: "#eee", //滑动通道的边框颜色
-        fillerColor: '#1F4E3D', //滑动条颜色
+        fillerColor: '#1FB864', //滑动条颜色
         backgroundColor: '#eee',//未选中的滑动条的颜色
         showDataShadow: true,//是否显示数据阴影 默认auto
         rangeMode: ['value', 'value'],
@@ -596,7 +596,7 @@ async function chooseDate() {
   await treeCountDate(tree.value.getCurrentNode().treeId, startDate.value, endDate.value, 1, treeIdRank()).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
-      let name = key.replace(tree.value.getCurrentNode().treeName,'').trimStart()
+      let name = key.replace(tree.value.getCurrentNode().treeName, '').trimStart()
       nameArr.value.push(name)
       // Reflect.set(option2.value.legend.selected, key, true);
       seriesArr.value.push({
@@ -616,7 +616,7 @@ async function chooseDate() {
 const props = defineProps({
   treeType: {
     type: Number,
-    default: 2,
+    default: 4,
   },
 });
 
@@ -633,14 +633,14 @@ const loadingDialogVisible = ref(false);
 
 // vue实例
 const {
-  proxy: { $download },
+  proxy: {$download},
 } = getCurrentInstance();
 
 const valueFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"; // 时间格式
 
 // vue实例
 const {
-  proxy: { $modal },
+  proxy: {$modal},
 } = getCurrentInstance();
 
 // 加载
@@ -744,8 +744,8 @@ async function getPictureData() {
 
   if (tree && tree.value.getCurrentNode()?.children) {
     await treeCount(tree.value.getCurrentNode().treeId, 0).then(res => {
-      for(let key in res.data){
-        let name = key.replace(tree.value.getCurrentNode().treeName,'').trimStart()
+      for (let key in res.data) {
+        let name = key.replace(tree.value.getCurrentNode().treeName, '').trimStart()
         arrName.value.push(name);
         arrCount.value.push({
           value: res.data[key],
@@ -791,7 +791,7 @@ async function downloadSelectedImages() {
           const imageFolder = zip.folder("images");
           const downloadPromises = checkedPictures.value.map(async (pictureId) => {
             try {
-              const { blob, imageName } = await downloadImage(pictureId);
+              const {blob, imageName} = await downloadImage(pictureId);
               imageFolder.file(imageName, blob);
             } catch (error) {
               loadingDialogVisible.value = false;
@@ -800,7 +800,7 @@ async function downloadSelectedImages() {
             }
           })
           Promise.all(downloadPromises).then(() => {
-            zip.generateAsync({ type: "blob" }).then((content) => {
+            zip.generateAsync({type: "blob"}).then((content) => {
               saveAs(content, "images.zip");
               loadingDialogVisible.value = false;
               $modal.msgSuccess("下载选中图片成功");
@@ -866,6 +866,7 @@ async function deleteSelectedImages() {
         });
   }
 }
+
 //删除图片
 function deleteImage(pictureId, pictureUrl) {
   buttonLoading.value = true;
@@ -936,8 +937,8 @@ function photoAnalyze() {
   sessionStorage.setItem("isfromRouter", true);
   router.push({
     path: "/pictureAnalysis",
-    query: { id: checkedPictures.value, name: queryName},
-    meta: { keepAlive: true }
+    query: {id: checkedPictures.value, name: queryName},
+    meta: {keepAlive: true}
   });
 }
 
@@ -954,6 +955,7 @@ function handleEditImage(item) {
   editPhotoInfo.shotTime = item.shotTime;
   editPhotoInfo.remark = item.remark;
 }
+
 const isShowTest = ref(false);
 
 const photoInfo = reactive({
@@ -1067,13 +1069,13 @@ const flushDetail = ref(false);
 
 //图片上传与编辑表单校验规则
 const photoRules = reactive({
-  name: [{ required: true, message: "请输入图片新名称", trigger: "blur" }],
-  shotTime: [{ required: true, message: "请输入新的拍摄日期", trigger: "blur" }],
-  remark: [{ required: false, message: "请输入备注", trigger: "blur" }],
+  name: [{required: true, message: "请输入图片新名称", trigger: "blur"}],
+  shotTime: [{required: true, message: "请输入新的拍摄日期", trigger: "blur"}],
+  remark: [{required: false, message: "请输入备注", trigger: "blur"}],
 });
 
 //校验方法
-const isFormat =(file)=>{
+const isFormat = (file) => {
   const dateReg = /^.+_\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}\..+$/
   const onlydateReg = /^.+_\d{4}-\d{2}-\d{2}\..+$/
   if (!dateReg.test(file.name) && !onlydateReg.test(file.name)) {
@@ -1106,22 +1108,22 @@ let isRightName = ref(true)
 //上传图片校验图片命名格式
 const checkImageName = () => {
   //检查上传的图片名称格式是否规范
-  isRightName.value=true
+  isRightName.value = true
   //提取压缩文件
-  const zipFile = fileList.value.filter(file =>{
+  const zipFile = fileList.value.filter(file => {
     return file.name.endsWith('.zip')
   })
   //提取普通文件
-  const normalFile = fileList.value.filter(file =>{
+  const normalFile = fileList.value.filter(file => {
     return !file.name.endsWith('.zip')
   })
-  new Promise((resolve, reject)=>{
+  new Promise((resolve, reject) => {
     try {
       normalFile.forEach((file) => {
         isFormat(file)
       })
-      if(zipFile.length === 0) resolve()
-      zipFile.forEach(async (file,index) => {
+      if (zipFile.length === 0) resolve()
+      zipFile.forEach(async (file, index) => {
         const zip = new JSZip();
         zip.loadAsync(file.raw).then((zip) => {
           zip.forEach((relativePath, zipEntry) => {
@@ -1133,7 +1135,7 @@ const checkImageName = () => {
     } catch (err) {
       isRightName.value = false
     }
-  }).then(()=>{
+  }).then(() => {
     console.log(222);
     if (!isRightName.value) {
       $modal.confirm("存在图片名称格式不规范，这可能导致后续无法正常查询该图片，是否继续上传？").then(async () => {
@@ -1325,7 +1327,6 @@ const handleBeforeUpload = (file) => {
 };
 
 
-
 //图片上传成功回调
 async function uploadImageSuccess(res) {
   if (res.code === 500) {
@@ -1403,10 +1404,10 @@ const searchPhoto = async () => {
     return
   }
   imageSrcList.value = imageSrcListCopy.value.filter((photo) => {
-    return (photo.name ? photo.name.includes(searchForm.name===null?"":searchForm.name) : !searchForm.name) &&
-        (photo.shotTime ? photo.shotTime.includes(searchForm.time===null?"":searchForm.time) : !searchForm.time) &&
-        (photo.createBy ? photo.createBy.includes(searchForm.createBy===null?"":searchForm.createBy) : !searchForm.createBy) &&
-        (photo.createTime ? photo.createTime.includes(searchForm.createTime===null?"":searchForm.createTime) : !searchForm.createTime)
+    return (photo.name ? photo.name.includes(searchForm.name === null ? "" : searchForm.name) : !searchForm.name) &&
+        (photo.shotTime ? photo.shotTime.includes(searchForm.time === null ? "" : searchForm.time) : !searchForm.time) &&
+        (photo.createBy ? photo.createBy.includes(searchForm.createBy === null ? "" : searchForm.createBy) : !searchForm.createBy) &&
+        (photo.createTime ? photo.createTime.includes(searchForm.createTime === null ? "" : searchForm.createTime) : !searchForm.createTime)
   })
   if (imageSrcList.value.length === 0) {
     $modal.msgWarning('未查询到相关图片')
@@ -1579,10 +1580,10 @@ option.value = {
       left: '4%',
       right: '4%',
       bottom: 18, //图表底部距离
-      handleSize: 10,//左右2个滑动条的大小
+      // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1F4E3D', //滑动条颜色
+      fillerColor: '#1FB864', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -1629,9 +1630,9 @@ function resetForm() {
 const dataForm = ref(null);
 
 const rules = reactive({
-  treeName: [{ required: true, message: "请输入节点名称", trigger: "blur" }],
-  isShow: [{ required: true, message: "请选择", trigger: "blur" }],
-  keyword: [{ required: true, message: "请输入描述信息", trigger: "blur" }]
+  treeName: [{required: true, message: "请输入节点名称", trigger: "blur"}],
+  isShow: [{required: true, message: "请选择", trigger: "blur"}],
+  keyword: [{required: true, message: "请输入描述信息", trigger: "blur"}]
 });
 
 const validateIP = (rule, value, callback) => {
@@ -1839,6 +1840,7 @@ const defaultProps = ref({
 });
 
 const tree = ref(null);
+
 // 添加节点
 function addChildNode() {
   if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
@@ -1849,6 +1851,7 @@ function addChildNode() {
   dialogStatus.value = "create";
   dialogFormVisible.value = true;
 }
+
 // 修改节点
 function updateChildNode() {
   if (!tree.value.getCurrentNode()) {
@@ -1950,7 +1953,7 @@ async function rowClick(nodeObj) {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #409eff;
+  background-color: #1FB864;
 }
 
 .progress-text {
@@ -2142,7 +2145,7 @@ async function rowClick(nodeObj) {
   pointer-events: none;
 }
 
-.u-main .el-tag+.el-tag {
+.u-main .el-tag + .el-tag {
   margin-left: 10px;
 }
 
@@ -2172,7 +2175,7 @@ async function rowClick(nodeObj) {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1F4E3D;
+  background: #1FB864;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -2386,9 +2389,11 @@ async function rowClick(nodeObj) {
   :deep(.el-tree) {
 
     /* ---- ---- ---- ---- ^（节点对齐）---- ---- ---- ---- */
+
     .el-tree-node {
 
       /* ^ 所有节点 */
+
       i.el-tree-node__expand-icon {
         padding: 6px;
 
@@ -2409,6 +2414,7 @@ async function rowClick(nodeObj) {
       /* / 所有节点 */
 
       /* ^ 已展开的父节点 */
+
       i.el-tree-node__expand-icon.expanded {
         //transform: rotate(0deg); // 取消旋转
         //-webkit-transform: rotate(0deg); // 取消旋转
@@ -2427,6 +2433,7 @@ async function rowClick(nodeObj) {
       /* / 已展开的父节点 */
 
       /* ^ 叶子节点 */
+
       i.el-tree-node__expand-icon.is-leaf {
 
         &::before {
@@ -2437,6 +2444,7 @@ async function rowClick(nodeObj) {
       /* / 叶子节点 */
 
       /* ^ 复选框 */
+
       .el-checkbox {
         margin: 0 7px 0 2px;
 
@@ -2465,6 +2473,7 @@ async function rowClick(nodeObj) {
     /* ---- ---- ---- ---- /（节点对齐）---- ---- ---- ---- */
 
     /* ---- ---- ---- ---- ^（文字高亮）---- ---- ---- ---- */
+
     .el-tree-node.is-current {
       .el-tree-node__content {
         small {
@@ -2483,6 +2492,7 @@ async function rowClick(nodeObj) {
 
     /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
     /* ^ 树节点 */
+
     .el-tree-node {
       position: relative;
       width: auto;
@@ -2523,6 +2533,7 @@ async function rowClick(nodeObj) {
         padding-left: 0 !important;
 
         /* ^ 复选框 */
+
         .el-checkbox {
           margin: 0 10px 0 5.5px;
         }
@@ -2542,7 +2553,8 @@ async function rowClick(nodeObj) {
     /* / 树节点 */
 
     /* ^ 第一层节点 */
-    >.el-tree-node {
+
+    > .el-tree-node {
       padding-left: 0;
 
       &::before {
@@ -2557,6 +2569,7 @@ async function rowClick(nodeObj) {
     /* / 第一层节点 */
 
     /* ^ 叶子节点 */
+
     i.el-tree-node__expand-icon.is-leaf {
       display: none;
     }
@@ -2564,6 +2577,7 @@ async function rowClick(nodeObj) {
     /* / 叶子节点 */
 
     /* ^ 设置子节点左外边距 */
+
     .el-tree-node__content:has(.is-leaf) {
       // color: #00ffff;
       margin-left: 12px !important;
@@ -2674,7 +2688,7 @@ async function rowClick(nodeObj) {
   margin-right: 5px !important;
 }
 
-.search-container{
+.search-container {
   display: flex;
   max-width: 1100px;
 }
@@ -2682,7 +2696,7 @@ async function rowClick(nodeObj) {
 .chooseNameInput,
 .chooseDateInput {
   width: 150px;
-  flex:0.4 0.4 auto;
+  flex: 0.4 0.4 auto;
 }
 
 @media (max-width: 1330px) {
@@ -2719,7 +2733,7 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-card__header) {
-  background: #1F4E3D;
+  background: #1FB864;
   height: 60px !important;
   display: flex;
   vertical-align: middle;

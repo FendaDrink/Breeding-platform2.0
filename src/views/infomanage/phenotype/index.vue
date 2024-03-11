@@ -329,7 +329,7 @@ const createData = async () => {
     await upload.value.submit();
     console.log("2");
     isDisabled.value = true;
-    onsole.log("3");
+    console.log("3");
     console.log("4");
     tableLoading.value = false;
     tableName.value = "";
@@ -557,6 +557,12 @@ const allFileId = ref([]);
 // 请求文件列表
 function getList() {
   tableLoading.value = true;
+  // console.log(tree.value.getCurrentNode().children);
+  if (tree.value.getCurrentNode().children.length != 0) {
+    isdisabled3.value = true;
+  } else {
+    isdisabled3.value = false;
+  }
   listFile({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,
@@ -1032,7 +1038,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: #1fb864;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -1043,6 +1049,7 @@ onMounted(() => {
 :deep(.dialog-footer) {
   .el-button--primary {
     background: rgb(85, 123, 116);
+    border: #1fb864;
   }
 }
 </style>

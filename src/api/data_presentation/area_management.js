@@ -3,15 +3,15 @@ import request from '@/utils/request';
 //获取地图数据接口
 export const getMap = () => {
     return request({
-        url: '/phenotypeFile/getAreaData ',
+        url: '/sidebarTreeEnv/envFile/getAreaData',
         method: 'get'
     })
 }
 
-//通过性状名获取所有信息
-export function getTraitByCity(name){
+//根据环境因子查询地区
+export function getLocationByFactor(name){
     return request({
-        url:`/trait/listLocationByTraitId`,
+        url:`/sidebarTreeEnv/envFile/listLocationByFactorId`,
         method:'get',
         params:{
             name
@@ -20,21 +20,21 @@ export function getTraitByCity(name){
     })
 }
 
-//通过地区名获取所有性状
-export function selectTraitByLocation(location){
+//根据地区获取环境因子名
+export function selectFactorByLocation(area){
     return request({
-        url:`/phenotypeFile/selectTraitByLocation`,
+        url:`/sidebarTreeEnv/envFile/selectFactorByLocation`,
         method:'get',
         params:{
-            location
+            area
         }
     })
 }
 
-//获得所有性状名
-export function getAllTraitFromFile() {
+//获得所有环境因子名
+export function getAllFactorFromFile() {
     return request({
-        url: 'phenotypeFile/getAllTraitFromFile',
+        url: '/sidebarTreeEnv/envFile/getAllFactorFromFile',
         method: 'get',
     })
 }
