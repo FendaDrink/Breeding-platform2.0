@@ -438,15 +438,14 @@ const slider = [
     left: '4%',
     right: '4%',
     bottom: 18, //图表底部距离
-    handleSize: 10,//左右2个滑动条的大小
-    moveHandleSize: 0,
+    // handleSize: 10,//左右2个滑动条的大小
     borderColor: "#eee", //滑动通道的边框颜色
     fillerColor: '#1F4E3D', //滑动条颜色
     backgroundColor: '#eee',//未选中的滑动条的颜色
     showDataShadow: true,//是否显示数据阴影 默认auto
     rangeMode: ['value', 'value'],
     handleIcon: "arrow",
-    handleSize: "100%",
+    handleSize: "100%",//左右2个滑动条的大小
     showDetail: false,
   }
 ]
@@ -842,7 +841,18 @@ const allTraitValue = ref({
 //用于更新allTraitValue的函数
 function updateAllTraitValue(data) {
   allTraitValue.value.label = data.map((item) => item.materialId)
-  allTraitValue.value.value = data.map((item) => isPercentOrDate(item.traitValue))
+  allTraitValue.value.value = data.map((item,index,arr) =>{
+    return {
+          value: isPercentOrDate(item.traitValue),
+          itemStyle: {
+            // 按色相环从红渐变到绿色再渐变到紫色
+            color: (function () {
+              let c = echarts.color.modifyHSL('#5A9BD4', Math.round(360 / arr.length * index));
+              return c;
+            })()
+          }
+        }
+  },)
 }
 
 //根据性状名搜索
@@ -963,7 +973,7 @@ function showBarTrait() {
             }
           }
         },
-        color: '#4472C4',
+        color: '#1FB864'
       }
     ]
   };
@@ -994,7 +1004,6 @@ onMounted( () => {
 .chooseBox{
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
     width: 80%;
     margin-bottom: 30px;
     .input-title {
@@ -1022,7 +1031,7 @@ onMounted( () => {
 }
 
 :deep(.el-card__header) {
-  background: #1F4E3D;
+  background: #1FB864;
   height: 60px !important;
   display: flex;
   vertical-align: middle;

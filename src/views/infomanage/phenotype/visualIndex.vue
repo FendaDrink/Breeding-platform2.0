@@ -15,7 +15,7 @@
 
 <script setup>
 //控制可视化模块的显示
-const visualModule = ref('num')
+const visualModule = ref('traitAnalysis')
 
 import num from './visual/num.vue'
 import traitAnalysis from './visual/traitAnalysis.vue'
