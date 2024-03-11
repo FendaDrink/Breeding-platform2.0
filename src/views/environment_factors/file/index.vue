@@ -75,7 +75,7 @@ import {
   endUpdate,
 } from "@/api/infomanage/phenotype";
 
-import { getEnvDetailByFileId } from "@/api/environment_factors"
+import { getEnvDetailByFileId } from "@/api/environment_factors/environment_factors"
 // vue实例
 const {
   proxy: { $modal, $download },
