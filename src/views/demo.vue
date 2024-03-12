@@ -203,7 +203,8 @@
 <script setup name="phenoType">
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
+import { updateFile } from "@/api/infomanage/phenoType";
+import {getEnvFileList,delFile} from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -214,9 +215,9 @@ import { useRouter } from "vue-router";
 
 
 // 引入接口
-import {
-	treeCount, getEnvFileList, getEnvList, getEnvFactorChange
-} from "@/api/environment_factors/environment_factors";
+// import {
+// 	treeCount, getEnvFileList, getEnvList, getEnvFactorChange
+// } from "@/api/environment_factors/environment_factors";
 
 const router = useRouter();
 
@@ -337,20 +338,21 @@ const handleBeforeUpload = (file) => {
 	return isCsv;
 };
 
-/* const handleUploadFile = (file) => {
+ const handleUploadFile = (file) => {
 	// Handle file upload
 	console.log(file);
-}; */
+};
 
 const createData = async () => {
 	const valid = await form.value.validate();
 	console.log(valid);
 	if (valid) {
-		console.log(dataForm);
+		console.log(dataForm,'^^^^');
 		uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
 			}/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
 			}&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-			}&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude}&latitude=${dataForm.latitude}`;
+			}&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude
+      }&latitude=${dataForm.latitude}`;
 
 		$modal.msg("上传数据较大，请耐心等待！");
 		await upload.value.submit();
@@ -423,32 +425,6 @@ const mergeData = async () => {
 		getList();
 	}, 4000);
 };
-
-// 文件创建
-/* function createData() {
-	form.value.validate((valid) => {
-	if (valid) {
-		uploadUrl.value = `${
-		import.meta.env.VITE_APP_UPLOAD_URL
-		}/phenotypeFile/upload?treeId=${
-		tree.value.getCurrentNode().treeId
-		}&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${
-		dataForm.remark
-		}&fileName=${dataForm.fileName}`;
-		nextTick(async () => {
-		tableLoading.value = false;
-		await upload.value.submit();
-		isDisabled.value = true;
-		getList();
-		});
-	}
-	});
-	dialogFormVisible.value = false;
-	getList();
-	setTimeout(() => {
-	getList();
-	}, 4000);
-} */
 
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
@@ -622,6 +598,7 @@ function getList() {
 		fileList.value.forEach((item) => {
 			allFileId.value.push(item.fileId);
 		});
+    fileList.value = fileList.value.filter(item=>item.fileName.includes(queryParams.fileName));
 		total.value = res.total;
 	}).catch((err) => {
 		tableLoading.value = false;
@@ -897,7 +874,7 @@ function updateChildNode() {
 function downloadTemplate() {
 	//下载
 	$download.resource(
-		"C:\\Users\\Administrator\\Desktop\\yuzhong\\表型数据模板.csv"
+      "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\环境模板文件.csv"
 	);
 }
 
