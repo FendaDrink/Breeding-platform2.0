@@ -152,12 +152,12 @@ import { onBeforeRouteLeave } from "vue-router";
 
 import {
   listFile,
-  // searchBox,
+  searchBox,
   // traitAndMaterialList,
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,
-  endUpdate,
+  endUpdate, traitAndMaterialList,
 } from "@/api/infomanage/phenotype";
 
 const traitFileId = ref(60);
