@@ -558,11 +558,6 @@ const allFileId = ref([]);
 function getList() {
   tableLoading.value = true;
   // console.log(tree.value.getCurrentNode().children);
-  if (tree.value.getCurrentNode().children.length != 0) {
-    isdisabled3.value = true;
-  } else {
-    isdisabled3.value = false;
-  }
   listFile({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,
@@ -577,6 +572,7 @@ function getList() {
         fileList.value.forEach((item) => {
           allFileId.value.push(item.fileId);
         });
+        fileList.value = fileList.value.filter(item=>item.fileName.includes(queryParams.fileName));
         total.value = res.total;
       })
       .catch((err) => {
@@ -865,7 +861,7 @@ function updateChildNode() {
 function downloadTemplate() {
   //下载
   $download.resource(
-      "C:\\Users\\Administrator\\Desktop\\yuzhong\\表型数据模板.csv"
+      "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\表型数据模板.csv"
   );
 }
 
