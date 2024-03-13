@@ -58,13 +58,17 @@
                     </template>
                   </el-table-column>
                   <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
-                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="auto">
+                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100px">
                     <template #default="scope">
 
 
                       <el-tooltip content="文件详情" placement="top">
                         <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
                                    class="table_button">
+                        </el-button>
+                      </el-tooltip>
+                      <el-tooltip content="可视化" placement="top">
+                        <el-button size="medium" type="text" icon="View" link @click="fileVisual(scope.row)" class="table_button">
                         </el-button>
                       </el-tooltip>
                       <el-tooltip content="删除" placement="top">
@@ -695,7 +699,15 @@ const openfile = (row) => {
   console.log(row.tableName, "klkl");
   console.log(row.fileId, row.tableName);
   router.push({
-    path: "/file", // 跳转到的目标页面的路由名称
+    path: "environment/fileDetails", // 跳转到的目标页面的路由名称
+    query: { id: row.fileId, tableName: row.tableName },
+  });
+};
+
+//跳转可视化
+const fileVisual = (row) => {
+  router.push({
+    path: "/environment_data/category", // 跳转到的目标页面的路由名称
     query: { id: row.fileId, tableName: row.tableName },
   });
 };
