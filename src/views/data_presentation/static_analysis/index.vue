@@ -9,31 +9,29 @@
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-main width="78%" style="padding: 0" class="right-box">
         <div class="phenome-container">
-          <!-- 日期选择 -->
-          <el-card class="card-container">
-            <template #header>
-              <div class="card-header">
-                <span>日期选择</span>
-              </div>
-            </template>
-            <div class="big-wrapper" style="margin-top: 10px">
-              <div class="block">
-                <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至"
-                  start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts" :size="size"
-                  style="margin-right: 20px;" @change="chooseDate" />
-              </div>
-            </div>
-          </el-card>
-
           <!-- 可视化 -->
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>可视化</span>
+                <span>表型数据可视化</span>
               </div>
             </template>
             <!-- 文件统计 -->
             <div class="big-wrapper" style="margin-top: 10px;">
+              <div class="block">
+                <!-- 日期选择 -->
+                <span style="font-weight: bold;font-size: 18px;color:#606266">日期选择：</span>
+                <el-date-picker v-model="value2"
+                                type="daterange"
+                                unlink-panels range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                :shortcuts="shortcuts"
+                                :size="size"
+                                style="margin-right: 20px;"
+                                popper-class="date-picker"
+                                @change="chooseDate" />
+              </div>
               <v-chart class="chart" :option="option" autoresize v-loading="isLoading1" />
               <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
@@ -1006,7 +1004,7 @@ onMounted(async () => {
 
 .chart {
   height: 500px;
-  // background-color: #bfa;
+  margin:40px 0;
 }
 
 .chart1 {
