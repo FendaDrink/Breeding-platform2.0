@@ -637,10 +637,7 @@ function handleSelectionChange(selection) {
 async function updateFileStatus(row) {
   updateFile({
     fileId: row.fileId,
-    fileStatus: row.fileStatus,
-    fileName: row.fileName,
-    description: row.description,
-    dateTime: row.dateTime,
+    status: row.fileStatus,
   })
       .then((res) => {
         $modal.msgSuccess("更新成功");
@@ -702,7 +699,7 @@ const openfile = (row) => {
   console.log(row.tableName, "klkl");
   console.log(row.fileId, row.tableName);
   router.push({
-    path: "environment/fileDetails", // 跳转到的目标页面的路由名称
+    path: "/environment/fileDetails", // 跳转到的目标页面的路由名称
     query: { id: row.fileId, tableName: row.tableName },
   });
 };
