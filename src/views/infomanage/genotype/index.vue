@@ -157,7 +157,7 @@
           <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf"
             :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-            :on-change="handleUploadFile" :http-request="httpRequest" :before-upload="handleBeforeUpload">
+            :on-change="handleUploadFile">
             <el-button type="primary">Click to upload</el-button>
             <template #tip>
               <div class="el-upload__tip">select a file to upload</div>
@@ -492,6 +492,7 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
+  handleBeforeUpload();
 };
 
 // 文件创建

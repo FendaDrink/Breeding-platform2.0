@@ -40,14 +40,12 @@
                          v-hasPermi="['system:logininfor:remove']">删除</el-button>
               <el-container style="min-height: calc(100vh - 400px);padding-bottom: 20px;">
                 <!-- 表格部分 -->
-                <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe fit
+                <el-table v-loading="tableLoading" :data="fileList.slice((queryParams.pageNum - 1)*queryParams.pageSize,queryParams.pageNum * queryParams.pageSize)" @selection-change="handleSelectionChange" stripe fit
                           max-height="100%" class="mytable">
                   <el-table-column type="selection" min-width="55" align="center" fixed="left" />
                   <el-table-column label="序号" width="80px" type="index" :index="indexMethod" align="center" />
-                  <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
-                  <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
                   <el-table-column label="文件名" width="250" align="center" prop="fileName" />
-                  <el-table-column label="开始时间" align="center" prop="createTime" width="100px" />
+                  <el-table-column label="开始时间" align="center" prop="start" width="100px" />
                   <el-table-column label="结束时间" align="center" width="200px" prop="end" />
                   <el-table-column label="经度" align="center" prop="longitude" />
                   <el-table-column label="纬度" align="center" prop="latitude" />
@@ -108,8 +106,8 @@
                          :currentPage="queryParams.pageNum"
                          :page-size="queryParams.pageSize"
                          layout="total, sizes, prev, pager, next, jumper"
-                         @size-change="getList"
-                         @current-change="getList"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange"
                          :background="false" />
         </el-footer>
       </el-container>
@@ -162,11 +160,11 @@
           <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
                      :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
                      :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-                     :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
+                     :on-change="handleUploadFile">
             <el-button class="white-button" type="primary">点击上传</el-button>
-            <!-- <template #tip>
-        <div class="el-upload__tip">select a file to upload</div>
-        </template> -->
+<!--            <template #tip>-->
+<!--              <div class="el-upload__tip">select a file to upload</div>-->
+<!--            </template>-->
           </el-upload>
         </el-form-item>
         <el-form-item>
@@ -216,6 +214,7 @@ import { getToken } from "@/utils/auth";
 import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { useRouter } from "vue-router";
+import {asyncComputed} from "@vueuse/core";
 
 
 
@@ -346,13 +345,13 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
+  handleBeforeUpload();
 };
 
 const createData = async () => {
   const valid = await form.value.validate();
   console.log(valid);
   if (valid) {
-    console.log(dataForm,'^^^^');
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
     }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
     }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
@@ -401,6 +400,15 @@ function mergeFile(row) {
   }); */
   //dialogFormVisible.value = false;
 }
+
+
+// 分页操作事件
+const handleSizeChange = (val) => {
+  queryParams.pageSize = val;
+};
+const handleCurrentChange = (val) => {
+  queryParams.pageNum = val;
+};
 
 //文件合并
 
@@ -594,7 +602,6 @@ const allFileId = ref([]);
 function getList() {
   tableLoading.value = true;
   getEnvFileList(tree.value.getCurrentNode().treeId).then((res) => {
-    console.log(res,'hello');
     tableLoading.value = false;
     fileList.value = res.rows.map((item) => ({
       ...item,
@@ -604,7 +611,7 @@ function getList() {
       allFileId.value.push(item.fileId);
     });
     fileList.value = fileList.value.filter(item=>item.fileName.includes(queryParams.fileName));
-    total.value = res.total;
+    total.value = fileList.value.length;
   }).catch((err) => {
     tableLoading.value = false;
     $modal.msgError("获取列表失败");
