@@ -150,7 +150,6 @@ import { useRoute } from "vue-router";
 import { onBeforeRouteLeave } from "vue-router";
 
 import {
-  traitAndMaterialList,
   listFile,
   searchBox,
   selectDetailByFileId,
