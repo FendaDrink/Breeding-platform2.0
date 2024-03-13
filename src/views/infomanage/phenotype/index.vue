@@ -557,7 +557,6 @@ const allFileId = ref([]);
 // 请求文件列表
 function getList() {
   tableLoading.value = true;
-  // console.log(tree.value.getCurrentNode().children);
   listFile({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,
