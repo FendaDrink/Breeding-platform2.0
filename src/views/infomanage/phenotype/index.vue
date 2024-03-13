@@ -557,12 +557,6 @@ const allFileId = ref([]);
 // 请求文件列表
 function getList() {
   tableLoading.value = true;
-  // console.log(tree.value.getCurrentNode().children);
-  if (tree.value.getCurrentNode().children.length != 0) {
-    isdisabled3.value = true;
-  } else {
-    isdisabled3.value = false;
-  }
   listFile({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,

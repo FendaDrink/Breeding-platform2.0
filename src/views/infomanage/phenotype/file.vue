@@ -147,13 +147,10 @@
 <script setup>
 import { ref, reactive, onMounted, toRefs } from "vue";
 import { useRoute } from "vue-router";
-import { getTree } from "@/api/tree";
 import { onBeforeRouteLeave } from "vue-router";
 
 import {
-  listFile,
-  // searchBox,
-  // traitAndMaterialList,
+  traitAndMaterialList,
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,
