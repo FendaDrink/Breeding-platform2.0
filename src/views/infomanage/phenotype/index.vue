@@ -322,8 +322,8 @@ const createData = async () => {
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
     }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
-    }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-    }&fileName=${dataForm.fileName}`;
+    }&status=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+    }&fileName=${dataForm.fileName}&pointStatus=${0}`;
 
     $modal.msg("上传数据较大，请耐心等待！");
     await upload.value.submit();

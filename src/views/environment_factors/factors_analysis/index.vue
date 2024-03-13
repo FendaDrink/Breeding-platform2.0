@@ -55,7 +55,7 @@
                         start-placeholder="开始日期"
                         end-placeholder="结束日期" :shortcuts="shortcuts"
                         :size="size"
-                        style="margin-right: 20px;" @change="chooseDateHandler" />
+                        style="margin-right: 20px;" @change="changeSlectHandler" />
                   </div>
               </div>
             </div>
@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { onMounted, getCurrentInstance } from "vue";
+import {onMounted, getCurrentInstance, nextTick} from "vue";
 // 引入echarts
 import { use } from "echarts/core";
 import {
@@ -116,7 +116,7 @@ import 'echarts/lib/component/dataZoom'
 
 // 引入接口
 import {
-  treeCount,getEnvFileList,getEnvList,getEnvFactorChange
+  getEnvFileList,getEnvList,getEnvFactorChange
 } from "@/api/environment_factors/environment_factors";
 
 import { getTree } from "@/api/tree.js";
@@ -148,21 +148,20 @@ const fileOptions = ref([])
 const factorValue = ref([])
 
 // 选择文件
-const fileValue = ref();
+const fileValue = ref("");
 
 // 选中环境因子的响应函数
 const factorSelectHandler = () => {
-  console.log('环境因子被选择了',factorValue.value[1]);
   isLoading.value = true;
   updateEcharts();
-  chooseDateHandler();
+  changeSlectHandler();
 }
 
 // 选择文件的响应函数
 const fileSelectHandler = () => {
-  console.log('文件被选择了',fileValue.value);
   isLoading.value = true;
   updateEcharts();
+  changeSlectHandler();
 }
 
 
@@ -209,7 +208,6 @@ const viewWidth = document.documentElement.clientWidth;
 
 //折线图图数据
 const option = ref();
-const seriesArr = ref([])
 const nameArr = ref([])
 const dateArr = ref([])
 const dataArr = ref([])
@@ -291,17 +289,16 @@ const defaultProps = ref({
 });
 
 const treeType = ref(9);
+const tree = ref(null); // 树的实例
 
 // 加载
 const loadingText = ref("加载中...");
 
 
 const getTreeList = async () => {
-  getTree(treeType.value, 0, 1).then((res) => {
-    routesData.value = res.data;
-    // getPictureNumber();
-    chooseDateHandler();
-  })
+  await getTree(treeType.value, 0, 1).then((res) => {
+    routesData.value = res.data.children
+  });
 };
 
 
@@ -338,9 +335,8 @@ function dateToStr(obj) {
 }
 
 //选择日期以后的操作
-async function chooseDateHandler() {
+async function changeSlectHandler() {
   //清空echarts中的data数据
-  seriesArr.value = []
   nameArr.value = []
   dateArr.value = []
   dataArr.value = []
@@ -354,7 +350,12 @@ async function chooseDateHandler() {
 
 // 更新可视化图表
 async function updateEcharts(){
-  await getEnvFactorChange(fileValue.value,factorValue.value[1], startDate.value, endDate.value).then(res => {
+  isLoading.value = true;
+  nameArr.value = [];
+  dataArr.value = [];
+  const fileId = fileValue.value.toString();
+  const factorId = factorValue.value[1];
+  await getEnvFactorChange(fileId,factorId, startDate.value, endDate.value).then(res => {
     //遍历返回的数据列表并加入echarts中data
     const resData = res.data;
     resData.forEach(item=>{
@@ -372,13 +373,15 @@ async function updateEcharts(){
 
 
 onMounted(async () => {
+  await getTreeList();
   // value2.value = [new Date(new Date() - 90 * 24 * 3600 * 1000), new Date()];
   value2.value = [new Date(2014,4,10),new Date(2014,4,29)];
   // 请求文件列表
-  await getEnvFileList('475').then(res=>{
+  await getEnvFileList(routesData.value[0].treeId).then(res=>{
     fileOptions.value = res.rows;
+    console.log(fileOptions.value[0]);
     fileValue.value = fileOptions.value[0].fileId;
- }).catch(err=>{
+  }).catch(err=>{
    console.log(err);
  })
 
@@ -390,7 +393,7 @@ onMounted(async () => {
     console.log(err);
   })
 
-  await getTreeList();
+  await changeSlectHandler();
 });
 </script>
 

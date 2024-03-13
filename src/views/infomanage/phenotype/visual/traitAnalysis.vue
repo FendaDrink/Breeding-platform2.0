@@ -440,7 +440,7 @@ const slider = [
     bottom: 18, //图表底部距离
     // handleSize: 10,//左右2个滑动条的大小
     borderColor: "#eee", //滑动通道的边框颜色
-    fillerColor: '#1F4E3D', //滑动条颜色
+    fillerColor: '#1FB864', //滑动条颜色
     backgroundColor: '#eee',//未选中的滑动条的颜色
     showDataShadow: true,//是否显示数据阴影 默认auto
     rangeMode: ['value', 'value'],
