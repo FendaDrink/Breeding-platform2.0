@@ -258,7 +258,7 @@ function exportFile() {
 
 const fileList = [];
 
-const environmentFileId = ref(60);
+const environmentFileId = ref(route.query.id);
 
 //获取第一个表格
 const columns = ref([]); // 表头数据
