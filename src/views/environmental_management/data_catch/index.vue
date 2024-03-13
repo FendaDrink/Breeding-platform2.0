@@ -121,8 +121,9 @@ const headers = { Authorization: localStorage.getItem("token"), }
 const queryParams = ref({
     pageNum: 1,
     pageSize: 10,
-    total: 100
 })
+// 环境分析任务总数
+const total = ref(0)
 
 // .xlsx文件上传
 const submit = () => {
@@ -147,6 +148,7 @@ const getEnvironmentalData = async () => {
     const res = await getData(queryParams.value);
     if (res.code === 200) {
         envCatchDataList.value = Array.from(res.data)
+        total.value = res.total
     } else {
         ElMessage.error('获取数据失败')
     }

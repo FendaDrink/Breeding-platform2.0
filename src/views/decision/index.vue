@@ -2,32 +2,33 @@
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 20px;">
     <el-card class="card-container">
       <div style="display: flex;align-items: center;justify-content: center; gap:80px">
-        <div style="width: 50%; text-align: center;">
+        <div style="width: 45%; text-align: center;">
           <label for="inputHelpBlock">输入材料名称</label>
           <el-input type="textarea" placeholder="请输入材料名称，可用空格、回车、逗号隔开" v-model="textarea2"
-            style="padding: 0%; margin-top: 5px;">
+            style="padding: 0%; margin-top: 5px;margin-bottom: 30px;">
           </el-input>
           <el-button type="primary" @click="submit1" plain
             style="width: 110px; margin-top: 6px !important;">提交</el-button>
           <el-button type="info" plain style="width: 110px; margin-top: 6px !important;" @click="">下载预测结果</el-button>
         </div>
-        <div style="width: 50%; text-align: center;">
+        <div style="width: 45%; text-align: center;">
           <label for="inputHelpBlock">上传材料基因型文件</label>
           <!-- <el-upload class="upload-demo" drag multiple>
 						<el-icon class="el-icon--upload"><upload-filled /></el-icon>
 						<div>将文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
 					</el-upload> -->
 
-          <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept="" drag
+          <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag
             show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
-            :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed" style="margin-top: 5px;"
-            :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
+            :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
+            style="margin-top: 5px;margin-bottom: 30px;" :on-change="handleUploadFile"
+            :before-upload="handleBeforeUpload">
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div>将文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
           </el-upload>
           <el-button type="primary" @click="submit2" plain
-            style="width: 110px; margin-top: 6px !important;">提交</el-button>
-          <el-button type="info" plain style="width: 110px; margin-top: 6px !important;" @click="">下载预测结果</el-button>
+            style="width: 110px; margin-top: 3px !important;">提交</el-button>
+          <el-button type="info" plain style="width: 110px; margin-top: 3px !important;" @click="">下载预测结果</el-button>
         </div>
       </div>
       <!-- <div style="text-align: center;padding: 5px 0px;margin-top: 50px;">
@@ -36,9 +37,90 @@
         <el-button type="info" plain style="width: 110px; margin-top: 6px !important;" @click="">下载预测结果</el-button>
       </div> -->
     </el-card>
+    <el-card class="card-container">
+      <el-table max-height="40vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
+        <el-table-column prop="id" label="育种任务id"></el-table-column>
+        <el-table-column prop="material_name" label="材料名称"></el-table-column>
+        <el-table-column fixed="right" label="材料基因型">
+          <template #default="scope">
+            <el-button v-if="scope.row.genofile != null" link type="text" style="color: #0dbc79;"
+              @click="exportGeno(scope.row.genofile)">
+              {{ scope.row.genofile.split("\\").pop() }}
+            </el-button>
+            <el-button v-else link type="text" disabled>
+              无文件
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="测验种基因型">
+          <template #default="scope">
+            <el-button v-if="scope.row.ceyanfile != null" link type="text" style="color: #0dbc79;"
+              @click="exportGeno(scope.row.ceyanfile)">
+              {{ scope.row.ceyanfile.split("\\").pop() }}
+            </el-button>
+            <el-button v-else link type="text" disabled>
+              无文件
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createBy" label="创建人" />
+        <el-table-column prop="createTime" label="创建时间" />
+        <el-table-column label="任务状态" width="150">
+          <template #default="scope">
+            <div id="status">
+              <el-icon style="color: #0dbc79;font-size: 25px;" v-show="scope.row.status == 1">
+                <SuccessFilled />
+              </el-icon>
+              <el-icon style="font-size: 25px;" v-show="scope.row.status == 0">
+                <Loading />
+              </el-icon>
+              <el-icon style="color: #d32f2f; font-size: 25px;" v-show="scope.row.status == 2">
+                <CircleCloseFilled />
+              </el-icon>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="结果下载">
+          <template #default="scope">
+            <el-button link type="text" @click="exportPdf(scope.row)" style="color: #0dbc79;"
+              v-show="scope.row.status == 1">
+              导出pdf
+            </el-button>
+            <el-button link type="text" disabled v-show="scope.row.status != 1">
+              导出pdf
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="提示信息">
+          <template #default="scope">
+            <el-popover placement="top" title="Info" trigger="hover" :content="getPopoverContent(scope.row.info)">
+              <template #reference>
+                <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作">
+          <template #default="scope">
+            <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
+              <template #reference>
+                <el-button link type="text" style="color: #1FB864;">
+                  删除
+                </el-button>
+              </template>
+            </el-popconfirm>
+
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination v-show="total > 0" :total="total" :page-sizes="[3, 10, 20, 30, 50]"
+								v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+								background right layout=" ->, total, sizes,prev, pager, next, jumper" @size-change="getdataList"
+								@current-change="getdataList" />
+    </el-card>
   </div>
 </template>
-  
+
 <!-- <script>
 
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
@@ -129,21 +211,12 @@ export default {
 
 <script setup>
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
-import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import {
-  genoListFile,
-  selectDetailByFileId,
-  selectHistoryDetailByFileId,
-  delFile,
-  updateFile,
-} from "@/api/infomanage/genotype";
-import { getJsonByCSV, jsonToTable } from "@/utils/tree";
-import useUserStore from "@/store/modules/user";
+import { getEnvAnalyzeList,getDataListAPI } from "@/api/decision/decision";
+import { addMar, deleteMar, downloadFile, addMarNew } from '@/api/material';
 import { getToken } from "@/utils/auth";
-import { parseTime } from "@/utils/param";
-import { getTreeNodeIdsByNode } from "@/utils/tree";
-import { ElMessage } from "element-plus";
 import { useRoute, useRouter } from "vue-router";
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { blobValidate } from '@/utils/param'
 
 const router = useRouter();
 
@@ -156,6 +229,55 @@ const {
 const upload = ref(null);
 // 文件上传
 const uploadUrl = ref("");
+// 文件列表
+const fileList = ref([]);
+// 分页参数
+const queryParams = ref({
+  pageNum: 1,
+  pageSize: 10,
+});
+
+const total = ref(0);
+
+const dataList=ref([]);
+
+function getPopoverContent(info) {
+	if (info === 'The variation information of your file has non [-1,0,1,2] value, maybe your file has empty value or last row is empty, please check your file!') {
+        return '您文件中的变异信息存在非[-1,0,1,2]的值，可能是您的文件存在空值或文件最后一行为空，请检查您的文件！';
+      } else if (info === 'The material name you entered was not found in our database, please check it!') {
+        return '您输入的材料名称在我们的数据库中找不到，请检查!';
+      } else if (info === 'Flag setting error, please contact the administrator!') {
+        return 'Flag设置错误，请联系管理员!';
+      } else if (info === 'Please press the system test species button!') {
+        return '请点击系统测验种按钮!';
+      } else if (info === 'Please check the format of your vcf file, null value exists in the file!') {
+        return '请检查您的vcf文件格式，文件中存在空值!';
+      } else if (info === 'Please check the format of your vcf file, we need your vcf file to have standard header!') {
+        return '请检查您的vcf文件的格式，我们需要您的vcf文件有标准的title!';
+      } else if (info === 'Your vcf file has empty values, please check your vcf file!') {
+        return '您的vcf文件有空值，请检查您的vcf文件!';
+      } else if (info === 'Please check the format of your vcf file, we need the format of snp variation is [./.,0/0,0/1,1/1]!') {
+        return '请检查您的vcf文件格式，我们需要的变异信息的格式是[./.，0/0,0/1,1/1]!';
+      } else if (info === 'Please check your csv file format!') {
+        return '请检查您的csv文件格式!';
+      } else if (info === 'please check material in your test file!') {
+        return '请检查您的测验种文件中的材料名，它不能为0,-1,1,2!';
+      }else if (info === 'over!'){
+		return "完成!";
+	  }
+}
+
+// 获取育种任务列表
+const getdataList = async () => {
+  const res = await getDataListAPI(queryParams.value);
+  if (res.code === 200) {
+    $modal.msgSuccess(res.msg);
+    dataList.value = res.rows;
+    total.value = res.total;
+  } else {
+    $modal.msgError(res.msg);
+  }
+};
 
 //文件上传前触发
 //文件格式验证
@@ -180,28 +302,36 @@ const handleUploadFile = (file) => {
 };
 
 
-let materialName = ref([]);
 let textarea2 = ref('');
 
-const submit1 = () => {
-  let inputValue = textarea2.value;
+const submit1 = async () => {
+  if (textarea2.value === '') {
+    $modal.msgWarning("请输入材料名称！");
+    return;
+  }
 
-  // 然后进行替换操作
-  inputValue = inputValue.replace(/\s+/g, "\n").replace(/[\r\n]/g, "\n").replace(/,/g, "\n").replace(/，/g, "\n");
-  inputValue = inputValue.replace(/\n+/g, '\n');
-  console.log(inputValue);
-  // 将处理后的结果回显到textarea中
-  textarea2.value = inputValue;
-  // 如果需要转换为数组，可以在这里分割
-  const materialNames = inputValue.split('\n').filter(Boolean); // 过滤掉空字符串
+  let resultValue = textarea2.value.split(/[ \n,，]+/).join(';');
+  console.log(resultValue);
+  const res = await getEnvAnalyzeList(resultValue);
+  if (res.code === 200) {
+    $modal.msgSuccess(res.msg);
+  } else {
+    $modal.msgError(res.msg);
+  }
 }
 
 // 提交文件
 const submit2 = async () => {
-  uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-    }/system/breed2/NewFile/?param=${6580}`;
-  $modal.msg("上传数据较大，请耐心等待！");
-  await upload.value.submit();
+  if (fileList.value.length === 0) {
+    $modal.msgWarning("请先上传文件！");
+    return;
+  }
+  const res = await getEnvAnalyzeList(fileList.value[0].raw);
+  if (res.code === 200) {
+    $modal.msgSuccess(res.msg);
+  } else {
+    $modal.msgError(res.msg);
+  }
 };
 
 // 文件上传成功回调
@@ -219,6 +349,95 @@ const uploadFileError = (error, file, fileList) => {
   console.log("File upload error", error);
   $modal.msgError("上传失败");
 };
+
+
+function exportGeno(fileUrl) {
+	let resource = { resource: fileUrl }
+	// if(type=='ceyan'){
+	//      resource = {resource:row.ceyanfile}
+	// }else{
+	//      resource = {resource:row.genofile}
+	// }
+	let filename = resource.resource.split("\\").pop()
+	// console.log(filename)
+	downloadFile(resource).then(res => {
+		console.log(res)
+		const isLogin = blobValidate(res);
+		if (isLogin) {
+			const blob = new Blob([res])
+			saveAs(blob, `${filename}`)
+		} else {
+			const resText = data.text();
+			const rspObj = JSON.parse(resText);
+			const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+			Message.error(errMsg);
+		}
+	}).catch(err => {
+		console.log(err)
+		ElMessage.error('下载文件出现错误，请联系管理员！');
+	})
+}
+function exportPdf(row) {
+	console.log(row)
+	if (row.status != 1) {
+		ElMessageBox.alert('任务尚未成功时不能导出pdf', '错误', {
+			// if you want to disable its autofocus
+			// autofocus: false,
+			confirmButtonText: 'OK',
+			type: 'error',
+			callback: () => {
+			},
+		})
+		return
+	}
+	let resource = { resource: row.pdfpath }
+	downloadFile(resource).then(res => {
+		console.log(res)
+		const isLogin = blobValidate(res);
+		if (isLogin) {
+			const blob = new Blob([res])
+			saveAs(blob, `breed${row.id}.pdf`)
+		} else {
+			const resText = data.text();
+			const rspObj = JSON.parse(resText);
+			const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+			Message.error(errMsg);
+		}
+	}).catch(err => {
+		console.log(err)
+		ElMessage.error('下载文件出现错误，请联系管理员！');
+	})
+	// let id = {id:row.id}
+	// console.log(id)
+	// exportPDF(id).then(res => {
+	//   console.log(res)
+	//   const isLogin = blobValidate(res);
+	//   if (isLogin) {
+	//     const blob = new Blob([res])
+	//     saveAs(blob, `基因组预测比较-${id.id}.pdf`)
+	//     pageLoad.value = false
+	//   } else {
+	//     const resText = data.text();
+	//     const rspObj = JSON.parse(resText);
+	//     const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+	//     ElMessage.error("下载文件出现错误，请联系管理员！");
+	//     pageLoad.value = false
+	//   }
+	// }).catch(err => {
+	//   console.log(err)
+	//   pageLoad.value = false
+	//   ElMessage.error('下载文件出现错误，请联系管理员！');
+	// })
+}
+async function handleDelete(row) {
+	console.log(row)
+	await deleteMar(row.id)
+	getList()
+}
+
+onMounted(() => {
+  getdataList();
+});
 
 </script>
 
@@ -978,7 +1197,7 @@ onMounted(() => {
   getTreeList();
 });
 </script> -->
-  
+
 <style lang="less" scoped>
 .card-container {
   // width: 97%;
@@ -991,6 +1210,7 @@ onMounted(() => {
   // }
 
   //padding: 20px 20px 0px;
+  max-height: 50vh;
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
@@ -1061,9 +1281,9 @@ onMounted(() => {
   padding-left: 50px;
 }
 </style>
-  
-  
-  <!-- 卡片样式 -->
+
+
+<!-- 卡片样式 -->
 <style lang="less" scoped>
 .card-header {
   display: flex;
@@ -1168,7 +1388,7 @@ onMounted(() => {
 
 }
 </style>
-  
+
 <style lang="less" scoped>
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
@@ -1413,7 +1633,7 @@ onMounted(() => {
   --el-button-active-text-color: #ffffff;
 }
 </style>
-  
+
 <style>
 :root {
   --el-color-primary: #1FB864;
