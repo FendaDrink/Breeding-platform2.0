@@ -592,10 +592,7 @@ function handleSelectionChange(selection) {
 async function updateFileStatus(row) {
   updateFile({
     fileId: row.fileId,
-    fileStatus: row.fileStatus,
-    fileName: row.fileName,
-    description: row.description,
-    dateTime: row.dateTime,
+    status: row.fileStatus,
   })
       .then((res) => {
         $modal.msgSuccess("更新成功");
