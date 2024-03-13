@@ -2195,8 +2195,8 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-switch.is-checked .el-switch__core) {
-  border-color: green;
-  background-color: green;
+  border-color: #1fb864;
+  background-color: #1fb864;
 }
 </style>
 <style lang="scss" scoped>

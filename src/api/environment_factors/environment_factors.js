@@ -168,7 +168,7 @@ export function delFactor(factorId) {
         method: 'delete'
     })
 }
-=======
+
 // 查询文件详情
 export function getEnvDetailByFileId(query) {
     return request({

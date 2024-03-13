@@ -3,7 +3,7 @@
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
                   :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
-                style="min-height: calc(100vh - 180px);border-radius: 8px;padding: 0;margin-top: 0;">
+                style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;margin-top: 0%;">
         <el-tree ref="tree" :data="routesData" :props="defaultProps" node-key="treeId" default-expand-all
                  highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
                  class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
@@ -15,42 +15,42 @@
         <!-- //右边的盒子 -->
         <el-main width="78%" style="padding: 0; height: calc(100vh - 150px); " class="right-box">
           <div style="height: auto;">
-            <div class="node-part">
-              <el-button type="primary" class="filter-item my-button white-button" style="margin: 10px"
-                         @click.prevent="addChildNode" plain v-hasPermi="['system:node:add']">
+            <div class="div1">
+              <el-button type="primary" plain @click.prevent="addChildNode" v-hasPermi="['system:node:add']" icon="plus">
                 添加子节点</el-button>
-              <el-button type="success" class="filter-item my-button white-button" style="margin: 10px"
-                         @click.prevent="updateChildNode" plain v-hasPermi="['system:node:update']">修改节点</el-button>
-              <el-button type="danger" class="filter-item my-button white-button" style="margin: 10px"
-              @click.prevent="deleteNode" plain v-hasPermi="['system:node:remove']">删除节点</el-button>
-              <el-button type="info" class="filter-item my-button white-button" style="margin: 10px"
-                         @click.prevent="downloadTemplate" plain v-hasPermi="['system:node:update']">下载模板文件</el-button>
+              <el-button type="success" plain @click.prevent="updateChildNode" icon="edit"
+                         v-hasPermi="['system:node:update']">修改节点</el-button>
+              <el-button type="danger" plain @click.prevent="deleteNode" icon="delete"
+                         v-hasPermi="['system:node:remove']">删除节点</el-button>
+              <el-button type="info" plain @click.prevent="downloadTemplate" icon="download"
+                         v-hasPermi="['system:node:update']">下载模板文件</el-button>
             </div>
-            <div class="search-part">
+            <div class="div2">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter="handleQuery"
                         class="my-input" style="width: 180px; margin-right: 8px;" />
-              <el-button type="primary" class="search-button my-button green-button" @click="handleQuery">搜索</el-button>
-              <el-button @click="resetQuery" class="my-button white-button">重置</el-button>
+              <el-button type="primary" @click="handleQuery" icon="search">搜索</el-button>
+              <el-button @click="resetQuery" icon="Refresh">重置</el-button>
             </div>
 
-            <div class="table-part">
+            <div class="div3">
               <!-- 操作部分 -->
-              <el-button type="primary" plain class="addExcel my-button green-button" @click="handleAdd"
+              <el-button type="primary" @click="handleAdd" icon="plus" plain
                          v-hasPermi="['system:logininfor:add']">新增</el-button>
-              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
-                         v-hasPermi="['system:logininfor:remove']" class="my-button white-button">删除</el-button>
+              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled" icon="delete"
+                         v-hasPermi="['system:logininfor:remove']">删除</el-button>
+              <el-container style="min-height: calc(100vh - 400px);padding-bottom: 20px;">
                 <!-- 表格部分 -->
-                <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe fit>
+                <el-table v-loading="tableLoading" :data="fileList.slice((queryParams.pageNum - 1)*queryParams.pageSize,queryParams.pageNum * queryParams.pageSize)" @selection-change="handleSelectionChange" stripe fit
+                          max-height="100%" class="mytable">
                   <el-table-column type="selection" min-width="55" align="center" fixed="left" />
                   <el-table-column label="序号" width="80px" type="index" :index="indexMethod" align="center" />
-                  <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
-                  <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
                   <el-table-column label="文件名" width="250" align="center" prop="fileName" />
-                  <el-table-column label="物种名称" align="center" prop="speciesName" width="100px" />
-                  <el-table-column label="群体名称" align="center" width="200px" prop="populationName" />
-                  <el-table-column label="年份" align="center" prop="year" />
-                  <el-table-column label="地区" align="center" prop="location" />
-                  <el-table-column label="是否公开" align="center" prop="fileStatus" v-hasPermi="['system:file:remove']"
+                  <el-table-column label="开始时间" align="center" prop="start" width="100px" />
+                  <el-table-column label="结束时间" align="center" width="200px" prop="end" />
+                  <el-table-column label="经度" align="center" prop="longitude" />
+                  <el-table-column label="纬度" align="center" prop="latitude" />
+                  <el-table-column label="地点" align="center" prop="area" />
+                  <el-table-column label="是否公开" align="center" prop="status" v-hasPermi="['system:file:remove']"
                                    width="120">
                     <template #default="scope">
                       <el-switch v-model="fileList[scope.$index].fileStatus" @change="updateFileStatus(scope.row)">
@@ -58,40 +58,50 @@
                     </template>
                   </el-table-column>
                   <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
-                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="240px">
+                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="120px">
                     <template #default="scope">
-                      <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
-                                 class="table_button">文件详情
-                      </el-button>
-                      <el-button
-                          size="medium"
-                          type="text"
-                          icon="View"
-                          link
-                          @click="fileVisual(scope.row)"
-                          class="table_button"
-                      >可视化
-                      </el-button>
-                      <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
-                                 v-hasPermi="['system:file:remove']" class="table_button">删除</el-button>
+
+
+                      <el-tooltip content="文件详情" placement="top">
+                        <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
+                                   class="table_button">
+                        </el-button>
+                      </el-tooltip>
+                      <el-tooltip content="因子分类可视化" placement="top">
+                        <el-button size="medium" type="text" icon="place" link @click="fileVisual1(scope.row)" class="table_button">
+                        </el-button>
+                      </el-tooltip>
+                      <el-tooltip content="因子分析可视化" placement="top">
+                        <el-button size="medium" type="text" icon="View" link @click="fileVisual2(scope.row)" class="table_button">
+                        </el-button>
+                      </el-tooltip>
+                      <el-tooltip content="删除" placement="top">
+                        <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
+                                   v-hasPermi="['system:file:remove']" class="table_button">
+                        </el-button>
+                      </el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column label="历史版本" align="center" class-name="small-padding fixed-width" width="120px">
+                  <el-table-column label="历史版本" align="center" class-name="small-padding fixed-width" width="auto">
                     <template #default="scope">
-                      <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
-                                 class="table_button">查看历史版本
-                      </el-button>
+                      <el-tooltip content="查看历史版本" placement="top">
+                        <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
+                                   icon="timer" class="table_button">
+                        </el-button>
+                      </el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column label="合并操作" align="center" class-name="small-padding fixed-width" fixed="right"
-                                   min-width="150px">
+                  <el-table-column label="合并操作" align="center" class-name="small-padding fixed-width" min-width="auto">
                     <template #default="scope">
-                      <el-button icon="Download" :loading="downloadLoading" @click="mergeFile(scope.row)"
-                                 class="hebin-button white-button">合并
-                      </el-button>
+                      <el-tooltip content="合并" placement="top">
+                        <el-button type="text" icon="set-up" :loading="downloadLoading" @click="mergeFile(scope.row)"
+                                   class="table_button">
+                        </el-button>
+                      </el-tooltip>
                     </template>
                   </el-table-column>
                 </el-table>
+              </el-container>
             </div>
 
           </div>
@@ -99,9 +109,14 @@
         </el-main>
         <!-- 分页 -->
         <el-footer class="footer">
-          <el-pagination v-show="total > 0" :total="total" v-model:currentPage="queryParams.pageNum"
-                         v-model:page-size="queryParams.pageSize" layout="total, sizes, prev, pager, next, jumper"
-                         @size-change="getList" @current-change="getList" :background="false" />
+          <el-pagination v-show="total > 0"
+                         :total="total"
+                         :currentPage="queryParams.pageNum"
+                         :page-size="queryParams.pageSize"
+                         layout="total, sizes, prev, pager, next, jumper"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange"
+                         :background="false" />
         </el-footer>
       </el-container>
     </el-container>
@@ -117,38 +132,47 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button class="white-button" @click.passive="
-            dialogTreeStatus === 'createNode'
-              ? createTreeData()
-              : updateTreeData()
-          ">
+          <el-button type="success" plain @click.passive="
+						dialogTreeStatus === 'createNode'
+							? createTreeData()
+							: updateTreeData()
+					">
             保存
           </el-button>
-          <el-button class="white-button" @click="dialogTreeFormVisible = false">取消</el-button>
+          <el-button class="success" @click="dialogTreeFormVisible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible" :close-on-click-modal="false"
                @close="dialogClosed" center draggable width="30%">
       <el-form ref="form" :rules="rules" :model="dataForm" label-position="left" label-width="100px">
-        <el-form-item label="文件名称：" prop="fileName">
+        <el-form-item label="文件名称：" prop="fileName" v-show="dialogStatus === 'create' || 'other'">
           <el-input v-model="dataForm.fileName" placeholder="输入文件名称" />
         </el-form-item>
         <el-form-item label="备注：" prop="remark">
           <el-input v-model="dataForm.remark" placeholder="输入备注" />
         </el-form-item>
-        <el-form-item label="是否公开" prop="fileStatus">
+        <el-form-item label="是否公开" prop="fileStatus" v-show="dialogStatus === 'create'">
           <el-switch v-model="dataForm.fileStatus" />
+        </el-form-item>
+        <el-form-item label="地区：" prop="remark" v-show="dialogStatus === 'create'">
+          <el-input v-model="dataForm.area" placeholder="输入地区" />
+        </el-form-item>
+        <el-form-item label="经度：" prop="remark" v-show="dialogStatus === 'create'">
+          <el-input v-model="dataForm.longitude" placeholder="输入经度" />
+        </el-form-item>
+        <el-form-item label="纬度：" prop="remark" v-show="dialogStatus === 'create'">
+          <el-input v-model="dataForm.latitude" placeholder="输入纬度" />
         </el-form-item>
         <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
           <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
                      :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
                      :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-                     :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
+                     :on-change="handleUploadFile">
             <el-button class="white-button" type="primary">点击上传</el-button>
-            <!-- <template #tip>
-              <div class="el-upload__tip">select a file to upload</div>
-            </template> -->
+<!--            <template #tip>-->
+<!--              <div class="el-upload__tip">select a file to upload</div>-->
+<!--            </template>-->
           </el-upload>
         </el-form-item>
         <el-form-item>
@@ -187,17 +211,24 @@
   </div>
 </template>
 
-<script setup name="phenoType">
-import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
+<script setup>
+import { ref, getCurrentInstance, nextTick, onMounted,reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
+import {getEnvFileList,delFile,updateFile} from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
 import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
-import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import {asyncComputed} from "@vueuse/core";
+
+
+
+// 引入接口
+// import {
+// 	treeCount, getEnvFileList, getEnvList, getEnvFactorChange
+// } from "@/api/environment_factors/environment_factors";
 
 const router = useRouter();
 
@@ -238,6 +269,9 @@ const dataForm = reactive({
   remark: "",
   fileStatus: true,
   dateTime: null,
+  area: "",
+  longitude: "",
+  latitude: ""
 });
 
 //删除按钮状态
@@ -271,6 +305,9 @@ function resetForm() {
   dataForm.remark = "";
   dataForm.fileStatus = true;
   dataForm.dateTime = null;
+  dataForm.area = "";
+  dataForm.longitude = "";
+  dataForm.latitude = "";
 }
 
 const drawerTableLoading = ref(false);
@@ -299,10 +336,11 @@ const uploadUrl = ref("");
 const handleBeforeUpload = (file) => {
   // 拿到文件后缀名
   const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
-  const isCsv = fileType === "csv";
-  if (!isCsv) {
+  console.log(fileType);
+  const isCsv = fileType === "Csv";
+  if (!isxlsx) {
     $modal.msgError(
-        "只能上传csv格式的文件！",
+        "只能上传Csv格式的文件！",
         "error",
         "vab-hey-message-error"
     );
@@ -311,19 +349,21 @@ const handleBeforeUpload = (file) => {
   return isCsv;
 };
 
-/* const handleUploadFile = (file) => {
+const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-}; */
+  handleBeforeUpload();
+};
 
 const createData = async () => {
   const valid = await form.value.validate();
   console.log(valid);
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-    }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
-    }&status=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-    }&fileName=${dataForm.fileName}&pointStatus=${0}`;
+    }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
+    }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+    }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude
+    }&latitude=${dataForm.latitude}`;
 
     $modal.msg("上传数据较大，请耐心等待！");
     await upload.value.submit();
@@ -335,7 +375,6 @@ const createData = async () => {
     tableName.value = "";
   }
   dialogFormVisible.value = false;
-  getList();
   setTimeout(() => {
     getList();
   }, 4000);
@@ -355,19 +394,28 @@ function mergeFile(row) {
   dialogFormVisible.value = true;
   form.value.validate((valid) => {
     if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/penotypeFile/merge?tableName=${row.tableName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
+    uploadUrl.value = `${
+      import.meta.env.VITE_APP_UPLOAD_URL
+    }/penotypeFile/merge?tableName=${row.tableName}`;
+    nextTick(async () => {
+      tableLoading.value = false;
+      await upload.value.submit();
+      isDisabled.value = true;
+      getList();
+    });
     }
   }); */
   //dialogFormVisible.value = false;
 }
+
+
+// 分页操作事件
+const handleSizeChange = (val) => {
+  queryParams.pageSize = val;
+};
+const handleCurrentChange = (val) => {
+  queryParams.pageNum = val;
+};
 
 //文件合并
 
@@ -375,9 +423,12 @@ const mergeData = async () => {
   const valid = await form.value.validate();
   console.log(valid);
   if (valid) {
+    console.log(tableName.value,"kkkkkkkkkkkkkkkkkk");
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-    }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
+    }/sidebarTreeEnv/environment/merge?tableName=${tableName.value}&remark=${dataForm.remark
     }&fileName=${dataForm.fileName}`;
+
+    console.log(uploadUrl.value,"。。。。。。。。。。");
     $modal.msg("上传数据较大，请耐心等待！");
     await upload.value.submit();
     console.log("2");
@@ -385,7 +436,7 @@ const mergeData = async () => {
 
     console.log("4");
     tableLoading.value = false;
-    onsole.log("5");
+    console.log("5");
     tableName.value = "";
   }
   dialogFormVisible.value = false;
@@ -394,32 +445,6 @@ const mergeData = async () => {
     getList();
   }, 4000);
 };
-
-// 文件创建
-/* function createData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${
-        tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${
-        dataForm.remark
-      }&fileName=${dataForm.fileName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  });
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-} */
 
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
@@ -450,9 +475,9 @@ async function updateData() {
   form.value.validate((valid) => {
     if (valid) {
       uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?fileName=${dataForm.fileName}&description=${dataForm.description
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&treeId=${tree.value.getCurrentNode().treeId
-      }&dateTime=${parseTime(dataForm.dateTime)}`;
+      }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
+      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+      }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude}&latitude=${dataForm.latitude}`;
       nextTick(async () => {
         tableLoading.value = false;
         await upload.value.submit();
@@ -485,10 +510,10 @@ const dialogClosed = () => {
 };
 
 /* const dialogClosed = () => {
-  if (form.value) {
-    form.value.resetFields();
-  }
-  getList();
+	if (form.value) {
+	form.value.resetFields();
+	}
+	getList();
 }; */
 
 // 文件替换
@@ -501,21 +526,21 @@ function handleExceed(files) {
 
 /* // 文件修改
 async function updateData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      tableLoading.value = true;
-      updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
-        .then((res) => {
-          tableLoading.value = false;
-          dialogFormVisible.value = false;
-          getList();
-        })
-        .catch((err) => {
-          loading.value = false;
-          $modal.msgError("修改失败");
-        });
-    }
-  });
+	form.value.validate((valid) => {
+	if (valid) {
+		tableLoading.value = true;
+		updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
+		.then((res) => {
+			tableLoading.value = false;
+			dialogFormVisible.value = false;
+			getList();
+		})
+		.catch((err) => {
+			loading.value = false;
+			$modal.msgError("修改失败");
+		});
+	}
+	});
 } */
 
 // 文件表格
@@ -555,29 +580,49 @@ function handleDelete() {
 const allFileId = ref([]);
 
 // 请求文件列表
+// function getList() {
+// 	tableLoading.value = true;
+
+// 	listFile({
+// 		...queryParams,
+// 		treeId: tree.value.getCurrentNode().treeId,
+// 		fileStatus: roles[0] === "admin" ? null : 1,
+// 	})
+// 		.then((res) => {
+// 			tableLoading.value = false;
+// 			fileList.value = res.rows.map((item) => ({
+// 				...item,
+// 				fileStatus: item.status === 1,
+// 			}));
+// 			fileList.value.forEach((item) => {
+// 				allFileId.value.push(item.fileId);
+// 			});
+// 			total.value = res.total;
+// 		})
+// 		.catch((err) => {
+// 			tableLoading.value = false;
+// 			$modal.msgError("获取列表失败");
+// 		});
+// }
+
+
 function getList() {
   tableLoading.value = true;
-  listFile({
-    ...queryParams,
-    treeId: tree.value.getCurrentNode().treeId,
-    fileStatus: roles[0] === "admin" ? null : 1,
-  })
-      .then((res) => {
-        tableLoading.value = false;
-        fileList.value = res.rows.map((item) => ({
-          ...item,
-          fileStatus: item.status === 1,
-        }));
-        fileList.value.forEach((item) => {
-          allFileId.value.push(item.fileId);
-        });
-        fileList.value = fileList.value.filter(item=>item.fileName.includes(queryParams.fileName));
-        total.value = res.total;
-      })
-      .catch((err) => {
-        tableLoading.value = false;
-        $modal.msgError("获取列表失败");
-      });
+  getEnvFileList(tree.value.getCurrentNode().treeId).then((res) => {
+    tableLoading.value = false;
+    fileList.value = res.rows.map((item) => ({
+      ...item,
+      fileStatus: item.status === 1,
+    }));
+    fileList.value.forEach((item) => {
+      allFileId.value.push(item.fileId);
+    });
+    fileList.value = fileList.value.filter(item=>item.fileName.includes(queryParams.fileName));
+    total.value = fileList.value.length;
+  }).catch((err) => {
+    tableLoading.value = false;
+    $modal.msgError("获取列表失败");
+  });
 }
 
 // 选择文件项
@@ -655,16 +700,25 @@ function deleteFile(row) {
 //跳转文件详情
 const openfile = (row) => {
   console.log(row.tableName, "klkl");
+  console.log(row.fileId, row.tableName);
   router.push({
-    path: "/phenotype/file", // 跳转到的目标页面的路由名称
+    path: "environment/fileDetails", // 跳转到的目标页面的路由名称
     query: { id: row.fileId, tableName: row.tableName },
   });
 };
 
-//跳转可视化
-const fileVisual = (row) => {
+// 跳转可视化（因子分类）
+const fileVisual1 = (row) => {
   router.push({
-    path: "/phenotype/fileVisual", // 跳转到的目标页面的路由名称
+    path: "/environment_data/category", // 跳转到的目标页面的路由名称
+    query: { id: row.fileId, tableName: row.tableName },
+  });
+};
+
+//跳转可视化（因子分析）
+const fileVisual2 = (row) => {
+  router.push({
+    path: "/environment_data/analysis", // 跳转到的目标页面的路由名称
     query: { id: row.fileId, tableName: row.tableName },
   });
 };
@@ -673,12 +727,7 @@ const fileVisual = (row) => {
 function openHistory(row) {
   historyTableLoading.value = true;
   historyFormVisible.value = true;
-  listFile({
-    ...queryParams,
-    treeId: tree.value.getCurrentNode().treeId,
-    fileStatus: roles[0] === "admin" ? null : 1,
-    tableName: row.tableName,
-  })
+  getEnvFileList(tree.value.getCurrentNode().treeId)
       .then((res) => {
         tableLoading.value = false;
         historyFileList.value = res.rows.map((item) => ({
@@ -736,16 +785,16 @@ const routesData = ref([
     treeName: "Level one 1",
     treeId: "1",
     children: [
+    {
+      treeName: "Level two 1-1",
+      treeId: "11",
+      children: [
       {
-        treeName: "Level two 1-1",
-        treeId: "11",
-        children: [
-          {
-            treeName: "Level three 1-1-1",
-            treeId: "111",
-          },
-        ],
+        treeName: "Level three 1-1-1",
+        treeId: "111",
       },
+      ],
+    },
     ],
   }, */
 ]);
@@ -774,7 +823,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(4); // 树的种类
+const treeType = ref(9); // 树的种类
 const tree = ref(null); // 数的dom实例
 const firstLeafNode = ref(null);
 const firstLeafNodeKey = ref(null);
@@ -860,7 +909,7 @@ function updateChildNode() {
 function downloadTemplate() {
   //下载
   $download.resource(
-      "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\表型数据模板.csv"
+      "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\环境模板文件.csv"
   );
 }
 
@@ -1003,10 +1052,6 @@ onMounted(() => {
   margin-left: 10px;
 }
 
-.el-main{
-  overflow: hidden;
-}
-
 .u-main .button-new-tag {
   margin-left: 10px;
   height: 32px;
@@ -1033,7 +1078,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1fb864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -1044,7 +1089,6 @@ onMounted(() => {
 :deep(.dialog-footer) {
   .el-button--primary {
     background: rgb(85, 123, 116);
-    border: #1fb864;
   }
 }
 </style>
@@ -1161,7 +1205,7 @@ onMounted(() => {
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   /* 0 3px 3px -2px rgba(0, 0, 0, 0.12),
-         0 1px 8px 0 rgba(0, 0, 0, 0.2); */
+       0 1px 8px 0 rgba(0, 0, 0, 0.2); */
 }
 
 :deep(.permission-tree) {
@@ -1205,7 +1249,7 @@ onMounted(() => {
   line-height: 30px;
   font-size: 14px;
   color: black;
-  padding: 0;
+  padding: 0%;
 }
 
 :deep(.el-tree-node__expand-icon) {
@@ -1410,37 +1454,37 @@ onMounted(() => {
 }
 
 //一级节点选择器
-// :deep(.el-tree > .el-tree-node > .el-tree-node__content) {
-//   font-weight: 600;
-//   color: #80a492;
-//   height: 28px;
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #107c10;
+  height: 28px;
 
-//   .el-tree-node__label {
-//     font-size: 18px;
-//     font-family: "PingFang SC";
-//   }
-// }
+  .el-tree-node__label {
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
 
 //二级节点选择器
-// :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
-//   font-weight: 500;
-//   color: #99bcac;
-//   height: 26px;
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
+  height: 26px;
 
-//   .el-tree-node__label {
-//     font-size: 16px;
-//   }
-// }
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
 
-//三级节点选择器
-// :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
-//   font-weight: 400;
-//   height: 23px;
+三级节点选择器 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
 
-//   .el-tree-node__label {
-//     font-size: 14px;
-//   }
-// }
+  .el-tree-node__label {
+    font-size: 14px;
+  }
+}
+
 
 // 设置高亮颜色
 :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
@@ -1471,10 +1515,15 @@ onMounted(() => {
   padding: 0% !important;
 }
 
-:deep(.el-button) {
-  margin: 0% !important;
-  margin-right: 8px !important;
+// :deep(.el-button) {
+//   margin: 0% !important;
+//   margin-right: 8px !important;
+// }
+
+.mytable {
+  background-color: #eeeeee;
 }
+
 
 @media (max-width: 1330px) {
   .my-button {
@@ -1490,12 +1539,12 @@ onMounted(() => {
     padding: 0% !important;
   }
 
-  .el-button {
-    font-size: 12px;
-    /* 设置按钮的字体大小为小号 */
-    padding: 3px 6px;
-    /* 根据需要调整按钮的内边距 */
-  }
+  // .el-button {
+  //   font-size: 12px;
+  //   /* 设置按钮的字体大小为小号 */
+  //   padding: 3px 6px;
+  //   /* 根据需要调整按钮的内边距 */
+  // }
 
   :deep(.el-input__inner) {
     padding: 1px 11px;
@@ -1569,17 +1618,17 @@ onMounted(() => {
 }
 
 /* 修改前后箭头未点击时的背景颜色 */
-:deep( .el-pagination .btn-prev,.el-pagination .btn-next) {
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
   background-color: #fff !important;
 }
 
 /* 修改未点击时的数字方块背景颜色 */
-:deep( .el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
   background-color: #EEEEEE !important;
 }
 
 /* 未点击时的数字方块背景颜色 */
-:deep( .el-pagination .el-pager li:not(.active):not(.disabled)) {
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
   background-color: #fff !important;
   color: #000;
 }
@@ -1610,17 +1659,27 @@ onMounted(() => {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-.white-button{
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
 
-.white-button:hover{
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
+
+
+
+
+
+// .white-button,
+// .el-button--default,
+// .el-button--primary {
+//   background-color: #fff !important;
+//   color: #000 !important;
+//   border: 1px solid #CCCCCC !important;
+// }
+
+// .white-button:hover,
+// .el-button--default:hover,
+// .el-button--primary:hover {
+//   background-color: #E6E6E6 !important;
+//   color: #000 !important;
+//   border: 1px solid #CCCCCC !important;
+// }
 
 
 .green-button {
@@ -1687,29 +1746,99 @@ onMounted(() => {
   /* 字体大小在上面的代码中修改 */
 }
 
-.node-part {
-  margin: 15px 0;
+.div1 {
+  padding: 15px 20px;
   background-color: #EEEEEE;
 }
 
-.search-part {
+.div2 {
   padding: 15px 20px;
   background-color: #fff;
   margin: 0px 0px 20px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 }
 
-.table-part {
-  padding: 20px;
-  height: calc(100vh - 310px);
-  overflow: auto;
+.div3 {
+  padding: 20px 20px 0px;
   background-color: #fff;
+  margin: 0px 0px 20px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+  // overflow: auto;
 }
 
 .el-table {
+  background-color: #EEEEEE !important;
   margin-top: 20px;
-  overflow: auto;
+}
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
 }
 </style>
 
