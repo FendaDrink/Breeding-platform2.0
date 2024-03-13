@@ -80,6 +80,7 @@ import {
 } from "@/api/data_presentation/laboratory_management";
 import 'echarts/lib/component/dataZoom'
 import { listType } from "@/api/system/type";
+import {useRoute} from "vue-router";
 const route = useRoute();
 const chartsShow = ref(false);
 const traitValue = ref("");

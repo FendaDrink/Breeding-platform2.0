@@ -112,7 +112,7 @@ function initHistogram() {
         },
         axisLine: {
           lineStyle: {
-            color: '#b3d1b1'
+            color: '#1FB864'
           }
         }
       },
@@ -195,7 +195,7 @@ function initHistogram1() {
         type: "value",
         axisLine: {
           lineStyle: {
-            color: '#b3d1b1'
+            color: '#1FB864'
           }
         },
         name: 'pc2',

@@ -58,7 +58,7 @@
                     </template>
                   </el-table-column>
                   <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
-                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100px">
+                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="120px">
                     <template #default="scope">
 
 
@@ -67,8 +67,12 @@
                                    class="table_button">
                         </el-button>
                       </el-tooltip>
-                      <el-tooltip content="可视化" placement="top">
-                        <el-button size="medium" type="text" icon="View" link @click="fileVisual(scope.row)" class="table_button">
+                      <el-tooltip content="因子分类可视化" placement="top">
+                        <el-button size="medium" type="text" icon="place" link @click="fileVisual1(scope.row)" class="table_button">
+                        </el-button>
+                      </el-tooltip>
+                      <el-tooltip content="因子分析可视化" placement="top">
+                        <el-button size="medium" type="text" icon="View" link @click="fileVisual2(scope.row)" class="table_button">
                         </el-button>
                       </el-tooltip>
                       <el-tooltip content="删除" placement="top">
@@ -210,8 +214,7 @@
 <script setup>
 import { ref, getCurrentInstance, nextTick, onMounted,reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { updateFile } from "@/api/infomanage/phenoType";
-import {getEnvFileList,delFile} from '@/api/environmental_management/file';
+import {getEnvFileList,delFile,updateFile} from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -704,10 +707,18 @@ const openfile = (row) => {
   });
 };
 
-//跳转可视化
-const fileVisual = (row) => {
+// 跳转可视化（因子分类）
+const fileVisual1 = (row) => {
   router.push({
     path: "/environment_data/category", // 跳转到的目标页面的路由名称
+    query: { id: row.fileId, tableName: row.tableName },
+  });
+};
+
+//跳转可视化（因子分析）
+const fileVisual2 = (row) => {
+  router.push({
+    path: "/environment_data/analysis", // 跳转到的目标页面的路由名称
     query: { id: row.fileId, tableName: row.tableName },
   });
 };

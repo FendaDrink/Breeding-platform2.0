@@ -120,6 +120,7 @@ import {
 } from "@/api/environment_factors/environment_factors";
 
 import { getTree } from "@/api/tree.js";
+import {useRoute} from "vue-router";
 
 use([
   GridComponent,
@@ -135,8 +136,7 @@ use([
 
 provide(THEME_KEY);
 
-const arrName = ref([])
-const arrCount = ref([])
+const route = useRoute();
 
 // 环境因子数据
 const envOptions = ref([])
@@ -148,7 +148,7 @@ const fileOptions = ref([])
 const factorValue = ref([])
 
 // 选择文件
-const fileValue = ref("");
+const fileValue = ref();
 
 // 选中环境因子的响应函数
 const factorSelectHandler = () => {
@@ -160,6 +160,7 @@ const factorSelectHandler = () => {
 // 选择文件的响应函数
 const fileSelectHandler = () => {
   isLoading.value = true;
+  console.log(fileValue.value,typeof fileValue.value);
   updateEcharts();
   changeSlectHandler();
 }
@@ -379,8 +380,7 @@ onMounted(async () => {
   // 请求文件列表
   await getEnvFileList(routesData.value[0].treeId).then(res=>{
     fileOptions.value = res.rows;
-    console.log(fileOptions.value[0]);
-    fileValue.value = fileOptions.value[0].fileId;
+    fileValue.value = route.query?.id?[parseInt(route.query.id)]:fileOptions.value[0].fileId;
   }).catch(err=>{
    console.log(err);
  })
