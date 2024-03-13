@@ -96,7 +96,7 @@ export function addFile(data) {
 
 // 修改树节点上的文件
 export function updateFile(data) {
-  data.status = data.fileStatus ? 1 : 0;
+  data.status = data.status ? 1 : 0;
   return request({
     url: '/phenotypeFile',
     method: 'put',
