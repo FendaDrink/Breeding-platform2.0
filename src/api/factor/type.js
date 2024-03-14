@@ -42,3 +42,20 @@ export function delType(factorTypeId) {
     method: 'delete'
   })
 }
+
+export function checkout(data){
+  return request({
+    url:"/sidebarTreeEnv/envFactorType/checkFactorTypeName",
+    method:'post',
+    data:data
+  })
+}
+
+export function download(data){
+  return request({
+    url:"/sidebarTreeEnv/envFactorType/download",
+    method:'post',
+    responseType:"blob",
+    data:data
+  })
+}

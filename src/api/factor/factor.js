@@ -42,3 +42,50 @@ export function delFactor(factorId) {
     method: 'delete'
   })
 }
+export function download(data){
+  return request({
+    url:"/sidebarTreeEnv/envFactorType/download",
+    method:'post',
+    responseType:"blob",
+    data:data
+  })
+}
+
+export function getSelect(){
+  return request({
+    url: '/sidebarTreeEnv/asFactorType/selectEnvFactorName' ,
+    method: 'get'
+  })
+}
+
+export function selHighL(data){
+  return request({
+    url:"/sidebarTreeEnv/asFactorType/selectHighlightin",
+    method:'get',
+    params:data
+  })
+}
+export function addHigh(data){
+  return request({
+    url:"/sidebarTreeEnv/asFactorType/checkUpdate",
+    method:'post',
+    data:data
+  })
+}
+
+export function getLightLine(query,data) {
+  return request({
+    url: '/sidebarTreeEnv/asFactorType/selectHighlight' ,
+    method: 'post',
+    params:query,
+    data:data
+  })
+}
+
+export function checkout(data){
+  return request({
+    url:"/sidebarTreeEnv/envFactorType/checkFactorTypeName",
+    method:'post',
+    data:data
+  })
+}

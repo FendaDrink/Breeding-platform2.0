@@ -38,7 +38,7 @@
 </template>
 
 <!-- <script setup>
-import * as echarts from 'echarts';
+import * define echarts from 'echarts';
 import { onMounted } from 'vue';
 import { useRoute } from "vue-router";
 

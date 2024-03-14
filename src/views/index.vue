@@ -25,9 +25,6 @@
                 </h4>
               </div>
             </div>
-           <!--  <div>
-              <p>{{ item.description }}</p>
-            </div> -->
           </div>
         </div>
       </div>
@@ -234,19 +231,18 @@ const typeList = reactive([
         }
 
         .overlay {
-          background: #1f4e3d;
+          background: #099a4a;
           display: inline-block;
           position: absolute;
           z-index: 1;
           bottom: -1vw;
-          right: 16%;
+          left: 50%;
+          transform: translateX(-50%);
           padding: 2vw 5vw;
           min-width: 65%;
           height: 6vw;
           transition: height 0.3s;
           box-sizing: border-box;
-          //visibility: hidden;
-          //opacity: 0;
 
           span {
            display: inline-block;
