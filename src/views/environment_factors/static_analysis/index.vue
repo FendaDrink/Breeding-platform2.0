@@ -9,15 +9,18 @@
                   :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-main width="78%" style="padding: 0" class="right-box">
         <div class="phenome-container">
-          <!-- 日期选择 -->
+          <!-- 可视化 -->
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>日期选择</span>
+                <span>环境数据可视化</span>
               </div>
             </template>
-            <div class="big-wrapper" style="margin-top: 10px">
+            <!-- 文件统计 -->
+            <div class="big-wrapper" style="margin-top: 10px;">
               <div class="block">
+                <!-- 日期选择 -->
+                <span style="font-weight: bold;font-size: 18px;color:#606266">日期选择：</span>
                 <el-date-picker v-model="value2"
                                 type="daterange"
                                 unlink-panels range-separator="至"
@@ -29,18 +32,6 @@
                                 popper-class="date-picker"
                                 @change="chooseDate" />
               </div>
-            </div>
-          </el-card>
-
-          <!-- 可视化 -->
-          <el-card class="card-container">
-            <template #header>
-              <div class="card-header">
-                <span>可视化</span>
-              </div>
-            </template>
-            <!-- 文件统计 -->
-            <div class="big-wrapper" style="margin-top: 10px;">
               <v-chart class="chart" :option="option" autoresize v-loading="isLoading1" />
               <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
@@ -284,7 +275,7 @@ async function getPictureNumber() {
 
     option.value = {
       title: {
-        text: '环境文件数量统计'
+        text: '环境文件数量统计',
       },
       grid: {
         left: '4%',
@@ -590,6 +581,8 @@ onMounted(async () => {
     margin-top: 10px;
     margin-bottom: 20px;
   }
+
+
 }
 </style>
 
@@ -628,8 +621,6 @@ onMounted(async () => {
   width: 100%;
 }
 </style>
-
-
 
 <style lang="less" scoped>
 :deep(.permission-tree) {
@@ -957,7 +948,6 @@ onMounted(async () => {
 }
 </style>
 
-
 <!-- 卡片样式 -->
 <style lang="less" scoped>
 .shadow {
@@ -1011,7 +1001,7 @@ onMounted(async () => {
 
 .chart {
   height: 500px;
-  // background-color: #bfa;
+  margin: 40px 0;
 }
 
 .chart1 {

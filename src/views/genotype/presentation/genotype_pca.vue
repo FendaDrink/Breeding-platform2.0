@@ -112,7 +112,7 @@ function initHistogram() {
         },
         axisLine: {
           lineStyle: {
-            color: '#b3d1b1'
+            color: '#1FB864'
           }
         }
       },
@@ -195,7 +195,7 @@ function initHistogram1() {
         type: "value",
         axisLine: {
           lineStyle: {
-            color: '#b3d1b1'
+            color: '#1FB864'
           }
         },
         name: 'pc2',
@@ -729,49 +729,25 @@ onMounted(() => {
 <style lang="less" scoped>
 :deep(.permission-tree) {
   margin: 5px;
-  // background: #f2fbf7;
+  //background: #f2fbf7;
   min-width: 98%;
   display: inline-block;
   width: auto;
   overflow: auto;
   margin-right: 0px;
-  padding: 3px;
   padding-right: 15px;
 }
 
 :deep(.el-tree-node__content) {
   border-radius: 5px;
   margin: 1px;
-  line-height: 30px;
-  font-size: 14px;
   color: black;
   padding: 0%;
-}
-
-:deep(.el-tree-node__label) {
-  font-size: 16px;
-}
-
-:deep(.el-form-item__label) {
-  width: 110px;
+  height: 20px;
 }
 
 :deep(.el-tree-node__expand-icon) {
   color: black;
-}
-
-:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: #fff !important;
-}
-
-.card {
-  position: relative;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 0;
-  box-sizing: border-box;
 }
 
 .element-plus-tree {
@@ -780,9 +756,11 @@ onMounted(() => {
   :deep(.el-tree) {
 
     /* ---- ---- ---- ---- ^（节点对齐）---- ---- ---- ---- */
+
     .el-tree-node {
 
       /* ^ 所有节点 */
+
       i.el-tree-node__expand-icon {
         padding: 6px;
 
@@ -803,6 +781,7 @@ onMounted(() => {
       /* / 所有节点 */
 
       /* ^ 已展开的父节点 */
+
       i.el-tree-node__expand-icon.expanded {
         //transform: rotate(0deg); // 取消旋转
         //-webkit-transform: rotate(0deg); // 取消旋转
@@ -817,10 +796,13 @@ onMounted(() => {
         }
       }
 
+
       /* / 已展开的父节点 */
 
       /* ^ 叶子节点 */
+
       i.el-tree-node__expand-icon.is-leaf {
+
         &::before {
           display: none;
         }
@@ -828,21 +810,56 @@ onMounted(() => {
 
       /* / 叶子节点 */
 
-      /* ^ 设置子节点左外边距 */
-      .el-tree-node__content:has(.is-leaf) {
-        // color: #00ffff;
-        margin-left: 12px !important;
+      /* ^ 复选框 */
 
-        .el-tree-node__label {
-          //font-size: 8px;
+      .el-checkbox {
+        margin: 0 7px 0 2px;
+
+        .el-checkbox__inner {
+          width: 14px;
+          height: 14px;
+          border-radius: 2px;
+          border: 1px solid #bbb;
         }
 
-        //background-color: red;
+        .el-checkbox__input.is-checked .el-checkbox__inner,
+        .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+          border: 1px solid #5e7ce0;
+        }
+      }
+
+      /* / 复选框 */
+
+      .el-tree-node__content {
+        small {
+          font-size: 14px;
+        }
       }
     }
 
+    /* ---- ---- ---- ---- /（节点对齐）---- ---- ---- ---- */
+
+    /* ---- ---- ---- ---- ^（文字高亮）---- ---- ---- ---- */
+
+    .el-tree-node.is-current {
+      .el-tree-node__content {
+        small {
+          color: #5e7ce0;
+        }
+      }
+
+      .el-tree-node__children {
+        small {
+          color: unset;
+        }
+      }
+    }
+
+    /* ---- ---- ---- ---- /（文字高亮）---- ---- ---- ---- */
+
     /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
     /* ^ 树节点 */
+
     .el-tree-node {
       position: relative;
       width: auto;
@@ -852,7 +869,7 @@ onMounted(() => {
       &::before {
         width: 1px;
         height: 100%;
-        content: "";
+        content: '';
         position: absolute;
         top: -38px;
         bottom: 0;
@@ -865,7 +882,7 @@ onMounted(() => {
       &::after {
         width: 13px;
         height: 13px;
-        content: "";
+        content: '';
         position: absolute;
         z-index: 0;
         left: 0;
@@ -883,6 +900,7 @@ onMounted(() => {
         padding-left: 0 !important;
 
         /* ^ 复选框 */
+
         .el-checkbox {
           margin: 0 10px 0 5.5px;
         }
@@ -902,7 +920,8 @@ onMounted(() => {
     /* / 树节点 */
 
     /* ^ 第一层节点 */
-    >.el-tree-node {
+
+    > .el-tree-node {
       padding-left: 0;
 
       &::before {
@@ -917,6 +936,7 @@ onMounted(() => {
     /* / 第一层节点 */
 
     /* ^ 叶子节点 */
+
     i.el-tree-node__expand-icon.is-leaf {
       display: none;
     }
@@ -924,40 +944,145 @@ onMounted(() => {
     /* / 叶子节点 */
 
     /* ^ 设置子节点左外边距 */
+
     .el-tree-node__content:has(.is-leaf) {
       // color: #00ffff;
       margin-left: 12px !important;
+
+      .el-tree-node__label {
+        //font-size: 8px;
+      }
+
+      //background-color: red;
     }
 
     /* / 设置子节点左外边距 */
     /* ---- ---- ---- ---- /（新增辅助线）---- ---- ---- ---- */
   }
+}
 
-  :deep(.el-tree-node__content) {
-    border-radius: 5px;
-    margin: 1px;
-    color: black;
-    padding: 0%;
-    height: 20px;
+:deep(.el-tree-node__content) {
+  border-radius: 5px;
+  margin: 1px;
+  color: black;
+  padding: 0%;
+  height: 20px;
+}
+
+
+:deep(.el-tree-node__label) {
+  font-size: 15px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+//一级节点选择器
+:deep(.el-tree>.el-tree-node> .el-tree-node__content) {
+  font-weight: 600;
+  color: #80a492;
+  height: 28px;
+
+  .el-tree-node__label {
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
+
+//二级节点选择器
+:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
+  font-weight: 500;
+  color: #99bcac;
+  height: 26px;
+
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
+
+//三级节点选择器
+:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
+
+  .el-tree-node__label {
+    font-size: 14px;
   }
 
-  :deep(.el-tree-node__label) {
-    font-size: 15px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
 }
 
 // 设置高亮颜色
 :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: rgba(rgb(#424F63), 0.3) !important;
+  background-color: rgba(rgb(#4f6f46), 0.3) !important;
 
   .el-tree-node__label {
-    color: #424F63;
+    color: #4f6f46;
   }
 
   .el-tree-node__expand-icon {
-    color: #424F63;
+    color: #4f6f46;
+  }
+}
+
+:deep(.el-tree-node__content:hover) {
+  color: #4f6f46;
+  background-color: rgba(168, 191, 143, 0.3);
+
+  .el-tree-node__expand-icon {
+    color: #4f6f46;
+  }
+}
+
+.mokuai {
+  margin-bottom: 0;
+  //background-color: #F2FBF7;
+  padding: 0% !important;
+  margin-top: 0% !important;
+}
+
+
+:deep(.el-button) {
+  margin: 0% !important;
+  margin-right: 20px !important;
+}
+
+.mytable {
+  background-color: #EEEEEE;
+}
+
+.table_button {
+  padding: 0% !important;
+  margin: 0 !important;
+  margin-right: 5px !important;
+}
+
+.search-container {
+  display: flex;
+  max-width: 1100px;
+}
+
+.chooseNameInput,
+.chooseDateInput {
+  width: 150px;
+  flex: 0.4 0.4 auto;
+}
+
+@media (max-width: 1330px) {
+  .my-button {
+    margin-right: 2px !important;
+    /* 缩小元素之间的间距 */
+    font-size: 7px;
+  }
+
+  .my_input {
+    width: 120px;
+    /* 缩小输入框的宽度 */
+  }
+
+  .el-button {
+    font-size: 12px;
+    /* 设置按钮的字体大小为小号 */
+    padding: 3px 6px;
+    /* 根据需要调整按钮的内边距 */
   }
 }
 </style>

@@ -1953,7 +1953,7 @@ async function rowClick(nodeObj) {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #1FB864;
+  //background-color: #1FB864;
 }
 
 .progress-text {
@@ -2088,7 +2088,7 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-tree) {
-  background-color: rgb(183, 202, 189);
+  //background-color: rgb(183, 202, 189);
 }
 
 :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
@@ -2195,10 +2195,11 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-switch.is-checked .el-switch__core) {
-  border-color: green;
-  background-color: green;
+  border-color: #1fb864;
+  background-color: #1fb864;
 }
 </style>
+
 <style lang="scss" scoped>
 .image_box {
   width: 100%;
@@ -2278,7 +2279,7 @@ async function rowClick(nodeObj) {
 
 .mokuai {
   margin-bottom: 0;
-  background-color: rgb(183, 202, 189);
+  //background-color: rgb(183, 202, 189);
   // box-shadow:2px 2px 5px #000;
   // border:1px solid #ccc;
   // margin-bottom: 50px;
@@ -2314,6 +2315,7 @@ async function rowClick(nodeObj) {
   }
 }
 </style>
+
 <style lang="less" scoped>
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
@@ -2359,10 +2361,69 @@ async function rowClick(nodeObj) {
 }
 </style>
 
+<!-- 卡片样式 -->
+<style lang="less" scoped>
+.info-card {
+  border: none;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+:deep(.el-card__header) {
+  background: #1FB864;
+  height: 60px !important;
+  display: flex;
+  vertical-align: middle;
+  padding-left: 50px !important;
+
+  span {
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    letter-spacing: 2px;
+  }
+}
+
+:deep(.el-table__header) {
+  border-bottom: 1px solid black;
+  border-top: 1px solid #EBEEF5;
+
+  th {
+    font-weight: 800;
+    font-size: 16PX;
+    background: #FAFAFA !important;
+    letter-spacing: 2px;
+    height: 60px !important;
+  }
+}
+
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
+
+}
+
+.chart {
+  height: 500px;
+  margin-top: 10px;
+  // background-color: #bfa;
+}
+
+.chart2 {
+  height: 600px;
+  margin-top: 40px;
+}
+</style>
+
 <style lang="less" scoped>
 :deep(.permission-tree) {
   margin: 5px;
-  background: #f2fbf7;
+  //background: #f2fbf7;
   min-width: 98%;
   display: inline-block;
   width: auto;
@@ -2465,7 +2526,7 @@ async function rowClick(nodeObj) {
 
       .el-tree-node__content {
         small {
-          font-size: 13px;
+          font-size: 14px;
         }
       }
     }
@@ -2604,7 +2665,7 @@ async function rowClick(nodeObj) {
 
 
 :deep(.el-tree-node__label) {
-  font-size: 13px;
+  font-size: 15px;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -2667,7 +2728,7 @@ async function rowClick(nodeObj) {
 
 .mokuai {
   margin-bottom: 0;
-  background-color: #F2FBF7;
+  //background-color: #F2FBF7;
   padding: 0% !important;
   margin-top: 0% !important;
 }
@@ -2717,64 +2778,5 @@ async function rowClick(nodeObj) {
     padding: 3px 6px;
     /* 根据需要调整按钮的内边距 */
   }
-}
-</style>
-
-<!-- 卡片样式 -->
-<style lang="less" scoped>
-.info-card {
-  border: none;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-:deep(.el-card__header) {
-  background: #1FB864;
-  height: 60px !important;
-  display: flex;
-  vertical-align: middle;
-  padding-left: 50px !important;
-
-  span {
-    font-weight: 700;
-    font-size: 20px;
-    color: white;
-    letter-spacing: 2px;
-  }
-}
-
-:deep(.el-table__header) {
-  border-bottom: 1px solid black;
-  border-top: 1px solid #EBEEF5;
-
-  th {
-    font-weight: 800;
-    font-size: 16PX;
-    background: #FAFAFA !important;
-    letter-spacing: 2px;
-    height: 60px !important;
-  }
-}
-
-:deep(.el-table__cell) {
-  .cell {
-    word-break: break-word;
-  }
-
-}
-
-.chart {
-  height: 500px;
-  margin-top: 10px;
-  // background-color: #bfa;
-}
-
-.chart2 {
-  height: 600px;
-  margin-top: 40px;
 }
 </style>
