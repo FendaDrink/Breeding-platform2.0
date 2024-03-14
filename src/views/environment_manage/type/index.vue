@@ -1,10 +1,14 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="性状类型名称" prop="traitTypeId" label-width="80">
-          <el-input v-model="queryParams.traitTypeName" placeholder="请输入性状类型名称" clearable
-            @keyup.enter.native="handleQuery" />
+      <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch" label-width="100px">
+        <el-form-item label="环境因子类型">
+          <el-select v-model="add.type" class="m-2" placeholder="请选择形状类型" clearable>
+            <el-option v-for="item in factorOptions" :key="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="环境因子名称">
+          <el-input v-model="add.name" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" size="large" @click="handleQuery" class="white-button">搜索</el-button>
@@ -14,46 +18,38 @@
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="primary" plain icon="Plus" size="large" @click="handleAdd" v-hasPermi="['system:type:add']"
-            class="white-button">新增</el-button>
+          <el-button type="warning" plain size="large" @click="isModify" class="white-button"
+                     v-hasPermi="['system:factor:export']">确认修改</el-button>
         </el-col>
-        <el-col :span="1.5">
-          <el-button type="success" plain icon="Edit" size="large" :disabled="single" @click="handleUpdate"
-            v-hasPermi="['system:type:edit']" class="white-button">修改</el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button type="danger" plain icon="Ddelete" size="large" :disabled="multiple" @click="handleDelete"
-            v-hasPermi="['system:type:remove']" class="white-button">删除</el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button type="warning" plain icon="Download" size="large" @click="handleExport"
-            v-hasPermi="['system:type:export']" class="white-button">导出</el-button>
-        </el-col>
+
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table :data="typeList" @selection-change="handleSelectionChange">
+      <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange"
+                @select="handleSelect" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="性状类型名称" align="center" prop="traitTypeName" />
+        <el-table-column label="环境因子名称" align="center" prop="factorName" />
+        <el-table-column label="全称" align="center" prop="factorFullName" />
+        <el-table-column label="缩写" align="center" prop="factorAbbreviationName" />
         <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-button link size="large" type="text" @click="handleUpdate(scope.row)" class="table_button">修改</el-button>
-            <el-button size="large" type="text" @click="handleDelete(scope.row)" class="table_button">删除</el-button>
-          </template>
-        </el-table-column>
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-        layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+                     v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+                     layout="total, sizes, prev, pager, next, jumper" @size-change="getHigh" @current-change="getHigh" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="性状类型名称" prop="traitTypeName">
-          <el-input v-model="form.traitTypeName" placeholder="请输入性状类型名称" />
+        <el-form-item label="环境因子名称" prop="factorName">
+          <el-input v-model="form.factorName" placeholder="请输入环境因子名称" />
+        </el-form-item>
+        <el-form-item label="全称" prop="factorFullName">
+          <el-input v-model="form.factorFullName" placeholder="请输入全称" />
+        </el-form-item>
+        <el-form-item label="缩写" prop="factorAbbreviationName">
+          <el-input v-model="form.factorAbbreviationName" placeholder="请输入缩写" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -68,19 +64,18 @@
 </template>
 
 <script>
-import { download, checkout, listType, getType, delType, addType, updateType } from "@/api/system/type";
+import { addHigh, selHighL, download, getSelect, getLightLine, listFactor, addFactor, updateFactor } from "@/api/factor/factor";
 import { blobValidate } from '@/utils/param'
+import { ElMessage } from "element-plus";
 import { saveAs } from 'file-saver'
 export default {
-  name: "Type",
+  name: "Factor",
   data() {
     return {
-      name: "",
-      ifAdd: 0,
       // 遮罩层
       loading: true,
       // 选中数组
-      traitTypeId: [],
+      factorId: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -90,7 +85,7 @@ export default {
       // 总条数
       total: 0,
       // 【请填写功能名称】表格数据
-      typeList: [],
+      factorList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -99,20 +94,19 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        traitTypeName: "",
-        traitId: "",
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        traitTypeId: [
-          { required: true, message: "性状类型ID不能为空", trigger: "blur" }
-        ], traitTypeName: [
-          { required: true, message: "性状类型名称不能为空", trigger: "blur" }
+        factorName: [
+          { required: true, message: "环境因子名称不能为空", trigger: "blur" }
         ],
-        traitId: [
-          { required: true, message: "性状ID不能为空", trigger: "blur" }
+        factorFullName: [
+          { required: true, message: "全称不能为空", trigger: "blur" }
+        ],
+        factorAbbreviationName: [
+          { required: true, message: "缩写不能为空", trigger: "blur" }
         ],
         createBy: [
           { required: true, message: "创建者不能为空", trigger: "blur" }
@@ -126,23 +120,32 @@ export default {
         updateTime: [
           { required: true, message: "更新时间不能为空", trigger: "blur" }
         ],
-      }
+      },
+      //高亮显示
+      tableRowClassName: '',
+      add: {
+        type: "",
+        name: ""
+      },
+      rowid: [],
+      factorOptions: [],
+      len: "",
+      selectArr: [],
+      flen: 0,
+      Tlen: 0
     };
   },
   created() {
-    this.getList();
+    this.getHigh();
+    this.getsel();
   },
   methods: {
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
-      listType(this.queryParams).then(response => {
+      let query = { ...this.queryParams, ...this.add }
+      listFactor(query).then(response => {
         console.log(response)
-        this.typeList = response.rows;
-        this.typeList.forEach(item => {
-          if (item.remark == null) item.remark = "-"
-        })
-        this.total = response.total;
         this.loading = false;
       });
     },
@@ -154,118 +157,107 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        asTraitTypeId: null,
-        traitTypeId: null,
-        traitId: null,
+        factorId: null,
+        factorName: null,
+        factorFullName: null,
+        factorAbbreviationName: null,
         createBy: null,
         createTime: null,
         updateBy: null,
         updateTime: null,
         remark: null
       };
+      this.add.type = ""
+      this.add.name = ""
+      this.len = ""
       this.resetForm("form");
+
+    },
+    getHigh() {
+      this.loading = true;
+      let formdata = new FormData()
+      formdata.append("type", this.add.type)
+      formdata.append("name", this.add.name)
+      getLightLine(this.queryParams, formdata).then(response => {
+        console.log(response)
+        this.factorList = response.rows
+        this.total = response.total
+        let query = { ...this.add, ...this.queryParams }
+        selHighL(query).then(res => {
+          console.log(res)
+          this.len = res.data
+          this.selectArr = this.factorList.slice(0, this.len)
+          this.$refs.multipleTable.clearSelection();
+          this.selectArr.forEach(item => {
+            this.$refs.multipleTable.toggleRowSelection(item, true)
+          })
+          this.tableRowClassName = ({ row, rowIndex }) => {
+            console.log(row)
+            console.log(rowIndex)
+            if (rowIndex < this.len) {
+              return "success-row"
+            }
+            else return ""
+          }
+        })
+
+        this.loading = false;
+      });
+    },
+    gethigh() {
+      this.loading = true;
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.getList();
+      this.getHigh();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.traitTypeName = ""
+      this.resetForm("queryForm");
+      this.add.name = ""
+      this.add.type = ""
+      this.len = ""
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       console.log(selection)
-      this.traitTypeId = selection.map(item => item.traitTypeId)
-      this.single = selection.length !== 1
-      this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const asTraitTypeId = row.traitTypeId || this.traitTypeIdx``
-      getType(asTraitTypeId).then(response => {
-        console.log(response)
-        this.form = response.data;
-        this.name = this.form.traitTypeName
-        this.open = true;
-        this.title = "修改";
-      });
+      this.factorId = selection.map(item => item.factorId)
+      console.log(this.factorId)
     },
     /** 提交按钮 */
     submitForm() {
-      console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.traitTypeId != null) {
-            if (this.name == this.form.traitTypeName) {
-              updateType(this.form).then(response => {
-                this.$modal.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
-            }
-            else {
-              checkout(this.form).then(res => {
-                this.ifAdd = res.data;
-                if (this.ifAdd == 0) {
-                  updateType(this.form).then(response => {
-                    this.$modal.msgSuccess("修改成功");
-                    this.open = false;
-                    this.getList();
-                  });
-                }
-                else { this.$modal.msgWarning("该名称已存在！") }
-              })
-            }
-
-
+          if (this.form.factorId != null) {
+            updateFactor(this.form).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
           } else {
-            checkout(this.form).then(res => {
-              this.ifAdd = res.data;
-              if (this.ifAdd == 0) {
-                addType(this.form).then(response => {
-                  this.$modal.msgSuccess("新增成功");
-                  this.open = false;
-                  this.getList();
-                });
-              }
-              else {
-                this.$modal.msgWarning("该名称已存在！")
-              }
-            })
-
+            addFactor(this.form).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
           }
         }
       });
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const asTraitTypeIds = row.traitTypeId || this.traitTypeId;
-      this.$modal.confirm('是否确认删除编号为"' + asTraitTypeIds + '"的数据项？').then(function () {
-        return delType(asTraitTypeIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => { });
-    },
+    // /** 删除按钮操作 */
     /** 导出按钮操作 */
     handleExport() {
-      const trait_type_id = this.traitTypeId
-      download(trait_type_id).then(res => {
+      const factor_id = this.factorId
+      // let formdata = new FormData()
+      // formdata.append("species_id",species_id)
+      download(factor_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {
           const blob = new Blob([res])
           // console.log(blob)
-          saveAs(blob, `trait_type${new Date().getTime()}.xlsx`)
+          saveAs(blob, `factor_classification${new Date().getTime()}.xlsx`)
         } else {
           const resText = data.text();
           const rspObj = JSON.parse(resText);
@@ -273,10 +265,49 @@ export default {
           Message.error(errMsg);
         }
       })
+    },
+    //选中行高亮
+    handleSelect(selection, row) {
+      console.log(selection)
+      console.log(row)
+      selection.forEach(item => {
+        console.log(item)
+        //让某一行默认选中
+        this.$refs.multipleTable.toggleRowSelection(item, true)
+      });
+
+    },
+    getsel() {
+      getSelect().then(res => {
+        console.log(res)
+        this.factorOptions = res.data
+      })
+    },
+    isModify() {
+      let obj = {
+        list: [],
+        type: ""
+      }
+      obj.list = this.factorId
+      obj.type = this.add.type
+      if (obj.type == "" || obj.type == null) {
+        ElMessage.warning("请通过形状类型来修改！！")
+      }
+      else {
+        addHigh(obj).then(res => {
+          this.resetQuery()
+        })
+      }
+
     }
   }
 };
 </script>
+<style lang="scss">
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
 <!-- el-dialog的append-to-body属性会导致el-dialog的样式修改失效，先去掉 -->
 <style lang="less" scoped>
 :deep(.el-dialog__header) {

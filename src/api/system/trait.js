@@ -52,7 +52,7 @@ export function getLightLine(query,data) {
 }
 export function getSelect(){
   return request({
-    url: '/traitType/selectTraitTypeName' ,
+    url: '/Type/selectTraitTypeName' ,
     method: 'get'
   })
 }

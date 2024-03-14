@@ -7,7 +7,7 @@
               <div class="file_form">
                   <!-- 表格部分 -->
                   <el-table style="width: 95%; margin: auto" ref="multipleTable" v-loading="tableLoading"
-                      :data="tableData" tooltip-effect="dark" class="trait-form-table" stripe max-height="100vh - 220px">
+                      :data="tableData" tooltip-effect="dark" class="factor-form-table" stripe max-height="100vh - 220px">
                       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="auto"
                           fixed="left">
                           <template #default="scope">
@@ -62,20 +62,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, toRefs } from "vue";
+import {ref, reactive, onMounted, getCurrentInstance} from "vue";
 import { useRoute } from "vue-router";
-import { getTree } from "@/api/tree";
 import { onBeforeRouteLeave } from "vue-router";
 
 import {
-  listFile,
-  selectDetailByFileId,
-  exportPenoFile,
+  getEnvDetailByFileId,
+  exportEnvFile,
   modifiFileData,
   endUpdate,
-} from "@/api/infomanage/phenotype";
-
-import { getEnvDetailByFileId } from "@/api/environment_factors/environment_factors"
+} from "@/api/environment_factors/environment_factors";
 // vue实例
 const {
   proxy: { $modal, $download },
@@ -83,21 +79,9 @@ const {
 
 const dialogFormVisible = ref(false); // 表单可见
 const formKeys = [
-  "tableName",
   "fileId",
-  "phenotypeId",
-  "father",
-  "mother",
-  "location",
-  "fieldId",
-  "controlType",
-  "kindId",
-  "kindName",
-  "populationId",
-  "speciesName",
-  "populationName",
+  "environmentId",
   "remark",
-  "materialId",
 ];
 
 const form = reactive({});
@@ -106,9 +90,9 @@ formKeys.forEach((key) => {
   form[key] = "";
 });
 
-// 添加 trait_id_n 属性
+// 添加 factor_id_n 属性
 for (let i = 0; i <= 39; i++) {
-  form[`trait_id_${i}`] = "";
+  form[`factor_id_${i}`] = "";
 }
 
 const rules = reactive({
@@ -117,9 +101,10 @@ const rules = reactive({
 });
 
 const route = useRoute();
+console.log(route);
 const total = ref(2);
 
-const traitsArray = reactive([]); // 使用后端提供的性状数据填充这个数组
+const factorsArray = reactive([]); // 使用后端提供的性状数据填充这个数组
 //分页
 const pageSize = ref(20);
 const totalPage = ref(0);
@@ -131,86 +116,67 @@ function formatTableCell(value) {
   return value || '-'; // 如果值为空，返回'-'
 }
 
-async function fetchData(pageNumber, pageSize) {
+function fetchData() {
   try {
-      tableLoading.value = true;
-      //   environmentFileId.value = route.query.id;
-      environmentFileId.value = 37;
-      // 创建查询参数对象
-      const queryParams = reactive({
-          pageNum: pageNumber,
-          pageSize: pageSize,
-      });
-      getEnvDetailByFileId({
-          fileId: environmentFileId.value,
-          pageSize: queryParams.pageSize,
-          pageNum: queryParams.pageNum,
-      })
-          .then((res) => {
-              console.log(res, "9090");
-              let i = ref(0);
+    tableLoading.value = true;
+    environmentFileId.value = route.query.id;
+    // 创建查询参数对象
+    const queryParams = reactive({
+      pageNum: currentpageNum.value,
+      pageSize: pageSize.value,
+    });
 
-              totalPage.value = res.total;
-              tableColumns.value = [
-                  { prop: "factorId", label: "factorId", width: "80px", fixed: "left", },
-                  { prop: "factorName", label: "factorName", width: "130px", fixed: "left", },
-                  { prop: "factorValue", label: "factorValue", width: "80px", fixed: "left" },
-                  { prop: "remark", label: "备注", width: "80px" },
-                  { prop: "factorFullName", label: "factorFullName", width: "120px" },
-                  { prop: "factorAbbreviationName", label: "factorAbbreviationName", width: "200px" },
-              ];
+    tableColumns.value = [
+      {prop: "environmentId", label: "环境id", width: "80px", fixed: "left",},
+      {prop: "remark", label: "备注", width: "80px"},
+    ];
 
-              selectDetailByFileId({
-                  fileId: environmentFileId.value,
-                  pageSize: queryParams.pageSize,
-                  pageNum: queryParams.pageNum,
-              })
-                  .then((res) => {
-                      console.log(res.rows[0].traits[0].trait_id_0.traitValue, "123");
-                      totalPage.value = res.total;
-                      updateTableData(mapTraitsToTableData(res.rows)); // 确保传递正确的数据
+    getEnvDetailByFileId({
+      fileId: environmentFileId.value,
+      pageSize: queryParams.pageSize,
+      pageNum: queryParams.pageNum,
+    })
+        .then((res) => {
+          console.log(res.rows[0].factors[0].factor_id_0.factorValue, "123");
+          totalPage.value = res.total;
+          updateTableData(mapFactorsToTableData(res.rows)); // 确保传递正确的数据
 
-                      // 更新tableData
-                      for (let j = 0; j < res.rows.length; j++) {
-                          traitRes[j] = new Map();
+          // 更新tableData
+          for (let j = 0; j < res.rows.length; j++) {
+            factorRes[j] = new Map();
 
-                          for (let i = 0; i < res.rows[j].traits.length; i++) {
-                              let propertyName = `trait_id_${i}`;
-                              let traitIdValue = res.rows[j].traits[i][propertyName];
-                              if (traitIdValue) {
-                                  let traitValue = traitIdValue.traitValue;
-                                  traitRes[j].set(propertyName, traitValue);
-                              }
+            for (let i = 0; i < res.rows[j].factors.length; i++) {
+              let propertyName = `factor_id_${i}`;
+              let factorIdValue = res.rows[j].factors[i][propertyName];
+              if (factorIdValue) {
+                let factorValue = factorIdValue.factorValue;
+                factorRes[j].set(propertyName, factorValue);
+              }
 
-                              tableData[j][propertyName] = traitRes[j].get(propertyName);
+              tableData[j][propertyName] = factorRes[j].get(propertyName);
 
-                          }
-                      }
+            }
+          }
 
-                      // 更新tableColumns
-                      for (let i = 0; i < res.rows[0].traits.length; i++) {
-                          let propertyName = `trait_id_${i}`;
-                          tableColumns.value.push({
-                              prop: `trait_id_${i}`,
-                              label: res.rows[0].traits[i][propertyName].traitName,
-                              width: '100px'
-                          });
-                      }
+          // 更新tableColumns
+          for (let i = 0; i < res.rows[0].factors.length; i++) {
+            let propertyName = `factor_id_${i}`;
+            tableColumns.value.push({
+              prop: `factor_id_${i}`,
+              label: res.rows[0].factors[i][propertyName].factorName,
+              width: '100px'
+            });
+          }
 
-                      tableLoading.value = false;
-                  })
-                  .catch((err) => {
-                      tableLoading.value = false;
-                      console.error(err);
-                  });
-          })
-          .catch((err) => {
-              tableLoading.value = false;
-              console.error(err);
-          });
+          tableLoading.value = false;
+        })
+        .catch((err) => {
+          tableLoading.value = false;
+          console.error(err);
+        });
   } catch (error) {
-      tableLoading.value = false;
-      console.error("获取数据时出错：", error);
+    tableLoading.value = false;
+    console.error("获取数据时出错：", error);
   }
 }
 
@@ -227,13 +193,9 @@ const handleCurrentChange = (val) => {
 const tableName = ref("");
 
 const unmodifiableColumns = [
-  "tableName",
   "fileId",
-  "phenotypeId",
-  "location",
-  "speciesName",
-  "populationName",
-];
+  "environmentId"
+]
 
 // 计算属性，检查列是否为不可修改
 const isUnmodifiableColumn = (columnProp) => {
@@ -244,7 +206,7 @@ const isUnmodifiableColumn = (columnProp) => {
 function exportFile() {
   tableName.value = route.query.tableName;
   console.log(tableName.value);
-  exportPenoFile(tableName.value)
+  exportEnvFile(tableName.value)
       .then((res) => {
           console.log(res);
           $modal.msgSuccess(res.msg);
@@ -270,109 +232,16 @@ function updateTableData(data) {
 }
 
 const tableColumns = ref([]);
-const traitRes = reactive([]);
-const columnsValue = [];
-
-//请求性状信息
-function chooseForm() {
-  tableLoading.value = true;
-  environmentFileId.value = route.query.id;
-  const queryParams = reactive({
-      pageNum: 1,
-      pageSize: 10,
-  });
-  queryParams.pageNum = currentpageNum.value;
-  queryParams.pageSize = pageSize.value;
-  selectDetailByFileId({
-      fileId: environmentFileId.value,
-      pageSize: queryParams.pageSize,
-      pageNum: queryParams.pageNum,
-  })
-      .then((res) => {
-          console.log(res, "9090");
-          let i = ref(0);
-
-          totalPage.value = res.total;
-          tableColumns.value = [
-
-              { prop: "speciesName", label: "物种名", width: "80px", fixed: "left" },
-              {
-                  prop: "populationName",
-                  label: "种群名",
-                  width: "130px",
-                  fixed: "left",
-              },
-              { prop: "location", label: "地区", width: "80px", fixed: "left" },
-              { prop: "repeat", label: "重复试验", width: "120px" },
-              { prop: "kindId", label: "品种ID", width: "120px" },
-              { prop: "kindName", label: "品种名称", width: "200px" },
-              { prop: "materialId", label: "材料ID", width: "120px" },
-              { prop: "fieldId", label: "田间编号", width: "120px" },
-              { prop: "controlType", label: "对照类型", width: "100px" },
-              { prop: "father", label: "父本", width: "100px" },
-              { prop: "mother", label: "母本", width: "100px" },
-              { prop: "remark", label: "备注", width: "380px" },
-
-          ];
-
-          selectDetailByFileId({
-              fileId: environmentFileId.value,
-              pageSize: queryParams.pageSize,
-              pageNum: queryParams.pageNum,
-          })
-              .then((res) => {
-                  console.log(res.rows[0].traits[0].trait_id_0.traitValue, "123");
-                  totalPage.value = res.total;
-                  updateTableData(mapTraitsToTableData(res.rows)); // 确保传递正确的数据
-
-                  // 更新tableData
-                  for (let j = 0; j < res.rows.length; j++) {
-                      traitRes[j] = new Map();
-
-                      for (let i = 0; i < res.rows[j].traits.length; i++) {
-                          let propertyName = `trait_id_${i}`;
-                          let traitIdValue = res.rows[j].traits[i][propertyName];
-                          if (traitIdValue) {
-                              let traitValue = traitIdValue.traitValue;
-                              traitRes[j].set(propertyName, traitValue);
-                          }
-
-                          tableData[j][propertyName] = traitRes[j].get(propertyName);
-                      }
-                  }
-                  console.log("1");
-                  // 更新tableColumns
-                  for (let i = 0; i < res.rows[0].traits.length; i++) {
-                      let propertyName = `trait_id_${i}`;
-                      tableColumns.value.push({
-                          prop: `trait_id_${i}`,
-                          label: res.rows[0].traits[i][propertyName].traitName,
-                          width: '100px'
-                      });
-                  }
-                  console.log(tableColumns.value, "ioio");
-
-                  tableLoading.value = false;
-              })
-              .catch((err) => {
-                  tableLoading.value = false;
-                  console.error(err);
-              });
-      })
-      .catch((err) => {
-          tableLoading.value = false;
-          console.error(err);
-      });
-}
+const factorRes = reactive([]);
 
 // 将性状数据映射到表格格式的函数
-function mapTraitsToTableData(data) {
+function mapFactorsToTableData(data) {
   return data.map((entry) => {
-      const traits = {};
-      entry.traits.forEach((trait) => {
-          traits[`trait_id_${trait.traitId}`] = trait;
+      const factors = {};
+      entry.factors.forEach((factor) => {
+          factors[`factor_id_${factor.factorId}`] = factor;
       });
-      return { ...entry, traits };
+      return { ...entry, factors };
   });
 }
 
@@ -382,22 +251,9 @@ function modifFile(row) {
   dialogFormVisible.value = true;
 
   const keys = [
-      "tableName",
       "fileId",
-      "phenotypeId",
-      "repeat",
-      "father",
-      "mother",
-      "controlType",
-      "location",
-      "kindId",
-      "fieldId",
-      "kindName",
-      "populationId",
-      "speciesName",
-      "populationName",
+      "environmentId",
       "remark",
-      "materialId",
   ];
 
   keys.forEach((key) => {
@@ -405,50 +261,39 @@ function modifFile(row) {
   });
 
   for (let i = 0; i <= 39; i++) {
-      form[`trait_id_${i}`] = row[`trait_id_${i}`];
+      form[`factor_id_${i}`] = row[`factor_id_${i}`];
   }
 }
 function updateFileData() {
   const baseParams = {
       fileId: form.fileId,
-      tableName: form.tableName,
-      phenotypeId: form.phenotypeId,
-      father: form.father,
-      mother: form.mother,
-      repeat: form.repeat,
-      location: form.location,
-      kindId: form.kindId,
-      kindName: form.kindName,
-      populationId: form.populationId,
-      speciesName: form.speciesName,
-      populationName: form.populationName,
+      environmentId:form.environmentId,
       remark: form.remark,
-      materialId: form.materialId,
   };
 
-  let traitParams = {};
+  let factorParams = {};
   for (let i = 0; i <= 39; i++) {
-      traitParams[`trait_id_${i}`] = form[`trait_id_${i}`];
+      factorParams[`factor_id_${i}`] = form[`factor_id_${i}`];
   }
 
-  const params = { ...baseParams, ...traitParams };
+  const params = { ...baseParams, ...factorParams };
   
   modifiFileData(params)
       .then((res) => {
           console.log(res);
           $modal.msgSuccess(res.msg);
           dialogFormVisible.value = false;
-          chooseForm();
+          fetchData();
       })
       .catch((err) => {
           console.error(err);
-          $modal.msgError(res.msg);
+          $modal.msgError(err.msg);
           dialogFormVisible.value = false;
       });
 }
 
 onMounted(() => {
-  chooseForm();
+    fetchData();
 });
 
 onBeforeRouteLeave(() => {

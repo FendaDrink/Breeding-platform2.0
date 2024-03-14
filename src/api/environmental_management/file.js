@@ -28,3 +28,4 @@ export function delFile(fileId) {
         method: 'delete'
     });
 }
+

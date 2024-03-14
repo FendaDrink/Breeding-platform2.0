@@ -7,8 +7,8 @@
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
         <div class="echart_wrapper">
-          <img src="@/assets/img/11.png" class="bgc-img" style="width: 100%; height: 45vw">
-            <div id="traitPanMap" style="width: 100%; height: 45vw"></div>
+          <img src="@/assets/img/11.png" class="bgc-img" style="width: 100%; height: 100vh">
+            <div id="traitPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
             <div class="trait-form">
                 <el-table
                 :data="
@@ -31,7 +31,7 @@
                 <el-table-column
                     align="center"
                     prop="traitName"
-                    label="性状名称"
+                    label="环境因子名称"
                     min-width="150px"
                 >
                     <template #default="scope">
@@ -91,7 +91,7 @@ import {
   getTraitFormByFileId,
   getTraitBytraitId,
   selectTraitColByFileId,
-} from "@/api/data_presentation/trait_management";
+} from "@/api/environment_factors/factor_management";
 
 // vue实例
 const {
@@ -125,96 +125,6 @@ const phenotypeData = reactive([
   },
 ]);
 
-const data2 = reactive({
-  name: "植物性状",
-  children: [
-    {
-      name: "性状一",
-      id: "1",
-      children: [
-        {
-          name: "性状1.1",
-          id: "2",
-        },
-        {
-          name: "性状1.2",
-          id: "3",
-        },
-      ],
-    },
-    {
-      name: "性状二",
-      id: "4",
-      children: [
-        {
-          name: "性状2.1",
-          id: "5",
-        },
-        {
-          name: "性状2.2",
-          id: "6",
-        },
-      ],
-    },
-    {
-      name: "性状三",
-      id: "7",
-      children: [
-        {
-          name: "性状3.1",
-          id: "8",
-        },
-        {
-          name: "性状3.2",
-          id: "9",
-        },
-      ],
-    },
-    {
-      name: "性状四",
-      id: "10",
-      children: [
-        {
-          name: "性状4.1",
-          id: "11",
-        },
-        {
-          name: "性状4.2",
-          id: "12",
-        },
-      ],
-    },
-    {
-      name: "性状五",
-      id: "13",
-      children: [
-        {
-          name: "性状5.1",
-          id: "14",
-        },
-        {
-          name: "性状5.2",
-          id: "15",
-        },
-      ],
-    },
-    {
-      name: "性状六",
-      id: "16",
-      children: [
-        {
-          name: "性状6.1",
-          id: "17",
-        },
-        {
-          name: "性状6.2",
-          id: "1",
-        },
-      ],
-    },
-  ],
-});
-
 const echartData = reactive({
   name: "环境因子",
   children: [
@@ -225,19 +135,22 @@ const pieOption = {
     title: {
         text: "环境因子统计",
     },
+  textStyle:{
+    fontSize:14
+  },
     series: [
         {
         type: "tree",
         data: [echartData],
-        top: "10%",
-        bottom: "18%",
-        left: "1%",
+        top: "15%",
+        bottom: "20%",
+        left: "2%",
         layout: "radial",
         symbol: "emptyCircle",
-        symbolSize: 7,
+        symbolSize: 17,
         initialTreeDepth: 3,
         animationDurationUpdate: 750,
-        zoom: 1,
+        zoom: 1.1,
         emphasis: {
             focus: "descendant",
         },
@@ -332,7 +245,7 @@ function updatePhenotypeData(data) {
 
 const traitTableLoading = ref(false);
 
-//请求性状信息
+//请求环境因子信息
 function chooseForm() {
   if(!fileId.value) return;
   traitTableLoading.value = true;
@@ -411,7 +324,7 @@ function chooseForm() {
 //将请求到的形状信息转换为树形结构
 function createTreeData(data) {
     console.log(data,'data');
-  //获取性状类型
+  //获取环境因子类型
   echartData.children = [];
   let traitType = [];
   data.forEach((item) => {
@@ -425,7 +338,7 @@ function createTreeData(data) {
     if(!isExist){
       if(item.traitTypeId ==null){
         traitType.push({
-          name: "未定义性状类别",
+          name: "未定义环境因子类别",
           id: null
         })
       }else
@@ -562,7 +475,7 @@ function initHistogram() {
   chartDoms?.removeAttribute("_echarts_instance_")
   let myChart = echarts.init(chartDoms);
   myChart.on("click", (params) => {
-    if (params.data && params.data.name !== "植物性状") {
+    if (params.data && params.data.name !== "环境因子") {
       const isLeaf = isLeafNode(params.data);
       const chartData = pieOption.series[0].data; 
       const typeIdToSend = isLeaf
@@ -586,7 +499,7 @@ function initHistogram() {
           }
         })
         .catch((err) => {
-          $modal.msg("该性状未被定义");
+          $modal.msg("该环境因子未被定义");
         });
 
       // 展开所有子节点
@@ -639,7 +552,7 @@ onMounted(() => {
       position: absolute;
       top: 0;
       left: 0;
-      opacity: 0.3;
+      opacity: 0.1;
     }
     .trait-form {
       width: 100%;

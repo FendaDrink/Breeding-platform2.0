@@ -2,15 +2,9 @@
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
       <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="因子名称" prop="factorName">
-          <el-input v-model="queryParams.factorName" placeholder="请输入因子名称" clearable @keyup.enter.native="handleQuery" />
-        </el-form-item>
-        <el-form-item label="全称" prop="fullName">
-          <el-input v-model="queryParams.fullName" placeholder="请输入全称" clearable @keyup.enter.native="handleQuery" />
-        </el-form-item>
-        <el-form-item label="缩写" prop="abbreviationName">
-          <el-input v-model="queryParams.abbreviationName" placeholder="请输入缩写" clearable
-            @keyup.enter.native="handleQuery" />
+        <el-form-item label="环境因子类型名称" prop="factorTypeId" label-width="130px">
+          <el-input v-model="queryParams.factorTypeName" placeholder="请输入环境因子类型名称" clearable
+                    @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" size="large" @click="handleQuery" class="white-button">搜索</el-button>
@@ -20,54 +14,46 @@
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="primary" plain icon="Plus" size="large" @click="handleAdd" class="white-button"
-            v-hasPermi="['system:factor:add']">新增</el-button>
+          <el-button type="primary" plain icon="Plus" size="large" @click="handleAdd" v-hasPermi="['system:type:add']"
+                     class="white-button">新增</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="success" plain icon="Edit" size="large" :disabled="single" @click="handleUpdate" class="white-button"
-            v-hasPermi="['system:factor:edit']">修改</el-button>
+          <el-button type="success" plain icon="Edit" size="large" :disabled="single" @click="handleUpdate"
+                     v-hasPermi="['system:type:edit']" class="white-button">修改</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="danger" plain icon="Delete" size="large" :disabled="multiple" @click="handleDelete" class="white-button"
-            v-hasPermi="['system:factor:remove']">删除</el-button>
+          <el-button type="danger" plain icon="delete" size="large" :disabled="multiple" @click="handleDelete"
+                     v-hasPermi="['system:type:remove']" class="white-button">删除</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="warning" plain icon="Download" size="large" @click="handleExport" class="white-button"
-            v-hasPermi="['system:factor:export']">导出</el-button>
+          <el-button type="warning" plain icon="Download" size="large" @click="handleExport"
+                     v-hasPermi="['system:type:export']" class="white-button">导出</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table :data="factorList" @selection-change="handleSelectionChange">
+      <el-table :data="typeList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="因子名称" align="center" prop="factorName" />
-        <el-table-column label="全称" align="center" prop="fullName" />
-        <el-table-column label="缩写" align="center" prop="abbreviationName" />
+        <el-table-column label="环境因子类型名称" align="center" prop="factorTypeName" />
         <el-table-column label="备注" align="center" prop="remark" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-button size="large" type="text" @click="handleUpdate(scope.row)" class="table_button">修改</el-button>
+            <el-button link size="large" type="text" @click="handleUpdate(scope.row)" class="table_button">修改</el-button>
             <el-button size="large" type="text" @click="handleDelete(scope.row)" class="table_button">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-        layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+                     v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+                     layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="因子名称" prop="factorName">
-          <el-input v-model="form.factorName" placeholder="请输入因子名称" />
-        </el-form-item>
-        <el-form-item label="全称" prop="fullName">
-          <el-input v-model="form.fullName" placeholder="请输入全称" />
-        </el-form-item>
-        <el-form-item label="缩写" prop="abbreviationName">
-          <el-input v-model="form.abbreviationName" placeholder="请输入缩写" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
+        <el-form-item label="环境因子类型名称" prop="factorTypeName">
+          <el-input v-model="form.factorTypeName" placeholder="请输入环境因子类型名称" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -82,11 +68,11 @@
 </template>
 
 <script>
-import { listFactor, getFactor, delFactor, addFactor, updateFactor, getSelect } from "@/api/factor/factor";
+import { download, checkout, listType, getType, delType, addType, updateType } from "@/api/factor/type";
 import { blobValidate } from '@/utils/param'
 import { saveAs } from 'file-saver'
 export default {
-  name: "Factor",
+  name: "Type",
   data() {
     return {
       name: "",
@@ -94,7 +80,7 @@ export default {
       // 遮罩层
       loading: true,
       // 选中数组
-      factorId: [],
+      factorTypeId: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -104,7 +90,7 @@ export default {
       // 总条数
       total: 0,
       // 【请填写功能名称】表格数据
-      factorList: [],
+      typeList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -113,22 +99,20 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        factorName: null,
-        fullName: null,
-        abbreviationName: null,
+        factorTypeName: "",
+        factorId: "",
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        factorName: [
-          { required: true, message: "因子名称不能为空", trigger: "blur" }
+        factorTypeId: [
+          { required: true, message: "环境因子类型ID不能为空", trigger: "blur" }
+        ], factorTypeName: [
+          { required: true, message: "环境因子类型名称不能为空", trigger: "blur" }
         ],
-        fullName: [
-          { required: true, message: "全称不能为空", trigger: "blur" }
-        ],
-        abbreviationName: [
-          { required: true, message: "缩写不能为空", trigger: "blur" }
+        factorId: [
+          { required: true, message: "环境因子ID不能为空", trigger: "blur" }
         ],
         createBy: [
           { required: true, message: "创建者不能为空", trigger: "blur" }
@@ -142,22 +126,22 @@ export default {
         updateTime: [
           { required: true, message: "更新时间不能为空", trigger: "blur" }
         ],
-      },
-      //因子名称下拉框
-      factorOptions: []
-      // addition:
+      }
     };
   },
   created() {
     this.getList();
-    // this.getsel();
   },
   methods: {
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
-      listFactor(this.queryParams).then(response => {
-        this.factorList = response.rows;
+      listType(this.queryParams).then(response => {
+        console.log(response)
+        this.typeList = response.rows;
+        this.typeList.forEach(item => {
+          if (item.remark == null) item.remark = "-"
+        })
         this.total = response.total;
         this.loading = false;
       });
@@ -170,10 +154,9 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        asfactorTypeId: null,
+        factorTypeId: null,
         factorId: null,
-        factorName: null,
-        fullName: null,
-        abbreviationName: null,
         createBy: null,
         createTime: null,
         updateBy: null,
@@ -189,12 +172,13 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      this.queryParams.factorTypeName = ""
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.factorId = selection.map(item => item.factorId)
+      console.log(selection)
+      this.factorTypeId = selection.map(item => item.factorTypeId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -207,41 +191,48 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const factorId = row.factorId || this.factorId
-      getFactor(factorId).then(response => {
+      const asfactorTypeId = row.factorTypeId || this.factorTypeId
+      getType(asfactorTypeId).then(response => {
+        console.log(response)
         this.form = response.data;
-        this.name = this.form.factorName
+        this.name = this.form.factorTypeName
         this.open = true;
         this.title = "修改";
       });
     },
     /** 提交按钮 */
     submitForm() {
+      console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.factorId != null) {
-            if (this.name == this.form.factorName) {
-              updateFactor(this.form).then(response => {
+          if (this.form.factorTypeId != null) {
+            if (this.name == this.form.factorTypeName) {
+              updateType(this.form).then(response => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
                 this.getList();
               });
             }
             else {
-
+              checkout(this.form).then(res => {
+                this.ifAdd = res.data;
                 if (this.ifAdd == 0) {
-                  updateFactor(this.form).then(response => {
+                  updateType(this.form).then(response => {
                     this.$modal.msgSuccess("修改成功");
                     this.open = false;
                     this.getList();
                   });
                 }
                 else { this.$modal.msgWarning("该名称已存在！") }
+              })
             }
+
+
           } else {
-              this.ifAdd = res.data
+            checkout(this.form).then(res => {
+              this.ifAdd = res.data;
               if (this.ifAdd == 0) {
-                addFactor(this.form).then(response => {
+                addType(this.form).then(response => {
                   this.$modal.msgSuccess("新增成功");
                   this.open = false;
                   this.getList();
@@ -250,15 +241,17 @@ export default {
               else {
                 this.$modal.msgWarning("该名称已存在！")
               }
+            })
+
           }
         }
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const factorIds = row.factorId || this.factorId;
-      this.$modal.confirm('是否确认删除编号为"' + factorIds + '"的数据项？').then(function () {
-        return delFactor(factorIds);
+      const asfactorTypeIds = row.factorTypeId || this.factorTypeId;
+      this.$modal.confirm('是否确认删除编号为"' + asfactorTypeIds + '"的数据项？').then(function () {
+        return delType(asfactorTypeIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -266,25 +259,21 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      return
-      const factor_id = this.factorId
-      // let formdata = new FormData()
-      // formdata.append("species_id",species_id)
-      // download(factor_id).then(res => {
-      //   const isLogin = blobValidate(res);
-      //   if (isLogin) {
-      //     const blob = new Blob([res])
-      //     // console.log(blob)
-      //     saveAs(blob, `factor${new Date().getTime()}.xlsx`)
-      //   } else {
-      //     const resText = data.text();
-      //     const rspObj = JSON.parse(resText);
-      //     const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
-      //     Message.error(errMsg);
-      //   }
-      // })
-    },
-
+      const factor_type_id = this.factorTypeId
+      download(factor_type_id).then(res => {
+        const isLogin = blobValidate(res);
+        if (isLogin) {
+          const blob = new Blob([res])
+          // console.log(blob)
+          saveAs(blob, `factor_type${new Date().getTime()}.xlsx`)
+        } else {
+          const resText = data.text();
+          const rspObj = JSON.parse(resText);
+          const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+          Message.error(errMsg);
+        }
+      })
+    }
   }
 };
 </script>

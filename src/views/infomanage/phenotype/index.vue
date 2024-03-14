@@ -327,10 +327,7 @@ const createData = async () => {
 
     $modal.msg("上传数据较大，请耐心等待！");
     await upload.value.submit();
-    console.log("2");
     isDisabled.value = true;
-    console.log("3");
-    console.log("4");
     tableLoading.value = false;
     tableName.value = "";
   }
