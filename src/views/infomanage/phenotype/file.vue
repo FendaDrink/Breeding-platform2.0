@@ -156,7 +156,7 @@ import {
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,
-  endUpdate, traitAndMaterialList,
+  endUpdate
 } from "@/api/infomanage/phenotype";
 
 const traitFileId = ref(60);

@@ -8,8 +8,8 @@
     <div class="big-wrapper" style="margin-top: 10px">
         <div class="echart_wrapper">
           <img src="@/assets/img/11.png" class="bgc-img" style="width: 100%; height: 100vh">
-            <div id="traitPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
-            <div class="trait-form">
+            <div id="factorPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
+            <div class="factor-form">
                 <el-table
                 :data="
                     phenotypeData.slice(
@@ -30,33 +30,33 @@
 
                 <el-table-column
                     align="center"
-                    prop="traitName"
+                    prop="factorName"
                     label="环境因子名称"
                     min-width="150px"
                 >
                     <template #default="scope">
-                    {{ formatTableCell(scope.row.traitName) }}
+                    {{ formatTableCell(scope.row.factorName) }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     align="center"
-                    prop="fullName"
+                    prop="factorFullName"
                     label="全称"
                     min-width="150px"
                 >
                     <template #default="scope">
-                    {{ formatTableCell(scope.row.fullName) }}
+                    {{ formatTableCell(scope.row.factorFullName) }}
                     </template>
 
                 </el-table-column>
                 <el-table-column
-                    prop="abbreviationName"
+                    prop="factorAbbreviationName"
                     label="缩写"
                     align="center"
                     min-width="150px"
                 >
                     <template #default="scope">
-                    {{ formatTableCell(scope.row.abbreviationName) }}
+                    {{ formatTableCell(scope.row.factorAbbreviationName) }}
                     </template>
                 </el-table-column>
 
@@ -88,10 +88,11 @@ import * as echarts from "echarts";
 import { reactive, ref, onMounted, getCurrentInstance } from "vue";
 import { useRoute } from "vue-router";
 import {
-  getTraitFormByFileId,
-  getTraitBytraitId,
-  selectTraitColByFileId,
-} from "@/api/environment_factors/factor_management";
+  getEnvDetailByFileId,
+  exportEnvFile,
+  modifiFileData,
+  endUpdate,
+} from "@/api/environment_factors/environment_factors";
 
 // vue实例
 const {
@@ -101,8 +102,8 @@ const {
 //route实例
 const route = useRoute();
 
-// const fileId=ref(route.query.id);
-const fileId=ref(1051);
+const fileId=ref(route.query.id);
+// const fileId=ref(1051);
 
 //分页
 const pageSize = ref(10);
@@ -117,11 +118,11 @@ const currentpageNum2 = ref(1); //当前页数
 
 const phenotypeData = reactive([
   {
-    traitId: "B11",
-    traitName: "B11 content",
-    fullName: "B11含量",
+    factorId: "B11",
+    factorName: "B11 content",
+    factorFullName: "B11含量",
     remark: "45646",
-    abbreviationName: "biochemistry",
+    factorAbbreviationName: "biochemistry",
   },
 ]);
 
@@ -234,7 +235,7 @@ function formatTableCell(value) {
 
 
 //显示控制
-const traitChoosed = ref(false);
+const factorChoosed = ref(false);
 
 
 //用于更新phentypeData的函数
@@ -243,13 +244,13 @@ function updatePhenotypeData(data) {
   createTreeData(phenotypeData);
 }
 
-const traitTableLoading = ref(false);
+const factorTableLoading = ref(false);
 
 //请求环境因子信息
 function chooseForm() {
   if(!fileId.value) return;
-  traitTableLoading.value = true;
-  const traitFileId = fileId.value;
+  factorTableLoading.value = true;
+  const factorFileId = fileId.value;
 
   const queryParams = reactive({
     pageNum: 1,
@@ -257,67 +258,81 @@ function chooseForm() {
   });
   queryParams.pageNum = currentpageNum.value;
   queryParams.pageSize = pageSize.value;
-  traitChoosed.value = true;
-  getTraitFormByFileId({
-    fileId: traitFileId,
-    pageSize: queryParams.pageSize,
-    pageNum: queryParams.pageNum,
-  })
-    .then((res) => {
-      const tableDataValue = [];
-      const columnsValue = [];
-      totalPage.value = res.total;
-      if (res.total > 0) {
-        const firstItem = res.list[0];
+  factorChoosed.value = true;
+  // getFactorFormByFileId({
+  //   fileId: factorFileId,
+  //   pageSize: queryParams.pageSize,
+  //   pageNum: queryParams.pageNum,
+  // })
+  //   .then((res) => {
+  //     const tableDataValue = [];
+  //     const columnsValue = [];
+  //     totalPage.value = res.total;
+  //     if (res.total > 0) {
+  //       const firstItem = res.list[0];
+  //
+  //       // 生成表头
+  //       Object.keys(firstItem).forEach((key) => {
+  //         const factor = firstItem[key];
+  //         const factorKey = Object.keys(factor)[0];
+  //         const factorName = factor[factorKey].factorName;
+  //         columnsValue.push({ label: factorName, prop: factorKey });
+  //       });
+  //
+  //       // 生成表格数据
+  //       res.list.forEach((array) => {
+  //         const rowData = {};
+  //         array.forEach((factor) => {
+  //           const factorKey = Object.keys(factor)[0];
+  //           const factorValue = factor[factorKey].factorValue;
+  //           rowData[factorKey] = factorValue;
+  //         });
+  //         tableDataValue.push(rowData);
+  //       });
+  //     }
+  //
+  //     columns.value = columnsValue;
+  //     tableData.value = tableDataValue;
+  //
+  //     factorChoosed.value = true;
+  //     factorTableLoading.value = false;
+  //
+  //     /* initHistogram(); */
+  //   })
+  //   .catch((err) => {
+  //     factorTableLoading.value = false;
+  //     console.error(err);
+  //   });
 
-        // 生成表头
-        Object.keys(firstItem).forEach((key) => {
-          const trait = firstItem[key];
-          const traitKey = Object.keys(trait)[0];
-          const traitName = trait[traitKey].traitName;
-          columnsValue.push({ label: traitName, prop: traitKey });
-        });
-
-        // 生成表格数据
-        res.list.forEach((array) => {
-          const rowData = {};
-          array.forEach((trait) => {
-            const traitKey = Object.keys(trait)[0];
-            const traitValue = trait[traitKey].traitValue;
-            rowData[traitKey] = traitValue;
-          });
-          tableDataValue.push(rowData);
-        });
-      }
-
-      columns.value = columnsValue;
-      tableData.value = tableDataValue;
-
-      traitChoosed.value = true;
-      traitTableLoading.value = false;
-
-      /* initHistogram(); */
-    })
-    .catch((err) => {
-      traitTableLoading.value = false;
-      console.error(err);
-    });
-
-  selectTraitColByFileId(traitFileId)
-    .then((res) => {
+  getEnvDetailByFileId({fileId:factorFileId})
+  // selectFactorColByFileId(factorFileId)
+  .then((res) => {
       if (res.code === 200) {
-        totalPage2.value = res.data.length;
-        updatePhenotypeData(res.data);
+        console.log(res)
+        const factorsData = getFactorsData(res)
+        console.log(factorsData)
+        totalPage2.value = factorsData.length;
+        updatePhenotypeData(factorsData);
         assignColorToNodes(echartData, 0);
         addRingBackground(echartData, 0, 0, 0, 60);
         pieOption.series[0].data.push(echartData);
         initHistogram();
       }
     })
-    .catch((err) => {
-      console.error(err);
-    });
+    // .catch((err) => {
+    //   console.error(err);
+    // });
 
+}
+
+// 提取环境因子信息
+const getFactorsData = (data)=>{
+  if(data.length===0) return []
+  const factors = data.rows[0].factors
+  const res = factors.map((item,index) => {
+    return item[`factor_id_${index}`]
+  })
+  return res
 }
 
 
@@ -326,40 +341,40 @@ function createTreeData(data) {
     console.log(data,'data');
   //获取环境因子类型
   echartData.children = [];
-  let traitType = [];
+  let factorType = [];
   data.forEach((item) => {
     let isExist = false;
-    for(let i=0;i<traitType.length;i++){
-      if(traitType[i].id == item.traitTypeId){
+    for(let i=0;i<factorType.length;i++){
+      if(factorType[i].id == item.factorTypeId){
         isExist = true;
         break;
       }
     }
     if(!isExist){
-      if(item.traitTypeId ==null){
-        traitType.push({
+      if(item.factorTypeId ==null){
+        factorType.push({
           name: "未定义环境因子类别",
           id: null
         })
       }else
-      traitType.push({
-        name: item.traitTypeName,
-        id: item.traitTypeId
+      factorType.push({
+        name: item.factorTypeName,
+        id: item.factorTypeId
       })
     }
   })
-  console.log(traitType,'traitType');
+  console.log(factorType,'factorType');
   //创建树形结构
-  traitType.forEach((item) => {
+  factorType.forEach((item) => {
     let node={
       name: item.name,
       id: item.id,
       children: []
     }
-    node.children=data.filter((item2) => item2.traitTypeId === item.id).map((item3) => {
+    node.children=data.filter((item2) => item2.factorTypeId === item.id).map((item3) => {
       return {
-        name: item3.traitName,
-        id: item3.traitTypeId,
+        name: item3.factorName,
+        id: item3.factorTypeId,
         children: null
       }
     });
@@ -368,69 +383,69 @@ function createTreeData(data) {
   console.log(echartData,'echartData');
 }
 
-async function fetchData(pageNumber, pageSize) {
-  try {
-    traitTableLoading.value = true;
-    const traitFileId = fileId.value;
-
-    // 创建查询参数对象
-    const queryParams = reactive({
-      pageNum: pageNumber,
-      pageSize: pageSize,
-    });
-
-    traitChoosed.value = true;
-
-    getTraitFormByFileId({
-      fileId: traitFileId,
-      pageSize: queryParams.pageSize,
-      pageNum: queryParams.pageNum,
-    })
-      .then((res) => {
-        const tableDataValue = [];
-        const columnsValue = [];
-        totalPage.value = res.total;
-        if (res.total > 0) {
-          const firstItem = res.list[0];
-
-          // 生成表头
-          Object.keys(firstItem).forEach((key) => {
-            const trait = firstItem[key];
-            const traitKey = Object.keys(trait)[0];
-            const traitName = trait[traitKey].traitName;
-            columnsValue.push({ label: traitName, prop: traitKey });
-          });
-
-          // 生成表格数据
-          res.list.forEach((array) => {
-            const rowData = {};
-            array.forEach((trait) => {
-              const traitKey = Object.keys(trait)[0];
-              const traitValue = trait[traitKey].traitValue;
-              rowData[traitKey] = traitValue;
-            });
-            tableDataValue.push(rowData);
-          });
-        }
-
-        columns.value = columnsValue;
-        tableData.value = tableDataValue;
-
-        traitChoosed.value = true;
-        traitTableLoading.value = false;
-
-        /* initHistogram(); */
-      })
-      .catch((err) => {
-        traitTableLoading.value = false;
-        console.error(err);
-      });
-  } catch (error) {
-  
-    traitTableLoading.value = false;
-    console.error("获取数据时出错：", error);
-  }
-}
+// async function fetchData(pageNumber, pageSize) {
+//   try {
+//     factorTableLoading.value = true;
+//     const factorFileId = fileId.value;
+//
+//     // 创建查询参数对象
+//     const queryParams = reactive({
+//       pageNum: pageNumber,
+//       pageSize: pageSize,
+//     });
+//
+//     factorChoosed.value = true;
+//
+//     getFactorFormByFileId({
+//       fileId: factorFileId,
+//       pageSize: queryParams.pageSize,
+//       pageNum: queryParams.pageNum,
+//     })
+//       .then((res) => {
+//         const tableDataValue = [];
+//         const columnsValue = [];
+//         totalPage.value = res.total;
+//         if (res.total > 0) {
+//           const firstItem = res.list[0];
+//
+//           // 生成表头
+//           Object.keys(firstItem).forEach((key) => {
+//             const factor = firstItem[key];
+//             const factorKey = Object.keys(factor)[0];
+//             const factorName = factor[factorKey].factorName;
+//             columnsValue.push({ label: factorName, prop: factorKey });
+//           });
+//
+//           // 生成表格数据
+//           res.list.forEach((array) => {
+//             const rowData = {};
+//             array.forEach((factor) => {
+//               const factorKey = Object.keys(factor)[0];
+//               const factorValue = factor[factorKey].factorValue;
+//               rowData[factorKey] = factorValue;
+//             });
+//             tableDataValue.push(rowData);
+//           });
+//         }
+//
+//         columns.value = columnsValue;
+//         tableData.value = tableDataValue;
+//
+//         factorChoosed.value = true;
+//         factorTableLoading.value = false;
+//
+//         /* initHistogram(); */
+//       })
+//       .catch((err) => {
+//         factorTableLoading.value = false;
+//         console.error(err);
+//       });
+//   } catch (error) {
+//
+//     factorTableLoading.value = false;
+//     console.error("获取数据时出错：", error);
+//   }
+// }
 
 
 function buildTree(node) {
@@ -471,40 +486,41 @@ function findParentNodeId(nodeId, treeData) {
 }
 
 function initHistogram() {
-  let chartDoms = document.querySelector("#traitPanMap");
+  let chartDoms = document.querySelector("#factorPanMap");
   chartDoms?.removeAttribute("_echarts_instance_")
   let myChart = echarts.init(chartDoms);
   myChart.on("click", (params) => {
-    if (params.data && params.data.name !== "环境因子") {
-      const isLeaf = isLeafNode(params.data);
-      const chartData = pieOption.series[0].data; 
-      const typeIdToSend = isLeaf
-        ? findParentNodeId(params.data.id, chartData)
-        : params.data.id;
-
-      getTraitBytraitId(typeIdToSend)
-        .then((res) => {
-
-          if (!isLeaf) {
-            totalPage2.value = res.data.length;
-            updatePhenotypeData(res.data);
-          } else {
-            const leafName = params.data.name;
-            const filteredData = res.data.filter(
-              (item) => item && item.traitName === leafName
-            );
-
-            totalPage2.value = filteredData.length;
-            updatePhenotypeData(filteredData);
-          }
-        })
-        .catch((err) => {
-          $modal.msg("该环境因子未被定义");
-        });
-
-      // 展开所有子节点
-      expandNode(params.data, myChart);
-    }
+    // if (params.data && params.data.name !== "环境因子") {
+    //   console.log('woce')
+    //   const isLeaf = isLeafNode(params.data);
+    //   const chartData = pieOption.series[0].data;
+    //   const typeIdToSend = isLeaf
+    //     ? findParentNodeId(params.data.id, chartData)
+    //     : params.data.id;
+    //
+    //   getFactorByfactorId(typeIdToSend)
+    //     .then((res) => {
+    //
+    //       if (!isLeaf) {
+    //         totalPage2.value = res.data.length;
+    //         updatePhenotypeData(res.data);
+    //       } else {
+    //         const leafName = params.data.name;
+    //         const filteredData = res.data.filter(
+    //           (item) => item && item.factorName === leafName
+    //         );
+    //
+    //         totalPage2.value = filteredData.length;
+    //         updatePhenotypeData(filteredData);
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       $modal.msg("该环境因子未被定义");
+    //     });
+    //
+    //   // 展开所有子节点
+    //   expandNode(params.data, myChart);
+    // }
   });
   pieOption && myChart.setOption(pieOption);
 }
@@ -554,7 +570,7 @@ onMounted(() => {
       left: 0;
       opacity: 0.1;
     }
-    .trait-form {
+    .factor-form {
       width: 100%;
       margin-top: -50px;
     }
