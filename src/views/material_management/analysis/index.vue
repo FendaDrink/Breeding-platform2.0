@@ -236,7 +236,7 @@ let queryParams = reactive({
   pageSize: 10
 })
 const scrollerHeight = computed(() => {
-  return (window.innerHeight - 400) + 'px'
+  return (window.innerHeight - 270) + 'px'
 })
 let data = reactive({
   methods: ['rrBLUP', 'BL', 'BRR', 'BayesA', 'BayesB'],
@@ -870,10 +870,6 @@ a.ui.teal.label:hover {
 }
 
 
-
-
-
-
 .white-button,
 .el-button--default,
 .el-button--primary {
@@ -1004,7 +1000,7 @@ a.ui.teal.label:hover {
 <style lang="less" scoped>
 :deep(.permission-tree) {
   margin: 5px;
-  // background: #f2fbf7;
+   background: #f2fbf7;
   min-width: 98%;
   display: inline-block;
   width: auto;
@@ -1223,16 +1219,73 @@ a.ui.teal.label:hover {
   }
 }
 
-// 设置高亮颜色
-:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: rgba(rgb(#424F63), 0.3) !important;
+:deep(.el-tree-node__content) {
+  border-radius: 5px;
+  margin: 1px;
+  color: black;
+  padding: 0%;
+  height: 20px;
+}
+
+:deep(.el-tree-node__label) {
+  font-size: 15px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+//一级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #80a492;
+  height: 28px;
 
   .el-tree-node__label {
-    color: #424F63;
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
+
+//二级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #80a492;
+  height: 26px;
+
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
+
+// 三级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
+
+  .el-tree-node__label {
+    font-size: 14px;
+  }
+}
+
+
+// 设置高亮颜色
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: rgba(rgb(#4f6f46), 0.3) !important;
+
+  .el-tree-node__label {
+    color: #80a492;
   }
 
   .el-tree-node__expand-icon {
-    color: #424F63;
+    color: #4f6f46;
+  }
+}
+
+:deep(.el-tree-node__content:hover) {
+  color: #4f6f46;
+  background-color: rgba(168, 191, 143, 0.3);
+
+  .el-tree-node__expand-icon {
+    color: #4f6f46;
   }
 }
 
