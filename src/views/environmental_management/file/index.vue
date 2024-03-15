@@ -28,15 +28,15 @@
             <div class="div2">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter="handleQuery"
                         class="my-input" style="width: 180px; margin-right: 8px;" />
-              <el-button type="primary" @click="handleQuery" icon="search">搜索</el-button>
-              <el-button @click="resetQuery" icon="Refresh">重置</el-button>
+              <el-button class="green-button" type="primary" @click="handleQuery" icon="search">搜索</el-button>
+              <el-button class="white-button" @click="resetQuery" icon="Refresh">重置</el-button>
             </div>
 
             <div class="div3">
               <!-- 操作部分 -->
-              <el-button type="primary" @click="handleAdd" icon="plus" plain
+              <el-button class="green-button" type="primary" @click="handleAdd" icon="plus" plain
                          v-hasPermi="['system:logininfor:add']">新增</el-button>
-              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled" icon="delete"
+              <el-button class="white-button" type="danger" plain @click="handleDelete" :disabled="deleteDisabled" icon="delete"
                          v-hasPermi="['system:logininfor:remove']">删除</el-button>
               <el-container style="min-height: calc(100vh - 400px);padding-bottom: 20px;">
                 <!-- 表格部分 -->
@@ -1739,7 +1739,7 @@ onMounted(() => {
 }
 
 .div1 {
-  padding: 15px 20px;
+  padding: 15px 0;
   background-color: #EEEEEE;
 }
 
