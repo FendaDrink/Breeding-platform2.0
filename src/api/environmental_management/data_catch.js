@@ -23,11 +23,21 @@ export function deleteData(id){
     });
 }
 
-export function downloadPdf(id){
+export function downloadResultPdf(id){
     return request({
         url: `/sidebarTreeEnv/envFile/downloadPdf`,
         method: 'get',
         params: {taskId: id},
+        responseType:"blob",
+        timeout: 1000*600
+    });
+}
+
+export function downloadFile(id){
+    return request({
+        url: `/system/breed2/download`,
+        method: 'get',
+        params:{id},
         responseType:"blob",
         timeout: 1000*600
     });

@@ -37,43 +37,66 @@
                     <el-table-column align="center" label="序号" type="index" width="80"></el-table-column>
                     <el-table-column label="任务编号" prop="id" align="center" width="180" />
                     <el-table-column align="center" prop="createBy" label="创建人" />
-                    <el-table-column align="center" prop="createTime" label="创建时间" /> 
+                    <el-table-column align="center" prop="createTime" label="创建时间" width="180" /> 
                     <el-table-column align="center" label="任务状态" width="150">
                         <template #default="scope">
                             <div id="status">
-                                <el-icon style="color: #0dbc79;font-size: 25px;" v-show="scope.row.status == 1">
+                                <el-icon style="color: #0dbc79;font-size: 25px;" v-show="scope.row.status == 2">
                                     <SuccessFilled />
                                 </el-icon>
-                                <el-icon style="font-size: 25px;" v-show="scope.row.status == 0">
+                                <el-icon style="font-size: 25px;" v-show="scope.row.status == 0||scope.row.status==1">
                                     <Loading />
                                 </el-icon>
-                                <el-icon style="color: #d32f2f; font-size: 25px;" v-show="scope.row.status == 2">
+                                <el-icon style="color: #d32f2f; font-size: 25px;" v-show="scope.row.status == 3">
                                     <CircleCloseFilled />
                                 </el-icon>
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column align="center" fixed="right" label="输入文件下载">
+                        <template #default="scope">
+                            <el-button link type="text" @click="exportFile(scope.row)" style="color: #0dbc79;"
+                                v-show="scope.row.status == 2">
+                                导出文件
+                            </el-button>
+                            <el-button link type="text" disabled v-show="scope.row.status != 2">
+                                导出文件
+                            </el-button> 
+                        </template>
+                    </el-table-column>
                     <el-table-column align="center" fixed="right" label="结果下载">
                         <template #default="scope">
                             <el-button link type="text" @click="exportPdf(scope.row)" style="color: #0dbc79;"
-                                v-show="scope.row.status == 1">
+                                v-show="scope.row.status == 2">
                                 导出pdf
                             </el-button>
-                            <el-button link type="text" disabled v-show="scope.row.status != 1">
+                            <el-button link type="text" disabled v-show="scope.row.status != 2">
                                 导出pdf
                             </el-button>
                         </template>
                     </el-table-column>
-                    <!-- <el-table-column align="center" fixed="right" label="提示信息">
+                    <el-table-column align="center" fixed="right" label="提示信息">
                         <template #default="scope">
-                            <el-popover placement="top" title="Info" trigger="hover"
-                                :content="getPopoverContent(scope.row.info)">
+                            <el-popover placement="top" trigger="hover"
+                            >
+                                <text>{{ scope.row.info }}</text>
                                 <template #reference>
                                     <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
                                 </template>
                             </el-popover>
                         </template>
-                    </el-table-column> -->
+                    </el-table-column>
+                    <el-table-column align="center" fixed="right" label="提示信息">
+                        <template #default="scope">
+                            <el-popover placement="top" trigger="hover"
+                            >
+                                <text>{{ scope.row.remark }}</text>
+                                <template #reference>
+                                    <el-button link type="text" style="color: #1FB864;">查看备注</el-button>
+                                </template>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
                     <el-table-column align="center" fixed="right" label="操作">
                         <template #default="scope">
                             <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
@@ -106,7 +129,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useRoute, useRouter } from "vue-router"
 import { blobValidate } from '@/utils/param' 
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { postData, getData,deleteData,downloadPdf } from '../../../api/environmental_management/data_catch';
+import { postData, getData,deleteData,downloadResultPdf,downloadFile } from '../../../api/environmental_management/data_catch';
 
 const router = useRouter()
 
@@ -136,7 +159,7 @@ const submit = () => {
             ElMessage.success('提交成功')
             environmentalData.value = []
             setTimeout(() => {
-                router.go(0)
+                // router.go(0)
             }, 1000)
         } else {
             ElMessage.error('提交失败')
@@ -147,8 +170,8 @@ const submit = () => {
 const getEnvironmentalData = async () => {
     const res = await getData(queryParams.value);
     if (res.code === 200) {
-        envCatchDataList.value = Array.from(res.data)
-        // total.value = res.total
+        envCatchDataList.value = Array.from(res.data.list)
+        total.value = res.data.total
     } else {
         ElMessage.error('获取数据失败')
     }
@@ -157,7 +180,7 @@ const getEnvironmentalData = async () => {
 // 下载pdf文件
 const exportPdf =(row) => {
 	console.log(row)
-	if (row.status != 1) {
+	if (row.status != 2) {
 		ElMessageBox.alert('任务尚未成功时不能导出pdf', '错误', {
 			// if you want to disable its autofocus
 			// autofocus: false,
@@ -168,7 +191,7 @@ const exportPdf =(row) => {
 		})
 		return
 	}
-	downloadPdf(row.id).then(res => {
+	downloadResultPdf(row.id).then(res => {
 		console.log(res)
 		const isLogin = blobValidate(res);
 		if (isLogin) {
@@ -184,27 +207,25 @@ const exportPdf =(row) => {
 		console.log(err)
 		ElMessage.error('下载文件出现错误，请联系管理员！');
 	})
-	// let id = {id:row.id}
-	// console.log(id)
-	// exportPDF(id).then(res => {
-	//   console.log(res)
-	//   const isLogin = blobValidate(res);
-	//   if (isLogin) {
-	//     const blob = new Blob([res])
-	//     saveAs(blob, `基因组预测比较-${id.id}.pdf`)
-	//     pageLoad.value = false
-	//   } else {
-	//     const resText = data.text();
-	//     const rspObj = JSON.parse(resText);
-	//     const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
-	//     ElMessage.error("下载文件出现错误，请联系管理员！");
-	//     pageLoad.value = false
-	//   }
-	// }).catch(err => {
-	//   console.log(err)
-	//   pageLoad.value = false
-	//   ElMessage.error('下载文件出现错误，请联系管理员！');
-	// })
+}
+// 下载输入文件
+const exportFile = (row) => {
+    downloadFile(row.id).then(res => {
+        console.log(res)
+        const isLogin = blobValidate(res);
+        if (isLogin) {
+            const blob = new Blob([res])
+            saveAs(blob, `breed${row.id}.xlsx`)
+        } else {
+            const resText = data.text();
+            const rspObj = JSON.parse(resText);
+            const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+            Message.error(errMsg);
+        }
+    }).catch(err => {
+        console.log(err)
+        ElMessage.error('下载文件出现错误，请联系管理员！');
+    })
 }
 // 删除任务
 const handleDelete = async (row) => {

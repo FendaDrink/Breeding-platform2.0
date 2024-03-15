@@ -758,7 +758,7 @@ onMounted(() => {
   // 在这里更新表格数据或执行其他必要的操作
   totalPage.value = tableData.length;
 
-  factorName.value = ' PTD1'
+  factorName.value = 'PTD1'
   search_city()
 });
 
