@@ -1,7 +1,7 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch" label-width="80px">
         <el-form-item label="性状名称" prop="traitName">
           <el-input v-model="queryParams.traitName" placeholder="请输入性状名称" clearable @keyup.enter.native="handleQuery" />
           <!-- <el-select v-model="queryParams.traitName" class="m-2" placeholder="请输入性状名称" clearable>

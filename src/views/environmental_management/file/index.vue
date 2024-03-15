@@ -218,17 +218,9 @@ import {getEnvFileList,delFile,updateFile} from '@/api/environmental_management/
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
-import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { useRouter } from "vue-router";
-import {asyncComputed} from "@vueuse/core";
 
-
-
-// 引入接口
-// import {
-// 	treeCount, getEnvFileList, getEnvList, getEnvFactorChange
-// } from "@/api/environment_factors/environment_factors";
 
 const router = useRouter();
 

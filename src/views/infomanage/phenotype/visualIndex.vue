@@ -9,7 +9,7 @@
         </div>
         <num v-if="visualModule==='num'"></num>
         <trait-analysis v-if="visualModule==='traitAnalysis'"></trait-analysis>
-        <trait-manage v-if="visualModule==='traitManage'"></trait-manage>
+<!--        <trait-manage v-if="visualModule==='traitManage'"></trait-manage>-->
     </div>
 </template>
 
