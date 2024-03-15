@@ -155,7 +155,8 @@ import {
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,
-  endUpdate
+  endUpdate,
+  traitAndMaterialList
 } from "@/api/infomanage/phenotype";
 
 const traitFileId = ref(60);
@@ -661,7 +662,6 @@ onBeforeRouteLeave(() => {
 
   .search-button{
     border:#1F4E3D;
-    background: rgb(85, 123, 116);
   }
 </style>
 <style lang="less" scoped>

@@ -16,28 +16,28 @@
         <el-main width="78%" style="padding: 0; height: calc(100vh - 150px); " class="right-box">
           <div style="height: auto;">
             <div class="node-part">
-              <el-button type="primary" class="filter-item my-button white-button" style="margin: 10px"
+              <el-button icon="plus" type="primary" class="filter-item my-button" style="margin: 10px"
                          @click.prevent="addChildNode" plain v-hasPermi="['system:node:add']">
                 添加子节点</el-button>
-              <el-button type="success" class="filter-item my-button white-button" style="margin: 10px"
+              <el-button icon="edit" type="success" class="filter-item my-button" style="margin: 10px"
                          @click.prevent="updateChildNode" plain v-hasPermi="['system:node:update']">修改节点</el-button>
-              <el-button type="danger" class="filter-item my-button white-button" style="margin: 10px"
+              <el-button icon="delete" type="danger" class="filter-item my-button" style="margin: 10px"
               @click.prevent="deleteNode" plain v-hasPermi="['system:node:remove']">删除节点</el-button>
-              <el-button type="info" class="filter-item my-button white-button" style="margin: 10px"
+              <el-button icon="download" type="info" class="filter-item my-button" style="margin: 10px"
                          @click.prevent="downloadTemplate" plain v-hasPermi="['system:node:update']">下载模板文件</el-button>
             </div>
             <div class="search-part">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter="handleQuery"
                         class="my-input" style="width: 180px; margin-right: 8px;" />
-              <el-button type="primary" class="search-button my-button green-button" @click="handleQuery">搜索</el-button>
-              <el-button @click="resetQuery" class="my-button white-button">重置</el-button>
+              <el-button icon="search" type="primary" class="search-button my-button green-button" @click="handleQuery">搜索</el-button>
+              <el-button icon="refresh" @click="resetQuery" class="my-button white-button">重置</el-button>
             </div>
 
             <div class="table-part">
               <!-- 操作部分 -->
-              <el-button type="primary" plain class="addExcel my-button green-button" @click="handleAdd"
+              <el-button icon="plus" type="primary" plain class="addExcel my-button green-button" @click="handleAdd"
                          v-hasPermi="['system:logininfor:add']">新增</el-button>
-              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
+              <el-button icon="delete" type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
                          v-hasPermi="['system:logininfor:remove']" class="my-button white-button">删除</el-button>
                 <!-- 表格部分 -->
                 <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe fit>
@@ -1039,7 +1039,6 @@ onMounted(() => {
 
 :deep(.dialog-footer) {
   .el-button--primary {
-    background: rgb(85, 123, 116);
     border: #1fb864;
   }
 }
@@ -1606,18 +1605,6 @@ onMounted(() => {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-.white-button{
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover{
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
 
 .green-button {
   background-color: #1FB864 !important;
