@@ -22,7 +22,7 @@
                 </div>
                 <div style="text-align: center;">
                     <el-button type="success" @click="submit" plain
-                        style="width: 110px; margin-top: 6px;">提交</el-button>
+                        style="width: 110px; margin-top: 20px;">提交</el-button>
                     <!-- <el-button type="success" plain style="width: 110px; margin-top: 6px;"
                         @click="exportGeno('C:\\Users\\Administrator\\Desktop\\sdxx\\xm_2_1\\6210\\vcf_template.vcf')">下载vcf模板</el-button> -->
                 </div>
@@ -87,10 +87,10 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-pagination class="pagination" v-show="queryParams.total > 0" :total="queryParams.total" :page-sizes="[3, 10, 20, 30, 50]"
-								v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-								background right layout=" ->, total, sizes,prev, pager, next, jumper" @size-change="getEnvironmentalData"
-								@current-change="getEnvironmentalData" />
+                <el-pagination class="pagination" v-show="total > 0" :total="total" :page-sizes="[3, 10, 20, 30, 50]"
+                    v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+                    background right layout=" ->, total, sizes,prev, pager, next, jumper" @size-change="getEnvironmentalData"
+                    @current-change="getEnvironmentalData" />
             </div>
         </div>
     </div>
@@ -123,7 +123,7 @@ const queryParams = ref({
     pageSize: 10,
 })
 // 环境分析任务总数
-const total = ref(0)
+const total = ref(10)
 
 // .xlsx文件上传
 const submit = () => {
@@ -148,7 +148,7 @@ const getEnvironmentalData = async () => {
     const res = await getData(queryParams.value);
     if (res.code === 200) {
         envCatchDataList.value = Array.from(res.data)
-        total.value = res.total
+        // total.value = res.total
     } else {
         ElMessage.error('获取数据失败')
     }
@@ -301,5 +301,284 @@ onMounted(() => {
             }
         }
     }
+}
+</style>
+
+<style lang="less" scoped>
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  background-color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+
+
+// :deep(.el-table__header) {
+//   border-bottom: 1px solid black;
+//   border-top: 1px solid #EBEEF5;
+
+//   th {
+//     font-weight: 800;
+//     font-size: 16PX;
+//     background: #FAFAFA !important;
+//     letter-spacing: 2px;
+//     height: 60px !important;
+//   }
+// }
+
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
+
+}
+</style>
+
+<style lang="less" scoped>
+/* 假设 el-checkbox 是表头中的一个子元素 */
+
+:deep(.el-table .el-table__header-wrapper tr th) {
+  background-color: #1FB864 !important;
+  color: rgb(255, 255, 255);
+}
+
+/* 修改前后箭头未点击时的背景颜色 */
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background-color: #fff !important;
+}
+
+/* 修改未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+  background-color: #EEEEEE !important;
+}
+
+/* 未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
+  background-color: #fff !important;
+  color: #000;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #1FB864 !important; //修改默认的背景色
+  color: #fff;
+}
+
+:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.el-pagination ul li:not(:last-child)) {
+  border-right: #DDDDDD 1px solid;
+}
+
+
+:deep(.el-pagination ul) {
+  border: #DDDDDD 1px solid;
+}
+
+
+.green-button {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.green-button:hover {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.table_button {
+  color: #1FB864;
+}
+
+.table_button:hover {
+  color: #1FB864;
+}
+
+// .el-select-dropdown__item.selected {
+//   color: #1FB864;
+// }
+
+// .el-input {
+//   --el-input-focus-border-color: #1FB864;
+// }
+
+// .el-select {
+//   --el-select-input-focus-border-color: #1FB864;
+// }
+
+/* 开关组件 */
+// :deep(.el-switch.is-checked .el-switch__core) {
+//   border-color: #1FB864;
+//   background-color: #1FB864;
+// }
+
+/* 多选组件 */
+// :deep(.el-checkbox) {
+//   --el-checkbox-checked-input-border-color: #1FB864;
+//   --el-checkbox-checked-bg-color: #1FB864;
+//   --el-checkbox-input-border-color-hover: #1FB864;
+// }
+
+:deep(.el-table__header .el-checkbox) {
+  /* Your styles here */
+  --el-checkbox-checked-input-border-color: #424F63;
+  --el-checkbox-checked-bg-color: #424F63;
+  --el-checkbox-input-border-color-hover: #424F63;
+}
+
+/* 树结构 */
+.el-aside {
+  background-color: #fff !important;
+}
+
+.el-tree {
+  background-color: #fff !important;
+  margin: 0px !important;
+  color: #000;
+  /* 字体大小在上面的代码中修改 */
+}
+
+.div1 {
+  padding: 15px 20px;
+  background-color: #EEEEEE;
+}
+
+.div2 {
+  padding: 15px 20px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.div3 {
+  padding: 20px 20px 0px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.el-table {
+  background-color: #EEEEEE !important;
+  margin-top: 20px;
+}
+
+.footer {
+  height: fit-content;
+}
+
+:deep(.el-textarea__inner) {
+  background-color: transparent !important;
+  border: 1px dashed #DCDFE6 !important;
+  resize: none;
+  box-shadow: none;
+  height: 200px !important;
+
+  :hover {
+    border: 1px dashed #DCDFE6 !important;
+  }
+
+}
+
+:deep(.el-textarea :hover) {
+  border-color: #1FB864 !important;
+  outline: none !important;
+}
+
+:deep(.el-textarea :focus) {
+  outline: none !important;
+}
+
+.upload-demo {
+  height: 200px !important;
+}
+
+:deep(.el-upload-dragger) {
+  height: 200px !important;
+}
+
+
+:deep(.el-button) {
+  --el-button-border-color: #1FB864;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #1FB864;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #1FB864;
+  --el-button-active-text-color: #1FB864;
+  --el-button-active-border-color: #1FB864;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #1FB864 !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #1FB864 !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #1FB864 !important;
+  --el-button-hover-border-color: #1FB864 !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #21c96c;
+  --el-button-border-color: #21c96c;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #1FB864;
+  --el-button-hover-border-color: #1FB864;
+  --el-button-active-bg-color: #1FB864;
+  --el-button-active-border-color: #1FB864;
+  --el-button-disabled-text-color: #1FB864;
+  --el-button-disabled-bg-color: #1FB864;
+  --el-button-disabled-border-color: #1FB864;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
+}
+</style>
+
+<style>
+:root {
+  --el-color-primary: #1FB864;
 }
 </style>

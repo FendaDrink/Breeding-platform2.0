@@ -1,62 +1,60 @@
 <template>
-  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 20px;">
-    <el-card class="card-container">
-      <div style="display: flex;align-items: center;justify-content: center; gap:80px">
-        <div style="width: 45%; text-align: center;">
-          <label for="inputHelpBlock">输入材料名称</label>
-          <el-input type="textarea" placeholder="请输入材料名称，可用空格、回车、逗号隔开" v-model="textarea2"
-            style="padding: 0%; margin-top: 5px;margin-bottom: 30px;">
-          </el-input>
-          <el-button type="primary" @click="submit1" plain
-            style="width: 110px; margin-top: 6px !important;">提交</el-button>
-          <el-button type="info" plain style="width: 110px; margin-top: 6px !important;" @click="">下载预测结果</el-button>
-        </div>
-        <div style="width: 45%; text-align: center;">
-          <label for="inputHelpBlock">上传材料基因型文件</label>
-          <!-- <el-upload class="upload-demo" drag multiple>
-						<el-icon class="el-icon--upload"><upload-filled /></el-icon>
-						<div>将文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
-					</el-upload> -->
-
-          <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag
-            show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
-            :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-            style="margin-top: 5px;margin-bottom: 30px;" :on-change="handleUploadFile"
-            :before-upload="handleBeforeUpload">
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div>将文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
-          </el-upload>
-          <el-button type="primary" @click="submit2" plain
-            style="width: 110px; margin-top: 3px !important;">提交</el-button>
-          <el-button type="info" plain style="width: 110px; margin-top: 3px !important;" @click="">下载预测结果</el-button>
+  <div style="width: 100%; max-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 10px;">
+    <div class="card-container upper">
+      <div class="background">
+        <div class="main-content">
+          <div class="main-title">欢迎使用智能育种平台</div>
+          <div class="input-wrapper">
+            <div class="input">
+              <el-input
+                placeholder="请输入材料名称(用逗号或空格隔开)和上传材料基因型文件"
+                v-model="textarea2"
+                size="large"
+              >
+                <template #prepend>
+                  <el-popover :width="500" placement="bottom-start" :visible.sync="showPopover">
+                    <div class="inner-upload">
+                      <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept="." drag
+                        show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
+                        :on-error="uploadFileError" :on-success="uploadFileSuccess"
+                        :on-change="handleUploadFile"
+                        :before-upload="handleBeforeUpload">
+                        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                        <div>将文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
+                      </el-upload>
+                      <div class="btns">
+                        <div class="close">
+                          <el-button type="primary" @click="showPopover=!showPopover" style="width: 80px;"><el-icon><Close /></el-icon>&nbsp;取消</el-button>
+                        </div>
+                      </div>
+                    </div>
+                    <template #reference>
+                      <el-button class="no-inherit" @click="showPopover=!showPopover"><el-icon :color="showPopover?'#1FB864':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon></el-button>
+                    </template>
+                  </el-popover>
+                </template>
+                <template #append>
+                  <el-button @click="submit"><el-icon><Search/></el-icon>&nbsp;&nbsp;搜索</el-button>
+                </template>
+              </el-input>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- <div style="text-align: center;padding: 5px 0px;margin-top: 50px;">
-        <el-button type="primary" @click="createData" plain
-          style="width: 110px; margin-top: 6px !important;">提交</el-button>
-        <el-button type="info" plain style="width: 110px; margin-top: 6px !important;" @click="">下载预测结果</el-button>
-      </div> -->
-    </el-card>
-    <el-card class="card-container">
-      <el-table max-height="40vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
+    </div>
+    <el-card class="card-container lower">
+      <div class="card-header">
+        <span>育种任务列表</span>
+        <el-button @click="getdataList" type="primary">刷新任务列表</el-button>
+      </div>
+      <el-table max-height="22vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
         <el-table-column prop="id" label="育种任务id"></el-table-column>
-        <el-table-column prop="material_name" label="材料名称"></el-table-column>
+        <el-table-column prop="materialName" label="材料名称"></el-table-column>
         <el-table-column fixed="right" label="材料基因型">
           <template #default="scope">
             <el-button v-if="scope.row.genofile != null" link type="text" style="color: #0dbc79;"
               @click="exportGeno(scope.row.genofile)">
               {{ scope.row.genofile.split("\\").pop() }}
-            </el-button>
-            <el-button v-else link type="text" disabled>
-              无文件
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="测验种基因型">
-          <template #default="scope">
-            <el-button v-if="scope.row.ceyanfile != null" link type="text" style="color: #0dbc79;"
-              @click="exportGeno(scope.row.ceyanfile)">
-              {{ scope.row.ceyanfile.split("\\").pop() }}
             </el-button>
             <el-button v-else link type="text" disabled>
               无文件
@@ -93,7 +91,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="提示信息">
           <template #default="scope">
-            <el-popover placement="top" title="Info" trigger="hover" :content="getPopoverContent(scope.row.info)">
+            <el-popover placement="top" trigger="hover" :content="scope.row.info?scope.row.info:'无'">
               <template #reference>
                 <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
               </template>
@@ -109,7 +107,6 @@
                 </el-button>
               </template>
             </el-popconfirm>
-
           </template>
         </el-table-column>
       </el-table>
@@ -121,102 +118,14 @@
   </div>
 </template>
 
-<!-- <script>
-
-import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
-import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
-import useUserStore from "@/store/modules/user";
-import { getJsonByCSV, jsonToTable } from '@/utils/tree';
-import { getToken } from "@/utils/auth";
-import { parseTime } from "@/utils/param";
-import { getTreeNodeIdsByNode } from "@/utils/tree";
-import { ElMessage } from "element-plus";
-import { useRouter } from "vue-router";
-
-import { uploadFile } from "@/api/gjy/decision.js"
-export default {
-  data() {
-    return {
-      textarea2: '',
-      materialName: [],
-      fileList: [],
-      uploadUrl: '',
-      param: '#' // 这里假设你有从其他地方获取或初始化param的方式
-    }
-  },
-  async mounted() {
-  },
-  methods: {
-    async submit() {
-
-
-      console.log(this.textarea2);
-      this.textarea2 = this.textarea2.replace(/\ +/g, "\n").replace(/[\r\n]/g, "\n");
-      this.textarea2 = this.textarea2.replace(/,/g, "\n");
-      this.textarea2 = this.textarea2.replace(/，/g, "\n");
-      this.textarea2 = this.textarea2.replace(/\n+/g, '\n');
-      // console.log(this.textarea2);
-      this.materialName = this.textarea2.split(/\s+/);;
-      // console.log(this.materialName);
-      const upload = this.$refs.upload;
-      // 文件上传
-      const uploadUrl = ref("");
-
-      console.log(this.fileList);
-      uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-        }/system/breed2/NewFile`;
-      console.log(uploadUrl);
-      // $modal.msg("上传数据较大，请耐心等待！");
-      await upload.value.submit();
-    },
-    getToken() {
-      // 根据实际情况获取token，这里仅作示例
-      return localStorage.getItem('accessToken') || '';
-    },
-    handleBeforeUpload(file) {
-      // 在上传前进行一些验证操作
-      return true; // 返回true表示允许上传
-    },
-    handleUploadFile(file) {
-      this.fileList = [file];
-    },
-    async uploadFileSuccess(response) {
-      // 上传成功后的处理
-      console.log('上传成功:', response);
-      this.$message.success('文件上传成功');
-    },
-    uploadFileError(err) {
-      // 上传失败的处理
-      console.error('上传失败:', err);
-      this.$message.error('文件上传失败');
-    },
-    handleExceed(files, fileList) {
-      // 超过限制时的处理
-      this.$message.warning(`只能上传一个文件`);
-    },
-    // async uploadFiles() {
-    //   console.log(this.fileList);
-    //   uploadFile(this.fileList[0], "#");
-    // }
-  },
-  mounted() {
-    // 如果需要在组件挂载后立即上传（例如自动上传的情况）
-    // 可以在这里调用uploadFiles方法
-    // this.uploadFiles();
-  }
-}; -->
-
-
-
 <script setup>
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
-import { getEnvAnalyzeList,getDataListAPI } from "@/api/decision/decision";
-import { addMar, deleteMar, downloadFile, addMarNew } from '@/api/material';
+import { getEnvAnalyzeList,getDataListAPI,deleteMar, downloadFile} from "@/api/decision/decision";
 import { getToken } from "@/utils/auth";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { blobValidate } from '@/utils/param'
+import { get } from "@vueuse/core";
 
 const router = useRouter();
 
@@ -234,38 +143,47 @@ const fileList = ref([]);
 // 分页参数
 const queryParams = ref({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 3,
 });
+// 弹出框
+const showPopover = ref(false);
 
 const total = ref(0);
 
 const dataList=ref([]);
 
-function getPopoverContent(info) {
-	if (info === 'The variation information of your file has non [-1,0,1,2] value, maybe your file has empty value or last row is empty, please check your file!') {
-        return '您文件中的变异信息存在非[-1,0,1,2]的值，可能是您的文件存在空值或文件最后一行为空，请检查您的文件！';
-      } else if (info === 'The material name you entered was not found in our database, please check it!') {
-        return '您输入的材料名称在我们的数据库中找不到，请检查!';
-      } else if (info === 'Flag setting error, please contact the administrator!') {
-        return 'Flag设置错误，请联系管理员!';
-      } else if (info === 'Please press the system test species button!') {
-        return '请点击系统测验种按钮!';
-      } else if (info === 'Please check the format of your vcf file, null value exists in the file!') {
-        return '请检查您的vcf文件格式，文件中存在空值!';
-      } else if (info === 'Please check the format of your vcf file, we need your vcf file to have standard header!') {
-        return '请检查您的vcf文件的格式，我们需要您的vcf文件有标准的title!';
-      } else if (info === 'Your vcf file has empty values, please check your vcf file!') {
-        return '您的vcf文件有空值，请检查您的vcf文件!';
-      } else if (info === 'Please check the format of your vcf file, we need the format of snp variation is [./.,0/0,0/1,1/1]!') {
-        return '请检查您的vcf文件格式，我们需要的变异信息的格式是[./.，0/0,0/1,1/1]!';
-      } else if (info === 'Please check your csv file format!') {
-        return '请检查您的csv文件格式!';
-      } else if (info === 'please check material in your test file!') {
-        return '请检查您的测验种文件中的材料名，它不能为0,-1,1,2!';
-      }else if (info === 'over!'){
-		return "完成!";
-	  }
-}
+// 点击文件按钮
+const clickPopover = () => {
+  showPopover.value = !showPopover.value;
+  console.log(showPopover.value);
+};
+
+// function getPopoverContent(info) {
+	// if (info === 'The variation information of your file has non [-1,0,1,2] value, maybe your file has empty value or last row is empty, please check your file!') {
+  //       return '您文件中的变异信息存在非[-1,0,1,2]的值，可能是您的文件存在空值或文件最后一行为空，请检查您的文件！';
+  //     } else if (info === 'The material name you entered was not found in our database, please check it!') {
+  //       return '您输入的材料名称在我们的数据库中找不到，请检查!';
+  //     } else if (info === 'Flag setting error, please contact the administrator!') {
+  //       return 'Flag设置错误，请联系管理员!';
+  //     } else if (info === 'Please press the system test species button!') {
+  //       return '请点击系统测验种按钮!';
+  //     } else if (info === 'Please check the format of your vcf file, null value exists in the file!') {
+  //       return '请检查您的vcf文件格式，文件中存在空值!';
+  //     } else if (info === 'Please check the format of your vcf file, we need your vcf file to have standard header!') {
+  //       return '请检查您的vcf文件的格式，我们需要您的vcf文件有标准的title!';
+  //     } else if (info === 'Your vcf file has empty values, please check your vcf file!') {
+  //       return '您的vcf文件有空值，请检查您的vcf文件!';
+  //     } else if (info === 'Please check the format of your vcf file, we need the format of snp variation is [./.,0/0,0/1,1/1]!') {
+  //       return '请检查您的vcf文件格式，我们需要的变异信息的格式是[./.，0/0,0/1,1/1]!';
+  //     } else if (info === 'Please check your csv file format!') {
+  //       return '请检查您的csv文件格式!';
+  //     } else if (info === 'please check material in your test file!') {
+  //       return '请检查您的测验种文件中的材料名，它不能为0,-1,1,2!';
+  //     }else if (info === 'over!'){
+	//   return "完成!";
+  // }
+
+// }
 
 // 获取育种任务列表
 const getdataList = async () => {
@@ -304,35 +222,25 @@ const handleUploadFile = (file) => {
 
 let textarea2 = ref('');
 
-const submit1 = async () => {
+const submit = async () => {
   if (textarea2.value === '') {
     $modal.msgWarning("请输入材料名称！");
     return;
   }
-
-  let resultValue = textarea2.value.split(/[ \n,，]+/).join(';');
-  console.log(resultValue);
-  const res = await getEnvAnalyzeList(resultValue);
-  if (res.code === 200) {
-    $modal.msgSuccess(res.msg);
-  } else {
-    $modal.msgError(res.msg);
-  }
-}
-
-// 提交文件
-const submit2 = async () => {
   if (fileList.value.length === 0) {
     $modal.msgWarning("请先上传文件！");
     return;
   }
-  const res = await getEnvAnalyzeList(fileList.value[0].raw);
+  let resultValue = textarea2.value.split(/[ \n,，]+/).join(';');
+  console.log(resultValue);
+  const res = await getEnvAnalyzeList({ param: resultValue},fileList.value[0]);
   if (res.code === 200) {
     $modal.msgSuccess(res.msg);
+      getdataList();
   } else {
     $modal.msgError(res.msg);
   }
-};
+}
 
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
@@ -432,7 +340,8 @@ function exportPdf(row) {
 async function handleDelete(row) {
 	console.log(row)
 	await deleteMar(row.id)
-	getList()
+  ElMessage.success('删除成功')
+	getdataList()
 }
 
 onMounted(() => {
@@ -441,764 +350,96 @@ onMounted(() => {
 
 </script>
 
-<!-- <script setup>
-import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
-import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
-import useUserStore from "@/store/modules/user";
-import { getJsonByCSV, jsonToTable } from '@/utils/tree';
-import { getToken } from "@/utils/auth";
-import { parseTime } from "@/utils/param";
-import { getTreeNodeIdsByNode } from "@/utils/tree";
-import { ElMessage } from "element-plus";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-// vue实例
-const {
-  proxy: { $modal, $download },
-} = getCurrentInstance();
-// 登录用户权限
-const { roles } = useUserStore();
-const isDisabled = ref(false);
-const isDisabled2 = ref(false);
-
-// 加载
-const loading = ref(false);
-const loadingText = ref("加载中...");
-const tableLoading = ref(false);
-const historyTableLoading = ref(false);
-
-// 对话框
-const dialogFormVisible = ref(false);
-const dialogStatus = ref("");
-const textMap = {
-  create: "添加文件",
-  update: "修改文件",
-  other: "选择合并文件",
-  createNode: "添加节点",
-  updateNode: "修改节点",
-};
-
-// 表单实例
-const form = ref(null);
-
-// 表单参数
-const dataForm = reactive({
-  fileId: null,
-  fileName: "",
-  description: "",
-  remark: "",
-  fileStatus: true,
-  dateTime: null,
-});
-
-//删除按钮状态
-const deleteDisabled = ref(false);
-
-// 校验规则
-const rules = reactive({
-  fileName: [{ required: true, message: "请输入文件名", trigger: "blur" }],
-  description: [
-    { required: false, message: "请输入文件描述备注", trigger: "blur" },
-  ],
-  dateTime: [{ required: true, message: "请选择一个日期", trigger: "blur" }],
-});
-
-const dataForm2 = reactive({
-  fileName: "",
-  description: "",
-  dateTime: "",
-  fileStatus: false,
-});
-
-const drawer = ref(false); // 文件详情窗口开启状态
-const fileName = ref(""); // 选中文件名
-const curFileUrl = ref(""); //文件路径
-
-//表单重置
-function resetForm() {
-  dataForm.fileId = null;
-  dataForm.fileName = "";
-  dataForm.description = "";
-  dataForm.remark = "";
-  dataForm.fileStatus = true;
-  dataForm.dateTime = null;
-}
-
-const drawerTableLoading = ref(false);
-const drawerTableData = ref([]);
-const tableProps = ref([]);
-// 开启文件详情窗口
-async function openDrawer(row) {
-  fileName.value = row.fileName;
-  curFileUrl.value = row.url;
-  drawer.value = true;
-  drawerTableLoading.value = true;
-  getJsonByCSV(row.url).then((result) => {
-    tableProps.value = result[0];
-    drawerTableData.value = jsonToTable(result);
-    drawerTableLoading.value = false;
-  });
-}
-
-// 上传实例
-const upload = ref(null);
-// 文件上传
-const uploadUrl = ref("");
-
-//文件上传前触发
-//文件格式验证
-const handleBeforeUpload = (file) => {
-  // 拿到文件后缀名
-  const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
-  const isCsv = fileType === "csv";
-  if (!isCsv) {
-    $modal.msgError(
-      "只能上传csv格式的文件！",
-      "error",
-      "vab-hey-message-error"
-    );
-    return false;
-  }
-  return isCsv;
-};
-
-/* const handleUploadFile = (file) => {
-  // Handle file upload
-  console.log(file);
-}; */
-
-const createData = async () => {
-  const valid = await form.value.validate();
-  console.log(valid);
-  if (valid) {
-    uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-      }&fileName=${dataForm.fileName}`;
-
-    $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled.value = true;
-    onsole.log("3");
-    console.log("4");
-    tableLoading.value = false;
-    tableName.value = "";
-  }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-};
-
-const tableName = ref("");
-
-//文件合并
-function mergeFile(row) {
-  dialogStatus.value = "other";
-  tableName.value = row.tableName;
-  fileList.value = [];
-  resetForm();
-  dialogFormVisible.value = true;
-  isDisabled2.value = false;
-  /* fileList.value = [];
-  dialogFormVisible.value = true;
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/penotypeFile/merge?tableName=${row.tableName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  }); */
-  //dialogFormVisible.value = false;
-}
-
-//文件合并
-
-const mergeData = async () => {
-  const valid = await form.value.validate();
-  console.log(valid);
-  if (valid) {
-    uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
-      }&fileName=${dataForm.fileName}`;
-    $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
-
-    console.log("4");
-    tableLoading.value = false;
-    onsole.log("5");
-    tableName.value = "";
-  }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-};
-
-// 文件创建
-/* function createData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${
-        tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${
-        dataForm.remark
-      }&fileName=${dataForm.fileName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  });
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-} */
-
-// 文件上传成功回调
-async function uploadFileSuccess(response) {
-  if (response.code === 200) {
-    $modal.msgSuccess(response.msg);
-  } else {
-    $modal.msgError("格式不正确，请下载模板文件比对！");
-  }
-  //$modal.msgSuccess("上传成功");
-
-  isDisabled.value = false;
-  const curNode = tree.value.getCurrentNode();
-  //upload.value.clearFiles();
-
-  getList();
-  rowClick(curNode);
-  dialogFormVisible.value = false;
-}
-
-// 文件上传失败回调
-const uploadFileError = (error, file, fileList) => {
-  console.log("File upload error", error);
-  $modal.msgError("上传失败");
-};
-
-//更新文件
-async function updateData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-        }/phenotypeFile/upload?fileName=${dataForm.fileName}&description=${dataForm.description
-        }&fileStatus=${dataForm.fileStatus ? 1 : 0}&treeId=${tree.value.getCurrentNode().treeId
-        }&dateTime=${parseTime(dataForm.dateTime)}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  });
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-}
-
-//取消文件对话框
-function deleteUploadData() {
-  dialogFormVisible.value = false;
-  isDisabled.value = false;
-  /*rules.value = {}; */
-  if (form.value) {
-    form.value.resetFields();
-  }
-  getList();
-}
-
-//关闭添加文件窗口
-const dialogClosed = () => {
-  getList();
-};
-
-/* const dialogClosed = () => {
-  if (form.value) {
-    form.value.resetFields();
-  }
-  getList();
-}; */
-
-// 文件替换
-function handleExceed(files) {
-  upload.value?.clearFiles();
-  const file = files[0];
-  file.uid = genFileId();
-  upload.value?.handleStart(file);
-}
-
-/* // 文件修改
-async function updateData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      tableLoading.value = true;
-      updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
-        .then((res) => {
-          tableLoading.value = false;
-          dialogFormVisible.value = false;
-          getList();
-        })
-        .catch((err) => {
-          loading.value = false;
-          $modal.msgError("修改失败");
-        });
-    }
-  });
-} */
-
-// 文件表格
-const fileList = ref([]); // 文件列表
-const historyFileList = ref([]); //历史文件版本
-const ids = ref([]); // 选中数组
-const multiple = ref(false); // 是否多选
-
-// 打开添加文件对话框
-function handleAdd() {
-  dialogStatus.value = "create";
-  fileList.value = [];
-  resetForm();
-  dialogFormVisible.value = true;
-  isDisabled.value = false;
-}
-
-// 删除文件
-function handleDelete() {
-  if (ids.value.length == 0) {
-    $modal.msg("您没有选择文件！");
-  } else {
-    $modal.confirm("是否删除文件?").then(() => {
-      delFile(ids.value)
-        .then((res) => {
-          console.log("222");
-          $modal.msgSuccess("删除成功！");
-          getList();
-        })
-        .catch((err) => {
-          $modal.msgError("删除失败");
-        });
-    });
-  }
-}
-
-const allFileId = ref([]);
-
-// 请求文件列表
-function getList() {
-  tableLoading.value = true;
-  listFile({
-    ...queryParams,
-    treeId: tree.value.getCurrentNode().treeId,
-    fileStatus: roles[0] === "admin" ? null : 1,
-  })
-    .then((res) => {
-      tableLoading.value = false;
-      fileList.value = res.rows.map((item) => ({
-        ...item,
-        fileStatus: item.status === 1,
-      }));
-      fileList.value.forEach((item) => {
-        allFileId.value.push(item.fileId);
-      });
-      total.value = res.total;
-    })
-    .catch((err) => {
-      tableLoading.value = false;
-      $modal.msgError("获取列表失败");
-    });
-}
-
-// 选择文件项
-function handleSelectionChange(selection) {
-  ids.value = [];
-  selection.forEach((item) => {
-    ids.value.push(item.fileId);
-  });
-}
-
-// 更新是否公开选项
-async function updateFileStatus(row) {
-  updateFile({
-    fileId: row.fileId,
-    fileStatus: row.fileStatus,
-    fileName: row.fileName,
-    description: row.description,
-    dateTime: row.dateTime,
-  })
-    .then((res) => {
-      $modal.msgSuccess("更新成功");
-    })
-    .catch((err) => {
-      $modal.msgError("更新失败");
-    });
-}
-
-// 下载文件
-const downloadLoading = ref(false);
-let downloadTimer = null;
-async function handleDownload(row) {
-  if (downloadLoading.value) {
-    return; // Prevent multiple downloads while in progress
-  }
-  $modal.msg("正在下载中，请等待");
-  downloadLoading.value = true;
-  try {
-    await $download.resource(row.url);
-
-    downloadTimer = setTimeout(() => {
-      downloadLoading.value = false;
-      clearTimeout(downloadTimer);
-    }, 5000);
-  } catch (error) {
-    console.log(error);
-    downloadLoading.value = false;
-  }
-}
-
-// 修改文件
-function handleUpdate(row) {
-  dataForm.fileId = row.fileId;
-  dataForm.fileName = row.fileName;
-  dataForm.description = row.description;
-  dataForm.fileStatus = row.fileStatus;
-  dataForm.dateTime = row.dateTime;
-  dialogFormVisible.value = true;
-  dialogStatus.value = "update";
-}
-
-// 删除文件
-function deleteFile(row) {
-  $modal.confirm("是否删除文件?").then(() => {
-    delFile([row.fileId])
-      .then((res) => {
-        $modal.msgSuccess("删除成功！");
-        getList();
-      })
-      .catch((err) => {
-        $modal.msgError("删除失败");
-      });
-  });
-}
-
-//跳转文件详情
-const openfile = (row) => {
-  console.log(row.tableName, "klkl");
-  router.push({
-    path: "/phenotype/file", // 跳转到的目标页面的路由名称
-    query: { id: row.fileId, tableName: row.tableName },
-  });
-};
-
-//查看文件历史版本
-function openHistory(row) {
-  historyTableLoading.value = true;
-  historyFormVisible.value = true;
-  listFile({
-    ...queryParams,
-    treeId: tree.value.getCurrentNode().treeId,
-    fileStatus: roles[0] === "admin" ? null : 1,
-    tableName: row.tableName,
-  })
-    .then((res) => {
-      tableLoading.value = false;
-      historyFileList.value = res.rows.map((item) => ({
-        ...item,
-        fileStatus: item.status === 1,
-      }));
-      historyFileList.value.forEach((item) => {
-        allFileId.value.push(item.fileId);
-      });
-      total.value = res.total;
-      historyTableLoading.value = false;
-    })
-    .catch((err) => {
-      tableLoading.value = false;
-      historyTableLoading.value = false;
-      $modal.msgError("获取列表失败");
-    });
-}
-
-// 表单提交
-const total = ref(2);
-const queryParams = reactive({
-  pageNum: 1,
-  pageSize: 10,
-  treeId: "",
-  fileId: "",
-  fileName: "",
-  description: "",
-  fileStatus: "",
-  dateTime: "",
-});
-const showSearch = ref(true);
-const queryForm = ref(null); // 查询表单dom元素
-const handleQuery = async () => {
-  // 查询回调
-  queryParams.treeId = tree.value.getCurrentNode().treeId;
-
-  getList();
-};
-
-const resetQuery = () => {
-  queryParams.pageNum = 1;
-  queryParams.pageSize = 10;
-  queryParams.treeId = 0;
-  queryParams.fileId = "";
-  queryParams.fileName = "";
-  queryParams.description = "";
-  queryParams.fileStatus = true;
-  getList();
-};
-
-// 树控件
-const routesData = ref([
-  /*  {
-    treeName: "Level one 1",
-    treeId: "1",
-    children: [
-      {
-        treeName: "Level two 1-1",
-        treeId: "11",
-        children: [
-          {
-            treeName: "Level three 1-1-1",
-            treeId: "111",
-          },
-        ],
-      },
-    ],
-  }, */
-]);
-
-// 树表单
-const treeForm = reactive({
-  treeName: "",
-  isShow: true,
-});
-
-const dialogTreeFormVisible = ref(false); // 树表单可见
-const historyFormVisible = ref(false); //历史上传记录表单
-const dataTreeForm = ref(null); // 树表单dom实例
-const dialogTreeStatus = ref("createNode");
-//树表单验证规则
-const treeRules = reactive({
-  treeName: [
-    { required: true, message: "Please input Activity name", trigger: "blur" },
-  ],
-  isShow: [{ required: true, message: "Please select", trigger: "blur" }],
-});
-
-// 树组件节点属性
-const defaultProps = ref({
-  children: "children",
-  label: "treeName",
-});
-
-const treeType = ref(4); // 树的种类
-const tree = ref(null); // 数的dom实例
-const firstLeafNode = ref(null);
-const firstLeafNodeKey = ref(null);
-
-const getTreeList = () => {
-  getTree(treeType.value, 0, 1).then((res) => {
-    routesData.value = res.data.children;
-    const firstLeafNodeParent = findFirstLeafNodeParent(routesData.value);
-
-    if (firstLeafNodeParent) {
-      nextTick(() => {
-        const treeComponent = tree.value;
-
-        if (treeComponent) {
-          treeComponent.setCurrentKey(firstLeafNodeParent.treeId);
-          rowClick(firstLeafNodeParent);
-        }
-      });
-    }
-  });
-};
-
-// 递归查找第一个叶子节点的父节点的函数
-function findFirstLeafNodeParent(nodes, parentNode = null) {
-  for (const node of nodes) {
-    if (!node.children || node.children.length === 0) {
-      // 如果当前节点是叶子节点，返回其父节点
-      return parentNode;
-    } else {
-      const firstLeafParent = findFirstLeafNodeParent(node.children, node);
-      if (firstLeafParent) {
-        return firstLeafParent;
-      }
-    }
-  }
-  return null;
-}
-
-// 递归查找第一个叶子节点的函数
-function findFirstLeafNode(nodes) {
-  for (const node of nodes) {
-    if (!node.children || node.children.length === 0) {
-      return node;
-    } else {
-      const firstLeaf = findFirstLeafNode(node.children);
-      if (firstLeaf) {
-        return firstLeaf;
-      }
-    }
-  }
-  return null;
-}
-
-// 重置树表单
-function resetTreeForm() {
-  treeForm.treeName = "";
-  treeForm.isShow = true;
-}
-
-// 添加节点
-function addChildNode() {
-  if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
-    $modal.msgWarning("请选择所要添加节点的父节点");
-    return;
-  }
-  resetTreeForm();
-  dialogTreeStatus.value = "createNode";
-  dialogTreeFormVisible.value = true;
-}
-
-// 修改节点
-function updateChildNode() {
-  if (!tree.value.getCurrentNode()) {
-    $modal.msgWarning("请选择所要修改节点的父节点");
-    return;
-  }
-  resetTreeForm();
-  dialogTreeStatus.value = "updateNode";
-  dialogTreeFormVisible.value = true;
-}
-
-//下载模板文件
-function downloadTemplate() {
-  //下载
-  $download.resource(
-    "C:\\Users\\Administrator\\Desktop\\yuzhong\\表型数据模板.csv"
-  );
-}
-
-// 创建树节点
-function createTreeData() {
-  dataTreeForm.value.validate((valid) => {
-    if (valid) {
-      const id = tree.value.getCurrentNode()
-        ? tree.value.getCurrentNode().treeId
-        : 0;
-      addNode({
-        isShow: treeForm.isShow ? 1 : 0,
-        treeName: treeForm.treeName,
-        parentId: id,
-        treeType: treeType.value,
-      }).then(
-        () => {
-          $modal.msgSuccess("添加节点成功");
-          getTreeList();
-        },
-        () => {
-          $modal.msgError("添加节点失败");
-        }
-      );
-      dialogTreeFormVisible.value = false;
-    }
-  });
-}
-
-// 更新树节点
-function updateTreeData() {
-  dataTreeForm.value.validate((valid) => {
-    if (valid) {
-      updateNode({
-        isShow: treeForm.isShow ? 1 : 0,
-        treeName: treeForm.treeName,
-        treeId: tree.value.getCurrentNode().treeId,
-      }).then(
-        () => {
-          $modal.msgSuccess("修改成功");
-          getTreeList();
-        },
-        () => {
-          $modal.msgError("修改失败");
-        }
-      );
-      dialogTreeFormVisible.value = false;
-    }
-  });
-}
-
-//删除节点
-function deleteNode() {
-  if (!tree.value.getCurrentNode()) {
-    $modal.msgWarning("请选择节点");
-    return;
-  }
-  $modal.confirm("是否删除该节点").then(() => {
-    const curNode = tree.value.getCurrentNode();
-    const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
-    deleteNodes(curNodeTreeIds).then(() => {
-      $modal.msgSuccess("删除节点成功");
-      getTreeList();
-    });
-  });
-}
-
-//树控件点击回调
-function rowClick(nodeObj) {
-  if (nodeObj.disabled) {
-    return;
-  }
-  /* resetForm(); */
-  treeRules.value = {};
-  /* rules.value = {};  */
-  treeForm.treeName = nodeObj.treeName;
-  if (nodeObj.isShow == 1) {
-    treeForm.isShow == true;
-  } else {
-    treeForm.isShow == false;
-  }
-
-  queryParams.treeId = nodeObj.treeId;
-  resetQuery();
-  getList();
-}
-
-onMounted(() => {
-  getTreeList();
-});
-</script> -->
-
 <style lang="less" scoped>
+.upper{
+  border-radius: 5px;
+  height: 50vh;
+  .background{
+    height: 100%;
+    // background-color: #d94646;
+    border-radius: 5px;
+    background-image: url('@/assets/images/breed.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .main-content{
+      width: 50%;
+      height: 70%;
+      .main-title{
+        font-size: 40px;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 20px;
+        color:#fff
+      }
+      .input-wrapper{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        .input{
+          width: 70%;
+          @media (max-width: 1500px) {
+            width: 90%;
+          }
+          color: #fff;
+          :deep(.el-input){
+            --el-input-border-color:#1FB864 !important;
+          }
+          .el-input{
+            width: 100%;
+            font-size: 110%;
+            box-shadow: none;
+            :deep(.el-input__inner){
+              // box-shadow: none;
+              &::placeholder{
+                color: #817d7d;
+                font-size: 85%;
+              }
+            }
+            :deep(.el-input-group__prepend){
+              background-color: #fff;
+              .el-button{
+                .el-icon{
+                  // background-color: #1FB864;
+                  font-size: 120%;
+                }
+              }
+            }
+            :deep(.el-input-group__append){
+              background-color: #1FB864;
+              width: 18%;
+              border: none;
+              border-radius: 0 5px 5px 0;
+              cursor: pointer;
+            }
+            :deep(.el-button){
+              width: 100%;
+              color:#fff;
+              display: flex;
+              justify-content: space-between;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.inner-upload{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .btns{
+    display: flex;
+    justify-content:flex-end;
+    margin-top: 40px;
+  }
+}
+.lower{
+  min-height: 30vh;
+}
 .card-container {
   // width: 97%;
   // border-radius: 50px;
@@ -1210,7 +451,6 @@ onMounted(() => {
   // }
 
   //padding: 20px 20px 0px;
-  max-height: 50vh;
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
@@ -1289,82 +529,12 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
   position: relative;
   background-color: #fff;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
-}
-
-:deep(.el-card__header) {
-  background: #525559;
-  height: 60px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
-
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
-  span {
-
-    font-weight: 700;
-    font-size: 20px;
-    color: white;
-    text-align: center;
-    letter-spacing: 2px;
-  }
-
-
-}
 
 
 
@@ -1564,43 +734,43 @@ onMounted(() => {
 
 
 :deep(.el-button) {
-  --el-button-border-color: #dcdfe6;
+  --el-button-border-color: #1FB864;
   --el-button-bg-color: #ffffff;
   --el-button-text-color: #606266;
   --el-button-disabled-text-color: #a8abb2;
   --el-button-disabled-bg-color: #ffffff;
   --el-button-disabled-border-color: #e4e7ed;
   --el-button-divide-border-color: rgba(255, 255, 255, .5);
-  --el-button-hover-text-color: #409eff;
+  --el-button-hover-text-color: #1FB864;
   --el-button-hover-bg-color: #ecf5ff;
-  --el-button-hover-border-color: #c6e2ff;
-  --el-button-active-text-color: #409eff;
-  --el-button-active-border-color: #409eff;
+  --el-button-hover-border-color: #1FB864;
+  --el-button-active-text-color: #1FB864;
+  --el-button-active-border-color: #1FB864;
   --el-button-active-bg-color: #ecf5ff;
 }
 
 :deep(.el-button--primary.is-plain) {
-  --el-button-text-color: #409eff !important;
+  --el-button-text-color: #1FB864 !important;
   --el-button-bg-color: #ecf5ff !important;
-  --el-button-border-color: #a0cfff !important;
+  --el-button-border-color: #1FB864 !important;
   --el-button-hover-text-color: #ffffff !important;
-  --el-button-hover-bg-color: #409eff !important;
-  --el-button-hover-border-color: #409eff !important;
+  --el-button-hover-bg-color: #1FB864 !important;
+  --el-button-hover-border-color: #1FB864 !important;
   --el-button-active-text-color: #ffffff !important;
 }
 
 .el-button--primary {
   --el-button-text-color: #ffffff;
-  --el-button-bg-color: #409eff;
-  --el-button-border-color: #409eff;
+  --el-button-bg-color: #21c96c;
+  --el-button-border-color: #21c96c;
   --el-button-hover-text-color: #ffffff;
-  --el-button-hover-bg-color: #79bbff;
-  --el-button-hover-border-color: #79bbff;
-  --el-button-active-bg-color: #337ecc;
-  --el-button-active-border-color: #337ecc;
-  --el-button-disabled-text-color: #337ecc;
-  --el-button-disabled-bg-color: #a0cfff;
-  --el-button-disabled-border-color: #a0cfff;
+  --el-button-hover-bg-color: #1FB864;
+  --el-button-hover-border-color: #1FB864;
+  --el-button-active-bg-color: #1FB864;
+  --el-button-active-border-color: #1FB864;
+  --el-button-disabled-text-color: #1FB864;
+  --el-button-disabled-bg-color: #1FB864;
+  --el-button-disabled-border-color: #1FB864;
 }
 
 .el-button--success.is-plain {
