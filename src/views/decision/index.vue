@@ -7,20 +7,20 @@
           <div class="input-wrapper">
             <div class="input">
               <el-input
-                placeholder="请输入材料名称(用逗号或空格隔开)和上传材料基因型文件"
+                placeholder="请输入材料名称(多个用逗号隔开)和上传材料基因型文件"
                 v-model="textarea2"
                 size="large"
               >
                 <template #prepend>
                   <el-popover :width="500" placement="bottom-start" :visible.sync="showPopover">
                     <div class="inner-upload">
-                      <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept="." drag
+                      <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag
                         show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
                         :on-error="uploadFileError" :on-success="uploadFileSuccess"
                         :on-change="handleUploadFile"
                         :before-upload="handleBeforeUpload">
                         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                        <div>将文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
+                        <div>将.vcf格式文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
                       </el-upload>
                       <div class="btns">
                         <div class="close">
@@ -125,7 +125,6 @@ import { getToken } from "@/utils/auth";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { blobValidate } from '@/utils/param'
-import { get } from "@vueuse/core";
 
 const router = useRouter();
 
@@ -231,9 +230,14 @@ const submit = async () => {
     $modal.msgWarning("请先上传文件！");
     return;
   }
-  let resultValue = textarea2.value.split(/[ \n,，]+/).join(';');
-  console.log(resultValue);
-  const res = await getEnvAnalyzeList({ param: resultValue},fileList.value[0]);
+  const isRight = /^[\w\s]+(?:,[\w\s]+)*$/.test(textarea2.value);
+  if (!isRight) {
+    $modal.msgWarning("材料名称格式不正确！");
+    return;
+  }
+  let formdata = new FormData();
+  formdata.append('genofile', fileList.value[0].raw);
+  const res = await getEnvAnalyzeList({ param: textarea2.value},formdata);
   if (res.code === 200) {
     $modal.msgSuccess(res.msg);
       getdataList();
@@ -381,7 +385,7 @@ onMounted(() => {
         .input{
           width: 70%;
           @media (max-width: 1500px) {
-            width: 90%;
+            width: 95%;
           }
           color: #fff;
           :deep(.el-input){
@@ -395,7 +399,7 @@ onMounted(() => {
               // box-shadow: none;
               &::placeholder{
                 color: #817d7d;
-                font-size: 85%;
+                font-size: 80%;
               }
             }
             :deep(.el-input-group__prepend){
