@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; max-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 10px;">
+  <div style="width: 100%; background-color: #eeeeee;padding-top: 10px;">
     <div class="card-container upper">
       <div class="background">
         <div class="main-content">
@@ -12,7 +12,7 @@
                 size="large"
               >
                 <template #prepend>
-                  <el-popover :width="500" placement="bottom-start" :visible.sync="showPopover">
+                  <el-popover :width="400" placement="bottom-start" :visible.sync="showPopover">
                     <div class="inner-upload">
                       <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag
                         show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
@@ -47,7 +47,7 @@
         <span>育种任务列表</span>
         <el-button @click="getdataList" type="primary">刷新任务列表</el-button>
       </div>
-      <el-table max-height="22vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
+      <el-table max-height="70vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
         <el-table-column prop="id" label="育种任务id"></el-table-column>
         <el-table-column prop="materialName" label="材料名称"></el-table-column>
         <el-table-column fixed="right" label="材料基因型">
@@ -144,6 +144,8 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 3,
 });
+// 加载中显示框
+const loading=ref(null)
 // 弹出框
 const showPopover = ref(false);
 
@@ -222,7 +224,7 @@ const handleUploadFile = (file) => {
 let textarea2 = ref('');
 
 const submit = async () => {
-  if (textarea2.value === '') {
+  if (textarea2.value === ''||textarea2.value.trim() === ''){
     $modal.msgWarning("请输入材料名称！");
     return;
   }
@@ -237,10 +239,18 @@ const submit = async () => {
   }
   let formdata = new FormData();
   formdata.append('genofile', fileList.value[0].raw);
+  loading.value=ElMessage({
+    type:'warning',
+    message:'搜索中...',
+    duration:0,
+  })
   const res = await getEnvAnalyzeList({ param: textarea2.value},formdata);
   if (res.code === 200) {
-    $modal.msgSuccess(res.msg);
-      getdataList();
+    loading.value.close()
+    $modal.msgSuccess('搜索成功')
+    setTimeout(()=>{
+      router.go(0)
+    },1000)
   } else {
     $modal.msgError(res.msg);
   }
@@ -357,7 +367,7 @@ onMounted(() => {
 <style lang="less" scoped>
 .upper{
   border-radius: 5px;
-  height: 50vh;
+  height: 75vh;
   .background{
     height: 100%;
     // background-color: #d94646;
@@ -369,7 +379,7 @@ onMounted(() => {
     align-items: center;
     .main-content{
       width: 50%;
-      height: 70%;
+      height: 50%;
       .main-title{
         font-size: 40px;
         font-weight: 700;
@@ -435,15 +445,42 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  height: 220px;
+  .upload-demo{
+    width: 95%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
   .btns{
+    width: 100%;
     display: flex;
     justify-content:flex-end;
-    margin-top: 40px;
+    padding-right: 10px;
   }
 }
-.lower{
-  min-height: 30vh;
+:deep(.el-upload-dragger){
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  .el-icon{
+    height: 30px;
+  }
+  div{
+    padding: 20px;
+  }
 }
+:deep(.el-upload-list){
+  width:100%;
+}
+// .lower{
+//   min-height: 30vh;
+// }
 .card-container {
   // width: 97%;
   // border-radius: 50px;
@@ -732,9 +769,6 @@ onMounted(() => {
   height: 200px !important;
 }
 
-:deep(.el-upload-dragger) {
-  height: 200px !important;
-}
 
 
 :deep(.el-button) {
