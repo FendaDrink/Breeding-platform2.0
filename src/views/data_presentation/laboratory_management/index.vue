@@ -1,9 +1,5 @@
 <template>
-  <div style="
-          width: 100%;
-          min-height: calc(100vh - 84px);
-          background-color: #eeeeee;
-        ">
+  <div style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <!--树-->
@@ -16,12 +12,11 @@
       <!-- //右边的盒子 -->
       <el-main width="78%" style="padding: 0" class="right-box">
         <el-card class="card-container" v-show="fileChooseShow">
-          <h1>表型文件选择<i>&nbsp;</i></h1>
-          <!-- <template #header>
+          <template #header>
             <div class="card-header">
-              <span>表型文件选择</span>
+              <h1>表型文件选择<i>&nbsp;</i></h1>
             </div>
-          </template> -->
+          </template>
           <div v-if="fileList.length" class="big-wrapper" style="margin-top: 10px">
             <div class="form_choose">
               <el-radio-group :disabled="histogramLoading === true" v-model="declaredDates"
@@ -31,7 +26,7 @@
               </el-radio-group>
             </div>
             <el-row>
-              <el-button @click="chooseForm" v-loading="chooseLoading" size="large" type="primary"
+              <el-button @click="chooseForm" v-loading="chooseLoading" size="large" type="success" plain
                 style="width: 80px">确定</el-button>
             </el-row>
           </div>
@@ -54,12 +49,11 @@
 
         <div class="big_container home" v-show="laboratoryShow" v-loading="laboratoryLoading">
           <el-card class="card-container" style="margin-bottom: 0;">
-            <h1>多试验分析<i>&nbsp;</i></h1>
-            <!-- <template #header>
+            <template #header>
               <div class="card-header">
-                <span>多试验分析</span>
+                <h1>多试验分析<i>&nbsp;</i></h1>
               </div>
-            </template> -->
+            </template>
             <div style="margin-top: 10px">
               <div v-show="fileChooseShow">
                 <!-- <div class="input-title">
@@ -70,13 +64,13 @@
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                   <el-button style="margin-left: 20px !important" @click="search_trait" v-loading="searchLoading"
-                    icon="Search" type="primary">搜索</el-button>
+                    icon="Search" type="success" plain>搜索</el-button>
                 </div>
               </div>
               <!--  第二部分表单 -->
               <div class="labotatory_form">
-                <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark"
-                  style="margin: 30px auto" class="trait-form-table" v-show="laboratorFormShow" stripe>
+                <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="margin: 30px auto"
+                  class="trait-form-table" v-show="laboratorFormShow" stripe>
                   <el-table-column label="序号" width="80" type="index" align="center" :index="indexMethod" />
                   <el-table-column prop="traitName" label="性状名" align="center"></el-table-column>
                   <el-table-column prop="average" label="平均值" align="center"></el-table-column>
@@ -358,182 +352,93 @@ onMounted(async () => {
 </script>
 
 <style lang="less" scoped>
-.footer {
-  //background-color: red;
-  position: relative;
-  height: auto;
-
-  .pag {
-    position: absolute;
-    bottom: 0;
-    padding-top: 100px;
-    //background-color: blue;
-  }
-}
-
-.filter-item {
-  margin-right: 20px;
-}
-
-:deep(el-col) {
-  padding: 0%;
-}
-
-.myform {
-  display: flex !important;
-  align-items: center !important;
-  height: auto;
-}
-
 /* 所有标签 */
-.title {
-  margin: auto;
-}
-
-.node-title {
-  background-color: rgb(154, 190, 175);
-  color: #fff;
-  height: 50px;
-  width: 100%;
-  border-radius: 10px;
-  margin: 10px auto;
-}
-
-.node-title-content {
-  float: left;
-  margin-left: 20px;
-  font-size: 16px;
-  line-height: 50px;
-}
-
-.search_table {
-  display: flex;
-}
-
-
-.big-wrapper {
-  margin: auto;
-}
-
-.container-wrapper {
-  margin: auto;
-}
-
-.searchtable {
-  margin-bottom: 20px;
-}
-
-.SearchBox-card {
-  margin: 20px;
-  margin-bottom: 40px;
-}
-
-.input-title {
-  margin-left: 50px;
-  color: grey;
-  font-size: 12px;
-}
-
-.input-title span {
-  color: rgb(78, 151, 211);
-}
-
-/* 所有标签 */
-.title {
-  width: 95%;
-  margin: auto;
-}
-
-.node-title {
-  background-color: rgb(154, 190, 175);
-  color: #fff;
-  height: 50px;
-  width: 100%;
-  border-radius: 10px;
-  margin: 10px auto;
-}
-
-.node-title-content {
-  float: left;
-  margin-left: 20px;
-  font-size: 16px;
-  line-height: 50px;
-}
 
 #traitPanMap {
   height: 450px;
   width: 400px;
 }
 
-/deep/ #traitPanMap div {
+:deep(#traitPanMap) div {
   height: 450px;
   width: 400px;
 }
 
 .phenome-container {
-  display: flex;
-  flex-direction: column;
+  //display: flex;
+  //flex-direction: column;
+  //position: relative;
 
   .echart_wrapper {
     display: flex;
+    flex-direction: column;
+    position: relative;
 
     #traitPanMap {
-      width: 40%;
-      margin-left: -40px;
+      width: 100%;
     }
 
     .trait-form {
-      width: 60%;
+      width: 100%;
+      margin-top: -50px;
     }
+  }
+
+  .bgc-img {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    content: "";
+    //display: overflow;
+    // background-size: contain;
+    // background-repeat: no-repeat;
+    // background-position: bottom;
+    // box-sizing: border-box;
+    width: 60vw;
+    width: 100%;
+    height: 33vw;
+    opacity: 0.2;
+    // background-image: linear-gradient(to top, #9be15d 0%, #00e3ae 100%);
   }
 }
 
-.description-form {
-  margin-bottom: 40px;
-}
-
-.gene-description {
-  display: flex;
-  flex-direction: row;
-}
 
 .echart_wrapper {
   display: flex;
   justify-content: space-between;
 }
 
-.description-form {
-  width: 55%;
-}
 
-.description-echart {
-  width: 45%;
-}
+.card-container {
+  padding: 0px;
+  background-color: #fff;
+  margin: 0px 20px 20px 20px;
+  margin-right: 0;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
-.gene-form-table {
-  margin: 30px 0px;
+  h1 {
+    font-size: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin: 0 0 20px;
+  }
+
+  h1 i {
+    background-color: #1FB864;
+    height: 5px;
+    width: 150px;
+    margin-left: -75px;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 0;
+    opacity: .5;
+  }
 }
 
 .big-wrapper {
   margin: auto;
-}
-
-.container-wrapper {
-  margin: auto;
-}
-
-.right-box {
-  margin-left: 20px;
-}
-
-.right-box {
-  margin-left: 20px;
-}
-
-.app-container {
-  .permission-tree {
-    margin-bottom: 30px;
-  }
 }
 
 .form_choose {
@@ -551,20 +456,366 @@ onMounted(async () => {
 }
 </style>
 
+
 <style lang="less" scoped>
 :deep(.el-button) {
   margin: 0% !important;
-  margin-right: 20px !important;
+  margin-right: 8px !important;
 }
 
-.mytable {
-  background-color: #eeeeee;
+
+@media (max-width: 1330px) {
+  .my-button {
+    margin-right: 2px !important;
+    /* 缩小元素之间的间距 */
+    font-size: 7px;
+  }
+
+  .my-input {
+    width: 120px;
+    /* 缩小输入框的宽度 */
+    margin-right: 2px;
+    padding: 0% !important;
+  }
+
+  .el-button {
+    font-size: 12px;
+    /* 设置按钮的字体大小为小号 */
+    padding: 3px 6px;
+    /* 根据需要调整按钮的内边距 */
+  }
+
+  :deep(.el-input__inner) {
+    padding: 1px 11px;
+  }
+
+  :deep(.el-form-item__label) {
+    padding: 0%;
+  }
+}
+
+.hebin-button {
+  margin-right: 0% !important;
+}
+</style>
+
+<style lang="less" scoped>
+/* 假设 el-checkbox 是表头中的一个子元素 */
+
+:deep(.el-table .el-table__header-wrapper tr th) {
+  background-color: #1FB864 !important;
+  color: rgb(255, 255, 255);
+}
+
+/* 修改前后箭头未点击时的背景颜色 */
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background-color: #fff !important;
+}
+
+/* 修改未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+  background-color: #EEEEEE !important;
+}
+
+/* 未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
+  background-color: #fff !important;
+  color: #000;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #1FB864 !important; //修改默认的背景色
+  color: #fff;
+}
+
+:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.el-pagination ul li:not(:last-child)) {
+  border-right: #DDDDDD 1px solid;
+}
+
+
+:deep(.el-pagination ul) {
+  border: #DDDDDD 1px solid;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload .el-upload-dragger) {
+  width: 100%;
+}
+
+.green-button {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.green-button:hover {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
 }
 
 .table_button {
-  padding: 0% !important;
-  margin: 0 !important;
-  margin-right: 5px !important;
+  color: #1FB864;
+}
+
+.table_button:hover {
+  color: #1FB864;
+}
+
+:deep(.el-table__header .el-checkbox) {
+  /* Your styles here */
+  --el-checkbox-checked-input-border-color: #424F63;
+  --el-checkbox-checked-bg-color: #424F63;
+  --el-checkbox-input-border-color-hover: #424F63;
+}
+
+/* 树结构 */
+.el-aside {
+  background-color: #fff !important;
+}
+
+.el-tree {
+  background-color: #fff !important;
+  margin: 0px !important;
+  color: #000;
+  /* 字体大小在上面的代码中修改 */
+}
+
+.div1 {
+  padding: 15px 20px;
+  background-color: #EEEEEE;
+}
+
+.div2 {
+  padding: 15px 20px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.div3 {
+  padding: 20px 20px 0px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.el-table {
+  background-color: #EEEEEE !important;
+  margin-top: 20px;
+}
+
+.footer {
+  height: fit-content;
+}
+
+:deep(.el-radio) {
+  width: 30%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+  width: 150px;
+}
+
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+}
+
+:deep(.el-card__header) {
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
+
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+
+}
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
+}
+
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
+}
+
+//一级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #107c10;
+  height: 28px;
+
+  .el-tree-node__label {
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
+
+//二级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
+  height: 26px;
+
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
+
+三级节点选择器 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
+
+  .el-tree-node__label {
+    font-size: 14px;
+  }
+}
+</style>
+
+<style>
+:root {
+  --el-color-primary: #1FB864;
 }
 </style>
 
@@ -589,6 +840,11 @@ onMounted(async () => {
   font-size: 14px;
   color: black;
   padding: 0%;
+
+  svg {
+    color: black;
+
+  }
 }
 
 :deep(.el-tree-node__label) {
@@ -603,9 +859,7 @@ onMounted(async () => {
   background-color: #fff !important;
 }
 
-:deep(.el-icon) {
-  color: black;
-}
+
 
 .card {
   position: relative;
@@ -801,643 +1055,6 @@ onMounted(async () => {
 
   .el-tree-node__expand-icon {
     color: #424F63;
-  }
-}
-</style>
-
-<style lang="less" scoped>
-/* 假设 el-checkbox 是表头中的一个子元素 */
-
-:deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
-  color: rgb(255, 255, 255);
-}
-
-/* 修改前后箭头未点击时的背景颜色 */
-:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
-  background-color: #fff !important;
-}
-
-/* 修改未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
-  background-color: #EEEEEE !important;
-}
-
-/* 未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
-  background-color: #fff !important;
-  color: #000;
-}
-
-:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
-  color: #fff;
-}
-
-:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-:deep(.el-pagination ul li:not(:last-child)) {
-  border-right: #DDDDDD 1px solid;
-}
-
-
-:deep(.el-pagination ul) {
-  border: #DDDDDD 1px solid;
-}
-
-:deep(.el-upload) {
-  width: 100%;
-}
-
-:deep(.el-upload .el-upload-dragger) {
-  width: 100%;
-}
-
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-
-.green-button {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.green-button:hover {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.table_button {
-  color: #1FB864;
-}
-
-.table_button:hover {
-  color: #1FB864;
-}
-
-// .el-select-dropdown__item.selected {
-//   color: #1FB864;
-// }
-
-// .el-input {
-//   --el-input-focus-border-color: #1FB864;
-// }
-
-// .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
-// }
-
-/* 开关组件 */
-// :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
-// }
-
-/* 多选组件 */
-// :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
-// }
-
-:deep(.el-table__header .el-checkbox) {
-  /* Your styles here */
-  --el-checkbox-checked-input-border-color: #424F63;
-  --el-checkbox-checked-bg-color: #424F63;
-  --el-checkbox-input-border-color-hover: #424F63;
-}
-
-/* 树结构 */
-.el-aside {
-  background-color: #fff !important;
-}
-
-.el-tree {
-  background-color: #fff !important;
-  margin: 0px !important;
-  color: #000;
-  /* 字体大小在上面的代码中修改 */
-}
-
-.div1 {
-  padding: 15px 20px;
-  background-color: #EEEEEE;
-}
-
-.div2 {
-  padding: 15px 20px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.div3 {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.el-table {
-  background-color: #EEEEEE !important;
-  margin-top: 20px;
-}
-</style>
-
-<style>
-:root {
-  --el-color-primary: #1FB864;
-}
-</style>
-
-<style lang="less" scoped>
-/* 所有标签 */
-
-#traitPanMap {
-  height: 450px;
-  width: 400px;
-}
-
-:deep(#traitPanMap) div {
-  height: 450px;
-  width: 400px;
-}
-
-.phenome-container {
-  display: flex;
-  flex-direction: column;
-  //position: relative;
-
-  .echart_wrapper {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-
-    #traitPanMap {
-      width: 100%;
-    }
-
-    .trait-form {
-      width: 100%;
-      margin-top: -50px;
-    }
-  }
-
-  .bgc-img {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    content: "";
-    //display: overflow;
-    // background-size: contain;
-    // background-repeat: no-repeat;
-    // background-position: bottom;
-    // box-sizing: border-box;
-    width: 60vw;
-    width: 100%;
-    height: 33vw;
-    opacity: 0.2;
-    // background-image: linear-gradient(to top, #9be15d 0%, #00e3ae 100%);
-  }
-}
-
-
-.echart_wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-
-.card-container {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-
-  h1 {
-    font-size: 20px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-    margin: 0 0 20px;
-  }
-
-  h1 i {
-    background-color: #1FB864;
-    height: 5px;
-    width: 150px;
-    margin-left: -75px;
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    z-index: 0;
-    opacity: .5;
-  }
-}
-
-.big-wrapper {
-  margin: auto;
-}
-
-.right-box {
-  margin-left: 20px;
-}
-
-.form_choose {
-  display: flex;
-  flex-direction: column;
-
-  .el-radio-group {
-    margin: 20px 0;
-  }
-
-  .el-button {
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
-}
-</style>
-
-<style lang="less" scoped>
-:deep(.permission-tree) {
-  margin: 5px;
-  background: #f2fbf7;
-  min-width: 98%;
-  display: inline-block;
-  width: auto;
-  overflow: auto;
-  margin-right: 0px;
-  padding-right: 15px;
-}
-
-:deep(.el-tree-node__content) {
-  border-radius: 5px;
-  margin: 1px;
-  color: black;
-  padding: 0%;
-  height: 20px;
-}
-
-:deep(.el-tree-node__expand-icon) {
-  color: black;
-}
-
-.element-plus-tree {
-  //padding: 100px;
-
-  :deep(.el-tree) {
-
-    /* ---- ---- ---- ---- ^（节点对齐）---- ---- ---- ---- */
-
-    .el-tree-node {
-
-      /* ^ 所有节点 */
-
-      i.el-tree-node__expand-icon {
-        padding: 6px;
-
-        &::before {
-          font-family: element-ui-icons;
-          font-style: normal;
-          //content: "\e6d9";
-          //color: #000000;
-          border: 1px solid #606266;
-          border-radius: 2px;
-        }
-
-        // svg {
-        //   display: true; // 隐藏所有节点的 svg 图标
-        // }
-      }
-
-      /* / 所有节点 */
-
-      /* ^ 已展开的父节点 */
-
-      i.el-tree-node__expand-icon.expanded {
-        //transform: rotate(0deg); // 取消旋转
-        //-webkit-transform: rotate(0deg); // 取消旋转
-
-        &::before {
-          font-family: element-ui-icons;
-          font-style: normal;
-          //content: "\e6d8";
-          //color: #000000;
-          border: 1px solid #606266;
-          border-radius: 2px;
-        }
-      }
-
-
-      /* / 已展开的父节点 */
-
-      /* ^ 叶子节点 */
-
-      i.el-tree-node__expand-icon.is-leaf {
-
-        &::before {
-          display: none;
-        }
-      }
-
-      /* / 叶子节点 */
-
-      /* ^ 复选框 */
-
-      .el-checkbox {
-        margin: 0 7px 0 2px;
-
-        .el-checkbox__inner {
-          width: 14px;
-          height: 14px;
-          border-radius: 2px;
-          border: 1px solid #bbb;
-        }
-
-        .el-checkbox__input.is-checked .el-checkbox__inner,
-        .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-          border: 1px solid #5e7ce0;
-        }
-      }
-
-      /* / 复选框 */
-
-      .el-tree-node__content {
-        small {
-          font-size: 13px;
-        }
-      }
-    }
-
-    /* ---- ---- ---- ---- /（节点对齐）---- ---- ---- ---- */
-
-    /* ---- ---- ---- ---- ^（文字高亮）---- ---- ---- ---- */
-
-    .el-tree-node.is-current {
-      .el-tree-node__content {
-        small {
-          color: #5e7ce0;
-        }
-      }
-
-      .el-tree-node__children {
-        small {
-          color: unset;
-        }
-      }
-    }
-
-    /* ---- ---- ---- ---- /（文字高亮）---- ---- ---- ---- */
-
-    /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
-    /* ^ 树节点 */
-
-    .el-tree-node {
-      position: relative;
-      width: auto;
-      // width: max-content; // 显示文字宽度
-      padding-left: 13px;
-
-      &::before {
-        width: 1px;
-        height: 100%;
-        content: '';
-        position: absolute;
-        top: -38px;
-        bottom: 0;
-        left: 0;
-        right: auto;
-        border-width: 1px;
-        border-left: 1px solid #b8b9bb;
-      }
-
-      &::after {
-        width: 13px;
-        height: 13px;
-        content: '';
-        position: absolute;
-        z-index: 0;
-        left: 0;
-        right: auto;
-        top: 12px;
-        bottom: auto;
-        border-width: 1px;
-        border-top: 1px solid #b8b9bb;
-      }
-
-      .el-tree-node__content {
-        position: relative;
-        z-index: 1;
-        //color: #000;
-        padding-left: 0 !important;
-
-        /* ^ 复选框 */
-
-        .el-checkbox {
-          margin: 0 10px 0 5.5px;
-        }
-
-        /* / 复选框 */
-      }
-
-      .el-tree-node__children {
-        padding-left: 12px;
-      }
-
-      &:last-child::before {
-        height: 50px;
-      }
-    }
-
-    /* / 树节点 */
-
-    /* ^ 第一层节点 */
-
-    > .el-tree-node {
-      padding-left: 0;
-
-      &::before {
-        border-left: none;
-      }
-
-      &::after {
-        border-top: none;
-      }
-    }
-
-    /* / 第一层节点 */
-
-    /* ^ 叶子节点 */
-
-    i.el-tree-node__expand-icon.is-leaf {
-      display: none;
-    }
-
-    /* / 叶子节点 */
-
-    /* ^ 设置子节点左外边距 */
-
-    .el-tree-node__content:has(.is-leaf) {
-      // color: #00ffff;
-      margin-left: 12px !important;
-
-      .el-tree-node__label {
-        //font-size: 8px;
-      }
-
-      //background-color: red;
-    }
-
-    /* / 设置子节点左外边距 */
-    /* ---- ---- ---- ---- /（新增辅助线）---- ---- ---- ---- */
-  }
-}
-
-:deep(.el-tree-node__content) {
-  border-radius: 5px;
-  margin: 1px;
-  color: black;
-  padding: 0%;
-  height: 20px;
-}
-
-
-:deep(.el-tree-node__label) {
-  font-size: 13px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-//一级节点选择器
-:deep(.el-tree>.el-tree-node> .el-tree-node__content) {
-  font-weight: 600;
-  color: #80a492;
-  height: 28px;
-
-  .el-tree-node__label {
-    font-size: 18px;
-    font-family: "PingFang SC";
-  }
-}
-
-//二级节点选择器
-:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
-  font-weight: 500;
-  color: #99bcac;
-  height: 26px;
-
-  .el-tree-node__label {
-    font-size: 16px;
-  }
-}
-
-//三级节点选择器
-:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
-  font-weight: 400;
-  height: 23px;
-
-  .el-tree-node__label {
-    font-size: 14px;
-  }
-
-}
-
-// 设置高亮颜色
-:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: rgba(rgb(#4f6f46), 0.3) !important;
-
-  .el-tree-node__label {
-    color: #4f6f46;
-  }
-
-  .el-tree-node__expand-icon {
-    color: #4f6f46;
-  }
-}
-
-:deep(.el-tree-node__content:hover) {
-  color: #4f6f46;
-  background-color: rgba(168, 191, 143, 0.3);
-
-  .el-tree-node__expand-icon {
-    color: #4f6f46;
-  }
-}
-
-.mokuai {
-  margin-bottom: 0;
-  background-color: #F2FBF7;
-  padding: 0% !important;
-  margin-top: 0% !important;
-}
-
-
-:deep(.el-button) {
-  margin: 0% !important;
-  margin-right: 20px !important;
-}
-
-.mytable {
-  background-color: #EEEEEE;
-}
-
-.table_button {
-  padding: 0% !important;
-  margin: 0 !important;
-  margin-right: 5px !important;
-}
-
-.search-container {
-  display: flex;
-  max-width: 1100px;
-}
-
-.chooseNameInput,
-.chooseDateInput {
-  width: 150px;
-  flex: 0.4 0.4 auto;
-}
-
-@media (max-width: 1330px) {
-  .my-button {
-    margin-right: 2px !important;
-    /* 缩小元素之间的间距 */
-    font-size: 7px;
-  }
-
-  .my_input {
-    width: 120px;
-    /* 缩小输入框的宽度 */
-  }
-
-  .el-button {
-    font-size: 12px;
-    /* 设置按钮的字体大小为小号 */
-    padding: 3px 6px;
-    /* 根据需要调整按钮的内边距 */
   }
 }
 </style>

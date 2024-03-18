@@ -1,9 +1,9 @@
 <template>
   <div style="
-      width: 100%;
-      min-height: calc(100vh - 84px);
-      background-color: #eeeeee;
-    ">
+          width: 100%;
+          min-height: calc(100vh - 84px);
+          background-color: #eeeeee;
+        ">
     <div class="photoInfo" draggable="true" @dragstart="moveStart" @dragend="moveEnd" v-show="isShowTest">
       <el-card class="box-card info-card">
         <template #header>
@@ -28,13 +28,13 @@
       </el-card>
     </div>
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
-                  :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <!-- 树 -->
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
-                style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;">
+        style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;">
         <el-tree ref="tree" :data="routesData" :props="defaultProps" node-key="treeId" :default-expand-all="true"
-                 highlight-current :current-node-key="1" @node-click="rowClick" @treeNodeChanged="handleTreeNodeChanged"
-                 class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
+          highlight-current :current-node-key="1" @node-click="rowClick" @treeNodeChanged="handleTreeNodeChanged"
+          class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
         </el-tree>
       </el-aside>
 
@@ -43,23 +43,23 @@
         <el-main width="78%" style="padding: 0; margin-left: 10px;" class="right-box">
           <!-- 操作部分 -->
           <div style="width: 100%;">
-            <el-button type="primary" class="my-button" style="margin: 10px" @click.prevent="addChildNode"
-                       v-hasPermi="['system:node:add']">
+            <el-button plain type="primary" class="my-button" @click.prevent="addChildNode" icon="plus"
+              v-hasPermi="['system:node:add']">
               添加子节点</el-button>
-            <el-button type="danger" class="my-button" style="margin: 10px" @click.prevent="deleteNode"
-                       v-hasPermi="['system:node:remove']">删除节点</el-button>
-            <el-button type="info" class="my-button" style="margin: 10px" @click.prevent="updateChildNode"
-                       v-hasPermi="['system:node:update']">修改节点</el-button>
+            <el-button plain type="danger" class="my-button" @click.prevent="deleteNode" icon="delete"
+              v-hasPermi="['system:node:remove']">删除节点</el-button>
+            <el-button plain type="success" class="my-button" @click.prevent="updateChildNode" icon="edit"
+              v-hasPermi="['system:node:update']">修改节点</el-button>
             <!-- 可能要做隐藏 -->
             <template v-if="tree && tree.getCurrentNode()?.children.length === 0">
-              <el-button type="primary" class="my-button" style="margin: 10px" @click.prevent="addImage"
-                         v-hasPermi="['system:image:add']">添加图片</el-button>
-              <el-button type="primary" class="my-button" style="margin: 10px" @click.prevent="addNodeMsg"
-                         v-hasPermi="['system:image:add']">节点详细信息</el-button>
-              <el-button type="info" class="my-button" style="margin: 10px" :loading="downloadLoading"
-                         @click.prevent="downloadPython" v-hasPermi="['system:image:add']">下载远程连接文件</el-button>
-              <el-button type="primary" class="my-button" style="margin: 0 10px" @click.prevent="autoUploadDialog"
-                         v-hasPermi="['system:image:add']">图片自动上传</el-button>
+              <el-button plain type="primary" class="my-button" @click.prevent="addImage"
+                v-hasPermi="['system:image:add']">添加图片</el-button>
+              <el-button plain type="info" class="my-button" @click.prevent="addNodeMsg"
+                v-hasPermi="['system:image:add']">节点详细信息</el-button>
+              <el-button plain type="info" class="my-button" :loading="downloadLoading" @click.prevent="downloadPython"
+                v-hasPermi="['system:image:add']">下载远程连接文件</el-button>
+              <el-button plain type="info" class="my-button" @click.prevent="autoUploadDialog"
+                v-hasPermi="['system:image:add']">图片自动上传</el-button>
             </template>
             <br />
             当前节点状态：
@@ -68,41 +68,41 @@
           <template v-if="tree && tree.getCurrentNode()?.children.length == 0">
             <!-- 搜索部分 -->
             <div class="search-container">
-              <el-input clearable v-model.trim="searchForm.name" prefix-icon="Search"
-                        style="margin-right:5px;" class="chooseNameInput" placeholder="图片名"></el-input>
-              <el-input clearable v-model.trim="searchForm.createBy" prefix-icon="Search"
-                        style="margin-right:5px;" class="chooseNameInput" placeholder="上传者"></el-input>
-              <el-date-picker v-model="searchForm.time" style="margin-right:5px; width:150px; flex:auto" class="chooseDateInput"
-                              placeholder="拍摄日期" value-format="YYYY-MM-DD"></el-date-picker>
-              <el-date-picker v-model="searchForm.createTime" style="margin-right:5px; width:150px; flex:auto" class="chooseDateInput"
-                              placeholder="上传日期" value-format="YYYY-MM-DD"></el-date-picker>
+              <el-input clearable v-model.trim="searchForm.name" prefix-icon="Search" style="margin-right:5px;"
+                class="chooseNameInput" placeholder="图片名"></el-input>
+              <el-input clearable v-model.trim="searchForm.createBy" prefix-icon="Search" style="margin-right:5px;"
+                class="chooseNameInput" placeholder="上传者"></el-input>
+              <el-date-picker v-model="searchForm.time" style="margin-right:5px; width:150px; flex:auto"
+                class="chooseDateInput" placeholder="拍摄日期" value-format="YYYY-MM-DD"></el-date-picker>
+              <el-date-picker v-model="searchForm.createTime" style="margin-right:5px; width:150px; flex:auto"
+                class="chooseDateInput" placeholder="上传日期" value-format="YYYY-MM-DD"></el-date-picker>
               <el-button :loading="searchLoading" @click="searchPhoto" icon="Search" type="primary">查询</el-button>
               <el-button :loading="resetLoading" @click="resetSearchForm" icon="Refresh" type="info">重置</el-button>
             </div>
-            <el-button type="danger" style="margin: 0 10px" @click="deleteSelectedImages" :loading="buttonLoading"
-                       v-hasPermi="['system:image:remove']" class="my-button">删除选中图片</el-button>
-            <el-button type="primary" style="margin: 0 10px" @click="downloadSelectedImages"
-                       class="my-button">下载选中图片</el-button>
-            <el-button type="warning" style="margin: 0 10px" @click="editCheckedPhotoInfo"
-                       class="my-button">编辑选中图片</el-button>
-            <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button">分析选中图片</el-button>
-            <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
-                         size="large" class="my-button">
+            <el-button type="danger" style="margin: 0 10px" @click="deleteSelectedImages" :loading="buttonLoading" plain
+              v-hasPermi="['system:image:remove']" class="my-button">删除选中图片</el-button>
+              <el-button type="warning"
+              style="margin: 0 10px" @click="editCheckedPhotoInfo" plain class="my-button">编辑选中图片</el-button>
+            <el-button type="info" style="margin: 0 10px" @click="downloadSelectedImages" plain
+              class="my-button">下载选中图片</el-button>
+            <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>分析选中图片</el-button>
+            <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange" size="large"
+              class="my-button">
               <p>全选该节点所有图片</p>
             </el-checkbox>
           </template>
           <!-- 内容部分 -->
           <!-- 如果为非叶子节点 -->
           <div v-if="tree && tree.getCurrentNode()?.children.length !== 0"
-               style="max-height: calc(100vh - 290px); font-size: 20px;">
+            style="max-height: calc(100vh - 290px); font-size: 20px;">
             <span style="font-weight: bold;">描述信息：</span>{{ form.keyword ? form.keyword : '描述信息为空!' }}
             <br />
             <!-- 选择日期组件 -->
             <div style="margin-top:10px">
               <span style="font-weight: bold;">日期选择：</span>
               <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期"
-                              end-placeholder="结束日期" :shortcuts="shortcuts" :size="size" style="margin-right: 20px;"
-                              @change="chooseDate" />
+                end-placeholder="结束日期" :shortcuts="shortcuts" :size="size" style="margin-right: 20px;"
+                @change="chooseDate" />
             </div>
             <el-card class="card-container" style="margin-top:10px;">
               <template #header>
@@ -119,11 +119,11 @@
           </div>
 
           <div v-if="imageSrcList.length === 0 && tree && tree.getCurrentNode()?.children.length === 0"
-               style="max-height: calc(100vh - 290px);font-size: 20px;">
+            style="max-height: calc(100vh - 290px);font-size: 20px;">
             暂无图片！
           </div>
           <div class="image_box img-list" v-if="tree && tree.getCurrentNode()?.children.length === 0"
-               style="max-height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
+            style="max-height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
             <div class="imgCard_container">
               <el-checkbox-group class="imgCard_container" v-model="checkedPictures" @change="handleSelectionChange">
                 <el-card class="image_item item" :style="{ width: myWidth, height: myHeight }" v-for="(item, index) in imageSrcList.slice(
@@ -133,16 +133,15 @@
                   <div class="wrapper">
                     <div class="imgBox">
                       <el-checkbox size="large" :key="item.pictureId" v-model="checkedPictures"
-                                   :label="item.pictureId"></el-checkbox>
+                        :label="item.pictureId"></el-checkbox>
                       <el-image @close="photoViewerClose" @switch="switchPhoto"
-                                :src="getImageUrlByUrl(item.lessPictureUrl)" @click.self="showPhotoInfo(item)" :preview-src-list="imageSrcList
+                        :src="getImageUrlByUrl(item.lessPictureUrl)" @click.self="showPhotoInfo(item)" :preview-src-list="imageSrcList
                           .slice(
                             (currentpageNum - 1) * pageSize,
                             currentpageNum * pageSize
                           )
                           .map((item) => getImageUrlByUrl(item.pictureUrl))
-                          " ref="previewImg" :initial-index="index" :style="{ height: imgHeight }" lazy
-                                scroll-container>
+                        " ref="previewImg" :initial-index="index" :style="{ height: imgHeight }" lazy scroll-container>
                         <template #placeholder>
                           <div class="image-slot">
                             Loading<span class="dot">...</span>
@@ -168,7 +167,7 @@
                       <span>编辑</span>
                     </button>
                     <button class="delete_button" size="large" @click="deleteImage(item.pictureId, item.pictureUrl)"
-                            v-hasPermi="['system:image:remove']">
+                      v-hasPermi="['system:image:remove']">
                       <el-icon>
                         <Delete />
                       </el-icon>
@@ -186,15 +185,9 @@
         <!--分页组件-->
         <el-footer class="footer" v-if="tree && tree.getCurrentNode()?.children.length === 0">
           <div class="demo-pagination-block">
-            <el-pagination
-                background
-                :current-page="currentpageNum"
-                :page-sizes="[24, 32, 40]"
-                :page-size="pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="totalPage"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" />
+            <el-pagination background :current-page="currentpageNum" :page-sizes="[24, 32, 40]" :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper" :total="totalPage" @size-change="handleSizeChange"
+              @current-change="handleCurrentChange" />
           </div>
         </el-footer>
       </el-container>
@@ -216,12 +209,12 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click.passive="
+          <el-button type="success" plain @click.passive="
             dialogStatus === 'create' ? createData() : updateData()
-            ">
+          ">
             保存
           </el-button>
-          <el-button @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogFormVisible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -243,10 +236,10 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click.passive="saveNodeDetailsButton">
+          <el-button type="success" plain @click.passive="saveNodeDetailsButton">
             保存
           </el-button>
-          <el-button @click="msgDialogVisible = false">取消</el-button>
+          <el-button type="info" plain @click="msgDialogVisible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -255,10 +248,10 @@
       <div class="photoDialog">
         <div class="leftBox">
           <el-upload :file-list="fileList" class="upload-demo" ref="upload" :accept="acceptType()"
-                     list-type="picture-card" :action="uploadUrl" :auto-upload="false"
-                     :headers="{ Authorization: 'Bearer ' + getToken() }" :before-upload="handleBeforeUpload" :limit="photo.limit"
-                     :on-exceed="handleExceed" :on-preview="handlePictureCardPreview" :on-error="uploadImageError"
-                     :on-success="uploadImageSuccess" :on-change="handleUploadFile" :multiple="true">
+            list-type="picture-card" :action="uploadUrl" :auto-upload="false"
+            :headers="{ Authorization: 'Bearer ' + getToken() }" :before-upload="handleBeforeUpload" :limit="photo.limit"
+            :on-exceed="handleExceed" :on-preview="handlePictureCardPreview" :on-error="uploadImageError"
+            :on-success="uploadImageSuccess" :on-change="handleUploadFile" :multiple="true">
             <el-button type="primary">Click to upload</el-button>
 
             <template #tip>
@@ -276,11 +269,11 @@
             </template>
           </el-upload>
           <div class="dialog-footer">
-            <el-button type="primary" :loading="submitButtonLoading"
-                       @click.passive="dialogStatus === 'updataPhoto' ? checkImageName() : confirmEditPhoto()">
+            <el-button type="success" plain :loading="submitButtonLoading"
+              @click.passive="dialogStatus === 'updataPhoto' ? checkImageName() : confirmEditPhoto()">
               {{ dialogStatus === 'updataPhoto' ? '添加' : '修改' }}
             </el-button>
-            <el-button @click="suspendSubmitImage">取消</el-button>
+            <el-button @click="suspendSubmitImage" type="info" plain>取消</el-button>
           </div>
         </div>
         <div class="rightBox" v-if="dialogStatus === 'editPhoto'">
@@ -290,7 +283,7 @@
             </el-form-item>
             <el-form-item label="新拍摄日期：" prop="shotTime">
               <el-date-picker format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" clearable
-                              v-model="editPhotoInfo.shotTime" placeholder="请输入新的拍摄日期" type="datetime" prop="treeName" />
+                v-model="editPhotoInfo.shotTime" placeholder="请输入新的拍摄日期" type="datetime" prop="treeName" />
             </el-form-item>
             <el-form-item label="备注：" prop="remark">
               <el-input clearable v-model="editPhotoInfo.remark" placeholder="请输入备注" />
@@ -311,10 +304,10 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click.passive="autoUpload">
+          <el-button type="success" @click.passive="autoUpload" plain>
             保存
           </el-button>
-          <el-button @click="autoDialog = false">取消</el-button>
+          <el-button type="info" plain @click="autoDialog = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -504,7 +497,7 @@ function dateToStr(date) {
 
 //获取视口宽度
 const viewWidth = document.documentElement.clientWidth;
-const chart2Left =29480/viewWidth+'%'
+const chart2Left = 29480 / viewWidth + '%'
 
 //选择日期以后的操作
 async function chooseDate() {
@@ -633,14 +626,14 @@ const loadingDialogVisible = ref(false);
 
 // vue实例
 const {
-  proxy: {$download},
+  proxy: { $download },
 } = getCurrentInstance();
 
 const valueFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"; // 时间格式
 
 // vue实例
 const {
-  proxy: {$modal},
+  proxy: { $modal },
 } = getCurrentInstance();
 
 // 加载
@@ -710,12 +703,12 @@ const imageList = [
   {
     pictureId: 1,
     pictureUrl:
-        "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+      "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
   },
   {
     pictureId: 2,
     pictureUrl:
-        "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
+      "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
   },
 ];
 
@@ -784,38 +777,38 @@ async function downloadSelectedImages() {
     $modal.msg("您没有选择图片！");
   } else {
     $modal
-        .confirm("是否下载选中的图片?")
-        .then(async () => {
-          loadingDialogVisible.value = true;
-          const zip = new JSZip();
-          const imageFolder = zip.folder("images");
-          const downloadPromises = checkedPictures.value.map(async (pictureId) => {
-            try {
-              const {blob, imageName} = await downloadImage(pictureId);
-              imageFolder.file(imageName, blob);
-            } catch (error) {
-              loadingDialogVisible.value = false;
-              console.error(`下载图片失败: ${error}`);
-              $modal.msgError("下载选中图片失败");
-            }
-          })
-          Promise.all(downloadPromises).then(() => {
-            zip.generateAsync({type: "blob"}).then((content) => {
-              saveAs(content, "images.zip");
-              loadingDialogVisible.value = false;
-              $modal.msgSuccess("下载选中图片成功");
-            }).catch((err) => {
-              console.log(err)
-              loadingDialogVisible.value = false;
-              $modal.msgError("生成压缩包失败");
-            })
+      .confirm("是否下载选中的图片?")
+      .then(async () => {
+        loadingDialogVisible.value = true;
+        const zip = new JSZip();
+        const imageFolder = zip.folder("images");
+        const downloadPromises = checkedPictures.value.map(async (pictureId) => {
+          try {
+            const { blob, imageName } = await downloadImage(pictureId);
+            imageFolder.file(imageName, blob);
+          } catch (error) {
+            loadingDialogVisible.value = false;
+            console.error(`下载图片失败: ${error}`);
+            $modal.msgError("下载选中图片失败");
+          }
+        })
+        Promise.all(downloadPromises).then(() => {
+          zip.generateAsync({ type: "blob" }).then((content) => {
+            saveAs(content, "images.zip");
+            loadingDialogVisible.value = false;
+            $modal.msgSuccess("下载选中图片成功");
           }).catch((err) => {
             console.log(err)
             loadingDialogVisible.value = false;
-            console.error('Error downloading images:', err);
-            $modal.msgError("下载选中图片失败");
-          });
-        })
+            $modal.msgError("生成压缩包失败");
+          })
+        }).catch((err) => {
+          console.log(err)
+          loadingDialogVisible.value = false;
+          console.error('Error downloading images:', err);
+          $modal.msgError("下载选中图片失败");
+        });
+      })
   }
 }
 
@@ -826,44 +819,44 @@ async function deleteSelectedImages() {
     $modal.msg("您没有选择图片！");
   } else {
     $modal
-        .confirm("是否删除该图片?")
-        .then(async () => {
-          buttonLoading.value = true;
-          const curNode = tree.value.getCurrentNode();
+      .confirm("是否删除该图片?")
+      .then(async () => {
+        buttonLoading.value = true;
+        const curNode = tree.value.getCurrentNode();
 
-          const deletePromises = checkedPictures.value.map((pictureId) => {
-            // 找到对应的图片 URL
-            const pictureUrl = imageSrcList.value.find(
-                (item) => item.pictureId === pictureId
-            ).pictureUrl;
+        const deletePromises = checkedPictures.value.map((pictureId) => {
+          // 找到对应的图片 URL
+          const pictureUrl = imageSrcList.value.find(
+            (item) => item.pictureId === pictureId
+          ).pictureUrl;
 
-            // 调用删除接口
-            return deleteImageByIdAndUrl(pictureId, pictureUrl).catch((error) => {
-              console.error(`删除图片失败: ${error}`);
-              $modal.msgError("删除选中图片失败");
-            });
-          });
-
-          try {
-            // 等待所有删除操作完成
-            await Promise.all(deletePromises);
-
-            // 删除成功
-            $modal.msgSuccess("删除选中图片成功");
-            rowClick(curNode);
-          } catch (error) {
-            // 如果有任何一个删除操作失败，都会进入这里
+          // 调用删除接口
+          return deleteImageByIdAndUrl(pictureId, pictureUrl).catch((error) => {
+            console.error(`删除图片失败: ${error}`);
             $modal.msgError("删除选中图片失败");
-          } finally {
-            // 无论成功或失败，最后都要停止 loading
-            buttonLoading.value = false;
-            checkedPictures.value = [];
-
-          }
-        })
-        .catch(() => {
-          buttonLoading.value = false;
+          });
         });
+
+        try {
+          // 等待所有删除操作完成
+          await Promise.all(deletePromises);
+
+          // 删除成功
+          $modal.msgSuccess("删除选中图片成功");
+          rowClick(curNode);
+        } catch (error) {
+          // 如果有任何一个删除操作失败，都会进入这里
+          $modal.msgError("删除选中图片失败");
+        } finally {
+          // 无论成功或失败，最后都要停止 loading
+          buttonLoading.value = false;
+          checkedPictures.value = [];
+
+        }
+      })
+      .catch(() => {
+        buttonLoading.value = false;
+      });
   }
 }
 
@@ -871,26 +864,26 @@ async function deleteSelectedImages() {
 function deleteImage(pictureId, pictureUrl) {
   buttonLoading.value = true;
   $modal
-      .confirm("是否删除该图片?")
-      .then(() => {
-        const curNode = tree.value.getCurrentNode();
-        const savedPageNum = localStorage.getItem("currentPageNum");
-        deleteImageByIdAndUrl(pictureId, pictureUrl).then(
-            () => {
-              $modal.msgSuccess("删除图片成功");
-              currentpageNum.value = savedPageNum ? parseInt(savedPageNum) : 1;
-              rowClick(curNode);
-              buttonLoading.value = false;
-            },
-            () => {
-              $modal.msgError("删除图片失败");
-              buttonLoading.value = false;
-            }
-        );
-      })
-      .catch(() => {
-        buttonLoading.value = false;
-      });
+    .confirm("是否删除该图片?")
+    .then(() => {
+      const curNode = tree.value.getCurrentNode();
+      const savedPageNum = localStorage.getItem("currentPageNum");
+      deleteImageByIdAndUrl(pictureId, pictureUrl).then(
+        () => {
+          $modal.msgSuccess("删除图片成功");
+          currentpageNum.value = savedPageNum ? parseInt(savedPageNum) : 1;
+          rowClick(curNode);
+          buttonLoading.value = false;
+        },
+        () => {
+          $modal.msgError("删除图片失败");
+          buttonLoading.value = false;
+        }
+      );
+    })
+    .catch(() => {
+      buttonLoading.value = false;
+    });
 }
 
 //图片对话框的配置信息
@@ -914,7 +907,7 @@ function editCheckedPhotoInfo() {
     $modal.msg("您只能选择一张图片进行编辑！");
   } else {
     const checkedPicture = imageSrcList.value.find(
-        (item) => item.pictureId === checkedPictures.value[0]
+      (item) => item.pictureId === checkedPictures.value[0]
     );
     handleEditImage(checkedPicture);
   }
@@ -937,8 +930,8 @@ function photoAnalyze() {
   sessionStorage.setItem("isfromRouter", true);
   router.push({
     path: "/pictureAnalysis",
-    query: {id: checkedPictures.value, name: queryName},
-    meta: {keepAlive: true}
+    query: { id: checkedPictures.value, name: queryName },
+    meta: { keepAlive: true }
   });
 }
 
@@ -1033,7 +1026,7 @@ async function downloadPython() {
 
   try {
     await $download.resource(
-        "C:\\Users\\Administrator\\Desktop\\tabletype\\main.exe"
+      "C:\\Users\\Administrator\\Desktop\\tabletype\\main.exe"
     );
 
     // Download completed successfully, start the timer
@@ -1069,9 +1062,9 @@ const flushDetail = ref(false);
 
 //图片上传与编辑表单校验规则
 const photoRules = reactive({
-  name: [{required: true, message: "请输入图片新名称", trigger: "blur"}],
-  shotTime: [{required: true, message: "请输入新的拍摄日期", trigger: "blur"}],
-  remark: [{required: false, message: "请输入备注", trigger: "blur"}],
+  name: [{ required: true, message: "请输入图片新名称", trigger: "blur" }],
+  shotTime: [{ required: true, message: "请输入新的拍摄日期", trigger: "blur" }],
+  remark: [{ required: false, message: "请输入备注", trigger: "blur" }],
 });
 
 //校验方法
@@ -1164,17 +1157,17 @@ const fileUpload = async () => {
       Authorization: 'Bearer ' + getToken(),
     }
   })
-      .then(res => {
-        //将图片的状态设置为成功
-        fileList.value.forEach((file) => {
-          file.status = "success";
-        });
-        uploadImageSuccess(res.data)
+    .then(res => {
+      //将图片的状态设置为成功
+      fileList.value.forEach((file) => {
+        file.status = "success";
+      });
+      uploadImageSuccess(res.data)
 
-      })
-      .catch(err => {
-        uploadImageError(err.data)
-      })
+    })
+    .catch(err => {
+      uploadImageError(err.data)
+    })
 }
 
 //确认编辑图片
@@ -1186,12 +1179,12 @@ const confirmEditPhoto = async () => {
     return
   }
   uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-  }/system/picture/modify?treeId=${tree.value.getCurrentNode().treeId
-  }&pictureId=${editPhotoInfo.pictureId
-  }&name=${editPhotoInfo.name
-  }&shotTime=${editPhotoInfo.shotTime
-  }&remark=${editPhotoInfo.remark
-  }`;
+    }/system/picture/modify?treeId=${tree.value.getCurrentNode().treeId
+    }&pictureId=${editPhotoInfo.pictureId
+    }&name=${editPhotoInfo.name
+    }&shotTime=${editPhotoInfo.shotTime
+    }&remark=${editPhotoInfo.remark
+    }`;
   try {
     await nextTick();
 
@@ -1208,8 +1201,8 @@ const confirmEditPhoto = async () => {
 const submitImage = async () => {
   submitButtonLoading.value = true;
   uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-  }/system/picture/upload?isShow=1&treeId=${tree.value.getCurrentNode().treeId
-  }`;
+    }/system/picture/upload?isShow=1&treeId=${tree.value.getCurrentNode().treeId
+    }`;
   try {
     await nextTick();
 
@@ -1258,12 +1251,12 @@ const handleUploadFile = (file) => {
   if (fileType === "zip") {
     flushDetail.value = true;
     var ImgOne = document.getElementsByClassName(
-        "el-upload-list__item-thumbnail"
+      "el-upload-list__item-thumbnail"
     );
     setTimeout(() => {
       for (let i = 0; i < ImgOne.length; i++) {
         const fileType2 = fileList.value[i].name.substring(
-            fileList.value[i].name.lastIndexOf(".") + 1
+          fileList.value[i].name.lastIndexOf(".") + 1
         );
         if (fileType2 === "zip") {
           ImgOne[i].src = zipLogo;
@@ -1275,12 +1268,12 @@ const handleUploadFile = (file) => {
   } else if (fileType === "rar") {
     flushDetail.value = true;
     var ImgOne = document.getElementsByClassName(
-        "el-upload-list__item-thumbnail"
+      "el-upload-list__item-thumbnail"
     );
     setTimeout(() => {
       for (let i = 0; i < ImgOne.length; i++) {
         const fileType2 = fileList.value[i].name.substring(
-            fileList.value[i].name.lastIndexOf(".") + 1
+          fileList.value[i].name.lastIndexOf(".") + 1
         );
         if (fileType2 === "zip") {
           ImgOne[i].src = zipLogo;
@@ -1316,9 +1309,9 @@ const handleBeforeUpload = (file) => {
   ];
   if (whiteList.indexOf(fileType) === -1) {
     $modal.msgError(
-        "只能上传图片或压缩包格式的文件！",
-        "error",
-        "vab-hey-message-error"
+      "只能上传图片或压缩包格式的文件！",
+      "error",
+      "vab-hey-message-error"
     );
     return false;
   }
@@ -1405,9 +1398,9 @@ const searchPhoto = async () => {
   }
   imageSrcList.value = imageSrcListCopy.value.filter((photo) => {
     return (photo.name ? photo.name.includes(searchForm.name === null ? "" : searchForm.name) : !searchForm.name) &&
-        (photo.shotTime ? photo.shotTime.includes(searchForm.time === null ? "" : searchForm.time) : !searchForm.time) &&
-        (photo.createBy ? photo.createBy.includes(searchForm.createBy === null ? "" : searchForm.createBy) : !searchForm.createBy) &&
-        (photo.createTime ? photo.createTime.includes(searchForm.createTime === null ? "" : searchForm.createTime) : !searchForm.createTime)
+      (photo.shotTime ? photo.shotTime.includes(searchForm.time === null ? "" : searchForm.time) : !searchForm.time) &&
+      (photo.createBy ? photo.createBy.includes(searchForm.createBy === null ? "" : searchForm.createBy) : !searchForm.createBy) &&
+      (photo.createTime ? photo.createTime.includes(searchForm.createTime === null ? "" : searchForm.createTime) : !searchForm.createTime)
   })
   if (imageSrcList.value.length === 0) {
     $modal.msgWarning('未查询到相关图片')
@@ -1443,17 +1436,17 @@ function autoUpload() {
     if (valid) {
       const curNode = tree.value.getCurrentNode();
       updateByIp(form.ip, form.remotePicture, curNode.treeId).then(
-          () => {
-            $modal.msgSuccess("开启自动上传成功");
-            rowClick(curNode);
-            autoDialog.value = false;
-            autoUploadLoading.value = false;
-          },
-          () => {
-            autoUploadLoading.value = false;
-            $modal.msgError("开启自动上传失败");
-          },
-          (autoUploadLoading.value = false)
+        () => {
+          $modal.msgSuccess("开启自动上传成功");
+          rowClick(curNode);
+          autoDialog.value = false;
+          autoUploadLoading.value = false;
+        },
+        () => {
+          autoUploadLoading.value = false;
+          $modal.msgError("开启自动上传失败");
+        },
+        (autoUploadLoading.value = false)
       );
     }
   });
@@ -1630,14 +1623,14 @@ function resetForm() {
 const dataForm = ref(null);
 
 const rules = reactive({
-  treeName: [{required: true, message: "请输入节点名称", trigger: "blur"}],
-  isShow: [{required: true, message: "请选择", trigger: "blur"}],
-  keyword: [{required: true, message: "请输入描述信息", trigger: "blur"}]
+  treeName: [{ required: true, message: "请输入节点名称", trigger: "blur" }],
+  isShow: [{ required: true, message: "请选择", trigger: "blur" }],
+  keyword: [{ required: true, message: "请输入描述信息", trigger: "blur" }]
 });
 
 const validateIP = (rule, value, callback) => {
   var regIP =
-      /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
+    /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
   var regLocalhost = /^localhost(:\d{1,5})?$/;
   if (value === "") {
     callback(new Error("请输入IP地址"));
@@ -1681,8 +1674,8 @@ function createData() {
   dataForm.value.validate((valid) => {
     if (valid) {
       const id = tree.value.getCurrentNode()
-          ? tree.value.getCurrentNode().treeId
-          : 0;
+        ? tree.value.getCurrentNode().treeId
+        : 0;
       addNode({
         isShow: form.isShow ? 1 : 0,
         treeName: form.treeName,
@@ -1690,13 +1683,13 @@ function createData() {
         treeType: props.treeType,
         keyword: form.keyword
       }).then(
-          (res) => {
-            $modal.msgSuccess("添加节点成功");
-            getTreeList();
-          },
-          (error) => {
-            $modal.msgError("添加节点失败");
-          }
+        (res) => {
+          $modal.msgSuccess("添加节点成功");
+          getTreeList();
+        },
+        (error) => {
+          $modal.msgError("添加节点失败");
+        }
       );
       dialogFormVisible.value = false;
     }
@@ -1713,14 +1706,14 @@ function updateData() {
         treeId: tree.value.getCurrentNode().treeId,
         keyword: form.keyword
       }).then(
-          () => {
-            $modal.msgSuccess("修改成功");
-            getTreeList();
-          },
-          () => {
-            $modal.msgError("修改失败");
-            getTreeList();
-          }
+        () => {
+          $modal.msgSuccess("修改成功");
+          getTreeList();
+        },
+        () => {
+          $modal.msgError("修改失败");
+          getTreeList();
+        }
       );
       dialogFormVisible.value = false;
     }
@@ -1740,14 +1733,14 @@ function saveNodeDetailsButton() {
         procMeth: form.procMeth,
         keyword: form.keyword,
       }).then(
-          (res) => {
-            $modal.msgSuccess("修改成功");
-            getTreeList();
-          },
-          (error) => {
-            $modal.msgError("修改失败");
-            getTreeList();
-          }
+        (res) => {
+          $modal.msgSuccess("修改成功");
+          getTreeList();
+        },
+        (error) => {
+          $modal.msgError("修改失败");
+          getTreeList();
+        }
       );
       msgDialogVisible.value = false;
     }
@@ -1764,14 +1757,14 @@ const switchChange = () => {
     treeId: tree.value.getCurrentNode().treeId,
     keyword: form.keyword
   }).then(
-      () => {
-        $modal.msgSuccess("修改成功");
-        getTreeList();
-      },
-      () => {
-        $modal.msgError("修改失败");
-        getTreeList();
-      }
+    () => {
+      $modal.msgSuccess("修改成功");
+      getTreeList();
+    },
+    () => {
+      $modal.msgError("修改失败");
+      getTreeList();
+    }
   );
 };
 
@@ -2145,7 +2138,7 @@ async function rowClick(nodeObj) {
   pointer-events: none;
 }
 
-.u-main .el-tag + .el-tag {
+.u-main .el-tag+.el-tag {
   margin-left: 10px;
 }
 
@@ -2175,7 +2168,7 @@ async function rowClick(nodeObj) {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -2220,8 +2213,8 @@ async function rowClick(nodeObj) {
 }
 
 .img-list {
-  padding-left: 1%;
-  padding-right: 1%;
+  //padding-left: 1%;
+  //padding-right: 1%;
   width: 100%;
   position: relative;
   right: 0;
@@ -2615,7 +2608,7 @@ async function rowClick(nodeObj) {
 
     /* ^ 第一层节点 */
 
-    > .el-tree-node {
+    >.el-tree-node {
       padding-left: 0;
 
       &::before {
@@ -2736,7 +2729,7 @@ async function rowClick(nodeObj) {
 
 :deep(.el-button) {
   margin: 0% !important;
-  margin-right: 20px !important;
+  margin-right: 8px !important;
 }
 
 .mytable {
@@ -2777,6 +2770,453 @@ async function rowClick(nodeObj) {
     /* 设置按钮的字体大小为小号 */
     padding: 3px 6px;
     /* 根据需要调整按钮的内边距 */
+  }
+}
+</style>
+
+<style>
+:root {
+  --el-color-primary: #1FB864;
+}
+</style>
+
+<!-- 树样式 -->
+<style lang="less" scoped>
+:deep(.permission-tree) {
+  margin: 5px;
+  // background: #f2fbf7;
+  min-width: 98%;
+  display: inline-block;
+  width: auto;
+  overflow: auto;
+  margin-right: 0px;
+  padding: 3px;
+  padding-right: 15px;
+}
+
+:deep(.el-tree-node__content) {
+  border-radius: 5px;
+  margin: 1px;
+  line-height: 30px;
+  font-size: 14px;
+  color: black;
+  padding: 0%;
+}
+
+:deep(.el-tree-node__label) {
+  font-size: 16px;
+}
+
+:deep(.el-form-item__label) {
+  width: 110px;
+}
+
+:deep(.el-tree-node__expand-icon) {
+  color: black;
+}
+
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: #fff !important;
+}
+
+.card {
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+.element-plus-tree {
+  //padding: 100px;
+
+  :deep(.el-tree) {
+
+    /* ---- ---- ---- ---- ^（节点对齐）---- ---- ---- ---- */
+    .el-tree-node {
+
+      /* ^ 所有节点 */
+      i.el-tree-node__expand-icon {
+        padding: 6px;
+
+        &::before {
+          font-family: element-ui-icons;
+          font-style: normal;
+          //content: "\e6d9";
+          //color: #000000;
+          border: 1px solid #606266;
+          border-radius: 2px;
+        }
+
+        // svg {
+        //   display: true; // 隐藏所有节点的 svg 图标
+        // }
+      }
+
+      /* / 所有节点 */
+
+      /* ^ 已展开的父节点 */
+      i.el-tree-node__expand-icon.expanded {
+        //transform: rotate(0deg); // 取消旋转
+        //-webkit-transform: rotate(0deg); // 取消旋转
+
+        &::before {
+          font-family: element-ui-icons;
+          font-style: normal;
+          //content: "\e6d8";
+          //color: #000000;
+          border: 1px solid #606266;
+          border-radius: 2px;
+        }
+      }
+
+      /* / 已展开的父节点 */
+
+      /* ^ 叶子节点 */
+      i.el-tree-node__expand-icon.is-leaf {
+        &::before {
+          display: none;
+        }
+      }
+
+      /* / 叶子节点 */
+
+      /* ^ 设置子节点左外边距 */
+      .el-tree-node__content:has(.is-leaf) {
+        // color: #00ffff;
+        margin-left: 12px !important;
+
+        .el-tree-node__label {
+          //font-size: 8px;
+        }
+
+        //background-color: red;
+      }
+    }
+
+    /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
+    /* ^ 树节点 */
+    .el-tree-node {
+      position: relative;
+      width: auto;
+      // width: max-content; // 显示文字宽度
+      padding-left: 13px;
+
+      &::before {
+        width: 1px;
+        height: 100%;
+        content: "";
+        position: absolute;
+        top: -38px;
+        bottom: 0;
+        left: 0;
+        right: auto;
+        border-width: 1px;
+        border-left: 1px solid #b8b9bb;
+      }
+
+      &::after {
+        width: 13px;
+        height: 13px;
+        content: "";
+        position: absolute;
+        z-index: 0;
+        left: 0;
+        right: auto;
+        top: 12px;
+        bottom: auto;
+        border-width: 1px;
+        border-top: 1px solid #b8b9bb;
+      }
+
+      .el-tree-node__content {
+        position: relative;
+        z-index: 1;
+        //color: #000;
+        padding-left: 0 !important;
+
+        /* ^ 复选框 */
+        .el-checkbox {
+          margin: 0 10px 0 5.5px;
+        }
+
+        /* / 复选框 */
+      }
+
+      .el-tree-node__children {
+        padding-left: 12px;
+      }
+
+      &:last-child::before {
+        height: 50px;
+      }
+    }
+
+    /* / 树节点 */
+
+    /* ^ 第一层节点 */
+    >.el-tree-node {
+      padding-left: 0;
+
+      &::before {
+        border-left: none;
+      }
+
+      &::after {
+        border-top: none;
+      }
+    }
+
+    /* / 第一层节点 */
+
+    /* ^ 叶子节点 */
+    i.el-tree-node__expand-icon.is-leaf {
+      display: none;
+    }
+
+    /* / 叶子节点 */
+
+    /* ^ 设置子节点左外边距 */
+    .el-tree-node__content:has(.is-leaf) {
+      // color: #00ffff;
+      margin-left: 12px !important;
+    }
+
+    /* / 设置子节点左外边距 */
+    /* ---- ---- ---- ---- /（新增辅助线）---- ---- ---- ---- */
+  }
+
+  :deep(.el-tree-node__content) {
+    border-radius: 5px;
+    margin: 1px;
+    color: black;
+    padding: 0%;
+    height: 20px;
+  }
+
+  :deep(.el-tree-node__label) {
+    font-size: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+// 设置高亮颜色
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: rgba(rgb(#424F63), 0.3) !important;
+
+  .el-tree-node__label {
+    color: #424F63;
+  }
+
+  .el-tree-node__expand-icon {
+    color: #424F63;
+  }
+}
+
+:deep(.el-radio) {
+  width: 30%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+}
+
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+}
+
+:deep(.el-card__header) {
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
+
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+
+}
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--warning.is-plain {
+  --el-button-text-color: #e6a23c;
+  --el-button-bg-color: #fdf6ec;
+  --el-button-border-color: #f3d19e;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #e6a23c;
+  --el-button-hover-border-color: #e6a23c;
+  --el-button-active-text-color: #ffffff;
+}
+
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
+}
+
+//一级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #107c10;
+  height: 28px;
+
+  .el-tree-node__label {
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
+
+//二级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
+  height: 26px;
+
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
+
+三级节点选择器 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
+
+  .el-tree-node__label {
+    font-size: 14px;
   }
 }
 </style>
