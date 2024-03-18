@@ -1,12 +1,12 @@
 <template>
-  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 20px;">
     <el-card class="card-container right-box">
-      <h1>基因热力图<i>&nbsp;</i></h1>
-      <!-- <template #header>
+      <!-- <h1>基因热力图<i>&nbsp;</i></h1> -->
+      <template #header>
         <div class="card-header">
-          <span>基因热力图</span>
+          <h1>基因热力图<i>&nbsp;</i></h1>
         </div>
-      </template> -->
+      </template>
 
       <el-container>
         <el-select v-model="materialSelected" multiple placeholder="请选择材料名" style="width: 500px;" filterable>
@@ -345,21 +345,19 @@ export default {
 
 </script>
   
-  <!-- 卡片样式 -->
+<!-- 卡片样式 -->
 <style lang="less" scoped>
-.card-header {
+ .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 :deep(.el-card__header) {
   background: #9abeaf;
   height: 60px !important;
   display: flex;
   vertical-align: middle;
   padding-left: 50px !important;
-
   span {
     font-weight: 700;
     font-size: 20px;
@@ -387,19 +385,31 @@ export default {
   }
 }
 
-</style>
-  
-  
-<style scoped lang="less">
-.wrapper {
-  width: 100%;
-  //background-color:blue;
-}
+.card-container {
+  padding: 0px;
+  background-color: #fff;
+  margin: 0px 20px 20px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
-.wrapper .chart {
-  height: 30px;
-  margin: 100px auto 0;
-  width: 100%;
+  h1 {
+    font-size: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin: 0 0 20px;
+  }
+
+  h1 i {
+    background-color: #1FB864;
+    height: 5px;
+    width: 150px;
+    margin-left: -75px;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 0;
+    opacity: .5;
+  }
 }
 </style>
 
@@ -567,37 +577,9 @@ export default {
 .footer {
   height: fit-content;
 }
-
 .right-box {
-  margin-left: 20px !important;
-  margin-right: 20px !important;
-}
-
-.card-container {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-
-  h1 {
-    font-size: 20px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-    margin: 0 0 20px;
-  }
-
-  h1 i {
-    background-color: #1FB864;
-    height: 5px;
-    width: 150px;
-    margin-left: -75px;
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    z-index: 0;
-    opacity: .5;
-  }
+  margin-left: 20px;
+  margin-right: 20px;
 }
 </style>
 
@@ -841,5 +823,87 @@ export default {
   .el-tree-node__expand-icon {
     color: #424F63;
   }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+}
+
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+}
+
+:deep(.el-card__header) {
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
+
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+
 }
 </style>

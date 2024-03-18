@@ -243,8 +243,8 @@
          </el-form>
          <template #footer>
             <div class="dialog-footer">
-               <el-button type="primary" @click="submitForm">确 定</el-button>
-               <el-button @click="cancel">取 消</el-button>
+               <el-button type="success" plain @click="submitForm">确 定</el-button>
+               <el-button @click="cancel" type="info" plain>取 消</el-button>
             </div>
          </template>
       </el-dialog>
@@ -294,7 +294,7 @@
          </el-form>
          <template #footer>
             <div class="dialog-footer">
-               <el-button @click="openView = false">关 闭</el-button>
+               <el-button @click="openView = false" type="info" plain>关 闭</el-button>
             </div>
          </template>
       </el-dialog>
