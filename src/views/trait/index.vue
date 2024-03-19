@@ -27,6 +27,7 @@
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
+
           <el-button type="primary" plain icon="Plus" @click="handleAdd" 
             v-hasPermi="['system:trait:add']">新增</el-button>
         </el-col>
@@ -371,13 +372,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;

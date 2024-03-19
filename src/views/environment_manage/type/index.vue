@@ -613,12 +613,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;

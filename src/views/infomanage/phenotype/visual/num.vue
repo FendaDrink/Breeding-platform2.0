@@ -133,7 +133,7 @@ onMounted(() => {
 }
 </style>
 
-// 卡片样式
+ <!-- 卡片样式 -->
 <style lang="less" scoped>
 .card-container {
   border-radius: 50px;
@@ -144,7 +144,7 @@ onMounted(() => {
   align-items: center;
 }
 :deep(.el-card__header) {
-  background: #1F4E3D;
+  background: #1FB864;
   height: 60px !important;
   display: flex;
   vertical-align: middle;

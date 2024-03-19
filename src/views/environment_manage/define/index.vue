@@ -13,6 +13,7 @@
                     @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
+
           <el-button type="primary" icon="Search"  @click="handleQuery" >搜索</el-button>
           <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
         </el-form-item>
@@ -20,6 +21,7 @@
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
+
           <el-button type="primary" plain icon="Plus"  @click="handleAdd" 
                      v-hasPermi="['system:factor:add']">新增</el-button>
         </el-col>
@@ -606,11 +608,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
 
 .green-button {
   background-color: #1FB864 !important;

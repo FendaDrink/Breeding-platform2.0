@@ -169,8 +169,10 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      // 按照输入框内容过滤数据
       this.queryParams.pageNum = 1;
-      this.getList();
+      this.getList()
+
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -590,12 +592,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;
