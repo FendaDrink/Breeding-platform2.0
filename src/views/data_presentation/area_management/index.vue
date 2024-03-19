@@ -1,5 +1,5 @@
 <template>
-  <div class="big_container home" style="width: 100%; height:100%; background-color: #eeeeee;">
+  <div class="big_container home" style="width: 100%; height:100%; background-color: #eeeeee;padding-top: 20px;">
     <!-- 地图 -->
     <el-card class="card-container">
       <div class="big-wrapper" style="margin-top: 10px">
@@ -27,19 +27,19 @@
       </div>
     </el-card>
     <el-card class="card-container">
-      <h1>根据地区搜索性状<i>&nbsp;</i></h1>
-      <!-- <template #header>
+      <!-- <h1>根据地区搜索性状<i>&nbsp;</i></h1> -->
+      <template #header>
         <div class="card-header">
-          <span>根据地区搜索性状</span>
+          <h1>根据地区搜索性状<i>&nbsp;</i></h1>
         </div>
-      </template> -->
+      </template>
       <div class="big-wrapper" style="margin-top: 10px">
         <div class="area_top">
           <div class="search_table">
             <el-select v-model="location" filterable placeholder="请输入地区名">
               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
-            <el-button icon="search" @click="search_trait" type="primary" style="margin-left: 25px">
+            <el-button icon="search" @click="search_trait" type="success" plain style="margin-left: 25px">
               搜索
             </el-button>
           </div>
@@ -84,12 +84,12 @@
     </el-card>
     <!-- 经纬度信息 -->
     <el-card class="card-container">
-      <h1>根据性状搜索地区<i>&nbsp;</i></h1>
-      <!-- <template #header>
+      <!-- <h1>根据性状搜索地区<i>&nbsp;</i></h1> -->
+      <template #header>
         <div class="card-header">
-          <span>根据性状搜索地区</span>
+          <h1>根据性状搜索地区<i>&nbsp;</i></h1>
         </div>
-      </template> -->
+      </template>
       <div class="big-wrapper" style="margin-top: 10px">
         <div class="area_top">
           <div class="search_table">
@@ -98,7 +98,7 @@
               <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
 
-            <el-button icon="search" @click="search_city" type="primary" style="margin-left: 25px">
+            <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
               搜索
             </el-button>
           </div>
@@ -790,7 +790,8 @@ window.addEventListener("DOMContentLoaded", function () {
   //   padding: 15px 20px 20px 20px !important;
   // }
 
-  padding: 20px 20px 0px;
+  //padding: 20px 20px 0px;
+  padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
@@ -864,27 +865,88 @@ window.addEventListener("DOMContentLoaded", function () {
 
 <!-- 卡片样式 -->
 <style lang="less" scoped>
-// .card-header {
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-// }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+}
+
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+}
 
 :deep(.el-card__header) {
-  background: #9ABEAF;
+  background: #1FB864;
   height: 60px !important;
   display: flex;
-  vertical-align: middle;
-  padding-left: 50px !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
 
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
 
     font-weight: 700;
     font-size: 20px;
     color: white;
+    text-align: center;
     letter-spacing: 2px;
   }
+
+
 }
+
+
 
 // :deep(.el-table__header) {
 //   border-bottom: 1px solid black;
@@ -916,17 +978,17 @@ window.addEventListener("DOMContentLoaded", function () {
 }
 
 /* 修改前后箭头未点击时的背景颜色 */
-:deep( .el-pagination .btn-prev,.el-pagination .btn-next) {
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
   background-color: #fff !important;
 }
 
 /* 修改未点击时的数字方块背景颜色 */
-:deep( .el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
   background-color: #EEEEEE !important;
 }
 
 /* 未点击时的数字方块背景颜色 */
-:deep( .el-pagination .el-pager li:not(.active):not(.disabled)) {
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
   background-color: #fff !important;
   color: #000;
 }
@@ -957,25 +1019,6 @@ window.addEventListener("DOMContentLoaded", function () {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;
@@ -1066,6 +1109,76 @@ window.addEventListener("DOMContentLoaded", function () {
 
 .footer {
   height: fit-content;
+}
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
 }
 </style>
 

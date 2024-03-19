@@ -1,12 +1,12 @@
 <template>
-  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 20px;">
     <el-card class="card-container right-box">
-      <h1>基因型数据筛选<i>&nbsp;</i></h1>
-      <!-- <template #header>
+      <!-- <h1>基因型数据筛选<i>&nbsp;</i></h1> -->
+      <template #header>
         <div class="card-header">
-          <span>基因型数据筛选</span>
+          <h1>基因型数据筛选<i>&nbsp;</i></h1>
         </div>
-      </template> -->
+      </template>
 
       <el-container>
         <el-main  class="">
@@ -28,7 +28,7 @@
             <el-option v-for="item in options" :key="item.index" :label="item.label" :value="item.index">
             </el-option>
           </el-select>
-          <el-button type="primary" plain icon="edit" @click="searchMaterial" class="filter-item my-button"
+          <el-button type="success" plain @click="searchMaterial" class="filter-item my-button" style="margin-left: 20px;"
             v-model="selectedItem">确认</el-button>
         </el-main>
         <!-- 分页 -->
@@ -220,7 +220,7 @@ export default {
               data: [data.ratio]
             });
             this.test_series[0].itemStyle = {
-              color: '#1FB864',
+              color: '#409EFF',
               borderWidth: 1, //设置border的宽度有多大
               borderColor: '#fff',
             };
@@ -343,7 +343,7 @@ export default {
         for (let i = 0; i < this.test_series.length; i++) {
           if (i === params.seriesIndex) {
             this.test_series[i].itemStyle = {
-              color: '#1FB864',
+              color: '#409EFF',
             };
           } else {
             this.test_series[i].itemStyle = {
@@ -474,135 +474,72 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-.wrapper .chart {
-  height: 30px;
-  margin: 0 auto;
-  width: 100%;
-  //background-color: blue;
-}
-</style>
-
-<style lang="less">
-.gene-informage-container {
-  height: auto;
-  width: 100%;
-  background-color: #F2F4F3;
-  margin-top: 50px;
-  overflow-x: auto;
-}
-
-.scrollable-content {
-  /* 给内容容器设置一个适当的高度，以便内容超过这个高度时出现滚动条 */
-  height: 100%;
+<!-- 卡片样式 -->
+<style lang="less" scoped>
+ .card-header {
   display: flex;
-  /* 使用flex布局 */
-  //flex-wrap: wrap; /* 当一行放不下所有子元素时换行 */
+  justify-content: space-between;
+  align-items: center;
+}
+:deep(.el-card__header) {
+  background: #9abeaf;
+  height: 60px !important;
+  display: flex;
+  vertical-align: middle;
+  padding-left: 50px !important;
+  span {
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    letter-spacing: 2px;
+  }
 }
 
-.child-div {
-  height: 220px;
-  margin: 5px;
-  // background-color:blue;
-  display: inline-block;
-  width: 50px;
+:deep(.el-table__header) {
+  border-bottom: 1px solid black;
+  border-top: 1px solid #ebeef5;
 
+  th {
+    font-weight: 800;
+    font-size: 16PX;
+    background: #FAFAFA !important;
+    letter-spacing: 2px;
+    height: 60px !important;
+  }
 }
 
-.child-div:hover {
-  /* Add your hover styles here */
-  background-color: lightgray;
-  border: 1px solid #9ABEAF;
-  cursor: pointer;
-  position: relative;
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
 }
 
-.additional-div {
-  display: none;
-  position: absolute;
-  width: 200px;
-  height: 100px;
-  background-color: lightblue;
-  z-index: 1;
+.card-container {
+  padding: 0px;
+  background-color: #fff;
+  margin: 0px 20px 20px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+
+  h1 {
+    font-size: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin: 0 0 20px;
+  }
+
+  h1 i {
+    background-color: #1FB864;
+    height: 5px;
+    width: 150px;
+    margin-left: -75px;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 0;
+    opacity: .5;
+  }
 }
-
-.hoverDiv {
-  position: absolute;
-  top: 0px;
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  z-index: 999;
-  max-width: 300px;
-  min-width: 200px;
-
-  word-break: break-all !important;
-
-  border-radius: 5px;
-  background-color: rgba(0, 75, 28, 0.9);
-  color: aliceblue;
-  font-size: 13px;
-  text-align: center;
-}
-
-
-
-.upper-child-div {
-  height: 80%;
-  margin: 2px;
-  // background-color: #9ABEAF;
-  //position:absolute;
-
-  // writing-mode: vertical-rl;
-  // text-orientation: upright;
-  //width:30px;
-}
-
-.textDiv {
-  // padding-top:35px;
-  // display: inline-block;
-  // transform: rotate(90deg);
-  // transform-origin: right;
-  // background-color:orange;
-
-  // position:relative;
-  // //top:20px;
-  // right:0;
-  // text-align: center;
-  // width:100%;
-  // height:20px;
-
-  margin-left: 20px;
-  display: block;
-  transform: rotate(90deg);
-  transform-origin: bottom left;
-  white-space: nowrap;
-  color: #2B86CF;
-  font-weight: 600;
-}
-
-.lower-child-div {
-  height: 15%;
-  padding: 3px;
-  margin: 2px;
-  // background-color: green;
-  text-align: right;
-  //width:100%;
-  word-break: break-all;
-  //max-width:150px;
-  //width:auto;
-
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  //max-width: 200px;
-}
-
-// .lower-child-div:hover {
-//   white-space: normal;
-//   overflow: visible;
-//   text-overflow: unset;
-// }
 </style>
 
 <style lang="less" scoped>
@@ -770,34 +707,8 @@ export default {
   height: fit-content;
 }
 .right-box {
-  margin-left: 20px !important;
-  margin-right: 20px !important;
-}
-.card-container {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-
-  h1 {
-    font-size: 20px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-    margin: 0 0 20px;
-  }
-
-  h1 i {
-    background-color: #1FB864;
-    height: 5px;
-    width: 150px;
-    margin-left: -75px;
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    z-index: 0;
-    opacity: .5;
-  }
+  margin-left: 20px;
+  margin-right: 20px;
 }
 </style>
 
@@ -1041,5 +952,87 @@ export default {
   .el-tree-node__expand-icon {
     color: #424F63;
   }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+}
+
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+}
+
+:deep(.el-card__header) {
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
+
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+
 }
 </style>
