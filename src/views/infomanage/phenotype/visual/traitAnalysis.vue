@@ -436,6 +436,7 @@ const slider = [
     height: 15, //高度
     type: "slider",
     xAxisIndex: [0], //控制第一个x轴
+    start:0,
     left: '4%',
     right: '4%',
     bottom: 18, //图表底部距离
@@ -980,6 +981,7 @@ function showBarTrait() {
   };
   if (allTraitValue.value.value.length > 5) {
     barTrait.dataZoom = slider
+    barTrait.dataZoom[0].end= (12/allTraitValue.value.value.length)*100
   }
   myChart.setOption(barTrait);
 }

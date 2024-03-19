@@ -1,12 +1,12 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
-                  :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
-                style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;margin-top: 0%;">
+        style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;margin-top: 0%;">
         <el-tree ref="tree" :data="routesData" :props="defaultProps" node-key="treeId" default-expand-all
-                 highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
-                 class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
+          highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
+          class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
         </el-tree>
       </el-aside>
 
@@ -19,29 +19,30 @@
               <el-button type="primary" plain @click.prevent="addChildNode" v-hasPermi="['system:node:add']" icon="plus">
                 添加子节点</el-button>
               <el-button type="success" plain @click.prevent="updateChildNode" icon="edit"
-                         v-hasPermi="['system:node:update']">修改节点</el-button>
+                v-hasPermi="['system:node:update']">修改节点</el-button>
               <el-button type="danger" plain @click.prevent="deleteNode" icon="delete"
-                         v-hasPermi="['system:node:remove']">删除节点</el-button>
+                v-hasPermi="['system:node:remove']">删除节点</el-button>
               <el-button type="info" plain @click.prevent="downloadTemplate" icon="download"
-                         v-hasPermi="['system:node:update']">下载模板文件</el-button>
+                v-hasPermi="['system:node:update']">下载模板文件</el-button>
             </div>
             <div class="div2">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter="handleQuery"
-                        class="my-input" style="width: 180px; margin-right: 8px;" />
-              <el-button type="primary" @click="handleQuery" icon="search">搜索</el-button>
+                class="my-input" style="width: 180px; margin-right: 8px;" />
+              <el-button  type="primary" @click="handleQuery" icon="search">搜索</el-button>
               <el-button @click="resetQuery" icon="Refresh">重置</el-button>
             </div>
 
             <div class="div3">
               <!-- 操作部分 -->
               <el-button type="primary" @click="handleAdd" icon="plus" plain
-                         v-hasPermi="['system:logininfor:add']">新增</el-button>
-              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled" icon="delete"
-                         v-hasPermi="['system:logininfor:remove']">删除</el-button>
-              <el-container style="min-height: calc(100vh - 400px);padding-bottom: 20px;">
+                v-hasPermi="['system:logininfor:add']">新增</el-button>
+              <el-button type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
+                icon="delete" v-hasPermi="['system:logininfor:remove']">删除</el-button>
+              <el-container style="min-height: calc(100vh - 400px);">
                 <!-- 表格部分 -->
-                <el-table v-loading="tableLoading" :data="fileList.slice((queryParams.pageNum -                     1)*queryParams.pageSize,queryParams.pageNum * queryParams.pageSize)" @selection-change="handleSelectionChange" stripe fit
-                          max-height="100%" class="mytable">
+                <el-table v-loading="tableLoading"
+                  :data="fileList.slice((queryParams.pageNum - 1) * queryParams.pageSize, queryParams.pageNum * queryParams.pageSize)"
+                  @selection-change="handleSelectionChange" stripe fit max-height="100%" class="mytable">
                   <el-table-column type="selection" min-width="55" align="center" fixed="left" />
                   <el-table-column label="序号" width="80px" type="index" :index="indexMethod" align="center" />
                   <el-table-column label="文件名" width="250" align="center" prop="fileName" />
@@ -51,7 +52,7 @@
                   <el-table-column label="纬度" align="center" prop="latitude" />
                   <el-table-column label="地点" align="center" prop="area" />
                   <el-table-column label="是否公开" align="center" prop="status" v-hasPermi="['system:file:remove']"
-                                   width="120">
+                    width="120">
                     <template #default="scope">
                       <el-switch v-model="fileList[scope.$index].fileStatus" @change="updateFileStatus(scope.row)">
                       </el-switch>
@@ -64,20 +65,22 @@
 
                       <el-tooltip content="文件详情" placement="top">
                         <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
-                                   class="table_button">
+                          class="table_button">
                         </el-button>
                       </el-tooltip>
                       <el-tooltip content="因子分类可视化" placement="top">
-                        <el-button size="medium" type="text" icon="place" link @click="fileVisual1(scope.row)" class="table_button">
+                        <el-button size="medium" type="text" icon="place" link @click="fileVisual1(scope.row)"
+                          class="table_button">
                         </el-button>
                       </el-tooltip>
                       <el-tooltip content="因子分析可视化" placement="top">
-                        <el-button size="medium" type="text" icon="View" link @click="fileVisual2(scope.row)" class="table_button">
+                        <el-button size="medium" type="text" icon="View" link @click="fileVisual2(scope.row)"
+                          class="table_button">
                         </el-button>
                       </el-tooltip>
                       <el-tooltip content="删除" placement="top">
                         <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
-                                   v-hasPermi="['system:file:remove']" class="table_button">
+                          v-hasPermi="['system:file:remove']" class="table_button">
                         </el-button>
                       </el-tooltip>
                     </template>
@@ -86,7 +89,7 @@
                     <template #default="scope">
                       <el-tooltip content="查看历史版本" placement="top">
                         <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
-                                   icon="timer" class="table_button">
+                          icon="timer" class="table_button">
                         </el-button>
                       </el-tooltip>
                     </template>
@@ -95,7 +98,7 @@
                     <template #default="scope">
                       <el-tooltip content="合并" placement="top">
                         <el-button type="text" icon="set-up" :loading="downloadLoading" @click="mergeFile(scope.row)"
-                                   class="table_button">
+                          class="table_button">
                         </el-button>
                       </el-tooltip>
                     </template>
@@ -109,14 +112,9 @@
         </el-main>
         <!-- 分页 -->
         <el-footer class="footer">
-          <el-pagination v-show="total > 0"
-                         :total="total"
-                         :currentPage="queryParams.pageNum"
-                         :page-size="queryParams.pageSize"
-                         layout="total, sizes, prev, pager, next, jumper"
-                         @size-change="handleSizeChange"
-                         @current-change="handleCurrentChange"
-                         :background="false" />
+          <el-pagination v-show="total > 0" :total="total" :currentPage="queryParams.pageNum"
+            :page-size="queryParams.pageSize" layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" :background="false" />
         </el-footer>
       </el-container>
     </el-container>
@@ -133,18 +131,18 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="success" plain @click.passive="
-						dialogTreeStatus === 'createNode'
-							? createTreeData()
-							: updateTreeData()
-					">
+            dialogTreeStatus === 'createNode'
+              ? createTreeData()
+              : updateTreeData()
+          ">
             保存
           </el-button>
-          <el-button class="success" @click="dialogTreeFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogTreeFormVisible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
     <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible" :close-on-click-modal="false"
-               @close="dialogClosed" center draggable width="30%">
+      @close="dialogClosed" center draggable width="30%">
       <el-form ref="form" :rules="rules" :model="dataForm" label-position="left" label-width="100px">
         <el-form-item label="文件名称：" prop="fileName" v-show="dialogStatus === 'create' || 'other'">
           <el-input v-model="dataForm.fileName" placeholder="输入文件名称" />
@@ -166,36 +164,36 @@
         </el-form-item>
         <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
           <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
-                     :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
-                     :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-                     :on-change="handleUploadFile">
-            <el-button class="white-button" type="primary">点击上传</el-button>
-<!--            <template #tip>-->
-<!--              <div class="el-upload__tip">select a file to upload</div>-->
-<!--            </template>-->
+            :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
+            :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
+            :on-change="handleUploadFile">
+            <el-button  type="primary">点击上传</el-button>
+            <!--            <template #tip>-->
+            <!--              <div class="el-upload__tip">select a file to upload</div>-->
+            <!--            </template>-->
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button class="white-button" type="primary" v-if="dialogStatus === 'create'"
-                     @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
+          <el-button  type="success" plain v-if="dialogStatus === 'create'"
+            @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
             保存
           </el-button>
-          <el-button class="white-button" type="primary" v-else @click="mergeData()" :disabled="isDisabled2">
+          <el-button  type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
             合并
           </el-button>
-          <el-button class="white-button" @click="deleteUploadData()">取消</el-button>
+          <el-button  type="info" plain @click="deleteUploadData()">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
     <el-dialog title="历史版本" v-model="historyFormVisible" :close-on-click-modal="false" @close="dialogClosed" center
-               draggable width="70%">
+      draggable width="70%">
       <el-table v-loading="historyTableLoading" :data="historyFileList">
         <el-table-column label="序号" width="100" type="index" :index="indexMethod" />
         <el-table-column label="文件名" align="center" prop="fileName" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-button class="table_button" size="small" type="text" icon="Download" :loading="downloadLoading"
-                       @click="handleDownload(scope.row)">下载
+              @click="handleDownload(scope.row)">下载
             </el-button>
             <el-button class="table_button" size="small" type="text" icon="Document" @click="openDrawer(scope.row)">预览
             </el-button>
@@ -212,9 +210,9 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, nextTick, onMounted,reactive } from "vue";
+import { ref, getCurrentInstance, nextTick, onMounted, reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import {getEnvFileList,delFile,updateFile} from '@/api/environmental_management/file';
+import { getEnvFileList, delFile, updateFile } from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -332,9 +330,9 @@ const handleBeforeUpload = (file) => {
   const isCsv = fileType === "Csv";
   if (!isxlsx) {
     $modal.msgError(
-        "只能上传Csv格式的文件！",
-        "error",
-        "vab-hey-message-error"
+      "只能上传Csv格式的文件！",
+      "error",
+      "vab-hey-message-error"
     );
     return false;
   }
@@ -352,10 +350,10 @@ const createData = async () => {
   console.log(valid);
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-    }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
-    }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-    }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude
-    }&latitude=${dataForm.latitude}`;
+      }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
+      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+      }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude
+      }&latitude=${dataForm.latitude}`;
 
     $modal.msg("上传数据较大，请耐心等待！");
     await upload.value.submit();
@@ -415,12 +413,12 @@ const mergeData = async () => {
   const valid = await form.value.validate();
   console.log(valid);
   if (valid) {
-    console.log(tableName.value,"kkkkkkkkkkkkkkkkkk");
+    console.log(tableName.value, "kkkkkkkkkkkkkkkkkk");
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-    }/sidebarTreeEnv/environment/merge?tableName=${tableName.value}&remark=${dataForm.remark
-    }&fileName=${dataForm.fileName}`;
+      }/sidebarTreeEnv/environment/merge?tableName=${tableName.value}&remark=${dataForm.remark
+      }&fileName=${dataForm.fileName}`;
 
-    console.log(uploadUrl.value,"。。。。。。。。。。");
+    console.log(uploadUrl.value, "。。。。。。。。。。");
     $modal.msg("上传数据较大，请耐心等待！");
     await upload.value.submit();
     console.log("2");
@@ -467,9 +465,9 @@ async function updateData() {
   form.value.validate((valid) => {
     if (valid) {
       uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-      }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude}&latitude=${dataForm.latitude}`;
+        }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
+        }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+        }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude}&latitude=${dataForm.latitude}`;
       nextTick(async () => {
         tableLoading.value = false;
         await upload.value.submit();
@@ -502,10 +500,10 @@ const dialogClosed = () => {
 };
 
 /* const dialogClosed = () => {
-	if (form.value) {
-	form.value.resetFields();
-	}
-	getList();
+  if (form.value) {
+  form.value.resetFields();
+  }
+  getList();
 }; */
 
 // 文件替换
@@ -518,21 +516,21 @@ function handleExceed(files) {
 
 /* // 文件修改
 async function updateData() {
-	form.value.validate((valid) => {
-	if (valid) {
-		tableLoading.value = true;
-		updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
-		.then((res) => {
-			tableLoading.value = false;
-			dialogFormVisible.value = false;
-			getList();
-		})
-		.catch((err) => {
-			loading.value = false;
-			$modal.msgError("修改失败");
-		});
-	}
-	});
+  form.value.validate((valid) => {
+  if (valid) {
+    tableLoading.value = true;
+    updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
+    .then((res) => {
+      tableLoading.value = false;
+      dialogFormVisible.value = false;
+      getList();
+    })
+    .catch((err) => {
+      loading.value = false;
+      $modal.msgError("修改失败");
+    });
+  }
+  });
 } */
 
 // 文件表格
@@ -558,14 +556,14 @@ function handleDelete() {
   } else {
     $modal.confirm("是否删除文件?").then(() => {
       delFile(ids.value)
-          .then((res) => {
-            console.log("222");
-            $modal.msgSuccess("删除成功！");
-            getList();
-          })
-          .catch((err) => {
-            $modal.msgError("删除失败");
-          });
+        .then((res) => {
+          console.log("222");
+          $modal.msgSuccess("删除成功！");
+          getList();
+        })
+        .catch((err) => {
+          $modal.msgError("删除失败");
+        });
     });
   }
 }
@@ -610,7 +608,7 @@ function getList() {
     fileList.value.forEach((item) => {
       allFileId.value.push(item.fileId);
     });
-    fileList.value = fileList.value.filter(item=>item.fileName.includes(queryParams.fileName));
+    fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
     uploadFileList.value = fileList.value;
     total.value = fileList.value.length;
   }).catch((err) => {
@@ -633,12 +631,12 @@ async function updateFileStatus(row) {
     fileId: row.fileId,
     status: row.fileStatus,
   })
-      .then((res) => {
-        $modal.msgSuccess("更新成功");
-      })
-      .catch((err) => {
-        $modal.msgError("更新失败");
-      });
+    .then((res) => {
+      $modal.msgSuccess("更新成功");
+    })
+    .catch((err) => {
+      $modal.msgError("更新失败");
+    });
 }
 
 // 下载文件
@@ -678,13 +676,13 @@ function handleUpdate(row) {
 function deleteFile(row) {
   $modal.confirm("是否删除文件?").then(() => {
     delFile([row.fileId])
-        .then((res) => {
-          $modal.msgSuccess("删除成功！");
-          getList();
-        })
-        .catch((err) => {
-          $modal.msgError("删除失败");
-        });
+      .then((res) => {
+        $modal.msgSuccess("删除成功！");
+        getList();
+      })
+      .catch((err) => {
+        $modal.msgError("删除失败");
+      });
   });
 }
 
@@ -719,23 +717,23 @@ function openHistory(row) {
   historyTableLoading.value = true;
   historyFormVisible.value = true;
   getEnvFileList(tree.value.getCurrentNode().treeId)
-      .then((res) => {
-        tableLoading.value = false;
-        historyFileList.value = res.rows.map((item) => ({
-          ...item,
-          fileStatus: item.status === 1,
-        }));
-        historyFileList.value.forEach((item) => {
-          allFileId.value.push(item.fileId);
-        });
-        total.value = res.total;
-        historyTableLoading.value = false;
-      })
-      .catch((err) => {
-        tableLoading.value = false;
-        historyTableLoading.value = false;
-        $modal.msgError("获取列表失败");
+    .then((res) => {
+      tableLoading.value = false;
+      historyFileList.value = res.rows.map((item) => ({
+        ...item,
+        fileStatus: item.status === 1,
+      }));
+      historyFileList.value.forEach((item) => {
+        allFileId.value.push(item.fileId);
       });
+      total.value = res.total;
+      historyTableLoading.value = false;
+    })
+    .catch((err) => {
+      tableLoading.value = false;
+      historyTableLoading.value = false;
+      $modal.msgError("获取列表失败");
+    });
 }
 
 // 表单提交
@@ -900,7 +898,7 @@ function updateChildNode() {
 function downloadTemplate() {
   //下载
   $download.resource(
-      "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\环境模板文件.csv"
+    "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\环境模板文件.csv"
   );
 }
 
@@ -909,21 +907,21 @@ function createTreeData() {
   dataTreeForm.value.validate((valid) => {
     if (valid) {
       const id = tree.value.getCurrentNode()
-          ? tree.value.getCurrentNode().treeId
-          : 0;
+        ? tree.value.getCurrentNode().treeId
+        : 0;
       addNode({
         isShow: treeForm.isShow ? 1 : 0,
         treeName: treeForm.treeName,
         parentId: id,
         treeType: treeType.value,
       }).then(
-          () => {
-            $modal.msgSuccess("添加节点成功");
-            getTreeList();
-          },
-          () => {
-            $modal.msgError("添加节点失败");
-          }
+        () => {
+          $modal.msgSuccess("添加节点成功");
+          getTreeList();
+        },
+        () => {
+          $modal.msgError("添加节点失败");
+        }
       );
       dialogTreeFormVisible.value = false;
     }
@@ -939,13 +937,13 @@ function updateTreeData() {
         treeName: treeForm.treeName,
         treeId: tree.value.getCurrentNode().treeId,
       }).then(
-          () => {
-            $modal.msgSuccess("修改成功");
-            getTreeList();
-          },
-          () => {
-            $modal.msgError("修改失败");
-          }
+        () => {
+          $modal.msgSuccess("修改成功");
+          getTreeList();
+        },
+        () => {
+          $modal.msgError("修改失败");
+        }
       );
       dialogTreeFormVisible.value = false;
     }
@@ -994,49 +992,8 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-:deep(.el-tree-node__label) {
-  font-size: 16px;
-}
-
 :deep(.el-form-item__label) {
   width: 110px;
-}
-
-:deep(.el-tree) {
-  /* background-color: rgb(183, 202, 189); */
-  background: transparent;
-}
-
-:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: #fff !important;
-}
-
-.icon-star {
-  color: black;
-  margin: 0 5px;
-}
-
-.card {
-  position: relative;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 200px;
-  // background: url(@/assets/img/tree/tree2.jpg) no-repeat center center / cover;
-  // background-color: #f2fbf7;
-  opacity: 1;
-  width: 100%;
 }
 
 .u-main .el-tag+.el-tag {
@@ -1083,7 +1040,7 @@ onMounted(() => {
   }
 }
 </style>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .image_box {
   width: 100%;
   display: flex;
@@ -1100,12 +1057,6 @@ onMounted(() => {
   width: 25%;
 }
 
-.right-box {
-  // background-color: #fff;
-  // border:1px solid #ccc;
-  // margin-bottom: 50px;
-  margin-left: 20px;
-}
 
 .el-row {
   margin-bottom: 20px;
@@ -1149,12 +1100,11 @@ onMounted(() => {
   // border:1px solid #ccc;
 }
 
-.mokuai {
-  margin-bottom: 0;
-  background-color: #f2fbf7;
-  // box-shadow:2px 2px 5px #000;
+.right-box {
+  // background-color: #fff;
   // border:1px solid #ccc;
   // margin-bottom: 50px;
+  margin-left: 20px;
 }
 
 .u-title {
@@ -1196,16 +1146,11 @@ onMounted(() => {
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   /* 0 3px 3px -2px rgba(0, 0, 0, 0.12),
-       0 1px 8px 0 rgba(0, 0, 0, 0.2); */
+         0 1px 8px 0 rgba(0, 0, 0, 0.2); */
 }
+</style>
 
-:deep(.permission-tree) {
-  margin: 10px;
-  margin-bottom: 30px;
-  background: #fff;
-  padding-right: 15px;
-}
-
+<style lang="less" scoped>
 .filter-item {
   margin-right: 20px;
 }
@@ -1221,6 +1166,212 @@ onMounted(() => {
 }
 </style>
 
+
+<style lang="less" scoped>
+:deep(.el-button) {
+  margin: 0% !important;
+  margin-right: 8px !important;
+}
+
+.mytable {
+  background-color: #eeeeee;
+}
+
+.table_button {
+  padding: 0% !important;
+  margin: 0 !important;
+  margin-right: 5px !important;
+}
+
+@media (max-width: 1330px) {
+  .my-button {
+    margin-right: 2px !important;
+    /* 缩小元素之间的间距 */
+    font-size: 7px;
+  }
+
+  .my-input {
+    width: 120px;
+    /* 缩小输入框的宽度 */
+    margin-right: 2px;
+    padding: 0%;
+  }
+
+  .el-button {
+    font-size: 12px;
+    /* 设置按钮的字体大小为小号 */
+    padding: 3px 6px;
+    /* 根据需要调整按钮的内边距 */
+  }
+
+  :deep(.el-input__inner) {
+    padding: 1px 11px;
+  }
+
+  :deep(.el-form-item__label) {
+    padding: 0%;
+  }
+}
+
+.hebin-button {
+  margin-right: 0% !important;
+}
+</style>
+
+
+
+
+<style lang="less" scoped>
+/* 假设 el-checkbox 是表头中的一个子元素 */
+
+:deep(.el-table .el-table__header-wrapper tr th) {
+  background-color: #1FB864 !important;
+  color: rgb(255, 255, 255);
+}
+
+/* 修改前后箭头未点击时的背景颜色 */
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background-color: #fff !important;
+}
+
+/* 修改未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+  background-color: #EEEEEE !important;
+}
+
+/* 未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
+  background-color: #fff !important;
+  color: #000;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #1FB864 !important; //修改默认的背景色
+  color: #fff;
+}
+
+:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.el-pagination ul li:not(:last-child)) {
+  border-right: #DDDDDD 1px solid;
+}
+
+
+:deep(.el-pagination ul) {
+  border: #DDDDDD 1px solid;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload .el-upload-dragger) {
+  width: 100%;
+}
+
+.green-button {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.green-button:hover {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.table_button {
+  color: #1FB864;
+}
+
+.table_button:hover {
+  color: #1FB864;
+}
+
+// .el-select-dropdown__item.selected {
+//   color: #1FB864;
+// }
+
+// .el-input {
+//   --el-input-focus-border-color: #1FB864;
+// }
+
+// .el-select {
+//   --el-select-input-focus-border-color: #1FB864;
+// }
+
+/* 开关组件 */
+// :deep(.el-switch.is-checked .el-switch__core) {
+//   border-color: #1FB864;
+//   background-color: #1FB864;
+// }
+
+/* 多选组件 */
+// :deep(.el-checkbox) {
+//   --el-checkbox-checked-input-border-color: #1FB864;
+//   --el-checkbox-checked-bg-color: #1FB864;
+//   --el-checkbox-input-border-color-hover: #1FB864;
+// }
+
+:deep(.el-table__header .el-checkbox) {
+  /* Your styles here */
+  --el-checkbox-checked-input-border-color: #424F63;
+  --el-checkbox-checked-bg-color: #424F63;
+  --el-checkbox-input-border-color-hover: #424F63;
+}
+
+/* 树结构 */
+.el-aside {
+  background-color: #fff !important;
+}
+
+:deep(.el-tree) {
+  background-color: #fff !important;
+  margin: 0px !important;
+  color: #000;
+  /* 字体大小在上面的代码中修改 */
+}
+
+.div1 {
+  padding: 15px 20px;
+  background-color: #EEEEEE;
+}
+
+.div2 {
+  padding: 15px 20px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.div3 {
+  padding: 20px 20px 0px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.el-table {
+  background-color: #EEEEEE !important;
+  margin-top: 20px;
+}
+
+.footer {
+  height: fit-content;
+}
+</style>
+
+<style>
+:root {
+  --el-color-primary: #1FB864;
+}
+</style>
+
+<!-- 树样式 -->
 <style lang="less" scoped>
 :deep(.permission-tree) {
   margin: 5px;
@@ -1243,14 +1394,32 @@ onMounted(() => {
   padding: 0%;
 }
 
+:deep(.el-tree-node__label) {
+  font-size: 16px;
+}
+
+:deep(.el-form-item__label) {
+  width: 110px;
+}
+
 :deep(.el-tree-node__expand-icon) {
   color: black;
 }
-</style>
 
+:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background-color: #fff !important;
+}
 
+.card {
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
 
-<style lang="less" scoped>
 .element-plus-tree {
   //padding: 100px;
 
@@ -1317,25 +1486,6 @@ onMounted(() => {
         //background-color: red;
       }
     }
-
-    /* ---- ---- ---- ---- /（节点对齐）---- ---- ---- ---- */
-
-    /* ---- ---- ---- ---- ^（文字高亮）---- ---- ---- ---- */
-    .el-tree-node.is-current {
-      .el-tree-node__content {
-        small {
-          color: #5e7ce0;
-        }
-      }
-
-      .el-tree-node__children {
-        small {
-          color: unset;
-        }
-      }
-    }
-
-    /* ---- ---- ---- ---- /（文字高亮）---- ---- ---- ---- */
 
     /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
     /* ^ 树节点 */
@@ -1444,43 +1594,8 @@ onMounted(() => {
   }
 }
 
-//一级节点选择器
-:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
-  font-weight: 600;
-  color: #107c10;
-  height: 28px;
-
-  .el-tree-node__label {
-    font-size: 18px;
-    font-family: "PingFang SC";
-  }
-}
-
-//二级节点选择器
-:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
-  font-weight: 600;
-  color: #1FB864;
-  height: 26px;
-
-  .el-tree-node__label {
-    font-size: 16px;
-  }
-}
-
-// 三级节点选择器
-:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
-  font-weight: 400;
-  height: 23px;
-
-  .el-tree-node__label {
-    font-size: 14px;
-  }
-}
-
-
 // 设置高亮颜色
 :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  //background-color: rgba(rgb(#4f6f46), 0.3) !important;
   background-color: rgba(rgb(#424F63), 0.3) !important;
 
   .el-tree-node__label {
@@ -1492,275 +1607,90 @@ onMounted(() => {
   }
 }
 
-// :deep(.el-tree-node__content:hover) {
-//   color: #4f6f46;
-//   background-color: rgba(168, 191, 143, 0.3);
-
-//   .el-tree-node__expand-icon {
-//     color: #4f6f46;
-//   }
-// }
-
-.mokuai {
-  margin-bottom: 0;
-  background-color: #f2fbf7;
-  padding: 0% !important;
+:deep(.el-radio) {
+  width: 30%;
 }
 
-// :deep(.el-button) {
-//   margin: 0% !important;
-//   margin-right: 8px !important;
-// }
-
-.mytable {
-  background-color: #eeeeee;
-}
-
-
-@media (max-width: 1330px) {
-  .my-button {
-    margin-right: 2px !important;
-    /* 缩小元素之间的间距 */
-    font-size: 7px;
-  }
-
-  .my-input {
-    width: 120px;
-    /* 缩小输入框的宽度 */
-    margin-right: 2px;
-    padding: 0% !important;
-  }
-
-  // .el-button {
-  //   font-size: 12px;
-  //   /* 设置按钮的字体大小为小号 */
-  //   padding: 3px 6px;
-  //   /* 根据需要调整按钮的内边距 */
-  // }
-
-  :deep(.el-input__inner) {
-    padding: 1px 11px;
-  }
-
-  :deep(.el-form-item__label) {
-    padding: 0%;
-  }
-}
-
-.table_button {
-  padding: 0% !important;
-  margin: 0 !important;
-  margin-right: 5px !important;
-
-  span {
-    font-size: 15px !important;
-    color: #4f6f46 !important;
-  }
-}
-
-.el-tree-node__content {
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
   position: relative;
+  background-color: #fff;
 }
 
-.disabled {
-  cursor: not-allowed;
+.card-header:before,
+.card-header:after {
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
   bottom: 0;
-  z-index: 2;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
 }
 
-.footer {
-  height: fit-content;
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
 }
 
-// :deep(.el-table__header) {
-//   border-bottom: 1px solid black;
-//   border-top: 1px solid #ebeef5;
+:deep(.el-card__header) {
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
 
-//   th {
-//     font-weight: 800;
-//     font-size: 16PX;
-//     background: #FAFAFA !important;
-//     letter-spacing: 2px;
-//     height: 60px !important;
-//   }
-// }
+  h1 {
+    margin: 0%;
+  }
 
-// :deep(.el-table__cell) {
-//   .cell {
-//     word-break: break-word;
-//   }
-// }
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
 
-.hebin-button {
-  margin-right: 0% !important;
-}
-</style>
-
-
-<style lang="less" scoped>
-/* 假设 el-checkbox 是表头中的一个子元素 */
-
-:deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
-  color: rgb(255, 255, 255);
-}
-
-/* 修改前后箭头未点击时的背景颜色 */
-:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
-  background-color: #fff !important;
-}
-
-/* 修改未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
-  background-color: #EEEEEE !important;
-}
-
-/* 未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
-  background-color: #fff !important;
-  color: #000;
-}
-
-:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
-  color: #fff;
-}
-
-:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-:deep(.el-pagination ul li:not(:last-child)) {
-  border-right: #DDDDDD 1px solid;
-}
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
 
 
-:deep(.el-pagination ul) {
-  border: #DDDDDD 1px solid;
-}
-
-:deep(.el-upload) {
-  width: 100%;
-}
-
-:deep(.el-upload .el-upload-dragger) {
-  width: 100%;
-}
-
-
-
-
-
-
-// .white-button,
-// .el-button--default,
-// .el-button--primary {
-//   background-color: #fff !important;
-//   color: #000 !important;
-//   border: 1px solid #CCCCCC !important;
-// }
-
-// .white-button:hover,
-// .el-button--default:hover,
-// .el-button--primary:hover {
-//   background-color: #E6E6E6 !important;
-//   color: #000 !important;
-//   border: 1px solid #CCCCCC !important;
-// }
-
-
-.green-button {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.green-button:hover {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.table_button {
-  color: #1FB864;
-}
-
-.table_button:hover {
-  color: #1FB864;
-}
-
-// .el-select-dropdown__item.selected {
-//   color: #1FB864;
-// }
-
-// .el-input {
-//   --el-input-focus-border-color: #1FB864;
-// }
-
-// .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
-// }
-
-/* 开关组件 */
-// :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
-// }
-
-/* 多选组件 */
-// :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
-// }
-
-:deep(.el-table__header .el-checkbox) {
-  /* Your styles here */
-  --el-checkbox-checked-input-border-color: #424F63;
-  --el-checkbox-checked-bg-color: #424F63;
-  --el-checkbox-input-border-color-hover: #424F63;
-}
-
-/* 树结构 */
-.el-aside {
-  background-color: #fff !important;
-}
-
-.el-tree {
-  background-color: #fff !important;
-  margin: 0px !important;
-  color: #000;
-  /* 字体大小在上面的代码中修改 */
-}
-
-.div1 {
-  padding: 15px 20px;
-  background-color: #EEEEEE;
-}
-
-.div2 {
-  padding: 15px 20px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.div3 {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-  // overflow: auto;
-}
-
-.el-table {
-  background-color: #EEEEEE !important;
-  margin-top: 20px;
 }
 
 :deep(.el-button) {
@@ -1832,263 +1762,27 @@ onMounted(() => {
   --el-button-hover-border-color: #909399;
   --el-button-active-text-color: #ffffff;
 }
-</style>
 
-<!-- 树样式 -->
-<style lang="less" scoped>
-:deep(.permission-tree) {
-  margin: 5px;
-  //background: #f2fbf7;
-  min-width: 98%;
-  display: inline-block;
-  width: auto;
-  overflow: auto;
-  margin-right: 0px;
-  padding-right: 15px;
+.el-button--warning.is-plain {
+  --el-button-text-color: #e6a23c;
+  --el-button-bg-color: #fdf6ec;
+  --el-button-border-color: #f3d19e;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #e6a23c;
+  --el-button-hover-border-color: #e6a23c;
+  --el-button-active-text-color: #ffffff;
 }
 
-:deep(.el-tree-node__content) {
-  border-radius: 5px;
-  margin: 1px;
-  color: black;
-  padding: 0%;
-  height: 20px;
-}
-
-:deep(.el-tree-node__expand-icon) {
-  color: black;
-}
-
-.element-plus-tree {
-  //padding: 100px;
-
-  :deep(.el-tree) {
-
-    /* ---- ---- ---- ---- ^（节点对齐）---- ---- ---- ---- */
-
-    .el-tree-node {
-
-      /* ^ 所有节点 */
-
-      i.el-tree-node__expand-icon {
-        padding: 6px;
-
-        &::before {
-          font-family: element-ui-icons;
-          font-style: normal;
-          //content: "\e6d9";
-          //color: #000000;
-          border: 1px solid #606266;
-          border-radius: 2px;
-        }
-
-        // svg {
-        //   display: true; // 隐藏所有节点的 svg 图标
-        // }
-      }
-
-      /* / 所有节点 */
-
-      /* ^ 已展开的父节点 */
-
-      i.el-tree-node__expand-icon.expanded {
-        //transform: rotate(0deg); // 取消旋转
-        //-webkit-transform: rotate(0deg); // 取消旋转
-
-        &::before {
-          font-family: element-ui-icons;
-          font-style: normal;
-          //content: "\e6d8";
-          //color: #000000;
-          border: 1px solid #606266;
-          border-radius: 2px;
-        }
-      }
-
-
-      /* / 已展开的父节点 */
-
-      /* ^ 叶子节点 */
-
-      i.el-tree-node__expand-icon.is-leaf {
-
-        &::before {
-          display: none;
-        }
-      }
-
-      /* / 叶子节点 */
-
-      /* ^ 复选框 */
-
-      .el-checkbox {
-        margin: 0 7px 0 2px;
-
-        .el-checkbox__inner {
-          width: 14px;
-          height: 14px;
-          border-radius: 2px;
-          border: 1px solid #bbb;
-        }
-
-        .el-checkbox__input.is-checked .el-checkbox__inner,
-        .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-          border: 1px solid #5e7ce0;
-        }
-      }
-
-      /* / 复选框 */
-
-      .el-tree-node__content {
-        small {
-          font-size: 14px;
-        }
-      }
-    }
-
-    /* ---- ---- ---- ---- /（节点对齐）---- ---- ---- ---- */
-
-    /* ---- ---- ---- ---- ^（文字高亮）---- ---- ---- ---- */
-
-    .el-tree-node.is-current {
-      .el-tree-node__content {
-        small {
-          color: #5e7ce0;
-        }
-      }
-
-      .el-tree-node__children {
-        small {
-          color: unset;
-        }
-      }
-    }
-
-    /* ---- ---- ---- ---- /（文字高亮）---- ---- ---- ---- */
-
-    /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
-    /* ^ 树节点 */
-
-    .el-tree-node {
-      position: relative;
-      width: auto;
-      // width: max-content; // 显示文字宽度
-      padding-left: 13px;
-
-      &::before {
-        width: 1px;
-        height: 100%;
-        content: '';
-        position: absolute;
-        top: -38px;
-        bottom: 0;
-        left: 0;
-        right: auto;
-        border-width: 1px;
-        border-left: 1px solid #b8b9bb;
-      }
-
-      &::after {
-        width: 13px;
-        height: 13px;
-        content: '';
-        position: absolute;
-        z-index: 0;
-        left: 0;
-        right: auto;
-        top: 12px;
-        bottom: auto;
-        border-width: 1px;
-        border-top: 1px solid #b8b9bb;
-      }
-
-      .el-tree-node__content {
-        position: relative;
-        z-index: 1;
-        //color: #000;
-        padding-left: 0 !important;
-
-        /* ^ 复选框 */
-
-        .el-checkbox {
-          margin: 0 10px 0 5.5px;
-        }
-
-        /* / 复选框 */
-      }
-
-      .el-tree-node__children {
-        padding-left: 12px;
-      }
-
-      &:last-child::before {
-        height: 50px;
-      }
-    }
-
-    /* / 树节点 */
-
-    /* ^ 第一层节点 */
-
-    > .el-tree-node {
-      padding-left: 0;
-
-      &::before {
-        border-left: none;
-      }
-
-      &::after {
-        border-top: none;
-      }
-    }
-
-    /* / 第一层节点 */
-
-    /* ^ 叶子节点 */
-
-    i.el-tree-node__expand-icon.is-leaf {
-      display: none;
-    }
-
-    /* / 叶子节点 */
-
-    /* ^ 设置子节点左外边距 */
-
-    .el-tree-node__content:has(.is-leaf) {
-      // color: #00ffff;
-      margin-left: 12px !important;
-
-      .el-tree-node__label {
-        //font-size: 8px;
-      }
-
-      //background-color: red;
-    }
-
-    /* / 设置子节点左外边距 */
-    /* ---- ---- ---- ---- /（新增辅助线）---- ---- ---- ---- */
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
   }
 }
 
-:deep(.el-tree-node__content) {
-  border-radius: 5px;
-  margin: 1px;
-  color: black;
-  padding: 0%;
-  height: 20px;
-}
-
-
-:deep(.el-tree-node__label) {
-  font-size: 15px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
 //一级节点选择器
-:deep(.el-tree>.el-tree-node> .el-tree-node__content) {
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #80a492;
+  color: #107c10;
   height: 28px;
 
   .el-tree-node__label {
@@ -2098,9 +1792,9 @@ onMounted(() => {
 }
 
 //二级节点选择器
-:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
-  font-weight: 500;
-  color: #99bcac;
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
   height: 26px;
 
   .el-tree-node__label {
@@ -2108,90 +1802,13 @@ onMounted(() => {
   }
 }
 
-//三级节点选择器
-:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
+//三级节点选择器 
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;
 
   .el-tree-node__label {
     font-size: 14px;
-  }
-
-}
-
-// 设置高亮颜色
-:deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: rgba(rgb(#4f6f46), 0.3) !important;
-
-  .el-tree-node__label {
-    color: #80a492;
-  }
-
-  .el-tree-node__expand-icon {
-    color: #4f6f46;
-  }
-}
-
-:deep(.el-tree-node__content:hover) {
-  color: #4f6f46;
-  background-color: rgba(168, 191, 143, 0.3);
-
-  .el-tree-node__expand-icon {
-    color: #4f6f46;
-  }
-}
-
-.mokuai {
-  margin-bottom: 0;
-  //background-color: #F2FBF7;
-  padding: 0% !important;
-  margin-top: 0% !important;
-}
-
-
-:deep(.el-button) {
-  margin: 0% !important;
-  margin-right: 20px !important;
-}
-
-.mytable {
-  background-color: #EEEEEE;
-}
-
-.table_button {
-  padding: 0% !important;
-  margin: 0 !important;
-  margin-right: 5px !important;
-}
-
-.search-container {
-  display: flex;
-  max-width: 1100px;
-}
-
-.chooseNameInput,
-.chooseDateInput {
-  width: 150px;
-  flex: 0.4 0.4 auto;
-}
-
-@media (max-width: 1330px) {
-  .my-button {
-    margin-right: 2px !important;
-    /* 缩小元素之间的间距 */
-    font-size: 7px;
-  }
-
-  .my_input {
-    width: 120px;
-    /* 缩小输入框的宽度 */
-  }
-
-  .el-button {
-    font-size: 12px;
-    /* 设置按钮的字体大小为小号 */
-    padding: 3px 6px;
-    /* 根据需要调整按钮的内边距 */
   }
 }
 </style>

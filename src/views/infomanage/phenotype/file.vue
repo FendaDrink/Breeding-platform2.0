@@ -1,9 +1,10 @@
 <template>
-  <div class="home">
+  <div class="home" style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
     <el-button
       style="margin: 20px; margin-left: calc(95% - 30px)"
       @click="exportFile"
-      type="primary"
+      type="warning"
+      plain
       size="large"
       >导出</el-button
     >
@@ -30,7 +31,7 @@
       </el-form-item>
       <el-form-item>
         <el-button class="search-button" type="primary" @click="searchSubmit" icon="Search">搜索</el-button>
-        <el-button type="info" @click="reset" icon="refresh">重置</el-button>
+        <el-button  @click="reset" icon="refresh">重置</el-button>
       </el-form-item>
     </el-form>
     <el-container>
@@ -55,15 +56,13 @@
               fixed="left"
             >
               <template #default="scope">
-                <el-button
-                  size="small"
-                  type="text"
-                  icon="Document"
-                  link
-                  @click="modifFile(scope.row)"
-                  >修改
-                </el-button>
+                <el-tooltip content="修改文件信息" placement="top">
+                  <el-button size="small" type="text" icon="Document" link @click="modifFile(scope.row)"
+                    class="table_button">
+                  </el-button></el-tooltip>
               </template>
+
+              
             </el-table-column>
 
             <el-table-column
@@ -134,10 +133,10 @@
       </el-scrollbar>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click.passive="updateFileData">
+          <el-button type="success" plain @click.passive="updateFileData">
             保存
           </el-button>
-          <el-button @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogFormVisible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -155,7 +154,8 @@ import {
   selectDetailByFileId,
   exportPenoFile,
   modifiFileData,
-  endUpdate
+  endUpdate,
+  traitAndMaterialList
 } from "@/api/infomanage/phenotype";
 
 const traitFileId = ref(60);
@@ -658,11 +658,6 @@ onBeforeRouteLeave(() => {
   .search-form{
     margin-left: 50px;
   }
-
-  .search-button{
-    border:#1F4E3D;
-    background: rgb(85, 123, 116);
-  }
 </style>
 <style lang="less" scoped>
 
@@ -696,21 +691,274 @@ onBeforeRouteLeave(() => {
     color: white;
   }
 }
-
-:deep(.el-table__header){
-  border-bottom: 1px solid black;
-  border-top: 1px solid #EBEEF5;
-
-  th{
-    font-weight: 800;
-    font-size: 16PX;
-    background: #FAFAFA !important;
-    letter-spacing: 2px;
-    height: 60px !important;
-  }
-}
 el-main{
   height: 100px;
   overflow: auto;
+}
+</style>
+
+<style lang="less" scoped>
+
+.footer{
+  position: absolute;
+  left: 2.5%;
+  padding: 0%;
+
+  .demo-pagination-block {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+
+  }
+
+}
+
+:deep(.el-main, .el-footer) {
+  padding: 0%;
+}
+.scrollbar-wrapper {
+  height: 400px; /* 设置容器的高度 */
+  overflow-y: auto; /* 启用纵向滚动条 */
+}
+
+:deep(.el-dialog__header) {
+  margin: 0%;
+  background-color: #0F5C32;
+  span {
+    color: white;
+  }
+}
+</style>
+
+
+<style lang="less" scoped>
+/* 假设 el-checkbox 是表头中的一个子元素 */
+
+:deep(.el-table .el-table__header-wrapper tr th) {
+  background-color: #1FB864 !important;
+  color: rgb(255, 255, 255);
+}
+
+/* 修改前后箭头未点击时的背景颜色 */
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background-color: #fff !important;
+}
+
+/* 修改未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+  background-color: #EEEEEE !important;
+}
+
+/* 未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
+  background-color: #fff !important;
+  color: #000;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #1FB864 !important; //修改默认的背景色
+  color: #fff;
+}
+
+:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.el-pagination ul li:not(:last-child)) {
+  border-right: #DDDDDD 1px solid;
+}
+
+
+:deep(.el-pagination ul) {
+  border: #DDDDDD 1px solid;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload .el-upload-dragger) {
+  width: 100%;
+}
+
+
+.green-button {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.green-button:hover {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.table_button {
+  color: #1FB864;
+}
+
+.table_button:hover {
+  color: #1FB864;
+}
+
+// .el-select-dropdown__item.selected {
+//   color: #1FB864;
+// }
+
+// .el-input {
+//   --el-input-focus-border-color: #1FB864;
+// }
+
+// .el-select {
+//   --el-select-input-focus-border-color: #1FB864;
+// }
+
+/* 开关组件 */
+// :deep(.el-switch.is-checked .el-switch__core) {
+//   border-color: #1FB864;
+//   background-color: #1FB864;
+// }
+
+/* 多选组件 */
+// :deep(.el-checkbox) {
+//   --el-checkbox-checked-input-border-color: #1FB864;
+//   --el-checkbox-checked-bg-color: #1FB864;
+//   --el-checkbox-input-border-color-hover: #1FB864;
+// }
+
+:deep(.el-table__header .el-checkbox) {
+  /* Your styles here */
+  --el-checkbox-checked-input-border-color: #424F63;
+  --el-checkbox-checked-bg-color: #424F63;
+  --el-checkbox-input-border-color-hover: #424F63;
+}
+
+/* 树结构 */
+.el-aside {
+  background-color: #fff !important;
+}
+
+.el-tree {
+  background-color: #fff !important;
+  margin: 0px !important;
+  color: #000;
+  /* 字体大小在上面的代码中修改 */
+}
+
+.div1 {
+  padding: 15px 20px;
+  background-color: #EEEEEE;
+}
+
+.div2 {
+  padding: 15px 20px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.div3 {
+  padding: 20px 20px 0px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.el-table {
+  background-color: #EEEEEE !important;
+  margin-top: 20px;
+}
+
+.footer {
+  height: fit-content;
+}
+
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--warning.is-plain {
+  --el-button-text-color: #e6a23c;
+  --el-button-bg-color: #fdf6ec;
+  --el-button-border-color: #f3d19e;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #e6a23c;
+  --el-button-hover-border-color: #e6a23c;
+  --el-button-active-text-color: #ffffff;
+}
+</style>
+
+<style>
+:root {
+  --el-color-primary: #1FB864;
 }
 </style>

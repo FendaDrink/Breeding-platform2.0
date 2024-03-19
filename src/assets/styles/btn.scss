@@ -41,6 +41,18 @@
   @include colorBtn($yellow)
 }
 
+.white-button{
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 1px solid #CCCCCC !important;
+}
+
+.white-button:hover{
+  background-color: #E6E6E6 !important;
+  color: #000 !important;
+  border: 1px solid #CCCCCC !important;
+}
+
 .pan-btn {
   font-size: 14px;
   color: #fff;
