@@ -7,7 +7,7 @@
                     <div class="main-upload">
                         <div>
                             <label for="inputHelpBlock">上传环境信息文件</label>
-                            <el-upload class="upload-demo" v-model:file-list="environmentalData" accept=".xlsx"
+                            <el-upload class="upload-demo" v-model:file-list="environmentalData" accept=".csv"
                                 action="#" :headers="headers" method="post" :auto-upload="false" multiple :limit="1"
                                 drag>
                                 <el-icon class="el-icon--upload"><upload-filled /></el-icon>
@@ -66,38 +66,38 @@
                         <template #default="scope">
                             <el-button link type="text" @click="exportFile(scope.row)" style="color: #0dbc79;"
                                 v-show="scope.row.status == 2">
-                                {{ scope.row.inputCondition }}
+                                {{ scope.row.inputCondition.split('\\').pop() }}
                             </el-button>
                             <el-button link type="text" disabled v-show="scope.row.status != 2">
-                                {{ scope.row.inputCondition }}
+                                {{ scope.row.inputCondition.split('\\').pop() }}
                             </el-button>
                         </template>
                     </el-table-column>
                     <el-table-column align="center" fixed="right" label="结果下载">
                         <template #default="scope">
-                            <el-button link type="text" @click="exportPdf(scope.row)" style="color: #0dbc79;"
+                            <el-button link type="text" @click="exportCsv(scope.row)" style="color: #0dbc79;"
                                 v-show="scope.row.status == 2">
-                                导出pdf
+                                导出csv
                             </el-button>
                             <el-button link type="text" disabled v-show="scope.row.status != 2">
-                                导出pdf
+                                导出csv
                             </el-button>
                         </template>
                     </el-table-column>
                     <el-table-column align="center" fixed="right" label="提示信息">
                         <template #default="scope">
                             <el-popover placement="top" trigger="hover">
-                                <text>{{ scope.row.info }}</text>
+                                <text>{{ scope.row.info===''?'无提示信息':scope.row.info }}</text>
                                 <template #reference>
                                     <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
                                 </template>
                             </el-popover>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" fixed="right" label="提示信息">
+                    <el-table-column align="center" fixed="right" label="备注">
                         <template #default="scope">
                             <el-popover placement="top" trigger="hover">
-                                <text>{{ scope.row.remark }}</text>
+                                <text>{{ scope.row.remark===null?'无备注信息': scope.row.remark }}</text>
                                 <template #reference>
                                     <el-button link type="text" style="color: #1FB864;">查看备注</el-button>
                                 </template>
@@ -136,7 +136,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useRoute, useRouter } from "vue-router"
 import { blobValidate } from '@/utils/param'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { postData, getData, deleteData, downloadResultPdf, downloadFile } from '../../../api/environmental_management/data_catch';
+import { postData, getData, deleteData, downloadResultCsv, downloadFile } from '../../../api/environmental_management/data_catch';
 
 const router = useRouter()
 
@@ -155,7 +155,7 @@ const queryParams = ref({
 // 环境分析任务总数
 const total = ref(10)
 
-// .xlsx文件上传
+// .csv文件上传
 const submit = () => {
     const formData = new FormData()
     formData.append('file', environmentalData.value[0].raw)
@@ -166,7 +166,7 @@ const submit = () => {
             ElMessage.success('提交成功')
             environmentalData.value = []
             setTimeout(() => {
-                // router.go(0)
+                router.go(0)
             }, 1000)
         } else {
             ElMessage.error('提交失败')
@@ -185,11 +185,11 @@ const getEnvironmentalData = async () => {
     }
     console.log(envCatchDataList.value)
 }
-// 下载pdf文件
-const exportPdf = (row) => {
+// 下载csv文件
+const exportCsv = (row) => {
     console.log(row)
     if (row.status != 2) {
-        ElMessageBox.alert('任务尚未成功时不能导出pdf', '错误', {
+        ElMessageBox.alert('任务尚未成功时不能导出csv', '错误', {
             // if you want to disable its autofocus
             // autofocus: false,
             confirmButtonText: 'OK',
@@ -199,12 +199,12 @@ const exportPdf = (row) => {
         })
         return
     }
-    downloadResultPdf(row.id).then(res => {
+    downloadResultCsv(row.id).then(res => {
         console.log(res)
         const isLogin = blobValidate(res);
         if (isLogin) {
             const blob = new Blob([res])
-            saveAs(blob, `breed${row.id}.pdf`)
+            saveAs(blob, `breed${row.id}.csv`)
         } else {
             const resText = data.text();
             const rspObj = JSON.parse(resText);
@@ -223,7 +223,7 @@ const exportFile = (row) => {
         const isLogin = blobValidate(res);
         if (isLogin) {
             const blob = new Blob([res])
-            saveAs(blob, `breed${row.id}.xlsx`)
+            saveAs(blob, `breed${row.id}.csv`)
         } else {
             const resText = data.text();
             const rspObj = JSON.parse(resText);

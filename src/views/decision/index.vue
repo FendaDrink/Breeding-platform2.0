@@ -29,7 +29,10 @@
                       </div>
                     </div>
                     <template #reference>
-                      <el-button class="no-inherit" @click="showPopover=!showPopover"><el-icon :color="showPopover?'#1FB864':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon></el-button>
+                      <el-button class="no-inherit" @click="showPopover=!showPopover">
+                        <!-- <el-icon v-if="!showPopover" :color="showPopover?'#fff':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon> -->
+                        <svg t="1710852877805" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1564" width="22" height="22"><path d="M62.659316 898.116869 155.237045 329.102536c1.693495-9.590827 10.725469-16.93495 19.757442-16.93495l713.52591 0 0-84.674752c0-9.590827-7.338479-16.93495-16.93495-16.93495l-429.018743 0L366.923925 120.238148 22.579934 120.238148c-9.596472 0-16.93495 7.344123-16.93495 16.93495L5.644983 881.181918c0 9.590827 7.338479 16.93495 16.93495 16.93495L62.659316 898.116869z" :fill="showPopover?'#ffffff':'#1FB864'" stroke="white" stroke-width="40" p-id="1565"></path><path d="M998.597574 382.16538 228.057332 382.16538c-9.037619 0-18.063947 7.338479-19.192944 16.370452L121.367144 882.310915c-1.693495 9.037619 4.515987 16.370452 13.54796 16.370452l770.540243 0c9.031974 0 18.063947-7.338479 19.187299-16.370452L1012.145535 398.535832C1013.83903 390.068357 1007.629548 382.16538 998.597574 382.16538z" :fill="showPopover?'#ffffff':'#1FB864'" stroke="white" stroke-width="40" p-id="1566"></path></svg>
+                      </el-button>
                     </template>
                   </el-popover>
                 </template>
@@ -413,7 +416,7 @@ onMounted(() => {
               }
             }
             :deep(.el-input-group__prepend){
-              background-color: #fff;
+              background-color: #1FB864;
               .el-button{
                 .el-icon{
                   // background-color: #1FB864;
@@ -423,6 +426,7 @@ onMounted(() => {
             }
             :deep(.el-input-group__append){
               background-color: #1FB864;
+              color:#fff;
               width: 18%;
               border: none;
               border-radius: 0 5px 5px 0;
@@ -430,9 +434,11 @@ onMounted(() => {
             }
             :deep(.el-button){
               width: 100%;
-              color:#fff;
               display: flex;
               justify-content: space-between;
+              .icon{
+                font-size: 120%;
+              }
             }
           }
         }
