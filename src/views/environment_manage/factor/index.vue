@@ -7,27 +7,27 @@
                     @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" size="large" @click="handleQuery" class="white-button">搜索</el-button>
-          <el-button icon="Refresh" size="large" @click="resetQuery" class="white-button">重置</el-button>
+          <el-button type="primary" icon="Search" size="large" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" size="large" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="primary" plain icon="Plus" size="large" @click="handleAdd" v-hasPermi="['system:type:add']"
-                     class="white-button">新增</el-button>
+                    >新增</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="success" plain icon="Edit" size="large" :disabled="single" @click="handleUpdate"
-                     v-hasPermi="['system:type:edit']" class="white-button">修改</el-button>
+                     v-hasPermi="['system:type:edit']">修改</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="danger" plain icon="delete" size="large" :disabled="multiple" @click="handleDelete"
-                     v-hasPermi="['system:type:remove']" class="white-button">删除</el-button>
+                     v-hasPermi="['system:type:remove']">删除</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="warning" plain icon="Download" size="large" @click="handleExport"
-                     v-hasPermi="['system:type:export']" class="white-button">导出</el-button>
+                     v-hasPermi="['system:type:export']">导出</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
@@ -167,8 +167,10 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      // 按照输入框内容过滤数据
       this.queryParams.pageNum = 1;
-      this.getList();
+      this.getList()
+
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -343,27 +345,6 @@ export default {
 
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
-}
-
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
 }
 
 

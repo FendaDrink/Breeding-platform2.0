@@ -20,26 +20,26 @@
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" size="large" @click="handleQuery" class="white-button">搜索</el-button>
-          <el-button icon="Refresh" size="large" @click="resetQuery" class="white-button">重置</el-button>
+          <el-button type="primary" icon="Search" size="large" @click="handleQuery" >搜索</el-button>
+          <el-button icon="Refresh" size="large" @click="resetQuery" >重置</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="primary" plain icon="Plus" size="large" @click="handleAdd" class="white-button"
+          <el-button type="primary" plain icon="Plus" size="large" @click="handleAdd" 
             v-hasPermi="['system:trait:add']">新增</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="success" plain icon="Edit" size="large" :disabled="single" @click="handleUpdate" class="white-button"
+          <el-button type="success" plain icon="Edit" size="large" :disabled="single" @click="handleUpdate" 
             v-hasPermi="['system:trait:edit']">修改</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="danger" plain icon="Delete" size="large" :disabled="multiple" @click="handleDelete" class="white-button"
+          <el-button type="danger" plain icon="Delete" size="large" :disabled="multiple" @click="handleDelete" 
             v-hasPermi="['system:trait:remove']">删除</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="warning" plain icon="Download" size="large" @click="handleExport" class="white-button"
+          <el-button type="warning" plain icon="Download" size="large" @click="handleExport" 
             v-hasPermi="['system:trait:export']">导出</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -367,28 +367,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
 
 .green-button {
   background-color: #1FB864 !important;

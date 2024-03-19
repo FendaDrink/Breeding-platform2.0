@@ -11,14 +11,14 @@
           <el-input v-model="add.name" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" size="large" @click="handleQuery" class="white-button">搜索</el-button>
-          <el-button icon="Refresh" size="large" @click="resetQuery" class="white-button">重置</el-button>
+          <el-button type="primary" icon="Search" size="large" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" size="large" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain size="large" @click="isModify" class="white-button"
+          <el-button type="warning" plain size="large" @click="isModify"
                      v-hasPermi="['system:factor:export']">确认修改</el-button>
         </el-col>
 
@@ -375,28 +375,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
 
 .green-button {
   background-color: #1FB864 !important;
