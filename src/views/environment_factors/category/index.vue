@@ -7,7 +7,6 @@
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
       <div class="echart_wrapper">
-<!--        <p class="file-name">已选文件：{{route.query.tableName}}</p>-->
         <div id="factorPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
         <div class="factor-form">
           <el-table :data="phenotypeData.slice(
@@ -327,7 +326,6 @@ const randomColor = () => {
 
   // 先在colors中随机选取一个颜色,同时删除
   let color = colors.splice(Math.floor(Math.random() * colors.length),1)[0];
-  console.log(color,'cccccc');
   return color;
 }
 
@@ -348,7 +346,6 @@ const sunBurstOption = {
       borderWidth: 20,
       borderColor:'#f1f6f3'
     },
-    gap: 50,
     levels: sunburstLevels,
     // emphasis:{
     //   itemStyle:{

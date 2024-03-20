@@ -3,7 +3,7 @@
     <el-card>
       <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="100px">
         <el-form-item label="环境因子类型">
-          <el-select v-model="add.type" class="m-2" placeholder="请选择形状类型" clearable>
+          <el-select v-model="add.type" class="m-2" placeholder="请选择环境因子类型" clearable>
             <el-option v-for="item in factorOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -291,7 +291,7 @@ export default {
       obj.list = this.factorId
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过形状类型来修改！！")
+        ElMessage.warning("请通过环境因子类型来修改！！")
       }
       else {
         addHigh(obj).then(res => {
@@ -335,13 +335,6 @@ export default {
   h1 {
     margin: 0%;
   }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
 
     font-weight: 700;
