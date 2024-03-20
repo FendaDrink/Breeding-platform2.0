@@ -16,7 +16,7 @@
         <el-form-item label="性状名称">
           <el-input v-model="add.name" placeholder="请输入性状名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-
+        <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery" >搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
       </el-form>

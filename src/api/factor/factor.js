@@ -53,7 +53,7 @@ export function download(data){
 
 export function getSelect(){
   return request({
-    url: '/sidebarTreeEnv/asFactorType/selectEnvFactorName' ,
+    url: '/sidebarTreeEnv/envFactorType/selectFactorTypeName' ,
     method: 'get'
   })
 }

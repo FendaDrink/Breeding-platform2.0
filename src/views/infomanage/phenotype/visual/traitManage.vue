@@ -7,7 +7,7 @@
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
         <div class="echart_wrapper">
-            <div id="traitPanMap" style="width: 100%; height: 55vw"></div>
+            <div id="traitPanMap" :loading="isSunBurstChartLoading" style="width: 100%; height: 55vw"></div>
             <div class="trait-form">
                 <el-table
                 :data="
@@ -84,20 +84,12 @@
 
 <script setup>
 import * as echarts from "echarts";
-import { reactive, ref, onMounted, getCurrentInstance, nextTick } from "vue";
-import { getTree } from "@/api/tree";
+import { reactive, ref, onMounted  } from "vue";
 import { useRoute } from "vue-router";
 import {
   getTraitFormByFileId,
-  getallTraitByfileId,
-  getTraitBytraitId,
   selectTraitColByFileId,
 } from "@/api/data_presentation/trait_management";
-
-// vue实例
-const {
-  proxy: { $modal, $download },
-} = getCurrentInstance();
 
 //route实例
 const route = useRoute();
@@ -146,101 +138,6 @@ const phenotypeData = reactive([
   },
 ]);
 
-const data2 = reactive({
-  name: "植物性状",
-  children: [
-    {
-      name: "性状一",
-      id: "1",
-      children: [
-        {
-          name: "性状1.1",
-          id: "2",
-        },
-        {
-          name: "性状1.2",
-          id: "3",
-        },
-      ],
-    },
-    {
-      name: "性状二",
-      id: "4",
-      children: [
-        {
-          name: "性状2.1",
-          id: "5",
-        },
-        {
-          name: "性状2.2",
-          id: "6",
-        },
-      ],
-    },
-    {
-      name: "性状三",
-      id: "7",
-      children: [
-        {
-          name: "性状3.1",
-          id: "8",
-        },
-        {
-          name: "性状3.2",
-          id: "9",
-        },
-      ],
-    },
-    {
-      name: "性状四",
-      id: "10",
-      children: [
-        {
-          name: "性状4.1",
-          id: "11",
-        },
-        {
-          name: "性状4.2",
-          id: "12",
-        },
-      ],
-    },
-    {
-      name: "性状五",
-      id: "13",
-      children: [
-        {
-          name: "性状5.1",
-          id: "14",
-        },
-        {
-          name: "性状5.2",
-          id: "15",
-        },
-      ],
-    },
-    {
-      name: "性状六",
-      id: "16",
-      children: [
-        {
-          name: "性状6.1",
-          id: "17",
-        },
-        {
-          name: "性状6.2",
-          id: "1",
-        },
-      ],
-    },
-  ],
-});
-
-const echartData = reactive({
-  name: "植物性状",
-  children: [
-  ],
-});
 
 const sunBurstData = reactive({
   name: "植物性状",
@@ -248,41 +145,7 @@ const sunBurstData = reactive({
   ],
 });
 
-const pieOption = {
-    title: {
-        text: "文件性状统计",
-    },
-    series: [
-        {
-        type: "tree",
-        data: [echartData],
-        top: "10%",
-        bottom: "18%",
-        left: "1%",
-        layout: "radial",
-        symbol: "emptyCircle",
-        symbolSize: 7,
-        initialTreeDepth: 3,
-        animationDurationUpdate: 750,
-        zoom: 1,
-        emphasis: {
-            focus: "descendant",
-        },
-        expandAndCollapse: false,
-        itemStyle: {
-            normal: {
-            color: "transparent",
-            },
-        },
-        },
-    ],
-};
-
-
-//获取第一个表格
-const columns = ref([]); // 表头数据
-const tableData = ref([]); // 表格数据
-
+const isSunBurstChartLoading =ref(true)
 const handleSizeChange2 = (val) => {
   pageSize2.value = val;
 };
@@ -297,15 +160,10 @@ function formatTableCell(value) {
 }
 
 
-//显示控制
-const traitChoosed = ref(false);
-
-
 //用于更新phentypeData的函数
 function updatePhenotypeData(data) {
   phenotypeData.splice(0, phenotypeData.length, ...data);
   createTreeData(phenotypeData);
-  createTreeData2(phenotypeData);
 }
 
 const traitTableLoading = ref(false);
@@ -322,7 +180,6 @@ function chooseForm() {
   });
   queryParams.pageNum = currentpageNum.value;
   queryParams.pageSize = pageSize.value;
-  traitChoosed.value = true;
   getTraitFormByFileId({
     fileId: traitFileId,
     pageSize: queryParams.pageSize,
@@ -355,10 +212,6 @@ function chooseForm() {
         });
       }
 
-      columns.value = columnsValue;
-      tableData.value = tableDataValue;
-
-      traitChoosed.value = true;
       traitTableLoading.value = false;
     })
     .catch((err) => {
@@ -369,7 +222,6 @@ function chooseForm() {
   selectTraitColByFileId(traitFileId)
     .then((res) => {
       if (res.code === 200) {
-        // const traitsData = getTraitsData(res)
         updatePhenotypeData(res.data);
         handleSunburstStyle()
         totalPage2.value = res.data.length;
@@ -382,56 +234,8 @@ function chooseForm() {
 
 }
 
-// 提取性状信息
-
 //将请求到的形状信息转换为树形结构
-function createTreeData(data) {
-    console.log(data,'data');
-  //获取性状类型
-  echartData.children = [];
-  let traitType = [];
-  data.forEach((item) => {
-    let isExist = false;
-    for(let i=0;i<traitType.length;i++){
-      if(traitType[i].id == item.traitTypeId){
-        isExist = true;
-        break;
-      }
-    }
-    if(!isExist){
-      if(item.traitTypeId ==null){
-        traitType.push({
-          name: "未定义性状类别",
-          id: null
-        })
-      }else
-      traitType.push({
-        name: item.traitTypeName,
-        id: item.traitTypeId
-      })
-    }
-  })
-  console.log(traitType,'traitType');
-  //创建树形结构
-  traitType.forEach((item) => {
-    let node={
-      name: item.name,
-      id: item.id,
-      children: []
-    }
-    node.children=data.filter((item2) => item2.traitTypeId === item.id).map((item3) => {
-      return {
-        name: item3.traitName,
-        id: item3.traitTypeId,
-        children: null
-      }
-    });
-    echartData.children.push(node);
-  })
-  console.log(echartData,'echartData');
-}
-
-const createTreeData2 = (data) => {
+const createTreeData = (data) => {
   console.log(data, 'data');
   //获取性状类型
   sunBurstData.children = [];
@@ -618,78 +422,9 @@ function initHistogram() {
   let chartDoms = document.querySelector("#traitPanMap");
   chartDoms?.removeAttribute("_echarts_instance_")
   let myChart = echarts.init(chartDoms);
-  myChart.on("click", (params) => {
-  });
-  console.log(pieOption, 'pieOption');
-  console.log(sunBurstOption, 'sunBurstOption');
   sunBurstOption && myChart.setOption(sunBurstOption);
+  isSunBurstChartLoading.value=false
 }
-
-
-async function fetchData(pageNumber, pageSize) {
-  try {
-    traitTableLoading.value = true;
-    const traitFileId = fileId.value;
-
-    // 创建查询参数对象
-    const queryParams = reactive({
-      pageNum: pageNumber,
-      pageSize: pageSize,
-    });
-
-    traitChoosed.value = true;
-
-    getTraitFormByFileId({
-      fileId: traitFileId,
-      pageSize: queryParams.pageSize,
-      pageNum: queryParams.pageNum,
-    })
-      .then((res) => {
-        const tableDataValue = [];
-        const columnsValue = [];
-        totalPage.value = res.total;
-        if (res.total > 0) {
-          const firstItem = res.list[0];
-
-          // 生成表头
-          Object.keys(firstItem).forEach((key) => {
-            const trait = firstItem[key];
-            const traitKey = Object.keys(trait)[0];
-            const traitName = trait[traitKey].traitName;
-            columnsValue.push({ label: traitName, prop: traitKey });
-          });
-
-          // 生成表格数据
-          res.list.forEach((array) => {
-            const rowData = {};
-            array.forEach((trait) => {
-              const traitKey = Object.keys(trait)[0];
-              const traitValue = trait[traitKey].traitValue;
-              rowData[traitKey] = traitValue;
-            });
-            tableDataValue.push(rowData);
-          });
-        }
-
-        columns.value = columnsValue;
-        tableData.value = tableDataValue;
-
-        traitChoosed.value = true;
-        traitTableLoading.value = false;
-
-        /* initHistogram(); */
-      })
-      .catch((err) => {
-        traitTableLoading.value = false;
-        console.error(err);
-      });
-  } catch (error) {
-  
-    traitTableLoading.value = false;
-    console.error("获取数据时出错：", error);
-  }
-}
-
 onMounted(() => {
   initHistogram();
   chooseForm()
