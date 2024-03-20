@@ -73,12 +73,11 @@ export function addHigh(data){
   })
 }
 
-export function getLightLine(query,data) {
+export function getLightLine(params) {
   return request({
-    url: '/sidebarTreeEnv/asFactorType/selectHighlight' ,
-    method: 'post',
-    params:query,
-    data:data
+    url: '/sidebarTreeEnv/asFactorType/fuzzyQueryFactorName' ,
+    method: 'get',
+    params:params
   })
 }
 

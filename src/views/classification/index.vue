@@ -19,6 +19,7 @@
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery" >搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
+        </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
@@ -189,7 +190,6 @@ export default {
         this.total = response.total
         let query = { ...this.add, ...this.queryParams }
         selHighL(query).then(res => {
-          console.log(res)
           this.len = res.data
           this.selectArr = this.traitList.slice(0, this.len)
           this.$refs.multipleTable.clearSelection();
@@ -197,8 +197,8 @@ export default {
             this.$refs.multipleTable.toggleRowSelection(item, true)
           })
           this.tableRowClassName = ({ row, rowIndex }) => {
-            console.log(row)
-            console.log(rowIndex)
+            console.log(row,'row')
+            console.log(rowIndex,'rowI')
             if (rowIndex < this.len) {
               return "success-row"
             }

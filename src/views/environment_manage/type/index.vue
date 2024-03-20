@@ -175,37 +175,29 @@ export default {
     },
     getHigh() {
       this.loading = true;
-      let formdata = new FormData()
-      formdata.append("type", this.add.type)
-      formdata.append("name", this.add.name)
-      getLightLine(this.queryParams, formdata).then(response => {
+      getLightLine({...this.queryParams, ...this.add}).then(response => {
         console.log(response)
-        this.factorList = response.rows
-        this.total = response.total
-        let query = { ...this.add, ...this.queryParams }
-        selHighL(query).then(res => {
-          console.log(res)
-          this.len = res.data
-          this.selectArr = this.factorList.slice(0, this.len)
+        const responseData=response.data
+        this.factorList = responseData.data
+        this.total = responseData.total
+        console.log(responseData,'asdsd');
+        this.len = responseData.size
+        console.log(this.len,'121')
+        this.factorList.slice(0, this.len).forEach((item)=>{
+          this.selectArr.push(item)
+        })
           this.$refs.multipleTable.clearSelection();
           this.selectArr.forEach(item => {
             this.$refs.multipleTable.toggleRowSelection(item, true)
           })
           this.tableRowClassName = ({ row, rowIndex }) => {
-            console.log(row)
-            console.log(rowIndex)
             if (rowIndex < this.len) {
               return "success-row"
             }
             else return ""
           }
-        })
-
         this.loading = false;
       });
-    },
-    gethigh() {
-      this.loading = true;
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -225,6 +217,8 @@ export default {
       console.log(selection)
       this.factorId = selection.map(item => item.factorId)
       console.log(this.factorId)
+      console.log(JSON.stringify(this.selectArr),'aaaa')
+
     },
     /** 提交按钮 */
     submitForm() {
@@ -303,6 +297,12 @@ export default {
   }
 };
 </script>
+<style>
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
+
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;

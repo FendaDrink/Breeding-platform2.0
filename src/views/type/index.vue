@@ -53,7 +53,7 @@
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules">
         <el-form-item label="性状类型名称" prop="traitTypeName">
           <el-input v-model="form.traitTypeName" placeholder="请输入性状类型名称" />
         </el-form-item>
