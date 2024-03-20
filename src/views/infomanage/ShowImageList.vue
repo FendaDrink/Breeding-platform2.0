@@ -105,11 +105,11 @@
                 @change="chooseDate" />
             </div>
             <el-card class="card-container" style="margin-top:10px;">
-              <template #header>
-                <div class="card-header">
-                  <span>表型图片统计</span>
-                </div>
-              </template>
+                <template #header>
+                  <div class="card-header">
+                    <h1 class="header-title">表型图片分析<i class="underline">&nbsp;</i></h1>
+                  </div>
+                </template>
               <!-- 表型图片统计 -->
               <div class="big-wrapper" style="margin-top: 10px;">
                 <v-chart class="chart" :option="option" autoresize v-loading="isLoading" />
@@ -2168,7 +2168,7 @@ async function rowClick(nodeObj) {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: #1FB864;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -3027,6 +3027,25 @@ async function rowClick(nodeObj) {
   height: 60px;
   position: relative;
   background-color: #fff;
+}
+
+.card-header .header-title{
+  font-size: 20px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.underline{
+  background-color: #1FB864;
+  height: 5px;
+  width: 150px;
+  margin-left: -75px;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 0;
+  opacity: 0.5;
 }
 
 .card-header:before,
