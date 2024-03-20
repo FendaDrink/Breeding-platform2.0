@@ -82,7 +82,7 @@
             </template>
             <!-- 文件统计 -->
             <div class="big-wrapper">
-              <v-chart class="chart1" :option="option2" autoresize v-loading="isLoading" style="margin-top:30px" />
+              <v-chart class="chart1" :option="option" autoresize v-loading="isLoading" style="margin-top:30px" />
             </div>
 
           </el-card>
@@ -208,16 +208,12 @@ const viewWidth = document.documentElement.clientWidth;
 
 
 //折线图图数据
-const option = ref();
 const nameArr = ref([])
 const dateArr = ref([])
 const dataArr = ref([])
 
 //折线图数据
-const option2 = ref({
-  // title: {
-  //   text: '文件数量变化统计',
-  // },
+const option = ref({
   tooltip: {
     trigger: 'axis',
   },
@@ -239,14 +235,40 @@ const option2 = ref({
     data: dateArr
   },
   yAxis: {
-    type: 'value',
+    type: 'value'
   },
   series: [
     {
       data: dataArr,
       type: 'line',
       smooth: true,
-      color:'#1FB864'
+      stack: 'Total',
+      lineStyle: {
+        // 线性渐变，前四个参数分别是 x0, y0, x2, y2, 范围从 0 - 1，相当于在图形包围盒中的百分比，如果 globalCoord 为 `true`，则该四个值是绝对的像素位置
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 0,
+          colorStops: [{
+            offset: 0, color: '#4C84FF' // 0% 处的颜色
+          }, {
+            offset: 1, color: '#28d016' // 100% 处的颜色
+          }],
+          globalCoord: false // 缺省为 false
+        },
+        width: 2,
+        shadowBlur: 10,
+        shadowColor: 'rgba(50,227,42,0.5)',
+        shadowOffsetX: 10,
+        shadowOffsetY: 20
+      },
+      areaStyle: {
+        normal: {
+          color: 'rgba(255,255,255,0)'
+        }
+      }
     }
   ],
   //实现下方拉动的数据
