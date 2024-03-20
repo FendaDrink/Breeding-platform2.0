@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; max-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 10px;">
+  <div style="width: 100%; background-color: #eeeeee;padding-top: 10px;">
     <div class="card-container upper">
       <div class="background">
         <div class="main-content">
@@ -12,7 +12,7 @@
                 size="large"
               >
                 <template #prepend>
-                  <el-popover :width="500" placement="bottom-start" :visible.sync="showPopover">
+                  <el-popover :width="400" placement="bottom-start" :visible.sync="showPopover">
                     <div class="inner-upload">
                       <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag
                         show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
@@ -29,7 +29,10 @@
                       </div>
                     </div>
                     <template #reference>
-                      <el-button class="no-inherit" @click="showPopover=!showPopover"><el-icon :color="showPopover?'#1FB864':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon></el-button>
+                      <el-button class="no-inherit" @click="showPopover=!showPopover">
+                        <!-- <el-icon v-if="!showPopover" :color="showPopover?'#fff':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon> -->
+                        <svg t="1710852877805" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1564" width="22" height="22"><path d="M62.659316 898.116869 155.237045 329.102536c1.693495-9.590827 10.725469-16.93495 19.757442-16.93495l713.52591 0 0-84.674752c0-9.590827-7.338479-16.93495-16.93495-16.93495l-429.018743 0L366.923925 120.238148 22.579934 120.238148c-9.596472 0-16.93495 7.344123-16.93495 16.93495L5.644983 881.181918c0 9.590827 7.338479 16.93495 16.93495 16.93495L62.659316 898.116869z" :fill="showPopover?'#ffffff':'#1FB864'" stroke="white" stroke-width="40" p-id="1565"></path><path d="M998.597574 382.16538 228.057332 382.16538c-9.037619 0-18.063947 7.338479-19.192944 16.370452L121.367144 882.310915c-1.693495 9.037619 4.515987 16.370452 13.54796 16.370452l770.540243 0c9.031974 0 18.063947-7.338479 19.187299-16.370452L1012.145535 398.535832C1013.83903 390.068357 1007.629548 382.16538 998.597574 382.16538z" :fill="showPopover?'#ffffff':'#1FB864'" stroke="white" stroke-width="40" p-id="1566"></path></svg>
+                      </el-button>
                     </template>
                   </el-popover>
                 </template>
@@ -47,7 +50,7 @@
         <span>育种任务列表</span>
         <el-button @click="getdataList" type="primary">刷新任务列表</el-button>
       </div>
-      <el-table max-height="22vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
+      <el-table max-height="70vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
         <el-table-column prop="id" label="育种任务id"></el-table-column>
         <el-table-column prop="materialName" label="材料名称"></el-table-column>
         <el-table-column fixed="right" label="材料基因型">
@@ -144,6 +147,8 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 3,
 });
+// 加载中显示框
+const loading=ref(null)
 // 弹出框
 const showPopover = ref(false);
 
@@ -222,7 +227,7 @@ const handleUploadFile = (file) => {
 let textarea2 = ref('');
 
 const submit = async () => {
-  if (textarea2.value === '') {
+  if (textarea2.value === ''||textarea2.value.trim() === ''){
     $modal.msgWarning("请输入材料名称！");
     return;
   }
@@ -237,10 +242,18 @@ const submit = async () => {
   }
   let formdata = new FormData();
   formdata.append('genofile', fileList.value[0].raw);
+  loading.value=ElMessage({
+    type:'warning',
+    message:'搜索中...',
+    duration:0,
+  })
   const res = await getEnvAnalyzeList({ param: textarea2.value},formdata);
   if (res.code === 200) {
-    $modal.msgSuccess(res.msg);
-      getdataList();
+    loading.value.close()
+    $modal.msgSuccess('搜索成功')
+    setTimeout(()=>{
+      router.go(0)
+    },1000)
   } else {
     $modal.msgError(res.msg);
   }
@@ -357,7 +370,7 @@ onMounted(() => {
 <style lang="less" scoped>
 .upper{
   border-radius: 5px;
-  height: 50vh;
+  height: 75vh;
   .background{
     height: 100%;
     // background-color: #d94646;
@@ -369,7 +382,7 @@ onMounted(() => {
     align-items: center;
     .main-content{
       width: 50%;
-      height: 70%;
+      height: 50%;
       .main-title{
         font-size: 40px;
         font-weight: 700;
@@ -403,7 +416,7 @@ onMounted(() => {
               }
             }
             :deep(.el-input-group__prepend){
-              background-color: #fff;
+              background-color: #1FB864;
               .el-button{
                 .el-icon{
                   // background-color: #1FB864;
@@ -413,6 +426,7 @@ onMounted(() => {
             }
             :deep(.el-input-group__append){
               background-color: #1FB864;
+              color:#fff;
               width: 18%;
               border: none;
               border-radius: 0 5px 5px 0;
@@ -420,9 +434,11 @@ onMounted(() => {
             }
             :deep(.el-button){
               width: 100%;
-              color:#fff;
               display: flex;
               justify-content: space-between;
+              .icon{
+                font-size: 120%;
+              }
             }
           }
         }
@@ -435,15 +451,42 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  height: 220px;
+  .upload-demo{
+    width: 95%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
   .btns{
+    width: 100%;
     display: flex;
     justify-content:flex-end;
-    margin-top: 40px;
+    padding-right: 10px;
   }
 }
-.lower{
-  min-height: 30vh;
+:deep(.el-upload-dragger){
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  .el-icon{
+    height: 30px;
+  }
+  div{
+    padding: 20px;
+  }
 }
+:deep(.el-upload-list){
+  width:100%;
+}
+// .lower{
+//   min-height: 30vh;
+// }
 .card-container {
   // width: 97%;
   // border-radius: 50px;
@@ -732,9 +775,6 @@ onMounted(() => {
   height: 200px !important;
 }
 
-:deep(.el-upload-dragger) {
-  height: 200px !important;
-}
 
 
 :deep(.el-button) {

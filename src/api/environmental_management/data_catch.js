@@ -23,11 +23,11 @@ export function deleteData(id){
     });
 }
 
-export function downloadResultPdf(id){
+export function downloadResultCsv(id){
     return request({
-        url: `/sidebarTreeEnv/envFile/downloadPdf`,
+        url: `/sidebarTreeEnv/envFile/downloadResult`,
         method: 'get',
-        params: {taskId: id},
+        params: {id},
         responseType:"blob",
         timeout: 1000*600
     });
@@ -35,7 +35,7 @@ export function downloadResultPdf(id){
 
 export function downloadFile(id){
     return request({
-        url: `/system/breed2/download`,
+        url: `/sidebarTreeEnv/envFile/download`,
         method: 'get',
         params:{id},
         responseType:"blob",
