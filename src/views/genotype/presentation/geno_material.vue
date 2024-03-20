@@ -382,7 +382,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = 4
+const treeType = 5
 const tree = ref(null); // 树的dom实例
 
 const firstLeafNode =ref(null)
@@ -818,7 +818,7 @@ onMounted(() => {
 //一级节点选择器
 :deep(.el-tree>.el-tree-node> .el-tree-node__content) {
   font-weight: 600;
-  color:#80a492;
+  color:#1FB864;
   height: 28px;
   .el-tree-node__label{
     font-size: 18px;
@@ -891,7 +891,7 @@ onMounted(() => {
   align-items: center;
 }
 :deep(.el-card__header){
-  background: #9ABEAF;
+  background: #1FB864;
   height: 60px  !important;
   display: flex;
   vertical-align: middle;
