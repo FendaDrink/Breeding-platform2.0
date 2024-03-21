@@ -169,8 +169,10 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      // 按照输入框内容过滤数据
       this.queryParams.pageNum = 1;
-      this.getList();
+      this.getList()
+
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -283,7 +285,7 @@ export default {
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background: #0F5C32;
+  background: #1FB864;
   height: 60px !important;
 
   span {
@@ -310,15 +312,9 @@ export default {
   padding: 0px !important;
 
   h1 {
-    margin: 0%;
+    margin: 0;
   }
 
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
 
     font-weight: 700;
@@ -590,12 +586,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;

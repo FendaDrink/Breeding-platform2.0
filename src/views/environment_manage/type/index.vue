@@ -3,7 +3,7 @@
     <el-card>
       <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="100px">
         <el-form-item label="环境因子类型">
-          <el-select v-model="add.type" class="m-2" placeholder="请选择形状类型" clearable>
+          <el-select v-model="add.type" class="m-2" placeholder="请选择环境因子类型" clearable>
             <el-option v-for="item in factorOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -175,37 +175,29 @@ export default {
     },
     getHigh() {
       this.loading = true;
-      let formdata = new FormData()
-      formdata.append("type", this.add.type)
-      formdata.append("name", this.add.name)
-      getLightLine(this.queryParams, formdata).then(response => {
+      getLightLine({...this.queryParams, ...this.add}).then(response => {
         console.log(response)
-        this.factorList = response.rows
-        this.total = response.total
-        let query = { ...this.add, ...this.queryParams }
-        selHighL(query).then(res => {
-          console.log(res)
-          this.len = res.data
-          this.selectArr = this.factorList.slice(0, this.len)
+        const responseData=response.data
+        this.factorList = responseData.data
+        this.total = responseData.total
+        console.log(responseData,'asdsd');
+        this.len = responseData.size
+        console.log(this.len,'121')
+        this.factorList.slice(0, this.len).forEach((item)=>{
+          this.selectArr.push(item)
+        })
           this.$refs.multipleTable.clearSelection();
           this.selectArr.forEach(item => {
             this.$refs.multipleTable.toggleRowSelection(item, true)
           })
           this.tableRowClassName = ({ row, rowIndex }) => {
-            console.log(row)
-            console.log(rowIndex)
             if (rowIndex < this.len) {
               return "success-row"
             }
             else return ""
           }
-        })
-
         this.loading = false;
       });
-    },
-    gethigh() {
-      this.loading = true;
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -225,6 +217,8 @@ export default {
       console.log(selection)
       this.factorId = selection.map(item => item.factorId)
       console.log(this.factorId)
+      console.log(JSON.stringify(this.selectArr),'aaaa')
+
     },
     /** 提交按钮 */
     submitForm() {
@@ -291,7 +285,7 @@ export default {
       obj.list = this.factorId
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过形状类型来修改！！")
+        ElMessage.warning("请通过环境因子类型来修改！！")
       }
       else {
         addHigh(obj).then(res => {
@@ -303,10 +297,16 @@ export default {
   }
 };
 </script>
+<style>
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
+
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background: #0F5C32;
+  background: #1FB864;
   height: 60px !important;
 
   span {
@@ -335,13 +335,6 @@ export default {
   h1 {
     margin: 0%;
   }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
 
     font-weight: 700;
@@ -613,12 +606,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;

@@ -131,7 +131,7 @@
 
 <script setup>
 import * as echarts from "echarts";
-import { reactive, ref, nextTick, onMounted } from "vue";
+import {reactive, ref, nextTick, onMounted, watchEffect} from "vue";
 import chinaData from "echarts/map/json/china.json";
 import { FIRST_LAST_KEYS } from "element-plus";
 import {
@@ -168,10 +168,14 @@ const cityLoading = ref(false);
 const states = ref([]);
 const states2 = ref([]);
 
+// 模拟点击
+const defaultLocation = ref("");
 //获得地图信息
 function getMaps() {
   getMap().then((res) => {
-    console.log(res, "jjj");
+    // location.value 设置
+    location.value = res.data[1].area;
+    search_trait();
     if (res.code === 200) {
       const mapData = MapOption.series[0].data;
       res.data.forEach((item) => {
@@ -192,10 +196,6 @@ function getMaps() {
       });
     }
     initCharts();
-    // 模拟点击北京
-    const defaultLocation = "北京";
-    // 将 location.value 设置为北京
-    location.value = defaultLocation;
     console.log("1");
     mapcharts.dispatchAction({
       type: "click",

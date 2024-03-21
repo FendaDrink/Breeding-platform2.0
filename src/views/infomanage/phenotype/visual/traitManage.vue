@@ -2,76 +2,99 @@
   <el-card class="card-container">
     <template #header>
       <div class="card-header">
-        <span>文件 {{route.query.tableName}} 包含的环境因子与分类</span>
+        <span>性状管理</span>
       </div>
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
-      <div class="echart_wrapper">
-        <div id="factorPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
-        <div class="factor-form">
-          <el-table :data="phenotypeData.slice(
-            (currentpageNum2 - 1) * pageSize2,
-            currentpageNum2 * pageSize2
-          )
-            " stripe style="margin: 10px auto">
-            <el-table-column label="序号" width="80px" type="index" :index="indexMethod" align="center" />
+        <div class="echart_wrapper">
+            <div id="traitPanMap" :loading="isSunBurstChartLoading" style="width: 100%; height: 55vw"></div>
+            <div class="trait-form">
+                <el-table
+                :data="
+                    phenotypeData.slice(
+                    (currentpageNum2 - 1) * pageSize2,
+                    currentpageNum2 * pageSize2
+                    )
+                "
+                stripe
+                style="margin: 10px auto"
+                >
+                <el-table-column
+                    label="序号"
+                    width="80px"
+                    type="index"
+                    :index="indexMethod"
+                    align="center"
+                />
 
-            <el-table-column align="center" prop="factorName" label="环境因子名称" min-width="150px">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.factorName) }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" prop="factorFullName" label="全称" min-width="150px">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.factorFullName) }}
-              </template>
+                <el-table-column
+                    align="center"
+                    prop="traitName"
+                    label="性状名称"
+                    min-width="150px"
+                >
+                    <template #default="scope">
+                    {{ formatTableCell(scope.row.traitName) }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    align="center"
+                    prop="fullName"
+                    label="全称"
+                    min-width="150px"
+                >
+                    <template #default="scope">
+                    {{ formatTableCell(scope.row.fullName) }}
+                    </template>
 
-            </el-table-column>
-            <el-table-column prop="factorAbbreviationName" label="缩写" align="center" min-width="150px">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.factorAbbreviationName) }}
-              </template>
-            </el-table-column>
+                </el-table-column>
+                <el-table-column
+                    prop="abbreviationName"
+                    label="缩写"
+                    align="center"
+                    min-width="150px"
+                >
+                    <template #default="scope">
+                    {{ formatTableCell(scope.row.abbreviationName) }}
+                    </template>
+                </el-table-column>
 
-            <el-table-column prop="remark" label="备注" min-width="180px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.remark) }}
-              </template>
+                <el-table-column prop="remark" label="备注" min-width="180px" align="center">
+                    <template #default="scope">
+                    {{ formatTableCell(scope.row.remark) }}
+                    </template>
 
-            </el-table-column>
-          </el-table>
+                </el-table-column>
+                </el-table>
 
-          <el-pagination background :total="totalPage2" :current-page="currentpageNum2" :page-size="pageSize2"
-            layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange2"
-            @current-change="handleCurrentChange2" />
+                <el-pagination
+                background
+                :total="totalPage2"
+                :current-page="currentpageNum2"
+                :page-size="pageSize2"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange2"
+                @current-change="handleCurrentChange2"
+                />
+            </div>
         </div>
-      </div>
     </div>
   </el-card>
 </template>
 
 <script setup>
 import * as echarts from "echarts";
-import { reactive, ref, onMounted, getCurrentInstance } from "vue";
+import { reactive, ref, onMounted  } from "vue";
 import { useRoute } from "vue-router";
 import {
-  getEnvDetailByFileId,
-  exportEnvFile,
-  modifiFileData,
-  endUpdate,
-} from "@/api/environment_factors/environment_factors";
-
-
-// vue实例
-const {
-  proxy: { $modal, $download },
-} = getCurrentInstance();
+  getTraitFormByFileId,
+  selectTraitColByFileId,
+} from "@/api/data_presentation/trait_management";
 
 //route实例
 const route = useRoute();
 
-const fileId = ref(route.query.id);
-// const fileId=ref(1051);
+const fileId=ref(route.query.id);
 
 //分页
 const pageSize = ref(10);
@@ -86,62 +109,43 @@ const currentpageNum2 = ref(1); //当前页数
 
 const phenotypeData = reactive([
   {
-    factorId: "B11",
-    factorName: "B11 content",
-    factorFullName: "B11含量",
+    traitId: "B11",
+    traitName: "B11 content",
+    fullName: "B11含量",
     remark: "45646",
-    factorAbbreviationName: "biochemistry",
+    abbreviationName: "biochemistry",
+  },
+  {
+    traitId: "B11",
+    traitName: "B11 content",
+    fullName: "B11含量",
+    remark: "45646",
+    abbreviationName: "biochemistry",
+  },
+  {
+    traitId: "B11",
+    traitName: "B11 content",
+    fullName: "B11含量",
+    remark: "45646",
+    abbreviationName: "biochemistry",
+  },
+  {
+    traitId: "B11",
+    traitName: "B11 content",
+    fullName: "B11含量",
+    remark: "45646",
+    abbreviationName: "biochemistry",
   },
 ]);
 
-const echartData = reactive({
-  name: "环境因子",
-  children: [
-  ],
-});
+
 const sunBurstData = reactive({
-  name: "环境因子",
+  name: "植物性状",
   children: [
   ],
 });
 
-
-const pieOption = {
-  title: {
-    text: "环境因子统计",
-  },
-  textStyle: {
-    fontSize: 14
-  },
-  series: [
-    {
-      type: "tree",
-      data: [echartData],
-      top: "15%",
-      bottom: "20%",
-      left: "2%",
-      layout: "radial",
-      symbol: "emptyCircle",
-      symbolSize: 17,
-      initialTreeDepth: 3,
-      animationDurationUpdate: 750,
-      zoom: 1.1,
-      emphasis: {
-        focus: "descendant",
-      },
-      expandAndCollapse: false,
-      itemStyle: {
-        normal: {
-          color: "transparent",
-        },
-      },
-    },
-  ],
-};
-
-const colorByLevel = ["#FF5733", "#FFAB33", "#33FF57", "#33ABFF"];
-
-
+const isSunBurstChartLoading =ref(true)
 const handleSizeChange2 = (val) => {
   pageSize2.value = val;
 };
@@ -152,28 +156,23 @@ const handleCurrentChange2 = (val) => {
 };
 
 function formatTableCell(value) {
-  return value || "-";
+  return value || "-"; 
 }
-
-
-//显示控制
-const factorChoosed = ref(false);
 
 
 //用于更新phentypeData的函数
 function updatePhenotypeData(data) {
   phenotypeData.splice(0, phenotypeData.length, ...data);
-  // createTreeData(phenotypeData);
-  createTreeData2(phenotypeData);
+  createTreeData(phenotypeData);
 }
 
-const factorTableLoading = ref(false);
+const traitTableLoading = ref(false);
 
-//请求环境因子信息
+//请求性状信息
 function chooseForm() {
-  if (!fileId.value) return;
-  factorTableLoading.value = true;
-  const factorFileId = fileId.value;
+  if(!fileId.value) return;
+  traitTableLoading.value = true;
+  const traitFileId = fileId.value;
 
   const queryParams = reactive({
     pageNum: 1,
@@ -181,16 +180,51 @@ function chooseForm() {
   });
   queryParams.pageNum = currentpageNum.value;
   queryParams.pageSize = pageSize.value;
-  factorChoosed.value = true;
-  getEnvDetailByFileId({ fileId: factorFileId })
-    // selectFactorColByFileId(factorFileId)
+  getTraitFormByFileId({
+    fileId: traitFileId,
+    pageSize: queryParams.pageSize,
+    pageNum: queryParams.pageNum,
+  })
+    .then((res) => {
+      const tableDataValue = [];
+      const columnsValue = [];
+      totalPage.value = res.total;
+      if (res.total > 0) {
+        const firstItem = res.list[0];
+
+        // 生成表头
+        Object.keys(firstItem).forEach((key) => {
+          const trait = firstItem[key];
+          const traitKey = Object.keys(trait)[0];
+          const traitName = trait[traitKey].traitName;
+          columnsValue.push({ label: traitName, prop: traitKey });
+        });
+
+        // 生成表格数据
+        res.list.forEach((array) => {
+          const rowData = {};
+          array.forEach((trait) => {
+            const traitKey = Object.keys(trait)[0];
+            const traitValue = trait[traitKey].traitValue;
+            rowData[traitKey] = traitValue;
+          });
+          tableDataValue.push(rowData);
+        });
+      }
+
+      traitTableLoading.value = false;
+    })
+    .catch((err) => {
+      traitTableLoading.value = false;
+      console.error(err);
+    });
+
+  selectTraitColByFileId(traitFileId)
     .then((res) => {
       if (res.code === 200) {
-        console.log(res)
-        const factorsData = getFactorsData(res)
-        updatePhenotypeData(factorsData);
+        updatePhenotypeData(res.data);
         handleSunburstStyle()
-        totalPage2.value = factorsData.length;
+        totalPage2.value = res.data.length;
         initHistogram();
       }
     })
@@ -200,60 +234,49 @@ function chooseForm() {
 
 }
 
-// 提取环境因子信息
-const getFactorsData = (data) => {
-  if (data.length === 0) return []
-  const factors = data.rows[0].factors
-  const res = factors.map((item, index) => {
-    return item[`factor_id_${index}`]
-  })
-  return res
-}
-
-
 //将请求到的形状信息转换为树形结构
-const createTreeData2 = (data) => {
+const createTreeData = (data) => {
   console.log(data, 'data');
-  //获取环境因子类型
+  //获取性状类型
   sunBurstData.children = [];
-  let factorType = [];
+  let traitType = [];
   data.forEach((item) => {
     let isExist = false;
-    for (let i = 0; i < factorType.length; i++) {
-      if (factorType[i].id === item.factorTypeId) {
+    for (let i = 0; i < traitType.length; i++) {
+      if (traitType[i].id === item.traitTypeId) {
         isExist = true;
         break;
       }
     }
     if (!isExist) {
-      if (item.factorTypeId == null) {
-        factorType.push({
-          name: "未定义因子类别",
+      if (item.traitTypeId == null) {
+        traitType.push({
+          name: "未定义性状类别",
           id: null,
         })
       } else
-        factorType.push({
-          name: item.factorTypeName,
-          id: item.factorTypeId
+        traitType.push({
+          name: item.traitTypeName,
+          id: item.traitTypeId
         })
     }
   })
-  console.log(factorType, 'factorType');
+  console.log(traitType, 'traitType');
   //创建树形结构
-  factorType.forEach((item) => {
+  traitType.forEach((item) => {
     let node = {
       name: item.name,
       value:1,
       children: []
     }
-    node.children = data.filter((item2) => item2.factorTypeId === item.id).map((item3) => {
+    node.children = data.filter((item2) => item2.traitTypeId === item.id).map((item3) => {
       return {
         name: '',
-        id: item3.factorTypeId,
+        id: item3.traitTypeId,
         value:1,
         children: [
           {
-            name: item3.factorName,
+            name: item3.traitName,
             value:1,
             children: null
           }
@@ -291,7 +314,7 @@ const sunburstLevels = [
   {
     label:{
       rotate: 0,
-      fontSize: 30,
+      fontSize: 24,
       fontWeight: 800,
       textBorderColor: '#000',
       textBorderWidth: 4,
@@ -300,16 +323,16 @@ const sunburstLevels = [
   {
     r0: '20%',
     r: '60%',
-    itemStyle:{
-      // shadowBlur:200,
-      // shadowColor:'rgba( 31,180, 98, 0.8)',
-    },
+    label: {
+      fontSize: 16
+    }
   },
   {
     r0: '60%',
     r: '70%',
   },
   {
+    r0:'70%',
     label:{
       color: '#fff',
       textBorderWidth:3
@@ -326,6 +349,7 @@ const randomColor = () => {
 
   // 先在colors中随机选取一个颜色,同时删除
   let color = colors.splice(Math.floor(Math.random() * colors.length),1)[0];
+  console.log(color,'cccccc');
   return color;
 }
 
@@ -343,17 +367,11 @@ const sunBurstOption = {
       textBorderWidth: 2,
     },
     itemStyle: {
-      borderWidth: 20,
+      borderWidth: 14,
       borderColor:'#f1f6f3'
     },
+    gap: 50,
     levels: sunburstLevels,
-    // emphasis:{
-    //   itemStyle:{
-    //     borderWidth: 0,
-    //     color: '#1FB964',
-    //
-    //   }
-    // }
   }
 };
 
@@ -366,11 +384,11 @@ const handleSunburstStyle = () => {
       shadowColor: color,
     }
     item.emphasis = {
-        itemStyle: {
-          color: color,
-          borderWidth: 0,
-        }
+      itemStyle: {
+        color: color,
+        borderWidth: 0,
       }
+    }
     item.children.forEach((item2, index2) => {
       item2.emphasis = {
         itemStyle: {
@@ -385,8 +403,6 @@ const handleSunburstStyle = () => {
       }
       item2.children[0].itemStyle = {
         color: 'transparent',
-        // color: color,
-        // borderWidth: 0,
         fontSize: 20,
       }
       item2.children[0].emphasis = {
@@ -403,24 +419,12 @@ const handleSunburstStyle = () => {
 };
 
 function initHistogram() {
-  let chartDoms = document.querySelector("#factorPanMap");
+  let chartDoms = document.querySelector("#traitPanMap");
   chartDoms?.removeAttribute("_echarts_instance_")
   let myChart = echarts.init(chartDoms);
-  myChart.on("click", (params) => {
-  });
-  console.log(pieOption, 'pieOption');
-  console.log(sunBurstOption, 'sunBurstOption');
   sunBurstOption && myChart.setOption(sunBurstOption);
-  // pieOption && myChart.setOption(pieOption);
+  isSunBurstChartLoading.value=false
 }
-
-// 文件名称对象，将其内容赋值给
-// const setFileName = ()=>{
-//   const p = document.querySelector('.file-name')
-//   p.dataset.content=p.textContent
-//   console.log(p,'121212121')
-// }
-
 onMounted(() => {
   initHistogram();
   chooseForm()
@@ -430,54 +434,33 @@ onMounted(() => {
 <style lang="less" scoped>
 .card {
   position: relative;
-  margin: 0 auto;
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
 }
 
 /* 所有标签 */
 
 
-.echart_wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: relative;
-  background-color: #f1f6f3;
-  //.file-name{
-  //  position: absolute;
-  //  top: 0;
-  //  left: 0;
-  //  z-index: 10;
-  //  font-size: 24px;
-  //  color: #fff;
-  //  //text-shadow: #000 1.5px 0 0, #000 0 1.5px 0, #000 -1.5px 0 0, #000 0 -1.5px 0;
-  //  font-weight: bold;
-  //  //filter:drop-shadow(2px 0 #000) drop-shadow(-2px 0 #000);
-  //  -webkit-text-stroke: 3px #000;
-  //}
-  //.file-name::after{
-  //  content:attr(data-content);
-  //  position:absolute;
-  //  top: 0;
-  //  left: 0;
-  //  z-index:66;
-  //  -webkit-text-stroke:0;
-  //}
-
-
-  .factor-form {
+  .echart_wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    margin-top: -50px;
+    position: relative;
+    .trait-form {
+      width: 100%;
+      margin-top: 50px;
+    }
   }
-}
+
+
 
 .card-container {
   width: 95%;
-  margin: 30px auto;
   border-radius: 50px;
   background-color: #f1f6f3;
 }
@@ -501,19 +484,19 @@ onMounted(() => {
   border-radius: 20px;
 }
 
-:deep(.el-table__header) {
+:deep(.el-table__header){
   border-bottom: 1px solid black;
   border-top: 1px solid #EBEEF5;
 
-  th {
+  th{
     font-weight: 800;
+    //color: 909399;
     font-size: 16PX;
     background: #FAFAFA !important;
     letter-spacing: 2px;
     height: 60px !important;
   }
 }
-
 .mokuai {
   margin-bottom: 0;
   background-color: rgb(183, 202, 189);
@@ -537,7 +520,7 @@ onMounted(() => {
   }
 }
 
-canvas {
+canvas{
   margin: 0 auto;
 }
 </style>
@@ -546,10 +529,10 @@ canvas {
 <!-- 卡片样式 -->
 
 <style lang="less" scoped>
-.card-container {
+
+.card-container{
   border-radius: 50px;
 }
-
 .card-header {
   display: flex;
   justify-content: space-between;

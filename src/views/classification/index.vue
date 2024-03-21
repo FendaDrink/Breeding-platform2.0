@@ -190,7 +190,6 @@ export default {
         this.total = response.total
         let query = { ...this.add, ...this.queryParams }
         selHighL(query).then(res => {
-          console.log(res)
           this.len = res.data
           this.selectArr = this.traitList.slice(0, this.len)
           this.$refs.multipleTable.clearSelection();
@@ -198,8 +197,8 @@ export default {
             this.$refs.multipleTable.toggleRowSelection(item, true)
           })
           this.tableRowClassName = ({ row, rowIndex }) => {
-            console.log(row)
-            console.log(rowIndex)
+            console.log(row,'row')
+            console.log(rowIndex,'rowI')
             if (rowIndex < this.len) {
               return "success-row"
             }
@@ -318,7 +317,7 @@ export default {
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background: #0F5C32;
+  background: #1FB864;
   height: 60px !important;
 
   span {
@@ -381,12 +380,6 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
-
-
-
-
-
-
 
 .green-button {
   background-color: #1FB864 !important;

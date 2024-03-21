@@ -53,7 +53,7 @@ export function download(data){
 
 export function getSelect(){
   return request({
-    url: '/sidebarTreeEnv/asFactorType/selectEnvFactorName' ,
+    url: '/sidebarTreeEnv/envFactorType/selectFactorTypeName' ,
     method: 'get'
   })
 }
@@ -73,12 +73,11 @@ export function addHigh(data){
   })
 }
 
-export function getLightLine(query,data) {
+export function getLightLine(params) {
   return request({
-    url: '/sidebarTreeEnv/asFactorType/selectHighlight' ,
-    method: 'post',
-    params:query,
-    data:data
+    url: '/sidebarTreeEnv/asFactorType/fuzzyQueryFactorName' ,
+    method: 'get',
+    params:params
   })
 }
 
