@@ -1,5 +1,6 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
@@ -183,6 +184,7 @@
         <el-table-column v-for="item in tableProps" :prop="item" :label="item" min-width="120" :key="item" align="center"/>
       </el-table>
     </el-drawer>
+  </el-config-provider>
   </div>
 </template>
 
@@ -198,11 +200,14 @@ import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 
-
-import { useI18n } from 'vue-i18n'
 import { computed } from "@vue/reactivity";
 
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 // const locale = computed(()=>{
 //   return i18n.locale;
 // })

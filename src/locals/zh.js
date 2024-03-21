@@ -19,6 +19,11 @@ export default {
     logo: {
         title: '基因组育种决策平台2.0'
     },
+    systom: {
+        prompt: '系统提示',
+        ok: '确定',
+        cancel: '取消',
+    },
     ...zhLocale,
     
     ...phenptype_zh

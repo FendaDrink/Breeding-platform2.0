@@ -3,6 +3,8 @@ import { createI18n } from 'vue-i18n'
 import zh from './zh'
 import en from './en'
 
+
+
 const messages = {
   en,
   zh,
@@ -19,3 +21,8 @@ const i18n = createI18n({
 })
 export default i18n
 
+export const setupI18n = {
+  install(App) {
+    App.use(i18n);
+  },
+};
