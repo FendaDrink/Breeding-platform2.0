@@ -50,7 +50,7 @@ import PsdStrength from '@/components/PsdStrength'
 import VueLazyload from 'vue-lazyload';
 
 // 国际化
-import * as VueI18n from 'vue-i18n'
+import i18n from './locals'
 
 const app = createApp(App)
 
@@ -91,4 +91,5 @@ app.use(ElementPlus, {
   size: Cookies.get('size') || 'default'
 })
 
+app.use(i18n)
 app.mount('#app')
