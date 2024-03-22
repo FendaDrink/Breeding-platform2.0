@@ -258,9 +258,9 @@ const option = ref({
           }],
           globalCoord: false // 缺省为 false
         },
-        width: 2,
-        shadowBlur: 10,
-        shadowColor: 'rgba(50,227,42,0.5)',
+        width: 8,
+        shadowBlur: 8,
+        shadowColor: 'rgba(50,227,42,0.1)',
         shadowOffsetX: 10,
         shadowOffsetY: 20
       },

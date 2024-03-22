@@ -189,7 +189,7 @@
 <script setup name="phenoType">
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
+import { listFile, updateFile, delFile, listFileHistory } from "@/api/infomanage/phenotype";
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -315,8 +315,8 @@ const handleBeforeUpload = (file) => {
   console.log(file);
 }; */
 
-const createData = async () => {
-  const valid = await form.value.validate();
+const createData = () => {
+  const valid = form.value.validate();
   console.log(valid);
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
@@ -325,10 +325,16 @@ const createData = async () => {
       }&fileName=${dataForm.fileName}&pointStatus=${0}`;
 
     $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    isDisabled.value = true;
-    tableLoading.value = false;
-    tableName.value = "";
+    try{
+      upload.value.submit();
+    }catch(err){
+      $modal.msgError(err);
+    }finally{
+      console.log("1")
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+    }
   }
   dialogFormVisible.value = false;
   getList();
@@ -668,7 +674,7 @@ const fileVisual = (row) => {
 function openHistory(row) {
   historyTableLoading.value = true;
   historyFormVisible.value = true;
-  listFile({
+  listFileHistory({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,
     fileStatus: roles[0] === "admin" ? null : 1,
@@ -683,7 +689,6 @@ function openHistory(row) {
       historyFileList.value.forEach((item) => {
         allFileId.value.push(item.fileId);
       });
-      total.value = res.total;
       historyTableLoading.value = false;
     })
     .catch((err) => {
@@ -1024,7 +1029,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {
