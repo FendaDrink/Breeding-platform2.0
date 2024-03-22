@@ -30,11 +30,12 @@
                      v-hasPermi="['system:trait:export']">确认修改</el-button>
         </el-col>
 
+
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
       <el-table ref="multipleTable" :data="traitList" v-model="selectArr" @selection-change="handleSelectionChange"
-                @select="handleSelect" :row-class-name="tableRowClassName">
+                @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
         <el-table-column label="性状名称" align="center" prop="traitName" />
@@ -100,7 +101,6 @@ export default {
       // 总条数
       total: 0,
       // 【请填写功能名称】表格数据
-
       traitList: [],
       // 弹出层标题
       title: "",
@@ -239,8 +239,8 @@ export default {
               return "success-row"
             } else return ""
           }
-        })
 
+        })
         this.loading = false;
       });
     },
@@ -262,7 +262,7 @@ export default {
                 })
                 resolve()
               })
-            })
+            });
       })
     },
     /** 搜索按钮操作 */

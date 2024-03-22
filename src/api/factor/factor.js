@@ -65,11 +65,21 @@ export function selHighL(data){
     params:data
   })
 }
+
+export function selHighLAll(data){
+  return request({
+    url:"/sidebarTreeEnv/asFactorType/selectHighlightinAll",
+    method:'get',
+    params:data
+  })
+}
+
 export function addHigh(data){
   return request({
     url:"/sidebarTreeEnv/asFactorType/checkUpdate",
     method:'post',
-    data:data
+    // 不知道name是干啥的，后端说得传
+    data:{...data,name:''}
   })
 }
 
@@ -78,6 +88,14 @@ export function getLightLine(params) {
     url: '/sidebarTreeEnv/asFactorType/fuzzyQueryFactorName' ,
     method: 'get',
     params:params
+  })
+}
+
+export function getLightLineAll(params) {
+  return request({
+    url: '/sidebarTreeEnv/asFactorType/fuzzyQueryFactorNameAll' ,
+    method: 'get',
+    params:params,
   })
 }
 

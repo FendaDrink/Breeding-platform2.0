@@ -11,13 +11,13 @@
           <el-input v-model="add.name" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search"  @click="handleQuery" >搜索</el-button>
+          <el-button type="primary" :loading="isSearching" icon="Search"  @click="handleQuery" >搜索</el-button>
           <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
         </el-form-item>
       </el-form>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain  @click="isModify"
+          <el-button type="warning" plain  @click="isModify" :loading="isModifing" icon="edit"
                      v-hasPermi="['system:factor:export']">确认修改</el-button>
         </el-col>
 
@@ -25,7 +25,7 @@
       </el-row>
 
       <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange"
-                @select="handleSelect" :row-class-name="tableRowClassName">
+                @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
         <el-table-column label="环境因子名称" align="center" prop="factorName" />
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { addHigh, selHighL, download, getSelect, getLightLine, listFactor, addFactor, updateFactor } from "@/api/factor/factor";
+import { addHigh, selHighLAll, download, getSelect, getLightLine, listFactor,getLightLineAll, addFactor, updateFactor } from "@/api/factor/factor";
 import { blobValidate } from '@/utils/param'
 import { ElMessage } from "element-plus";
 import { saveAs } from 'file-saver'
@@ -94,30 +94,32 @@ export default {
         pageNum: 1,
         pageSize: 10,
       },
+      //记录是否第一次查询
+      isFirstSearch: true,
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         factorName: [
-          { required: true, message: "环境因子名称不能为空", trigger: "blur" }
+          {required: true, message: "环境因子名称不能为空", trigger: "blur"}
         ],
         factorFullName: [
-          { required: true, message: "全称不能为空", trigger: "blur" }
+          {required: true, message: "全称不能为空", trigger: "blur"}
         ],
         factorAbbreviationName: [
-          { required: true, message: "缩写不能为空", trigger: "blur" }
+          {required: true, message: "缩写不能为空", trigger: "blur"}
         ],
         createBy: [
-          { required: true, message: "创建者不能为空", trigger: "blur" }
+          {required: true, message: "创建者不能为空", trigger: "blur"}
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          {required: true, message: "创建时间不能为空", trigger: "blur"}
         ],
         updateBy: [
-          { required: true, message: "更新者不能为空", trigger: "blur" }
+          {required: true, message: "更新者不能为空", trigger: "blur"}
         ],
         updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+          {required: true, message: "更新时间不能为空", trigger: "blur"}
         ],
       },
       //高亮显示
@@ -130,8 +132,19 @@ export default {
       factorOptions: [],
       len: "",
       selectArr: [],
+      //所有选中的数据
+      allSelecArr: {},
+      //是否为第一次查询
+      isFirstSelection: true,
+      //保存每页当前的数据
+      pageSelection: [],
+      //保存上一次的数据
+      lastSelection: [],
+      //加载项
+      isSearching: false,
+      isModifing: false,
       flen: 0,
-      Tlen: 0
+      Tlen: 0,
     };
   },
   created() {
@@ -175,33 +188,72 @@ export default {
     getHigh() {
       this.loading = true;
       getLightLine({...this.queryParams, ...this.add}).then(response => {
-        console.log(response)
         const responseData=response.data
         this.factorList = responseData.data
         this.total = responseData.total
+        if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
+          ElMessage.warning("没有符合条件的数据")
+        } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
+          ElMessage.success("查询成功")
+        }
+        this.isFirstSelection = true
+        this.isFirstSearch = false
         this.len = responseData.size
+        const num = this.queryParams.pageNum
+        const size = this.queryParams.pageSize
+        const start = (num - 1) * size
         this.selectArr = this.factorList.slice(0, this.len)
         this.$refs.multipleTable.clearSelection();
         setTimeout(()=>{
-          this.selectArr.forEach((item) => {
-            this.$refs.multipleTable.toggleRowSelection(item,true)
-          })
+          this.pageSelection = []
+          this.factorList.forEach((item, index) => {
+            if (this.allSelecArr[index + start] && item.factorId == this.allSelecArr[index + start].factorId) {
+              this.$refs.multipleTable.toggleRowSelection(item, true)
+              this.pageSelection.push(index)
+            }
+          });
+          this.isSearching = false
         },0)
-        this.tableRowClassName = ({ row, rowIndex }) => {
-          if (rowIndex < this.len) {
+        this.tableRowClassName = ({row, rowIndex}) => {
+          if (this.allSelecArr[rowIndex + start] && row.factorId == this.allSelecArr[rowIndex + start].factorId) {
             return "success-row"
-          }
-          else return ""
+          } else return ""
         }
         this.loading = false;
-      }).finally(()=>{
-
+      })
+    },
+    //查询所有选择的数据
+    getAllSelection() {
+      return new Promise((resolve, reject) => {
+        getLightLineAll({
+          ...this.add,
+          pageNum: 1,
+          pageSize: 1000
+        })
+            .then(res => {
+              const resData = res.data
+              resData.data.slice(0, resData.size).forEach((item, index) => {
+                  this.allSelecArr[index] = item
+                })
+                resolve()
+            });
       })
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    async handleQuery() {
+      if (this.add.type == "" && this.add.name == "") {
+        ElMessage.warning("请输入查询条件")
+        return
+      }
       this.queryParams.pageNum = 1;
-      this.getHigh();
+      this.isFirstSearch = true;
+      this.isFirstSelection = true
+      this.allSelecArr = {}
+      this.factorId = []
+      this.isSearching = true
+      this.getAllSelection().then(() => {
+        this.getHigh();
+      })
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -209,15 +261,23 @@ export default {
       this.add.name = ""
       this.add.type = ""
       this.len = ""
-      this.handleQuery();
+      this.allSelecArr = {}
+      this.factorId = []
+      this.queryParams.pageNum = 1;
+      this.isFirstSearch = true;
+      this.isFirstSelection = true
+      this.getHigh();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      console.log(selection)
-      this.factorId = selection.map(item => item.factorId)
-      console.log(this.factorId)
-      console.log(JSON.stringify(this.selectArr),'aaaa')
-
+      this.isFirstSelection = false
+      //获取allSelecArr的id数组
+      console.log(this.allSelecArr, "this.allSelecArr111");
+      this.factorId = []
+      for (let key in this.allSelecArr) {
+        this.factorId.push(this.allSelecArr[key].factorId)
+      }
+      console.log(this.factorId, "this.factorId");
     },
     /** 提交按钮 */
     submitForm() {
@@ -259,14 +319,38 @@ export default {
     },
     //选中行高亮
     handleSelect(selection, row) {
-      console.log(selection)
-      console.log(row)
-      selection.forEach(item => {
-        console.log(item)
-        //让某一行默认选中
-        this.$refs.multipleTable.toggleRowSelection(item, true)
-      });
-
+      console.log(selection, "selection");
+      const index = this.factorList.findIndex(item => item.factorId == row.factorId) + (this.queryParams.pageNum - 1) * this.queryParams.pageSize
+      console.log(this.pageSelection, "this.pageSelection计算前");
+      this.lastSelection = this.pageSelection
+      this.pageSelection = selection
+      console.log(this.pageSelection, this.pageSelection.length, "this.pageSelection");
+      console.log(this.lastSelection, this.lastSelection.length, "this.lastSelection");
+      if (this.pageSelection.length > this.lastSelection.length) {
+        this.allSelecArr[index] = row
+      } else {
+        delete this.allSelecArr[index]
+      }
+      console.log(this.allSelecArr, "this.allSelecArr");
+    },
+    //全选数据
+    handleSelectAll(selection) {
+      const start = (this.queryParams.pageNum - 1) * this.queryParams.pageSize
+      if (selection.length == 0) {
+        this.pageSelection = []
+        this.factorList.forEach((item, index) => {
+          delete this.allSelecArr[index + start]
+        })
+      } else {
+        this.pageSelection = selection
+        selection.forEach((item, index) => {
+          this.allSelecArr[index + start] = item
+        })
+      }
+      this.factorId = []
+      for (let key in this.allSelecArr) {
+        this.factorId.push(this.allSelecArr[key].factorId)
+      }
     },
     getsel() {
       getSelect().then(res => {
@@ -282,11 +366,17 @@ export default {
       obj.list = this.factorId
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过环境因子类型来修改！！")
-      }
-      else {
+        ElMessage.warning("请通过形状类型来修改！！")
+      } else {
+        this.isModifing = true
         addHigh(obj).then(res => {
+          if (res.code == 200) {
+            ElMessage.success("修改成功")
+          } else {
+            ElMessage.error("修改失败")
+          }
           this.resetQuery()
+          this.isModifing = false
         })
       }
 
