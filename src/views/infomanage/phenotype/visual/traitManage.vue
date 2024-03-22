@@ -2,7 +2,7 @@
   <el-card class="card-container">
     <template #header>
       <div class="card-header">
-        <span>性状管理</span>
+        <span>性状与分类</span>
       </div>
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
@@ -137,7 +137,7 @@ const phenotypeData = reactive([
     abbreviationName: "biochemistry",
   },
 ]);
-
+let _phenotypeData = []
 
 const sunBurstData = reactive({
   name: "植物性状",
@@ -163,6 +163,7 @@ function formatTableCell(value) {
 //用于更新phentypeData的函数
 function updatePhenotypeData(data) {
   phenotypeData.splice(0, phenotypeData.length, ...data);
+  _phenotypeData.splice(0, _phenotypeData.length, ...data);
   createTreeData(phenotypeData);
 }
 
@@ -237,8 +238,7 @@ function chooseForm() {
 //将请求到的形状信息转换为树形结构
 const createTreeData = (data) => {
   console.log(data, 'data');
-  //获取性状类型
-  sunBurstData.children = [];
+  //获取环境因子类型
   let traitType = [];
   data.forEach((item) => {
     let isExist = false;
@@ -251,7 +251,7 @@ const createTreeData = (data) => {
     if (!isExist) {
       if (item.traitTypeId == null) {
         traitType.push({
-          name: "未定义性状类别",
+          name: "未定义因子类别",
           id: null,
         })
       } else
@@ -267,22 +267,30 @@ const createTreeData = (data) => {
     let node = {
       name: item.name,
       value:1,
+      type:'TYPE',
+      iId:item.id,
+      father: {type:'ROOT',id:-2},
       children: []
     }
-    node.children = data.filter((item2) => item2.traitTypeId === item.id).map((item3) => {
+    node.children = data.filter((item2) => item2.traitTypeId === item.id).map((item3,index) => {
       return {
         name: '',
-        id: item3.traitTypeId,
+        type:'BLANK',
+        iId:item3.traitId,
         value:1,
+        father: {type: 'TYPE', id: item.id},
         children: [
           {
             name: item3.traitName,
-            value:1,
-            children: null
+            value: 1,
+            type: 'FACTOR',
+            iId: item3.traitId,
+            father: {type: 'BLANK', id: item3.traitId},
+            children: []
           }
         ]
       }
-    });
+    })
     node.value = node.children.length;
     sunBurstData.children.push(node);
   })
@@ -418,10 +426,72 @@ const handleSunburstStyle = () => {
   })
 };
 
+// 根据type与id找到对应的元素的父元素
+const findFather = (type,id) => {
+  if(type==='ROOT') return {type:'ROOT',id:-2}
+  if(type==='TYPE') return {type:'ROOT',id:-2}
+  for(let i of sunBurstData.children){
+    for(let j of i.children){
+      if(type==='BLANK'){
+        if(id===j.iId){
+          return j.father
+        }
+      }else {
+        if (id === j.children[0].iId) {
+          return j.children[0].father;
+        }
+      }
+    }
+  }
+}
+
+
+// 根据type和id来决定图表内容
+const getTableData = (type,id) => {
+  switch (type){
+    case 'ROOT':
+      phenotypeData.splice(0, phenotypeData.length, ..._phenotypeData);
+      break
+    case 'TYPE':
+      phenotypeData.splice(0, phenotypeData.length, ..._phenotypeData.filter(item => item.traitTypeId === id));
+      break
+    case 'FACTOR':
+      phenotypeData.splice(0, phenotypeData.length, _phenotypeData.find(item => item.traitId === id));
+      break
+    case 'BLANK':
+      phenotypeData.splice(0, phenotypeData.length, _phenotypeData.find(item => item.traitId === id));
+      break
+  }
+  totalPage2.value = phenotypeData.length
+  currentpageNum2.value = 1
+  currentFather = findFather(type,id)
+  console.log(currentFather,'father');
+  console.log(phenotypeData);
+}
+
+// 记录当前显示层的父元素
+let currentFather = null
+
+// 图表点击事件
+const sunBurstChartHandler = (params) =>{
+  console.log(params.data.name)
+  const data = params.data
+  // 判断是否需要返回
+  if(data.type === undefined) {
+    // 返回上一层
+    getTableData(currentFather.type,currentFather.id);
+  }else {
+    getTableData(data.type, data.iId)
+  }
+}
+
+
 function initHistogram() {
   let chartDoms = document.querySelector("#traitPanMap");
   chartDoms?.removeAttribute("_echarts_instance_")
   let myChart = echarts.init(chartDoms);
+  myChart.on("click", sunBurstChartHandler);
+
   sunBurstOption && myChart.setOption(sunBurstOption);
   isSunBurstChartLoading.value=false
 }

@@ -17,22 +17,25 @@
           <el-input v-model="add.name" placeholder="请输入性状名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleQuery" >搜索</el-button>
+          <el-button type="primary" icon="Search" @click="handleQuery" :loading="isSearching">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain @click="isModify" 
-            v-hasPermi="['system:trait:export']">确认修改</el-button>
+          <el-button type="warning" plain @click="isModify"
+                     :loading="isModifing"
+                     icon="edit"
+                     v-hasPermi="['system:trait:export']">确认修改</el-button>
         </el-col>
+
 
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
       <el-table ref="multipleTable" :data="traitList" v-model="selectArr" @selection-change="handleSelectionChange"
-        @select="handleSelect" :row-class-name="tableRowClassName">
+                @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
         <el-table-column label="性状名称" align="center" prop="traitName" />
@@ -41,9 +44,16 @@
         <el-table-column label="备注" align="center" prop="remark" />
       </el-table>
 
-      <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-        layout="total, sizes, prev, pager, next, jumper" @size-change="getHigh" @current-change="getHigh" />
+      <el-pagination
+          v-show="total > 0"
+          :total="total"
+          :page-sizes="[10, 20, 30, 50]"
+          background
+          v-model:current-page="queryParams.pageNum"
+          v-model:page-size="queryParams.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="getHigh"
+          @current-change="getHigh" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
@@ -68,9 +78,9 @@
     </el-dialog>
   </div>
 </template>
-  
+
 <script>
-import { addHigh, selHighL, download, getSelect, getLightLine, listTrait, getTrait, delTrait, addTrait, updateTrait } from "@/api/system/trait";
+import { addHigh, selHighL, download, getSelect, getLightLine, listTrait, getLightLineAll, selHighLAll, addTrait, updateTrait } from "@/api/system/trait";
 import { blobValidate } from '@/utils/param'
 import { ElMessage } from "element-plus";
 import { saveAs } from 'file-saver'
@@ -101,30 +111,32 @@ export default {
         pageNum: 1,
         pageSize: 10,
       },
+      //记录是否第一次查询
+      isFirstSearch: true,
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         traitName: [
-          { required: true, message: "性状名称不能为空", trigger: "blur" }
+          {required: true, message: "性状名称不能为空", trigger: "blur"}
         ],
         fullName: [
-          { required: true, message: "全称不能为空", trigger: "blur" }
+          {required: true, message: "全称不能为空", trigger: "blur"}
         ],
         abbreviationName: [
-          { required: true, message: "缩写不能为空", trigger: "blur" }
+          {required: true, message: "缩写不能为空", trigger: "blur"}
         ],
         createBy: [
-          { required: true, message: "创建者不能为空", trigger: "blur" }
+          {required: true, message: "创建者不能为空", trigger: "blur"}
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          {required: true, message: "创建时间不能为空", trigger: "blur"}
         ],
         updateBy: [
-          { required: true, message: "更新者不能为空", trigger: "blur" }
+          {required: true, message: "更新者不能为空", trigger: "blur"}
         ],
         updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+          {required: true, message: "更新时间不能为空", trigger: "blur"}
         ],
       },
       //高亮显示
@@ -137,6 +149,17 @@ export default {
       traitOptions: [],
       len: "",
       selectArr: [],
+      //所有选中的数据
+      allSelecArr: {},
+      //是否为第一次查询
+      isFirstSelection: true,
+      //保存每页当前的数据
+      pageSelection: [],
+      //保存上一次的数据
+      lastSelection: [],
+      //加载项
+      isSearching: false,
+      isModifing: false,
       flen: 0,
       Tlen: 0
     };
@@ -149,7 +172,7 @@ export default {
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
-      let query = { ...this.queryParams, ...this.add }
+      let query = {...this.queryParams, ...this.add}
       listTrait(query).then(response => {
         console.log(response)
         this.loading = false;
@@ -188,34 +211,76 @@ export default {
         console.log(response)
         this.traitList = response.rows
         this.total = response.total
-        let query = { ...this.add, ...this.queryParams }
+        let query = {...this.add, ...this.queryParams}
         selHighL(query).then(res => {
+          if ((this.add.type || this.add.name) && res.data == 0 && this.isFirstSearch) {
+            ElMessage.warning("没有符合条件的数据")
+          } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
+            ElMessage.success("查询成功")
+          }
+          this.isFirstSelection = true
+          this.isFirstSearch = false
           this.len = res.data
+          const num = this.queryParams.pageNum
+          const size = this.queryParams.pageSize
+          const start = (num - 1) * size
           this.selectArr = this.traitList.slice(0, this.len)
           this.$refs.multipleTable.clearSelection();
-          this.selectArr.forEach(item => {
-            this.$refs.multipleTable.toggleRowSelection(item, true)
-          })
-          this.tableRowClassName = ({ row, rowIndex }) => {
-            console.log(row,'row')
-            console.log(rowIndex,'rowI')
-            if (rowIndex < this.len) {
-              return "success-row"
+          this.pageSelection = []
+          this.traitList.forEach((item, index) => {
+            if (this.allSelecArr[index + start] && item.traitId == this.allSelecArr[index + start].traitId) {
+              this.$refs.multipleTable.toggleRowSelection(item, true)
+              this.pageSelection.push(index)
             }
-            else return ""
+          });
+          this.isSearching = false
+          this.tableRowClassName = ({row, rowIndex}) => {
+            if (this.allSelecArr[rowIndex + start] && row.traitId == this.allSelecArr[rowIndex + start].traitId) {
+              return "success-row"
+            } else return ""
           }
-        })
 
+        })
         this.loading = false;
       });
     },
-    gethigh() {
-      this.loading = true;
+    //查询所有选择的数据
+    getAllSelection() {
+      return new Promise((resolve, reject) => {
+        let formdata = new FormData()
+        formdata.append("type", this.add.type)
+        formdata.append("name", this.add.name)
+        getLightLineAll({
+          pageNum: 1,
+          pageSize: 1000
+        }, formdata)
+            .then(res1 => {
+              let query = {...this.add, pageNum: 1, pageSize: 1000}
+              selHighLAll(query).then(res2 => {
+                res1.rows.slice(0, res2.data).forEach((item, index) => {
+                  this.allSelecArr[index] = item
+                })
+                resolve()
+              })
+            });
+      })
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    async handleQuery() {
+      if (this.add.type == "" && this.add.name == "") {
+        ElMessage.warning("请输入查询条件")
+        return
+      }
       this.queryParams.pageNum = 1;
-      this.getHigh();
+      this.isFirstSearch = true;
+      this.isFirstSelection = true
+      this.allSelecArr = {}
+      this.traitId = []
+      this.isSearching = true
+      this.getAllSelection().then(() => {
+        this.getHigh();
+      })
+      // this.getHigh();
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -223,13 +288,23 @@ export default {
       this.add.name = ""
       this.add.type = ""
       this.len = ""
-      this.handleQuery();
+      this.allSelecArr = {}
+      this.traitId = []
+      this.queryParams.pageNum = 1;
+      this.isFirstSearch = true;
+      this.isFirstSelection = true
+      this.getHigh();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      console.log(selection)
-      this.traitId = selection.map(item => item.traitId)
-      console.log(this.traitId)
+      this.isFirstSelection = false
+      //获取allSelecArr的id数组
+      console.log(this.allSelecArr, "this.allSelecArr111");
+      this.traitId = []
+      for (let key in this.allSelecArr) {
+        this.traitId.push(this.allSelecArr[key].traitId)
+      }
+      console.log(this.traitId, "this.traitId");
     },
     /** 提交按钮 */
     submitForm() {
@@ -255,13 +330,10 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const trait_id = this.traitId
-      // let formdata = new FormData()
-      // formdata.append("species_id",species_id)
       download(trait_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {
           const blob = new Blob([res])
-          // console.log(blob)
           saveAs(blob, `trait_classification${new Date().getTime()}.xlsx`)
         } else {
           const resText = data.text();
@@ -273,14 +345,38 @@ export default {
     },
     //选中行高亮
     handleSelect(selection, row) {
-      console.log(selection)
-      console.log(row)
-      selection.forEach(item => {
-        console.log(item)
-        //让某一行默认选中
-        this.$refs.multipleTable.toggleRowSelection(item, true)
-      });
-
+      console.log(selection, "selection");
+      const index = this.traitList.findIndex(item => item.traitId == row.traitId) + (this.queryParams.pageNum - 1) * this.queryParams.pageSize
+      console.log(this.pageSelection, "this.pageSelection计算前");
+      this.lastSelection = this.pageSelection
+      this.pageSelection = selection
+      console.log(this.pageSelection, this.pageSelection.length, "this.pageSelection");
+      console.log(this.lastSelection, this.lastSelection.length, "this.lastSelection");
+      if (this.pageSelection.length > this.lastSelection.length) {
+        this.allSelecArr[index] = row
+      } else {
+        delete this.allSelecArr[index]
+      }
+      console.log(this.allSelecArr, "this.allSelecArr");
+    },
+    //全选数据
+    handleSelectAll(selection) {
+      const start = (this.queryParams.pageNum - 1) * this.queryParams.pageSize
+      if (selection.length == 0) {
+        this.pageSelection = []
+        this.traitList.forEach((item, index) => {
+          delete this.allSelecArr[index + start]
+        })
+      } else {
+        this.pageSelection = selection
+        selection.forEach((item, index) => {
+          this.allSelecArr[index + start] = item
+        })
+      }
+      this.traitId = []
+      for (let key in this.allSelecArr) {
+        this.traitId.push(this.allSelecArr[key].traitId)
+      }
     },
     getsel() {
       getSelect().then(res => {
@@ -297,10 +393,16 @@ export default {
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
         ElMessage.warning("请通过形状类型来修改！！")
-      }
-      else {
+      } else {
+        this.isModifing = true
         addHigh(obj).then(res => {
+          if (res.code == 200) {
+            ElMessage.success("修改成功")
+          } else {
+            ElMessage.error("修改失败")
+          }
           this.resetQuery()
+          this.isModifing = false
         })
       }
 
@@ -535,9 +637,11 @@ export default {
   :deep(.el-tree) {
 
     /* ---- ---- ---- ---- ^（节点对齐）---- ---- ---- ---- */
+
     .el-tree-node {
 
       /* ^ 所有节点 */
+
       i.el-tree-node__expand-icon {
         padding: 6px;
 
@@ -558,6 +662,7 @@ export default {
       /* / 所有节点 */
 
       /* ^ 已展开的父节点 */
+
       i.el-tree-node__expand-icon.expanded {
         //transform: rotate(0deg); // 取消旋转
         //-webkit-transform: rotate(0deg); // 取消旋转
@@ -575,6 +680,7 @@ export default {
       /* / 已展开的父节点 */
 
       /* ^ 叶子节点 */
+
       i.el-tree-node__expand-icon.is-leaf {
         &::before {
           display: none;
@@ -584,6 +690,7 @@ export default {
       /* / 叶子节点 */
 
       /* ^ 设置子节点左外边距 */
+
       .el-tree-node__content:has(.is-leaf) {
         // color: #00ffff;
         margin-left: 12px !important;
@@ -598,6 +705,7 @@ export default {
 
     /* ---- ---- ---- ---- ^（新增辅助线）---- ---- ---- ---- */
     /* ^ 树节点 */
+
     .el-tree-node {
       position: relative;
       width: auto;
@@ -638,6 +746,7 @@ export default {
         padding-left: 0 !important;
 
         /* ^ 复选框 */
+
         .el-checkbox {
           margin: 0 10px 0 5.5px;
         }
@@ -657,7 +766,8 @@ export default {
     /* / 树节点 */
 
     /* ^ 第一层节点 */
-    >.el-tree-node {
+
+    > .el-tree-node {
       padding-left: 0;
 
       &::before {
@@ -672,6 +782,7 @@ export default {
     /* / 第一层节点 */
 
     /* ^ 叶子节点 */
+
     i.el-tree-node__expand-icon.is-leaf {
       display: none;
     }
@@ -679,6 +790,7 @@ export default {
     /* / 叶子节点 */
 
     /* ^ 设置子节点左外边距 */
+
     .el-tree-node__content:has(.is-leaf) {
       // color: #00ffff;
       margin-left: 12px !important;
@@ -951,7 +1063,7 @@ export default {
   }
 }
 
-//三级节点选择器 
+//三级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;
@@ -960,7 +1072,8 @@ export default {
     font-size: 14px;
   }
 }
-:deep(.el-input__inner){
+
+:deep(.el-input__inner) {
   margin: 0%;
 }
 </style>

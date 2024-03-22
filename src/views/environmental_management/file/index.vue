@@ -707,8 +707,6 @@ function deleteFile(row) {
 
 //跳转文件详情
 const openfile = (row) => {
-  console.log(row.tableName, "klkl");
-  console.log(row.fileId, row.tableName);
   router.push({
     path: "/environment/fileDetails", // 跳转到的目标页面的路由名称
     query: { id: row.fileId, tableName: row.tableName },
@@ -719,7 +717,7 @@ const openfile = (row) => {
 const fileVisual1 = (row) => {
   router.push({
     path: "/environment_data/category", // 跳转到的目标页面的路由名称
-    query: { id: row.fileId, tableName: row.tableName },
+    query: { id: row.fileId, fileName: row.fileName },
   });
 };
 
@@ -727,7 +725,7 @@ const fileVisual1 = (row) => {
 const fileVisual2 = (row) => {
   router.push({
     path: "/environment_data/analysis", // 跳转到的目标页面的路由名称
-    query: { id: row.fileId, tableName: row.tableName },
+    query: { id: row.fileId, fileName: row.fileName },
   });
 };
 
