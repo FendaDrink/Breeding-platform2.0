@@ -14,13 +14,16 @@
           <template #dropdown>
             <el-dropdown-menu>
               <router-link to="/user/profile">
-                <el-dropdown-item>个人中心</el-dropdown-item>
+                <el-dropdown-item>{{ $t('navbar.MyAccount') }}</el-dropdown-item>
               </router-link>
               <el-dropdown-item command="setLayout">
-                <span>布局设置</span>
+                <span>{{ $t('navbar.setLayout') }}</span>
+              </el-dropdown-item>
+              <el-dropdown-item command="setLanguage">
+                <span>{{ $t('navbar.setLanguage') }}</span>
               </el-dropdown-item>
               <el-dropdown-item divided command="logout">
-                <span>退出登录</span>
+                <span>{{ $t('navbar.logout') }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -42,6 +45,11 @@ import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
 
+
+import { I18nD, useI18n } from 'vue-i18n'
+const { locale } = useI18n()
+
+
 const appStore = useAppStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
@@ -58,6 +66,9 @@ function handleCommand(command) {
     case "logout":
       logout();
       break;
+    case "setLanguage":
+      setLanguage();
+      break;
     default:
       break;
   }
@@ -73,6 +84,24 @@ function logout() {
       location.href = '/index';
     })
   }).catch(() => { });
+}
+
+function setLanguage(){
+  // console.log(locale.value);
+  if(locale.value == 'en'){
+    locale.value = 'zh-CN'
+  }else{
+    locale.value = 'en'
+  }
+  localStorage.setItem('lang', locale.value);
+  // 如果一个表单有rule，比如不为空，在一个语言下触发此rule的提示后，
+  // 再切换语言，同时打开这个表单，会报一个uncaught的错
+  // 此处强制刷新界面，但这不是一个好方法，体验很差
+  // 后续想到别的方法再行替换
+  // 这种方法也有报错，只是刷新掉了，故弃用
+  location. reload();
+  console.log(localStorage.getItem('lang'),"lllllllllllll");
+  
 }
 
 const emits = defineEmits(['setLayout'])

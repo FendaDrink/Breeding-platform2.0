@@ -16,7 +16,7 @@
         <el-form-item label="性状名称">
           <el-input v-model="add.name" placeholder="请输入性状名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-
+        <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery" >搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
         </el-form-item>
@@ -190,7 +190,6 @@ export default {
         this.total = response.total
         let query = { ...this.add, ...this.queryParams }
         selHighL(query).then(res => {
-          console.log(res)
           this.len = res.data
           this.selectArr = this.traitList.slice(0, this.len)
           this.$refs.multipleTable.clearSelection();
@@ -198,8 +197,8 @@ export default {
             this.$refs.multipleTable.toggleRowSelection(item, true)
           })
           this.tableRowClassName = ({ row, rowIndex }) => {
-            console.log(row)
-            console.log(rowIndex)
+            console.log(row,'row')
+            console.log(rowIndex,'rowI')
             if (rowIndex < this.len) {
               return "success-row"
             }
@@ -318,7 +317,7 @@ export default {
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background: #0F5C32;
+  background: #1FB864;
   height: 60px !important;
 
   span {

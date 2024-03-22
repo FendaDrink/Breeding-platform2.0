@@ -1,5 +1,6 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
@@ -17,40 +18,40 @@
           <div style="height: auto;">
             <div class="div1">
               <el-button icon="plus" type="primary" @click.prevent="addChildNode" plain v-hasPermi="['system:node:add']">
-                添加子节点</el-button>
+                {{ $t('phenotype.index.node_add') }}</el-button>
               <el-button icon="edit" type="success" @click.prevent="updateChildNode" plain
-                v-hasPermi="['system:node:update']">修改节点</el-button>
+                v-hasPermi="['system:node:update']">{{ $t('phenotype.index.node_update') }}</el-button>
               <el-button icon="delete" type="danger" @click.prevent="deleteNode" plain
-                v-hasPermi="['system:node:remove']">删除节点</el-button>
+                v-hasPermi="['system:node:remove']">{{ $t('phenotype.index.node_delete') }}</el-button>
               <el-button icon="download" type="info" @click.prevent="downloadTemplate" plain
-                v-hasPermi="['system:node:update']">下载模板文件</el-button>
+                v-hasPermi="['system:node:update']">{{ $t('phenotype.index.template_download') }}</el-button>
             </div>
             <div class="div2">
-              <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter="handleQuery"
+              <el-input v-model="queryParams.fileName" :placeholder="$t('phenotype.index.placeholder_fileName')" clearable @keyup.enter="handleQuery"
                 class="my-input" style="width: 180px; margin-right: 8px;" />
-              <el-button icon="search" type="primary" @click="handleQuery">搜索</el-button>
-              <el-button icon="refresh" @click="resetQuery">重置</el-button>
+              <el-button icon="search" type="primary" @click="handleQuery">{{ $t('phenotype.index.search') }}</el-button>
+              <el-button icon="refresh" @click="resetQuery">{{ $t('phenotype.index.reset') }}</el-button>
             </div>
 
             <div class="div3">
               <!-- 操作部分 -->
               <el-button icon="plus" type="primary" plain @click="handleAdd"
-                v-hasPermi="['system:logininfor:add']">新增</el-button>
+                v-hasPermi="['system:logininfor:add']">{{ $t('phenotype.index.file_add') }}</el-button>
               <el-button icon="delete" type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
-                v-hasPermi="['system:logininfor:remove']">删除</el-button>
+                v-hasPermi="['system:logininfor:remove']">{{ $t('phenotype.index.file_delete') }}</el-button>
               <!-- 表格部分 --><el-container style="min-height: calc(100vh - 400px);">
                 <el-table v-loading="tableLoading" max-height="100%" :data="fileList"
                   @selection-change="handleSelectionChange" stripe fit class="mytable">
                   <el-table-column type="selection" min-width="55" align="center" fixed="left" />
-                  <el-table-column label="序号" width="80px" type="index" :index="indexMethod" align="center" />
+                  <el-table-column :label="$t('phenotype.index.table_index')" width="80px" type="index" :index="indexMethod" align="center" />
                   <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
                   <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
-                  <el-table-column label="文件名" width="250" align="center" prop="fileName" />
-                  <el-table-column label="物种名称" align="center" prop="speciesName" width="100px" />
-                  <el-table-column label="群体名称" align="center" width="200px" prop="populationName" />
-                  <el-table-column label="年份" align="center" prop="year" />
-                  <el-table-column label="地区" align="center" prop="location" />
-                  <el-table-column label="是否公开" align="center" prop="fileStatus" v-hasPermi="['system:file:remove']"
+                  <el-table-column :label="$t('phenotype.index.table_fileName')" width="250" align="center" prop="fileName" />
+                  <el-table-column :label="$t('phenotype.index.table_speciesName')" align="center" prop="speciesName" width="100px" />
+                  <el-table-column :label="$t('phenotype.index.table_populationName')" align="center" width="200px" prop="populationName" />
+                  <el-table-column :label="$t('phenotype.index.table_year')" align="center" prop="year" />
+                  <el-table-column :label="$t('phenotype.index.table_location')" align="center" prop="location" />
+                  <el-table-column :label="$t('phenotype.index.table_fileStatus')" align="center" prop="fileStatus" v-hasPermi="['system:file:remove']"
                     width="120">
                     <template #default="scope">
                       <el-switch v-model="fileList[scope.$index].fileStatus" @change="updateFileStatus(scope.row)">
@@ -58,33 +59,33 @@
                     </template>
                   </el-table-column>
                   <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
-                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100px">
+                  <el-table-column :label="$t('phenotype.index.table_operate')" align="center" class-name="small-padding fixed-width" width="100px">
                     <template #default="scope">
-                      <el-tooltip content="文件详情" placement="top">
+                      <el-tooltip :content="$t('phenotype.index.tooltip_detail')" placement="top">
                         <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
                           class="table_button">
                         </el-button></el-tooltip>
-                      <el-tooltip content="可视化" placement="top">
+                      <el-tooltip :content="$t('phenotype.index.tooltip_view')" placement="top">
                         <el-button size="medium" type="text" icon="View" link @click="fileVisual(scope.row)"
                           class="table_button">
                         </el-button></el-tooltip>
-                      <el-tooltip content="删除" placement="top">
+                      <el-tooltip :content="$t('phenotype.index.tooltip_delete')" placement="top">
                         <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
                           v-hasPermi="['system:file:remove']" class="table_button"></el-button></el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column label="历史版本" align="center" class-name="small-padding fixed-width" width="auto">
+                  <el-table-column :label="$t('phenotype.index.table_previousVersions')" align="center" class-name="small-padding fixed-width" width="auto">
                     <template #default="scope">
-                      <el-tooltip content="查看历史版本" placement="top">
+                      <el-tooltip :content="$t('phenotype.index.tooltip_histoicalVersions')" placement="top">
                         <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
                           icon="timer" class="table_button">
                         </el-button></el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column label="合并操作" align="center" class-name="small-padding fixed-width" 
+                  <el-table-column :label="$t('phenotype.index.table_merge')" align="center" class-name="small-padding fixed-width" 
                     min-width="auto">
                     <template #default="scope">
-                      <el-tooltip content="合并" placement="top">
+                      <el-tooltip :content="$t('phenotype.index.tooltip_merge')" placement="top">
                         <el-button type="text" icon="set-up" :loading="downloadLoading" @click="mergeFile(scope.row)"
                           class="table_button">
                         </el-button></el-tooltip>
@@ -105,12 +106,12 @@
       </el-container>
     </el-container>
     <!-- 节点对话框 -->
-    <el-dialog :title="textMap[dialogTreeStatus]" v-model="dialogTreeFormVisible" center draggable width="30%">
+    <el-dialog :title="textMaps[dialogTreeStatus]" v-model="dialogTreeFormVisible" center draggable width="30%">
       <el-form ref="dataTreeForm" :model="treeForm" :rules="treeRules" label-position="left" label-width="110px">
-        <el-form-item label="节点新名称：" prop="treeName">
-          <el-input v-model="treeForm.treeName" placeholder="输入节点新名称" />
+        <el-form-item :label="$t('phenotype.index.dialog_nodeName')" prop="treeName">
+          <el-input v-model="treeForm.treeName" :placeholder="$t('phenotype.index.placeholder_node')" />
         </el-form-item>
-        <el-form-item label="是否公开：" prop="isShow">
+        <el-form-item :label="$t('phenotype.index.dialog_status')" prop="isShow">
           <el-switch v-model="treeForm.isShow" />
         </el-form-item>
       </el-form>
@@ -121,30 +122,30 @@
               ? createTreeData()
               : updateTreeData()
           ">
-            保存
+            {{ $t('phenotype.index.save') }}
           </el-button>
-          <el-button class="success" @click="dialogTreeFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogTreeFormVisible = false">{{ $t('phenotype.index.cancel') }}</el-button>
         </div>
       </template>
     </el-dialog>
-    <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible" :close-on-click-modal="false"
+    <el-dialog :title="textMaps[dialogStatus]" v-model="dialogFormVisible" :close-on-click-modal="false"
       @close="dialogClosed" center draggable width="30%">
       <el-form ref="form" :rules="rules" :model="dataForm" label-position="left" label-width="100px">
-        <el-form-item label="文件名称：" prop="fileName">
-          <el-input v-model="dataForm.fileName" placeholder="输入文件名称" />
+        <el-form-item :label="$t('phenotype.index.dialog_fileName')" prop="fileName">
+          <el-input v-model="dataForm.fileName" :placeholder="$t('phenotype.index.placeholder_fileName')" />
         </el-form-item>
-        <el-form-item label="备注：" prop="remark">
-          <el-input v-model="dataForm.remark" placeholder="输入备注" />
+        <el-form-item :label="$t('phenotype.index.dialog_comment')" prop="remark">
+          <el-input v-model="dataForm.remark" :placeholder="$t('phenotype.index.placeholder_comment')" />
         </el-form-item>
-        <el-form-item label="是否公开" prop="fileStatus">
+        <el-form-item :label="$t('phenotype.index.dialog_status')" prop="fileStatus">
           <el-switch v-model="dataForm.fileStatus" />
         </el-form-item>
-        <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
+        <el-form-item :label="$t('phenotype.index.dialog_upload')" prop="file" v-show="dialogStatus === 'create' || 'other'">
           <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
             :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
             :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
-            <el-button type="primary">点击上传</el-button>
+            <el-button type="primary">{{ $t('phenotype.index.upload') }}</el-button>
             <!-- <template #tip>
               <div class="el-upload__tip">select a file to upload</div>
             </template> -->
@@ -153,26 +154,26 @@
         <el-form-item>
           <el-button type="success" plain v-if="dialogStatus === 'create'"
             @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
-            保存
+            {{ $t('phenotype.index.save') }}
           </el-button>
           <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
-            合并
+            {{ $t('phenotype.index.merge') }}
           </el-button>
-          <el-button type="info" plain @click="deleteUploadData()">取消</el-button>
+          <el-button type="info" plain @click="deleteUploadData()">{{ $t('phenotype.index.cancel') }}</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog title="历史版本" v-model="historyFormVisible" :close-on-click-modal="false" @close="dialogClosed" center
+    <el-dialog :title="$t('phenotype.index.title_history')" v-model="historyFormVisible" :close-on-click-modal="false" @close="dialogClosed" center
       draggable width="70%">
       <el-table v-loading="historyTableLoading" :data="historyFileList">
-        <el-table-column label="序号" width="100" type="index" :index="indexMethod" />
-        <el-table-column label="文件名" align="center" prop="fileName" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column :label="$t('phenotype.index.table_index')" width="100" type="index" :index="indexMethod" />
+        <el-table-column :label="$t('phenotype.index.table_fileName')" align="center" prop="fileName" />
+        <el-table-column :label="$t('phenotype.index.table_operate')" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-button class="table_button" size="small" type="text" icon="Download" :loading="downloadLoading"
-              @click="handleDownload(scope.row)">下载
+              @click="handleDownload(scope.row)">{{ $t('phenotype.index.download') }}
             </el-button>
-            <el-button class="table_button" size="small" type="text" icon="Document" @click="openDrawer(scope.row)">预览
+            <el-button class="table_button" size="small" type="text" icon="Document" @click="openDrawer(scope.row)">{{ $t('phenotype.index.preview') }}
             </el-button>
           </template>
         </el-table-column>
@@ -183,11 +184,12 @@
         <el-table-column v-for="item in tableProps" :prop="item" :label="item" min-width="120" :key="item" align="center"/>
       </el-table>
     </el-drawer>
+  </el-config-provider>
   </div>
 </template>
 
 <script setup name="phenoType">
-import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
+import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
 import useUserStore from "@/store/modules/user";
@@ -197,6 +199,63 @@ import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+// const locale = computed(()=>{
+//   return i18n.locale;
+// })
+// watch(
+//   ()=>locale,
+//   ()=>{
+//     console.log(locale);
+//   },{immediate:true}
+// )
+
+const messages = {
+  message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')),
+  message_input_fileName: computed(() => i18n.t('phenotype.index.message_input_fileName')),
+  message_input_nodeName: computed(() => i18n.t('phenotype.index.message_input_nodeName')),
+  message_input_status: computed(() => i18n.t('phenotype.index.message_input_status')),
+  message_input_date: computed(() => i18n.t('phenotype.index.message_input_date')),
+  message_upload_csv: computed(() => i18n.t('phenotype.index.message_upload_csv')),
+  message_upload_wait: computed(() => i18n.t('phenotype.index.message_upload_wait')),
+  message_upload_compare: computed(() => i18n.t('phenotype.index.message_upload_compare')),
+  message_upload_fail: computed(() => i18n.t('phenotype.index.message_upload_fail')),
+  message_upload_success: computed(() => i18n.t('phenotype.index.message_upload_success')),
+  message_delete_select: computed(() => i18n.t('phenotype.index.message_delete_select')),
+  message_delete_confirm: computed(() => i18n.t('phenotype.index.message_delete_confirm')),
+  message_delete_success: computed(() => i18n.t('phenotype.index.message_delete_success')),
+  message_delete_fail: computed(() => i18n.t('phenotype.index.message_delete_fail')),
+  message_update_success: computed(() => i18n.t('phenotype.index.message_update_succcess')),
+  message_update_fail: computed(() => i18n.t('phenotype.index.message_update_fail')),
+  message_downloading: computed(() => i18n.t('phenotype.index.message_downloading')),
+  message_node_parent: computed(() => i18n.t('phenotype.index.message_node_parent')),
+  message_node_add_success: computed(() => i18n.t('phenotype.index.message_node_add_success')),
+  message_node_add_fail: computed(() => i18n.t('phenotype.index.message_node_add_fail')),
+  message_node_update_success: computed(() => i18n.t('phenotype.index.message_node_update_success')),
+  message_node_update_fail: computed(() => i18n.t('phenotype.index.message_node_update_fail')),
+  message_node_select: computed(() => i18n.t('phenotype.index.message_node_select')),
+  message_node_confirm: computed(() => i18n.t('phenotype.index.message_node_confirm')),
+  message_node_delete_success: computed(() => i18n.t('phenotype.index.message_node_delete_success')),
+  message_file_confirm: computed(() => i18n.t('phenotype.index.message_file_confirm')),
+  
+};
+
+const titles ={
+  create: computed(() => i18n.t('phenotype.index.title_create')),
+  update:computed(() => i18n.t('phenotype.index.title_update')),
+  other: computed(() => i18n.t('phenotype.index.title_other')),
+  createNode: computed(() => i18n.t('phenotype.index.title_createNode')),
+  updateNode: computed(() => i18n.t('phenotype.index.title_updateNode')),
+}
+
 
 const router = useRouter();
 
@@ -226,6 +285,20 @@ const textMap = {
   updateNode: "修改节点",
 };
 
+
+const textMaps = {
+  create: titles.create.value,
+  update: titles.update.value,
+  other: titles.other.value,
+  createNode: titles.createNode.value,
+  updateNode: titles.updateNode.value,
+  // create: computed(() => i18n.t('phenotype.index.title_create')),
+  // update:computed(() => i18n.t('phenotype.index.title_update')),
+  // other: computed(() => i18n.t('phenotype.index.title_other')),
+  // createNode: computed(() => i18n.t('phenotype.index.createNode')),
+  // updateNode: computed(() => i18n.t('phenotype.index.updateNode')),
+};
+
 // 表单实例
 const form = ref(null);
 
@@ -244,11 +317,11 @@ const deleteDisabled = ref(false);
 
 // 校验规则
 const rules = reactive({
-  fileName: [{ required: true, message: "请输入文件名", trigger: "blur" }],
+  fileName: [{ required: true, message: messages.message_input_fileName, trigger: "blur" }],
   description: [
     { required: false, message: "请输入文件描述备注", trigger: "blur" },
   ],
-  dateTime: [{ required: true, message: "请选择一个日期", trigger: "blur" }],
+  dateTime: [{ required: true, message: messages.message_input_date, trigger: "blur" }],
 });
 
 const dataForm2 = reactive({
@@ -299,9 +372,10 @@ const handleBeforeUpload = (file) => {
   // 拿到文件后缀名
   const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
   const isCsv = fileType === "csv";
+  // console.log(titles);
   if (!isCsv) {
     $modal.msgError(
-      "只能上传csv格式的文件！",
+      i18n.t('phenotype.index.message_upload_csv'),
       "error",
       "vab-hey-message-error"
     );
@@ -324,7 +398,7 @@ const createData = async () => {
       }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}&pointStatus=${0}`;
 
-    $modal.msg("上传数据较大，请耐心等待！");
+    $modal.msg(i18n.t('phenotype.index.message_upload_wait'));
     await upload.value.submit();
     isDisabled.value = true;
     tableLoading.value = false;
@@ -374,7 +448,7 @@ const mergeData = async () => {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
-    $modal.msg("上传数据较大，请耐心等待！");
+    $modal.msg(i18n.t('phenotype.index.message_upload_wait'));
     await upload.value.submit();
     console.log("2");
     isDisabled2.value = true;
@@ -422,7 +496,7 @@ async function uploadFileSuccess(response) {
   if (response.code === 200) {
     $modal.msgSuccess(response.msg);
   } else {
-    $modal.msgError("格式不正确，请下载模板文件比对！");
+    $modal.msgError(i18n.t('phenotype.index.message_upload_compare'));
   }
   //$modal.msgSuccess("上传成功");
 
@@ -438,7 +512,7 @@ async function uploadFileSuccess(response) {
 // 文件上传失败回调
 const uploadFileError = (error, file, uploadFileList) => {
   console.log("File upload error", error);
-  $modal.msgError("上传失败");
+  $modal.msgError(i18n.t('phenotype.index.message_upload_fail'));
 };
 
 //更新文件
@@ -533,17 +607,17 @@ function handleAdd() {
 // 删除文件
 function handleDelete() {
   if (ids.value.length == 0) {
-    $modal.msg("您没有选择文件！");
+    $modal.msg(i18n.t('phenotype.index.message_delete_select'));
   } else {
-    $modal.confirm("是否删除文件?").then(() => {
+    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
       delFile(ids.value)
         .then((res) => {
           console.log("222");
-          $modal.msgSuccess("删除成功！");
+          $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
           getList();
         })
         .catch((err) => {
-          $modal.msgError("删除失败");
+          $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
         });
     });
   }
@@ -574,7 +648,7 @@ function getList() {
     })
     .catch((err) => {
       tableLoading.value = false;
-      $modal.msgError("获取列表失败");
+      $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
     });
 }
 
@@ -593,10 +667,10 @@ async function updateFileStatus(row) {
     status: row.fileStatus,
   })
     .then((res) => {
-      $modal.msgSuccess("更新成功");
+      $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
     })
     .catch((err) => {
-      $modal.msgError("更新失败");
+      $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
     });
 }
 
@@ -607,7 +681,7 @@ async function handleDownload(row) {
   if (downloadLoading.value) {
     return; // Prevent multiple downloads while in progress
   }
-  $modal.msg("正在下载中，请等待");
+  $modal.msg(i18n.t('phenotype.index.message_downloading'));
   downloadLoading.value = true;
   try {
     await $download.resource(row.url);
@@ -635,14 +709,14 @@ function handleUpdate(row) {
 
 // 删除文件
 function deleteFile(row) {
-  $modal.confirm("是否删除文件?").then(() => {
+  $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
     delFile([row.fileId])
       .then((res) => {
-        $modal.msgSuccess("删除成功！");
+        $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
         getList();
       })
       .catch((err) => {
-        $modal.msgError("删除失败");
+        $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
       });
   });
 }
@@ -689,7 +763,7 @@ function openHistory(row) {
     .catch((err) => {
       tableLoading.value = false;
       historyTableLoading.value = false;
-      $modal.msgError("获取列表失败");
+      $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
     });
 }
 
@@ -758,9 +832,9 @@ const dialogTreeStatus = ref("createNode");
 //树表单验证规则
 const treeRules = reactive({
   treeName: [
-    { required: true, message: "Please input Activity name", trigger: "blur" },
+    { required: true, message: messages.message_input_nodeName, trigger: "blur" },
   ],
-  isShow: [{ required: true, message: "Please select", trigger: "blur" }],
+  isShow: [{ required: true, message: messages.message_input_status, trigger: "blur" }],
 });
 
 // 树组件节点属性
@@ -832,7 +906,7 @@ function resetTreeForm() {
 // 添加节点
 function addChildNode() {
   if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
-    $modal.msgWarning("请选择所要添加节点的父节点");
+    $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
     return;
   }
   resetTreeForm();
@@ -843,7 +917,7 @@ function addChildNode() {
 // 修改节点
 function updateChildNode() {
   if (!tree.value.getCurrentNode()) {
-    $modal.msgWarning("请选择所要修改节点的父节点");
+    $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
     return;
   }
   resetTreeForm();
@@ -873,11 +947,11 @@ function createTreeData() {
         treeType: treeType.value,
       }).then(
         () => {
-          $modal.msgSuccess("添加节点成功");
+          $modal.msgSuccess(i18n.t('phenotype.index.message_node_add_success'));
           getTreeList();
         },
         () => {
-          $modal.msgError("添加节点失败");
+          $modal.msgError(i18n.t('phenotype.index.message_node_add_fail'));
         }
       );
       dialogTreeFormVisible.value = false;
@@ -895,11 +969,11 @@ function updateTreeData() {
         treeId: tree.value.getCurrentNode().treeId,
       }).then(
         () => {
-          $modal.msgSuccess("修改成功");
+          $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
           getTreeList();
         },
         () => {
-          $modal.msgError("修改失败");
+          $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
         }
       );
       dialogTreeFormVisible.value = false;
@@ -910,14 +984,14 @@ function updateTreeData() {
 //删除节点
 function deleteNode() {
   if (!tree.value.getCurrentNode()) {
-    $modal.msgWarning("请选择节点");
+    $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
     return;
   }
-  $modal.confirm("是否删除该节点").then(() => {
+  $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
     const curNode = tree.value.getCurrentNode();
     const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
     deleteNodes(curNodeTreeIds).then(() => {
-      $modal.msgSuccess("删除节点成功");
+      $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
       getTreeList();
     });
   });
@@ -946,6 +1020,8 @@ function rowClick(nodeObj) {
 onMounted(() => {
   getTreeList();
 });
+
+
 </script>
 
 <style lang="less" scoped>
@@ -1024,7 +1100,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: #1FB864;
   margin-top: 10px;
 
   .el-dialog__title {
