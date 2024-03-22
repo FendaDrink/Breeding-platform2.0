@@ -191,7 +191,7 @@
 <script setup name="phenoType">
 import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { listFile, updateFile, delFile } from "@/api/infomanage/phenoType";
+import {listFile, updateFile, delFile, listFileHistory} from "@/api/infomanage/phenoType";
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -742,7 +742,7 @@ const fileVisual = (row) => {
 function openHistory(row) {
   historyTableLoading.value = true;
   historyFormVisible.value = true;
-  listFile({
+  listFileHistory({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,
     fileStatus: roles[0] === "admin" ? null : 1,
@@ -757,7 +757,6 @@ function openHistory(row) {
       historyFileList.value.forEach((item) => {
         allFileId.value.push(item.fileId);
       });
-      total.value = res.total;
       historyTableLoading.value = false;
     })
     .catch((err) => {
