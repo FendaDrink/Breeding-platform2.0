@@ -24,7 +24,7 @@
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain @click="isModify" 
+          <el-button type="warning" plain @click="isModify"
             v-hasPermi="['system:trait:export']">确认修改</el-button>
         </el-col>
 
@@ -68,7 +68,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
 <script>
 import { addHigh, selHighL, download, getSelect, getLightLine, listTrait, getTrait, delTrait, addTrait, updateTrait } from "@/api/system/trait";
 import { blobValidate } from '@/utils/param'
@@ -194,6 +194,7 @@ export default {
           this.selectArr = this.traitList.slice(0, this.len)
           this.$refs.multipleTable.clearSelection();
           this.selectArr.forEach(item => {
+            console.log(item,'shezhi')
             this.$refs.multipleTable.toggleRowSelection(item, true)
           })
           this.tableRowClassName = ({ row, rowIndex }) => {
@@ -951,7 +952,7 @@ export default {
   }
 }
 
-//三级节点选择器 
+//三级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;

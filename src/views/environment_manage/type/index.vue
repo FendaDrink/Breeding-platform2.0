@@ -15,10 +15,9 @@
           <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
         </el-form-item>
       </el-form>
-
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain  @click="isModify" 
+          <el-button type="warning" plain  @click="isModify"
                      v-hasPermi="['system:factor:export']">确认修改</el-button>
         </el-col>
 
@@ -180,24 +179,24 @@ export default {
         const responseData=response.data
         this.factorList = responseData.data
         this.total = responseData.total
-        console.log(responseData,'asdsd');
         this.len = responseData.size
-        console.log(this.len,'121')
-        this.factorList.slice(0, this.len).forEach((item)=>{
-          this.selectArr.push(item)
-        })
-          this.$refs.multipleTable.clearSelection();
-          this.selectArr.forEach(item => {
-            this.$refs.multipleTable.toggleRowSelection(item, true)
+        this.selectArr = this.factorList.slice(0, this.len)
+        this.$refs.multipleTable.clearSelection();
+        setTimeout(()=>{
+          this.selectArr.forEach((item) => {
+            this.$refs.multipleTable.toggleRowSelection(item,true)
           })
-          this.tableRowClassName = ({ row, rowIndex }) => {
-            if (rowIndex < this.len) {
-              return "success-row"
-            }
-            else return ""
+        },0)
+        this.tableRowClassName = ({ row, rowIndex }) => {
+          if (rowIndex < this.len) {
+            return "success-row"
           }
+          else return ""
+        }
         this.loading = false;
-      });
+      }).finally(()=>{
+
+      })
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -244,8 +243,6 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const factor_id = this.factorId
-      // let formdata = new FormData()
-      // formdata.append("species_id",species_id)
       download(factor_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {
@@ -545,7 +542,7 @@ export default {
   }
 }
 
-//三级节点选择器 
+//三级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;
