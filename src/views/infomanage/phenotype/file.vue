@@ -686,7 +686,7 @@ onBeforeRouteLeave(() => {
 
 :deep(.el-dialog__header) {
   margin: 0%;
-  background-color: #9abeaf;
+  background-color: #0F5C32;
   span {
     color: white;
   }

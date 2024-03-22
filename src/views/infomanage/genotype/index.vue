@@ -753,13 +753,14 @@ async function updateFileStatus(row) {
 const downloadLoading = ref(false);
 let downloadTimer = null;
 async function handleDownload(row) {
+  console.log(row,'~~~~~');
   if (downloadLoading.value) {
     return;
   }
   $modal.msg("正在下载中，请等待");
   downloadLoading.value = true;
   try {
-    await $download.resource(row.fileUrl);
+    await $download.resource(row.url);
 
     downloadTimer = setTimeout(() => {
       downloadLoading.value = false;
@@ -843,7 +844,6 @@ function openHistory(row) {
       historyFileList.value.forEach((item) => {
         allFileId.value.push(item.fileId);
       });
-      total.value = res.total;
     })
     .catch((err) => {
       tableLoading.value = false;
@@ -1137,7 +1137,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {

@@ -301,7 +301,7 @@ export default {
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background: #1FB864;
+  background: #0F5C32;
   height: 60px !important;
 
   span {

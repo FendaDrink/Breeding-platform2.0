@@ -785,7 +785,7 @@ function handleDownload(row) {
   :deep(.el-dialog__header) {
     margin-right: 0px;
     padding-right: 16px;
-    background: #fff;
+    background: #0F5C32;
     margin-top: 10px;
   
     .el-dialog__title {
