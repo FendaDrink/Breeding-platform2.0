@@ -19,7 +19,7 @@
                     </div>
                     <div class="btn" style="text-align: center;">
                         <el-button type="success" plain style="width: 110px; margin-top: 20px;"
-                        @click="downloadTemplate">下载模板文件</el-button>
+                        @click="downloadTemplate">下载模版文件</el-button>
                         <el-button type="success" @click="submit" plain
                         style="width: 110px; margin-top: 20px;">提交</el-button>
                     </div>
@@ -90,16 +90,6 @@
                                 <text>{{ scope.row.info===''?'无提示信息':scope.row.info }}</text>
                                 <template #reference>
                                     <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
-                                </template>
-                            </el-popover>
-                        </template>
-                    </el-table-column>
-                    <el-table-column align="center" fixed="right" label="备注">
-                        <template #default="scope">
-                            <el-popover placement="top" trigger="hover">
-                                <text>{{ scope.row.remark===null?'无备注信息': scope.row.remark }}</text>
-                                <template #reference>
-                                    <el-button link type="text" style="color: #1FB864;">查看备注</el-button>
                                 </template>
                             </el-popover>
                         </template>
@@ -185,13 +175,13 @@ const getEnvironmentalData = async () => {
     }
     console.log(envCatchDataList.value)
 }
-// 下载模板文件
+// 下载模版文件
 const downloadTemplate = () => {
     downloadTemplateAPI().then(res =>{
         const isLogin = blobValidate(res);
         if(isLogin){
             const blob = new Blob([res])
-            saveAs(blob,'模板文件.csv')
+            saveAs(blob,'模版文件.csv')
         }else{
             const resText = data.text();
             const rspObj = JSON.parse(resText);
