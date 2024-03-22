@@ -81,6 +81,8 @@ const dialogFormVisible = ref(false); // 表单可见
 const formKeys = [
   "fileId",
   "environmentId",
+  "area",
+  "date",
   "remark",
 ];
 
@@ -102,9 +104,7 @@ const rules = reactive({
 
 const route = useRoute();
 console.log(route);
-const total = ref(2);
 
-const factorsArray = reactive([]); // 使用后端提供的性状数据填充这个数组
 //分页
 const pageSize = ref(20);
 const totalPage = ref(0);
@@ -128,7 +128,10 @@ function fetchData() {
 
     tableColumns.value = [
       {prop: "environmentId", label: "环境id", width: "80px", fixed: "left",},
-      {prop: "remark", label: "备注", width: "80px"},
+      {prop: "area", label: "地区", width: "80px", fixed: "left"},
+      {prop: "date", label: "日期", width: "120px", fixed: "left"},
+      {prop: "remark", label: "备注", width: "80px", fixed: "left"},
+
     ];
 
     getEnvDetailByFileId({
@@ -194,8 +197,10 @@ const tableName = ref("");
 
 const unmodifiableColumns = [
   "fileId",
-  "environmentId"
-]
+  "environmentId",
+  "area",
+  "date"
+];
 
 // 计算属性，检查列是否为不可修改
 const isUnmodifiableColumn = (columnProp) => {
@@ -253,13 +258,14 @@ function modifFile(row) {
   const keys = [
       "fileId",
       "environmentId",
+      "area",
+      "date",
       "remark",
   ];
 
   keys.forEach((key) => {
       form[key] = row[key];
   });
-
   for (let i = 0; i <= 39; i++) {
       form[`factor_id_${i}`] = row[`factor_id_${i}`];
   }

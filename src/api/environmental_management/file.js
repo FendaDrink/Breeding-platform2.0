@@ -8,6 +8,12 @@ export function getEnvFileList(treeId) {
             treeId
         }
     });
+}export function getEnvFileHistory(query) {
+    return request({
+        url: '/sidebarTreeEnv/envFile/getFileHistory',
+        method: 'get',
+        params:query
+    });
 }
 
 

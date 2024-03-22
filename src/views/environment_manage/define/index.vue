@@ -1,7 +1,7 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="100px">
+      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch">
         <el-form-item label="环境因子名称" prop="factorName">
           <el-input v-model="queryParams.factorName" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
@@ -63,7 +63,7 @@
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules">
         <el-form-item label="环境因子名称" prop="factorName">
           <el-input v-model="form.factorName" placeholder="请输入环境因子名称" />
         </el-form-item>
@@ -332,7 +332,6 @@ export default {
   }
 
   // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
   // border-top: 60px solid red; /* 这将成为梯形的高度 */
   // border-right: 0;
   // border-bottom: 0;

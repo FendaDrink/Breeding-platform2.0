@@ -53,7 +53,7 @@ export function download(data){
 
 export function getSelect(){
   return request({
-    url: '/sidebarTreeEnv/asFactorType/selectEnvFactorName' ,
+    url: '/sidebarTreeEnv/envFactorType/selectFactorTypeName' ,
     method: 'get'
   })
 }
@@ -65,20 +65,37 @@ export function selHighL(data){
     params:data
   })
 }
+
+export function selHighLAll(data){
+  return request({
+    url:"/sidebarTreeEnv/asFactorType/selectHighlightinAll",
+    method:'get',
+    params:data
+  })
+}
+
 export function addHigh(data){
   return request({
     url:"/sidebarTreeEnv/asFactorType/checkUpdate",
     method:'post',
-    data:data
+    // 不知道name是干啥的，后端说得传
+    data:{...data,name:''}
   })
 }
 
-export function getLightLine(query,data) {
+export function getLightLine(params) {
   return request({
-    url: '/sidebarTreeEnv/asFactorType/selectHighlight' ,
-    method: 'post',
-    params:query,
-    data:data
+    url: '/sidebarTreeEnv/asFactorType/fuzzyQueryFactorName' ,
+    method: 'get',
+    params:params
+  })
+}
+
+export function getLightLineAll(params) {
+  return request({
+    url: '/sidebarTreeEnv/asFactorType/fuzzyQueryFactorNameAll' ,
+    method: 'get',
+    params:params,
   })
 }
 

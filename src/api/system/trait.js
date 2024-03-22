@@ -49,6 +49,13 @@ export function getLightLine(query,data) {
     params:query,
     data:data
   })
+}export function getLightLineAll(query,data) {
+  return request({
+    url: '/sidebarTree/type/selectHighlightAll' ,
+    method: 'post',
+    params:query,
+    data:data
+  })
 }
 export function getSelect(){
   return request({
@@ -68,6 +75,12 @@ export function download(data){
 export function selHighL(data){
   return request({
     url:"/sidebarTree/type/selectHighlightin",
+    method:'get',
+    params:data
+  })
+}export function selHighLAll(data){
+  return request({
+    url:"/sidebarTree/type/selectHighlightinAll",
     method:'get',
     params:data
   })

@@ -2,12 +2,11 @@
   <el-card class="card-container">
     <template #header>
       <div class="card-header">
-        <span>文件 {{route.query.tableName}} 包含的环境因子与分类</span>
+        <span>环境因子与分类</span>
       </div>
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
       <div class="echart_wrapper">
-<!--        <p class="file-name">已选文件：{{route.query.tableName}}</p>-->
         <div id="factorPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
         <div class="factor-form">
           <el-table :data="phenotypeData.slice(
@@ -85,7 +84,7 @@ const totalPage2 = ref(0);
 const currentpageNum2 = ref(1); //当前页数
 
 
-const phenotypeData = reactive([
+let phenotypeData = reactive([
   {
     factorId: "B11",
     factorName: "B11 content",
@@ -94,14 +93,19 @@ const phenotypeData = reactive([
     factorAbbreviationName: "biochemistry",
   },
 ]);
+// phenotypeData副本
+let _phenotypeData = []
 
 const echartData = reactive({
   name: "环境因子",
   children: [
   ],
 });
+
 const sunBurstData = reactive({
   name: "环境因子",
+  type: 'ROOT',
+  father:null,
   children: [
   ],
 });
@@ -164,8 +168,8 @@ const factorChoosed = ref(false);
 //用于更新phentypeData的函数
 function updatePhenotypeData(data) {
   phenotypeData.splice(0, phenotypeData.length, ...data);
-  // createTreeData(phenotypeData);
-  createTreeData2(phenotypeData);
+  _phenotypeData.splice(0, _phenotypeData.length, ...data);
+  createTreeData(phenotypeData);
 }
 
 const factorTableLoading = ref(false);
@@ -211,12 +215,10 @@ const getFactorsData = (data) => {
   return res
 }
 
-
 //将请求到的形状信息转换为树形结构
-const createTreeData2 = (data) => {
+const createTreeData = (data) => {
   console.log(data, 'data');
   //获取环境因子类型
-  sunBurstData.children = [];
   let factorType = [];
   data.forEach((item) => {
     let isExist = false;
@@ -245,22 +247,30 @@ const createTreeData2 = (data) => {
     let node = {
       name: item.name,
       value:1,
+      type:'TYPE',
+      iId:item.id,
+      father: {type:'ROOT',id:-2},
       children: []
     }
-    node.children = data.filter((item2) => item2.factorTypeId === item.id).map((item3) => {
+    node.children = data.filter((item2) => item2.factorTypeId === item.id).map((item3,index) => {
       return {
         name: '',
-        id: item3.factorTypeId,
+        type:'BLANK',
+        iId:item3.factorId,
         value:1,
+        father: {type: 'TYPE', id: item.id},
         children: [
           {
             name: item3.factorName,
-            value:1,
-            children: null
+            value: 1,
+            type: 'FACTOR',
+            iId: item3.factorId,
+            father: {type: 'BLANK', id: item3.factorId},
+            children: []
           }
         ]
       }
-    });
+    })
     node.value = node.children.length;
     sunBurstData.children.push(node);
   })
@@ -301,10 +311,6 @@ const sunburstLevels = [
   {
     r0: '20%',
     r: '60%',
-    itemStyle:{
-      // shadowBlur:200,
-      // shadowColor:'rgba( 31,180, 98, 0.8)',
-    },
   },
   {
     r0: '60%',
@@ -327,7 +333,6 @@ const randomColor = () => {
 
   // 先在colors中随机选取一个颜色,同时删除
   let color = colors.splice(Math.floor(Math.random() * colors.length),1)[0];
-  console.log(color,'cccccc');
   return color;
 }
 
@@ -348,17 +353,10 @@ const sunBurstOption = {
       borderWidth: 20,
       borderColor:'#f1f6f3'
     },
-    gap: 50,
     levels: sunburstLevels,
-    // emphasis:{
-    //   itemStyle:{
-    //     borderWidth: 0,
-    //     color: '#1FB964',
-    //
-    //   }
-    // }
   }
 };
+
 
 // 处理旭日图样式
 const handleSunburstStyle = () => {
@@ -405,24 +403,75 @@ const handleSunburstStyle = () => {
   })
 };
 
+// 根据type与id找到对应的元素的父元素
+const findFather = (type,id) => {
+  if(type==='ROOT') return {type:'ROOT',id:-2}
+  if(type==='TYPE') return {type:'ROOT',id:-2}
+  for(let i of sunBurstData.children){
+    for(let j of i.children){
+      if(type==='BLANK'){
+        if(id===j.iId){
+          return j.father
+        }
+      }else {
+        if (id === j.children[0].iId) {
+          return j.children[0].father;
+        }
+      }
+    }
+  }
+}
+
+
+// 根据type和id来决定图表内容
+const getTableData = (type,id) => {
+  switch (type){
+    case 'ROOT':
+      phenotypeData.splice(0, phenotypeData.length, ..._phenotypeData);
+      break
+    case 'TYPE':
+      phenotypeData.splice(0, phenotypeData.length, ..._phenotypeData.filter(item => item.factorTypeId === id));
+      break
+    case 'FACTOR':
+      phenotypeData.splice(0, phenotypeData.length, _phenotypeData.find(item => item.factorId === id));
+      break
+    case 'BLANK':
+      phenotypeData.splice(0, phenotypeData.length, _phenotypeData.find(item => item.factorId === id));
+      break
+  }
+  totalPage2.value = phenotypeData.length
+  currentpageNum2.value = 1
+  currentFather = findFather(type,id)
+  console.log(currentFather,'father');
+  console.log(phenotypeData);
+}
+
+// 记录当前显示层的父元素
+let currentFather = null
+
+// 图表点击事件
+const sunBurstChartHandler = (params) =>{
+  console.log(params.data.name)
+  const data = params.data
+  // 判断是否需要返回
+  if(data.type === undefined) {
+    // 返回上一层
+    getTableData(currentFather.type,currentFather.id);
+  }else {
+    getTableData(data.type, data.iId)
+  }
+}
+
 function initHistogram() {
   let chartDoms = document.querySelector("#factorPanMap");
   chartDoms?.removeAttribute("_echarts_instance_")
   let myChart = echarts.init(chartDoms);
-  myChart.on("click", (params) => {
-  });
-  console.log(pieOption, 'pieOption');
+  myChart.on("click", sunBurstChartHandler);
+  // console.log(pieOption, 'pieOption');
   console.log(sunBurstOption, 'sunBurstOption');
   sunBurstOption && myChart.setOption(sunBurstOption);
   // pieOption && myChart.setOption(pieOption);
 }
-
-// 文件名称对象，将其内容赋值给
-// const setFileName = ()=>{
-//   const p = document.querySelector('.file-name')
-//   p.dataset.content=p.textContent
-//   console.log(p,'121212121')
-// }
 
 onMounted(() => {
   initHistogram();
