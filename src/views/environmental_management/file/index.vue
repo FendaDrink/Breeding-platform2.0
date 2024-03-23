@@ -163,7 +163,7 @@
           <el-input v-model="dataForm.latitude" placeholder="输入纬度" />
         </el-form-item>
         <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
-          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
+          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".xlsx"
             :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
             :on-change="handleUploadFile">
@@ -375,19 +375,17 @@ const createData = async () => {
     }catch (err){
       $modal.msgError(err)
     }finally {
-      $modal.msgSuccess("上传成功！")
-      console.log("2");
+      $modal.msgSuccess("上传成功，稍后自动刷新！")
       isDisabled.value = true;
-      console.log("3");
-      console.log("4");
       tableLoading.value = false;
       tableName.value = "";
       dialogFormVisible.value = false;
+      setTimeout(() => {
+        getList();
+      }, 4000);
     }
   }
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 const tableName = ref("");
@@ -437,28 +435,31 @@ const mergeData = async (row) => {
       }/sidebarTreeEnv/environment/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
 
-    console.log(uploadUrl.value, "。。。。。。。。。。");
     $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
 
-    console.log("4");
-    tableLoading.value = false;
-    console.log("5");
-    tableName.value = "";
+    try{
+      await upload.value.submit();
+    }catch (err){
+      $modal.msgError(err)
+    }finally {
+      $modal.msgSuccess("合并成功，稍后自动刷新！")
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(async () => {
+        getList();
+      }, 4000);
+    }
+
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 // 文件上传成功回调
-async function uploadFileSuccess(response) {
+async function uploadFileSuccess(response,file,fileList) {
   if (response.code === 200) {
-    $modal.msgSuccess("上传成功！");
+    $modal.msgSuccess("上传成功");
   } else {
     $modal.msgError("格式不正确，请下载模板文件比对！");
   }
