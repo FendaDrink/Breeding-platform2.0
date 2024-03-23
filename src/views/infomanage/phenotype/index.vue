@@ -397,18 +397,23 @@ const createData = async () => {
       }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
       }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}&pointStatus=${0}`;
+    $modal.msg("上传数据较大，请耐心等待！");
 
-    $modal.msg(i18n.t('phenotype.index.message_upload_wait'));
-    await upload.value.submit();
-    isDisabled.value = true;
-    tableLoading.value = false;
-    tableName.value = "";
+    try{
+      await upload.value.submit();
+    }catch (err){
+      $modal.msgError(err)
+    }finally {
+      $modal.msgSuccess("上传成功，稍后自动刷新！")
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(async () => {
+        getList();
+      }, 4000);
+    }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
 };
 
 const tableName = ref("");
@@ -448,21 +453,27 @@ const mergeData = async () => {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
-    $modal.msg(i18n.t('phenotype.index.message_upload_wait'));
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
 
-    console.log("4");
-    tableLoading.value = false;
-    console.log("5");
-    tableName.value = "";
+    $modal.msg("上传数据较大，请耐心等待！");
+
+    try{
+      await upload.value.submit();
+    }catch (err){
+      $modal.msgError(err)
+    }finally {
+      $modal.msgSuccess("合并成功，稍后自动刷新！")
+      console.log("2");
+      isDisabled.value = true;
+      console.log("3");
+      console.log("4");
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(async () => {
+        getList();
+      }, 4000);
+    }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
 };
 
 // 文件创建

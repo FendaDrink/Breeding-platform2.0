@@ -504,21 +504,25 @@ const createData = async () => {
       }/genotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
       }&status=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
-    $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
 
-    console.log("4");
-    tableLoading.value = false;
-    console.log("5");
-    tableName.value = "";
+      $modal.msg("上传数据较大，请耐心等待！");
+
+      try{
+        await upload.value.submit();
+      }catch (err){
+        $modal.msgError(err)
+      }finally {
+        $modal.msgSuccess("上传成功，稍后自动刷新！")
+        isDisabled.value = true;
+        tableLoading.value = false;
+        tableName.value = "";
+        dialogFormVisible.value = false;
+        setTimeout(async () => {
+          getList();
+        }, 4000);
+      }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 // 文件上传成功回调
@@ -579,28 +583,24 @@ const mergeData = async () => {
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/genotypeFile/merge?tableName=${tableName.value}`;
+    $modal.msg("上传数据较大，请耐心等待！");
+
     try {
-      $modal.msg("上传数据较大，请耐心等待！");
-      console.log("1");
       await upload.value.submit();
-      console.log("2");
       isDisabled2.value = true;
-      console.log("3");
     } catch (error) {
-      console.error("上传错误: ", error);
+      console.error("合并错误: ", error);
     } finally {
-      console.log("4");
       tableLoading.value = false;
-      console.log("5");
       tableName.value = "";
+      dialogFormVisible.value = false;
       getList();
+      setTimeout(() => {
+        getList();
+      }, 4000);
     }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 // 文件合并
