@@ -47,7 +47,7 @@
                   <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
                   <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
                   <el-table-column :label="$t('phenotype.index.table_fileName')" width="250" align="center" prop="fileName" />
-                  <el-table-column :label="$t('phenotype.index.table_speciesName')" align="center" prop="speciesName" width="100px" />
+                  <el-table-column :label="$t('phenotype.index.table_speciesName')" align="center" prop="speciesName" width="120px" />
                   <el-table-column :label="$t('phenotype.index.table_populationName')" align="center" width="200px" prop="populationName" />
                   <el-table-column :label="$t('phenotype.index.table_year')" align="center" prop="year" />
                   <el-table-column :label="$t('phenotype.index.table_location')" align="center" prop="location" />
@@ -1110,7 +1110,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {

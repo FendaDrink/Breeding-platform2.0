@@ -1,9 +1,5 @@
 <template>
-  <div style="
-          width: 100%;
-          min-height: calc(100vh - 84px);
-          background-color: #eeeeee;
-        ">
+  <div style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <div class="photoInfo" draggable="true" @dragstart="moveStart" @dragend="moveEnd" v-show="isShowTest">
       <el-card class="box-card info-card">
         <template #header>
@@ -45,69 +41,69 @@
           <div style="width: 100%;">
             <el-button plain type="primary" class="my-button" @click.prevent="addChildNode" icon="plus"
               v-hasPermi="['system:node:add']">
-              添加子节点</el-button>
+              {{ $t('phenotype.showImage.button.nodeAdd') }}</el-button>
             <el-button plain type="danger" class="my-button" @click.prevent="deleteNode" icon="delete"
-              v-hasPermi="['system:node:remove']">删除节点</el-button>
+              v-hasPermi="['system:node:remove']">{{ $t('phenotype.showImage.button.node_delete') }}</el-button>
             <el-button plain type="success" class="my-button" @click.prevent="updateChildNode" icon="edit"
-              v-hasPermi="['system:node:update']">修改节点</el-button>
+              v-hasPermi="['system:node:update']">{{ $t('phenotype.showImage.button.node_update') }}</el-button>
             <!-- 可能要做隐藏 -->
             <template v-if="tree && tree.getCurrentNode()?.children.length === 0">
               <el-button plain type="primary" class="my-button" @click.prevent="addImage"
-                v-hasPermi="['system:image:add']">添加图片</el-button>
+                v-hasPermi="['system:image:add']">{{ $t('phenotype.showImage.button.image_add') }}</el-button>
               <el-button plain type="info" class="my-button" @click.prevent="addNodeMsg"
-                v-hasPermi="['system:image:add']">节点详细信息</el-button>
+                v-hasPermi="['system:image:add']">{{ $t('phenotype.showImage.button.node_detail') }}</el-button>
               <el-button plain type="info" class="my-button" :loading="downloadLoading" @click.prevent="downloadPython"
-                v-hasPermi="['system:image:add']">下载远程连接文件</el-button>
+                v-hasPermi="['system:image:add']">{{ $t('phenotype.showImage.button.download_remote') }}</el-button>
               <el-button plain type="info" class="my-button" @click.prevent="autoUploadDialog"
-                v-hasPermi="['system:image:add']">图片自动上传</el-button>
+                v-hasPermi="['system:image:add']">{{ $t('phenotype.showImage.button.image_auto') }}</el-button>
             </template>
             <br />
-            当前节点状态：
+            {{ $t('phenotype.showImage.label.current_status') }}
             <el-switch v-hasPermi="['system:node:update']" v-model="nodeIsShow" @change="switchChange()" />
           </div>
           <template v-if="tree && tree.getCurrentNode()?.children.length == 0">
             <!-- 搜索部分 -->
             <div class="search-container">
               <el-input clearable v-model.trim="searchForm.name" prefix-icon="Search" style="margin-right:5px;"
-                class="chooseNameInput" placeholder="图片名"></el-input>
+                class="chooseNameInput" :placeholder="$t('phenotype.showImage.label.image_name')"></el-input>
               <el-input clearable v-model.trim="searchForm.createBy" prefix-icon="Search" style="margin-right:5px;"
-                class="chooseNameInput" placeholder="上传者"></el-input>
+                class="chooseNameInput" :placeholder="$t('phenotype.showImage.label.image_uploader')"></el-input>
               <el-date-picker v-model="searchForm.time" style="margin-right:5px; width:150px; flex:auto"
-                class="chooseDateInput" placeholder="拍摄日期" value-format="YYYY-MM-DD"></el-date-picker>
+                class="chooseDateInput" :placeholder="$t('phenotype.showImage.label.image_date_taken')" value-format="YYYY-MM-DD"></el-date-picker>
               <el-date-picker v-model="searchForm.createTime" style="margin-right:5px; width:150px; flex:auto"
-                class="chooseDateInput" placeholder="上传日期" value-format="YYYY-MM-DD"></el-date-picker>
-              <el-button :loading="searchLoading" @click="searchPhoto" icon="Search" type="primary">查询</el-button>
-              <el-button :loading="resetLoading" @click="resetSearchForm" icon="Refresh" type="info">重置</el-button>
+                class="chooseDateInput" :placeholder="$t('phenotype.showImage.label.image_date_upload')" value-format="YYYY-MM-DD"></el-date-picker>
+              <el-button :loading="searchLoading" @click="searchPhoto" icon="Search" type="primary">{{ $t('phenotype.showImage.button.search') }}</el-button>
+              <el-button :loading="resetLoading" @click="resetSearchForm" icon="Refresh" type="info">{{ $t('phenotype.showImage.button.reset') }}</el-button>
             </div>
             <el-button type="danger" style="margin: 0 10px" @click="deleteSelectedImages" :loading="buttonLoading" plain
-              v-hasPermi="['system:image:remove']" class="my-button">删除选中图片</el-button>
+              v-hasPermi="['system:image:remove']" class="my-button">{{ $t('phenotype.showImage.button.image_delete') }}</el-button>
               <el-button type="warning"
-              style="margin: 0 10px" @click="editCheckedPhotoInfo" plain class="my-button">编辑选中图片</el-button>
+              style="margin: 0 10px" @click="editCheckedPhotoInfo" plain class="my-button">{{ $t('phenotype.showImage.button.image_update') }}</el-button>
             <el-button type="info" style="margin: 0 10px" @click="downloadSelectedImages" plain
-              class="my-button">下载选中图片</el-button>
-            <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>分析选中图片</el-button>
+              class="my-button">{{ $t('phenotype.showImage.button.image_download') }}</el-button>
+            <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{ $t('phenotype.showImage.button.image_analyse') }}</el-button>
             <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange" size="large"
               class="my-button">
-              <p>全选该节点所有图片</p>
+              <p>{{ $t('phenotype.showImage.label.select_all') }}</p>
             </el-checkbox>
           </template>
           <!-- 内容部分 -->
           <!-- 如果为非叶子节点 -->
           <div v-if="tree && tree.getCurrentNode()?.children.length !== 0"
             style="max-height: calc(100vh - 290px); font-size: 20px;">
-            <span style="font-weight: bold;">描述信息：</span>{{ form.keyword ? form.keyword : '描述信息为空!' }}
+            <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.description') }}</span>{{ form.keyword ? form.keyword : "$t('phenotype.showImage.dialog.other.dateSelction_empty')" }}
             <br />
             <!-- 选择日期组件 -->
             <div style="margin-top:10px">
-              <span style="font-weight: bold;">日期选择：</span>
-              <el-date-picker v-model="value2" type="daterange" unlink-panels range-separator="至" start-placeholder="开始日期"
-                end-placeholder="结束日期" :shortcuts="shortcuts" :size="size" style="margin-right: 20px;"
+              <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.dateSelction') }}</span>
+              <el-date-picker v-model="value2" type="daterange" unlink-panels :range-separator="$t('phenotype.showImage.dialog.other.to')" :start-placeholder="$t('phenotype.showImage.dialog.other.date_start')"
+                :end-placeholder="$t('phenotype.showImage.dialog.other.date_end')" :shortcuts="shortcuts" :size="size" style="margin-right: 20px;"
                 @change="chooseDate" />
             </div>
             <el-card class="card-container" style="margin-top:10px;">
                 <template #header>
                   <div class="card-header">
-                    <h1 class="header-title">表型图片分析<i class="underline">&nbsp;</i></h1>
+                    <h1 class="header-title">{{ $t('phenotype.showImage.dialog.other.phenoAnalysis') }}<i class="underline">&nbsp;</i></h1>
                   </div>
                 </template>
               <!-- 表型图片统计 -->
@@ -120,7 +116,7 @@
 
           <div v-if="imageSrcList.length === 0 && tree && tree.getCurrentNode()?.children.length === 0"
             style="max-height: calc(100vh - 290px);font-size: 20px;">
-            暂无图片！
+            {{ $t('phenotype.showImage.dialog.other.noImage') }}
           </div>
           <div class="image_box img-list" v-if="tree && tree.getCurrentNode()?.children.length === 0"
             style="max-height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
@@ -157,21 +153,21 @@
                   </div>
                   <div class="detailBox" :style="{ fontSize: fontSize }">
                     <p v-if="item.name">{{ item.name }}</p>
-                    <p v-if="!item.name"> 暂无名称</p>
+                    <p v-if="!item.name"> {{ $t('phenotype.showImage.dialog.other.noName') }}</p>
                   </div>
                   <div class="buttonsBox">
                     <button class="edit_button" size="large" @click="handleEditImage(item)">
                       <el-icon>
                         <Edit />
                       </el-icon>
-                      <span>编辑</span>
+                      <span>{{ $t('phenotype.showImage.button.edit') }}</span>
                     </button>
                     <button class="delete_button" size="large" @click="deleteImage(item.pictureId, item.pictureUrl)"
                       v-hasPermi="['system:image:remove']">
                       <el-icon>
                         <Delete />
                       </el-icon>
-                      <span>删除</span>
+                      <span>{{ $t('phenotype.showImage.button.update') }}</span>
                     </button>
                   </div>
 
@@ -195,16 +191,16 @@
 
     </el-container>
     <!-- 新增节点对话框 -->
-    <el-dialog :title="textMap[dialogStatus]" v-model="dialogFormVisible" center draggable width="30%">
+    <el-dialog :title="textMaps[dialogStatus]" v-model="dialogFormVisible" center draggable width="30%">
       <el-form ref="dataForm" :model="form" :rules="rules" label-position="left" label-width="110px">
-        <el-form-item label="节点新名称：" prop="treeName">
-          <el-input v-model="form.treeName" placeholder="输入节点新名称" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.nodeName')" prop="treeName">
+          <el-input v-model="form.treeName" :placeholder="$t('phenotype.showImage.dialog.placeholder.nodeName')" />
         </el-form-item>
-        <el-form-item label="是否公开：" prop="isShow">
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.status')" prop="isShow">
           <el-switch v-model="form.isShow" />
         </el-form-item>
-        <el-form-item label="信息描述：" prop="keyword">
-          <el-input v-model="form.keyword" placeholder="输入图片描述信息" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.description')" prop="keyword">
+          <el-input v-model="form.keyword" :placeholder="$t('phenotype.showImage.dialog.placeholder.description')" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -212,39 +208,39 @@
           <el-button type="success" plain @click.passive="
             dialogStatus === 'create' ? createData() : updateData()
           ">
-            保存
+            {{ $t('phenotype.showImage.button.save') }}
           </el-button>
-          <el-button type="info" plain @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogFormVisible = false">{{ $t('phenotype.showImage.button.cancel') }}</el-button>
         </div>
       </template>
     </el-dialog>
     <!-- 修改节点详细信息对话框 -->
-    <el-dialog title="节点图片详细信息" v-model="msgDialogVisible" center draggable width="30%">
+    <el-dialog :title="$t('phenotype.showImage.title.node_detail')"  v-model="msgDialogVisible" center draggable width="30%">
       <el-form ref="dataForm" :model="form" label-position="left" label-width="110px">
-        <el-form-item label="拍摄设备：">
-          <el-input v-model="form.shootEqmt" placeholder="输入拍摄设备名称" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.device')">
+          <el-input v-model="form.shootEqmt" :placeholder="$t('phenotype.showImage.dialog.placeholder.device')" />
         </el-form-item>
-        <el-form-item label="拍摄时间：">
-          <el-date-picker v-model="form.shootTime" type="datetime" placeholder="选择一个日期" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.date')">
+          <el-date-picker v-model="form.shootTime" type="datetime" :placeholder="$t('phenotype.showImage.dialog.placeholder.date')" />
         </el-form-item>
-        <el-form-item label="处理方式：">
-          <el-input v-model="form.procMeth" placeholder="输入处理方式" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.processing')">
+          <el-input v-model="form.procMeth" :placeholder="$t('phenotype.showImage.dialog.placeholder.processing')" />
         </el-form-item>
-        <el-form-item label="关键字（用逗号分隔）：">
-          <el-input v-model="form.keyword" placeholder="输入关键字" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.keywords')">
+          <el-input v-model="form.keyword" :placeholder="$t('phenotype.showImage.dialog.placeholder.keywords')" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button type="success" plain @click.passive="saveNodeDetailsButton">
-            保存
+            {{ $t('phenotype.showImage.button.save') }}
           </el-button>
-          <el-button type="info" plain @click="msgDialogVisible = false">取消</el-button>
+          <el-button type="info" plain @click="msgDialogVisible = false">{{ $t('phenotype.showImage.button.cancel') }}</el-button>
         </div>
       </template>
     </el-dialog>
     <!-- 添加与编辑图片对话框 -->
-    <el-dialog :title="textMap[dialogStatus]" v-model="imageDialog" center draggable max-width="50%">
+    <el-dialog :title="textMaps[dialogStatus]" v-model="imageDialog" center draggable max-width="50%">
       <div class="photoDialog">
         <div class="leftBox">
           <el-upload :file-list="fileList" class="upload-demo" ref="upload" :accept="acceptType()"
@@ -252,11 +248,11 @@
             :headers="{ Authorization: 'Bearer ' + getToken() }" :before-upload="handleBeforeUpload" :limit="photo.limit"
             :on-exceed="handleExceed" :on-preview="handlePictureCardPreview" :on-error="uploadImageError"
             :on-success="uploadImageSuccess" :on-change="handleUploadFile" :multiple="true">
-            <el-button type="primary">Click to upload</el-button>
+            <el-button type="primary">{{ $t('phenotype.showImage.button.upload') }}</el-button>
 
             <template #tip>
-              <div class="el-upload__tip">请上传图片<span
-                  v-if="dialogStatus === 'updataPhoto'">或压缩包</span><br />图片请按格式（材料名_拍摄日期）命名，如：<br />基因型_2023-09-01
+              <div class="el-upload__tip">{{ $t('phenotype.showImage.dialog.tip.t1') }}<span
+                  v-if="dialogStatus === 'updataPhoto'">{{ $t('phenotype.showImage.dialog.tip.t2') }}</span><br />{{ $t('phenotype.showImage.dialog.tip.t3') }}<br />基因型_2023-09-01
                 23.26.02.png</div>
             </template>
 
@@ -271,43 +267,44 @@
           <div class="dialog-footer">
             <el-button type="success" plain :loading="submitButtonLoading"
               @click.passive="dialogStatus === 'updataPhoto' ? checkImageName() : confirmEditPhoto()">
-              {{ dialogStatus === 'updataPhoto' ? '添加' : '修改' }}
+              <!-- {{ dialogStatus === 'updataPhoto' ? '添加' : '修改' }} -->
+              {{ $t('phenotype.showImage.button.save') }}
             </el-button>
-            <el-button @click="suspendSubmitImage" type="info" plain>取消</el-button>
+            <el-button @click="suspendSubmitImage" type="info" plain>{{ $t('phenotype.showImage.button.cancel') }}</el-button>
           </div>
         </div>
         <div class="rightBox" v-if="dialogStatus === 'editPhoto'">
           <el-form ref="dataForm" :model="editPhotoInfo" :rules="photoRules" label-position="left" label-width="110px">
-            <el-form-item label="图片新名称：" prop="name">
-              <el-input clearable v-model="editPhotoInfo.name" placeholder="请输入图片新名称" />
+            <el-form-item :label="$t('phenotype.showImage.dialog.label.imageNewName')" prop="name">
+              <el-input clearable v-model="editPhotoInfo.name" :placeholder="$t('phenotype.showImage.dialog.placeholder.imageNewName')" />
             </el-form-item>
-            <el-form-item label="新拍摄日期：" prop="shotTime">
+            <el-form-item :label="$t('phenotype.showImage.dialog.label.imageNewDate')" prop="shotTime">
               <el-date-picker format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" clearable
-                v-model="editPhotoInfo.shotTime" placeholder="请输入新的拍摄日期" type="datetime" prop="treeName" />
+                v-model="editPhotoInfo.shotTime" :placeholder="$t('phenotype.showImage.dialog.placeholder.imageNewDate')" type="datetime" prop="treeName" />
             </el-form-item>
-            <el-form-item label="备注：" prop="remark">
-              <el-input clearable v-model="editPhotoInfo.remark" placeholder="请输入备注" />
+            <el-form-item :label="$t('phenotype.showImage.dialog.label.comment')" prop="remark">
+              <el-input clearable v-model="editPhotoInfo.remark" :placeholder="$t('phenotype.showImage.dialog.placeholder.comment')" />
             </el-form-item>
           </el-form>
         </div>
       </div>
     </el-dialog>
     <!-- 图片自动上传对话框 -->
-    <el-dialog title="图片自动上传" v-model="autoDialog" center draggable width="30%">
-      <el-form ref="dataForm2" :model="form" :rules="autoRules" label-position="left" label-width="110px">
-        <el-form-item label="IP地址：" prop="ip">
-          <el-input v-model="form.ip" placeholder="输入IP地址" />
+    <el-dialog :title="$t('phenotype.showImage.title.image_auto')" v-model="autoDialog" center draggable width="30%">
+      <el-form ref="dataForm2" :model="form" :rules="autoRules" label-position="left" label-width="130px">
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.ip')" prop="ip">
+          <el-input v-model="form.ip" :placeholder="$t('phenotype.showImage.dialog.placeholder.ip')" />
         </el-form-item>
-        <el-form-item label="图片目录：" prop="remotePicture">
-          <el-input v-model="form.remotePicture" placeholder="输入图片目录" />
+        <el-form-item :label="$t('phenotype.showImage.dialog.label.catalog')" prop="remotePicture">
+          <el-input v-model="form.remotePicture" :placeholder="$t('phenotype.showImage.dialog.placeholder.catalog')" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button type="success" @click.passive="autoUpload" plain>
-            保存
+            {{ $t('phenotype.showImage.button.save') }}
           </el-button>
-          <el-button type="info" plain @click="autoDialog = false">取消</el-button>
+          <el-button type="info" plain @click="autoDialog = false">{{ $t('phenotype.showImage.button.cancel') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -341,7 +338,7 @@ import JSZip, { file } from "jszip";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
+
 
 // 引入echarts
 import { use } from "echarts/core";
@@ -358,6 +355,17 @@ import { BarChart, LineChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 import VChart, { THEME_KEY } from "vue-echarts";
 import axios from "axios";
+
+import { I18nD } from "vue-i18n";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
+const router = useRouter();
 use([
   GridComponent,
   UniversalTransition,
@@ -1601,6 +1609,13 @@ const textMap = {
   editPhoto: "编辑图片",
 };
 
+const textMaps = {
+  create: computed(() => i18n.t('phenotype.showImage.title.node_create')).value,
+  update: computed(() => i18n.t('phenotype.showImage.title.node_update')).value,
+  updataPhoto: computed(() => i18n.t('phenotype.showImage.title.image_upload')).value,
+  editPhoto: computed(() => i18n.t('phenotype.showImage.title.image_update')).value,
+};
+
 const form = reactive({
   treeName: "",
   shootEqmt: "",
@@ -2729,7 +2744,8 @@ async function rowClick(nodeObj) {
 
 :deep(.el-button) {
   margin: 0% !important;
-  margin-right: 8px !important;
+  margin-right: 4px !important;
+  margin-bottom: 4px !important;
 }
 
 .mytable {
