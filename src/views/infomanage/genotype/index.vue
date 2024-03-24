@@ -476,7 +476,7 @@ const uploadUrl = ref("");
 //文件格式验证
 const handleBeforeUpload = (file) => {
   // 拿到文件后缀名
-  const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+  const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
   const isVcf = fileType === "vcf";
   if (!isVcf) {
     $modal.msgError(

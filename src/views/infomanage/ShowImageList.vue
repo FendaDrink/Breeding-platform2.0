@@ -590,6 +590,7 @@ async function chooseDate() {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
       let name = key.replace(tree.value.getCurrentNode().treeName, '').trimStart()
+      if(name==="") name = tree.value.getCurrentNode().treeName;
       nameArr.value.push(name)
       // Reflect.set(option2.value.legend.selected, key, true);
       seriesArr.value.push({
@@ -609,7 +610,7 @@ async function chooseDate() {
 const props = defineProps({
   treeType: {
     type: Number,
-    default: 4,
+    default: 2,
   },
 });
 
@@ -739,6 +740,7 @@ async function getPictureData() {
     await treeCount(tree.value.getCurrentNode().treeId, 0).then(res => {
       for (let key in res.data) {
         let name = key.replace(tree.value.getCurrentNode().treeName, '').trimStart()
+        if(name==="") name = tree.value.getCurrentNode().treeName;
         arrName.value.push(name);
         arrCount.value.push({
           value: res.data[key],
