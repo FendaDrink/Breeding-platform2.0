@@ -196,6 +196,10 @@ function getMaps() {
       });
     }
     initCharts();
+    // 模拟点击北京
+    const defaultLocation = "吉林";
+    // 将 location.value 设置为北京
+    location.value = defaultLocation;
     console.log("1");
     mapcharts.dispatchAction({
       type: "click",
@@ -322,7 +326,7 @@ const MapOption = {
         },
       },
       data: [
-        { name: "北京", value: 0, selected: true },
+        { name: "北京", value: 0 },
         { name: "天津", value: 0 },
         { name: "上海", value: 0 },
         { name: "重庆", value: 0 },
@@ -608,6 +612,7 @@ let mapcharts; // 声明一个变量用于保存地图实例
 
 function initCharts() {
   let chinaMap = document.querySelector("#chinaMap");
+  chinaMap.removeAttribute("_echarts_instance_")
   mapcharts = echarts.init(chinaMap); // 保存地图实例到全局变量
   MapOption && mapcharts.setOption(MapOption);
 
@@ -654,9 +659,10 @@ async function search_city() {
           areaData.value.push(item);
         }
       });
+      console.log(areaData.value, "areaData");
       totalPage.value = areaData.value.length;
       tableData.value = matchedData(areaData.value);
-
+      console.log(tableData.value, "tableData");
       cityLoading.value = false;
     }
   } else {
@@ -733,7 +739,7 @@ onMounted(() => {
   initCharts();
   getMaps();
 
-  location.value = "北京";
+  location.value = "吉林";
   traitLoading.value = true;
   let selectedProvince = location.value;
   selectFactorByLocation(selectedProvince).then((res) => {

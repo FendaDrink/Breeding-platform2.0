@@ -320,7 +320,7 @@ getList();
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -702,7 +702,7 @@ getList();
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864 !important;
+  background: #0F5C32 !important;
   margin-top: 10px;
   display: flex;
   align-items: center;

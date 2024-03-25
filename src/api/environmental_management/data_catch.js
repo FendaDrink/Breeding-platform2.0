@@ -42,3 +42,12 @@ export function downloadFile(id){
         timeout: 1000*600
     });
 }
+
+export function downloadTemplateAPI(){
+    return request({
+        url:'/sidebarTreeEnv/envFile/downloadModel',
+        method:'get',
+        responseType:'blob',
+        timeout: 1000*600
+    })
+}

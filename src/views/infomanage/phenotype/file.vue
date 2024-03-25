@@ -1,79 +1,48 @@
 <template>
   <div class="home" style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
-    <el-button
-      style="margin: 20px; margin-left: calc(95% - 30px)"
-      @click="exportFile"
-      type="warning"
-      plain
-      size="large"
-      >导出</el-button
-    >
+    <el-config-provider :locale="locale">
+    <el-button style="margin: 20px; margin-left: calc(95% - 30px)" @click="exportFile" type="warning" plain
+      size="large">{{ $t('phenotype.file.button_export') }}</el-button>
     <el-form :inline="true" :model="searchForm" class="search-form">
-      <el-form-item label="材料名">
-        <el-select v-model="searchForm.searchMaterialId" multiple filterable clearable placeholder="请选择材料名">
-          <el-option
-            v-for="(item,index) in materialoptions"
-            :key="index"
-            :label="item"
-            :value="item">
+      <el-form-item :label="$t('phenotype.file.label_meterial')">
+        <el-select v-model="searchForm.searchMaterialId" multiple filterable clearable
+          :placeholder="$t('phenotype.file.placeholder_meterial')">
+          <el-option v-for="(item, index) in materialoptions" :key="index" :label="item" :value="item">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="表型名">
-        <el-select v-model="searchForm.searchTraitId" multiple filterable clearable placeholder="请选择表型名">
-          <el-option
-            v-for="(item,index) in traitoptions"
-            :key="index"
-            :label="item"
-            :value="item">
+      <el-form-item :label="$t('phenotype.file.label_phenotype')">
+        <el-select v-model="searchForm.searchTraitId" multiple filterable clearable
+          :placeholder="$t('phenotype.file.placeholder_phenotype')">
+          <el-option v-for="(item, index) in traitoptions" :key="index" :label="item" :value="item">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button class="search-button" type="primary" @click="searchSubmit" icon="Search">搜索</el-button>
-        <el-button  @click="reset" icon="refresh">重置</el-button>
+        <el-button class="search-button" type="primary" @click="searchSubmit" icon="Search">{{
+          $t('phenotype.file.button_search') }}</el-button>
+        <el-button @click="reset" icon="refresh">{{ $t('phenotype.file.button_reset') }}</el-button>
       </el-form-item>
     </el-form>
     <el-container>
       <el-main>
         <div class="file_form">
           <!-- 表格部分 -->
-          <el-table
-            style="width: 95%; margin: auto"
-            ref="multipleTable"
-            v-loading="tableLoading"
-            :data="tableData"
-            tooltip-effect="dark"
-            class="trait-form-table"
-            stripe
-            max-height="100vh - 280px"
-          >
-            <el-table-column
-              label="操作"
-              align="center"
-              class-name="small-padding fixed-width"
-              width="auto"
-              fixed="left"
-            >
+          <el-table style="width: 95%; margin: auto" ref="multipleTable" v-loading="tableLoading" :data="tableData"
+            tooltip-effect="dark" class="trait-form-table" stripe max-height="100vh - 280px">
+            <el-table-column :label="$t('phenotype.file.label_operation')" align="center" class-name="small-padding fixed-width" width="120px" fixed="left">
               <template #default="scope">
-                <el-tooltip content="修改文件信息" placement="top">
+                <el-tooltip :content="$t('phenotype.file.tooltip_update')" placement="top">
                   <el-button size="small" type="text" icon="Document" link @click="modifFile(scope.row)"
                     class="table_button">
                   </el-button></el-tooltip>
               </template>
 
-              
+
             </el-table-column>
 
-            <el-table-column
-              v-for="column in tableColumns"
-              :key="column.prop"
-              :label="column.label"
-              :prop="column.prop"
-              :min-width="column.width"
-              :fixed="column.fixed"
-              align="center"
-            >
+            <el-table-column v-for="column in tableColumns" :key="column.prop" :label="column.label" :prop="column.prop"
+              :min-width="column.width" :fixed="column.fixed" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row[column.prop]) }}
               </template>
@@ -84,49 +53,21 @@
 
       <el-footer class="footer">
         <div class="demo-pagination-block">
-          <el-pagination
-            background
-            :total="totalPage"
-            :current-page="currentpageNum"
-            :page-size="pageSize"
-            :page-sizes="[20, 30, 40, 50]"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            
-          />
+          <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
+            :page-sizes="[20, 30, 40, 50]" layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         </div>
       </el-footer>
     </el-container>
 
-    <el-dialog
-      title="修改文件详情"
-      v-model="dialogFormVisible"
-      center
-      draggable
-      width="30%"
-    >
+    <el-dialog :title="$t('phenotype.file.title_update')" v-model="dialogFormVisible" center draggable width="30%">
       <el-scrollbar wrap-class="scrollbar-wrapper">
         <el-container style="height: 500px">
-          <el-form
-            ref="dataTreeForm"
-            :model="form"
-            :rules="rules"
-            label-position="left"
-            label-width="110px"
-            style="width: 100%"
-          >
-            <el-form-item
-              v-for="column in tableColumns"
-              :label="column.label"
-              :prop="column.prop"
-              :key="column.prop"
-            >
-              <el-input
-                v-model="form[column.prop]"
-                :value="form[column.prop]"
-                :disabled="isUnmodifiableColumn(column.prop)"
-              />
+          <el-form ref="dataTreeForm" :model="form" :rules="rules" label-position="left" label-width="110px"
+            style="width: 100%">
+            <el-form-item v-for="column in tableColumns" :label="column.label" :prop="column.prop" :key="column.prop">
+              <el-input v-model="form[column.prop]" :value="form[column.prop]"
+                :disabled="isUnmodifiableColumn(column.prop)" />
             </el-form-item>
           </el-form>
         </el-container>
@@ -134,12 +75,14 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="success" plain @click.passive="updateFileData">
-            保存
+            {{ $t('phenotype.file.button_save') }}
           </el-button>
-          <el-button type="info" plain @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogFormVisible = false">{{ $t('phenotype.file.button_cancel')
+          }}</el-button>
         </div>
       </template>
     </el-dialog>
+  </el-config-provider>
   </div>
 </template>
 
@@ -157,90 +100,92 @@ import {
   endUpdate,
   traitAndMaterialList
 } from "@/api/infomanage/phenotype";
+import { I18nD } from "vue-i18n";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 
 const traitFileId = ref(60);
 
 const searchForm = reactive({
-  searchMaterialId:[],
-  searchTraitId:[],
+  searchMaterialId: [],
+  searchTraitId: [],
 })
 
-function searchSubmit(){
+function searchSubmit() {
   searchBox({
     fileId: traitFileId.value,
-    searchMaterialId:searchForm.searchMaterialId,
-    searchTraitId:searchForm.searchTraitId,
+    searchMaterialId: searchForm.searchMaterialId,
+    searchTraitId: searchForm.searchTraitId,
   }).then((res) => {
-          // console.log(res.rows[0].traits[0].trait_id_0.traitValue, "123");
-          totalPage.value = res.total;
-          updateTableData(mapTraitsToTableData(res.rows)); // 确保传递正确的数据
-          tableColumns.value = [
+    // console.log(res.rows[0].traits[0].trait_id_0.traitValue, "123");
+    totalPage.value = res.total;
+    updateTableData(mapTraitsToTableData(res.rows)); // 确保传递正确的数据
+    tableColumns.value = [
+      { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
+      { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "130px", fixed: "left", },
+      { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
+      { prop: "repeat", label: i18n.t('phenotype.file.table_repeat'), width: "120px" },
+      { prop: "kindId", label: i18n.t('phenotype.file.table_kindId'), width: "120px" },
+      { prop: "kindName", label: i18n.t('phenotype.file.table_kindName'), width: "200px" },
+      { prop: "materialId", label: i18n.t('phenotype.file.table_materialId'), width: "120px" },
+      { prop: "fieldId", label: i18n.t('phenotype.file.table_fieldId'), width: "120px" },
+      { prop: "controlType", label: i18n.t('phenotype.file.table_controlType'), width: "120px" },
+      { prop: "father", label: i18n.t('phenotype.file.table_father'), width: "100px" },
+      { prop: "mother", label: i18n.t('phenotype.file.table_mother'), width: "100px" },
+      { prop: "remark", label: i18n.t('phenotype.file.table_remark'), width: "380px" },
 
-            { prop: "speciesName", label: "物种名", width: "80px", fixed: "left" },
-            {
-              prop: "populationName",
-              label: "种群名",
-              width: "130px",
-              fixed: "left",
-            },
-            { prop: "location", label: "地区", width: "80px", fixed: "left" },
-            { prop: "repeat", label: "重复试验", width: "120px" },
-            { prop: "kindId", label: "品种ID", width: "120px" },
-            { prop: "kindName", label: "品种名称", width: "200px" },
-            { prop: "materialId", label: "材料ID", width: "120px" },
-            { prop: "fieldId", label: "田间编号", width: "120px" },
-            { prop: "controlType", label: "对照类型", width: "100px" },
-            { prop: "father", label: "父本", width: "100px" },
-            { prop: "mother", label: "母本", width: "100px" },
-            { prop: "remark", label: "备注", width: "380px" },
+    ];
+    // 更新tableData
+    for (let j = 0; j < res.rows.length; j++) {
+      traitRes[j] = new Map();
 
-          ];
-          // 更新tableData
-          for (let j = 0; j < res.rows.length; j++) {
-            traitRes[j] = new Map();
+      for (let i = 0; i < res.rows[j].traits.length; i++) {
+        let propertyName = `trait_id_${i}`;
+        let traitIdValue = res.rows[j].traits[i][propertyName];
+        if (traitIdValue) {
+          let traitValue = traitIdValue.traitValue;
+          traitRes[j].set(propertyName, traitValue);
+        }
 
-            for (let i = 0; i < res.rows[j].traits.length; i++) {
-              let propertyName = `trait_id_${i}`;
-              let traitIdValue = res.rows[j].traits[i][propertyName];
-              if (traitIdValue) {
-                let traitValue = traitIdValue.traitValue;
-                traitRes[j].set(propertyName, traitValue);
-              }
+        tableData[j][propertyName] = traitRes[j].get(propertyName);
+      }
+    }
+    console.log("1");
+    // 更新tableColumns
 
-              tableData[j][propertyName] = traitRes[j].get(propertyName);
-            }
-          }
-          console.log("1");
-          // 更新tableColumns
-          
-          for (let i = 0; i < res.rows[0].traits.length; i++) {
-            let propertyName = `trait_id_${i}`;
-            tableColumns.value.push({
-              prop: `trait_id_${i}`,
-              label: res.rows[0].traits[i][propertyName].traitName,
-              width: '100px'
-            });
-          }
-          console.log(tableColumns.value, "ioio");
+    for (let i = 0; i < res.rows[0].traits.length; i++) {
+      let propertyName = `trait_id_${i}`;
+      tableColumns.value.push({
+        prop: `trait_id_${i}`,
+        label: res.rows[0].traits[i][propertyName].traitName,
+        width: '100px'
+      });
+    }
+    console.log(tableColumns.value, "ioio");
 
-          tableLoading.value = false;
-        })
-        .catch((err) => {
-          tableLoading.value = false;
-          console.error(err);
-        });
+    tableLoading.value = false;
+  })
+    .catch((err) => {
+      tableLoading.value = false;
+      console.error(err);
+    });
 }
 
 //重置
-function reset(){
-  searchForm.searchMaterialId=[];
-  searchForm.searchTraitId=[];
+function reset() {
+  searchForm.searchMaterialId = [];
+  searchForm.searchTraitId = [];
   searchSubmit();
 }
 
 
 const traitoptions = ref([]);
-const materialoptions =ref([]);
+const materialoptions = ref([]);
 
 
 
@@ -298,8 +243,8 @@ const currentpageNum = ref(1); //当前页数
 const tableLoading = ref(false);
 
 function formatTableCell(value) {
-    return value || '-'; // 如果值为空，返回'-'
-  }
+  return value || '-'; // 如果值为空，返回'-'
+}
 
 async function fetchData(pageNumber, pageSize) {
   try {
@@ -321,28 +266,18 @@ async function fetchData(pageNumber, pageSize) {
 
         totalPage.value = res.total;
         tableColumns.value = [
-          {
-            prop: "speciesName",
-            label: "物种名",
-            width: "80px",
-            fixed: "left",
-          },
-          {
-            prop: "populationName",
-            label: "种群名",
-            width: "130px",
-            fixed: "left",
-          },
-          { prop: "location", label: "地区", width: "80px", fixed: "left" },
-          { prop: "repeat", label: "重复试验", width: "80px" },
-          { prop: "kindId", label: "品种ID", width: "120px" },
-          { prop: "kindName", label: "品种名称", width: "200px" },
-          { prop: "materialId", label: "材料ID", width: "120px" },
-          { prop: "fieldId", label: "田间编号", width: "80px" },
-          { prop: "controlType", label: "对照类型", width: "100px" },
-          { prop: "father", label: "父本", width: "100px" },
-          { prop: "mother", label: "母本", width: "100px" },
-          { prop: "remark", label: "备注", width: "380px" },
+          { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
+          { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "130px", fixed: "left", },
+          { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
+          { prop: "repeat", label: i18n.t('phenotype.file.table_repeat'), width: "120px" },
+          { prop: "kindId", label: i18n.t('phenotype.file.table_kindId'), width: "120px" },
+          { prop: "kindName", label: i18n.t('phenotype.file.table_kindName'), width: "200px" },
+          { prop: "materialId", label: i18n.t('phenotype.file.table_materialId'), width: "120px" },
+          { prop: "fieldId", label: i18n.t('phenotype.file.table_fieldId'), width: "120px" },
+          { prop: "controlType", label: i18n.t('phenotype.file.table_controlType'), width: "120px" },
+          { prop: "father", label: i18n.t('phenotype.file.table_father'), width: "100px" },
+          { prop: "mother", label: i18n.t('phenotype.file.table_mother'), width: "100px" },
+          { prop: "remark", label: i18n.t('phenotype.file.table_remark'), width: "380px" },
         ];
 
         selectDetailByFileId({
@@ -480,23 +415,18 @@ function chooseForm() {
       totalPage.value = res.total;
       tableColumns.value = [
 
-        { prop: "speciesName", label: "物种名", width: "80px", fixed: "left" },
-        {
-          prop: "populationName",
-          label: "种群名",
-          width: "130px",
-          fixed: "left",
-        },
-        { prop: "location", label: "地区", width: "80px", fixed: "left" },
-        { prop: "repeat", label: "重复试验", width: "120px" },
-        { prop: "kindId", label: "品种ID", width: "120px" },
-        { prop: "kindName", label: "品种名称", width: "200px" },
-        { prop: "materialId", label: "材料ID", width: "120px" },
-        { prop: "fieldId", label: "田间编号", width: "120px" },
-        { prop: "controlType", label: "对照类型", width: "100px" },
-        { prop: "father", label: "父本", width: "100px" },
-        { prop: "mother", label: "母本", width: "100px" },
-        { prop: "remark", label: "备注", width: "380px" },
+        { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
+        { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "130px", fixed: "left", },
+        { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
+        { prop: "repeat", label: i18n.t('phenotype.file.table_repeat'), width: "120px" },
+        { prop: "kindId", label: i18n.t('phenotype.file.table_kindId'), width: "120px" },
+        { prop: "kindName", label: i18n.t('phenotype.file.table_kindName'), width: "200px" },
+        { prop: "materialId", label: i18n.t('phenotype.file.table_materialId'), width: "120px" },
+        { prop: "fieldId", label: i18n.t('phenotype.file.table_fieldId'), width: "120px" },
+        { prop: "controlType", label: i18n.t('phenotype.file.table_controlType'), width: "120px" },
+        { prop: "father", label: i18n.t('phenotype.file.table_father'), width: "100px" },
+        { prop: "mother", label: i18n.t('phenotype.file.table_mother'), width: "100px" },
+        { prop: "remark", label: i18n.t('phenotype.file.table_remark'), width: "380px" },
 
       ];
 
@@ -621,13 +551,13 @@ function updateFileData() {
   modifiFileData(params)
     .then((res) => {
       console.log(res);
-      $modal.msgSuccess(res.msg);
+      $modal.msgSuccess(i18n.t('phenotype.file.message_updateSuccsess'));
       dialogFormVisible.value = false;
       chooseForm();
     })
     .catch((err) => {
       console.error(err);
-      $modal.msgError(res.msg);
+      $modal.msgError(i18n.t('phenotype.file.message_updateFail'));
       dialogFormVisible.value = false;
     });
 }
@@ -635,10 +565,10 @@ function updateFileData() {
 onMounted(() => {
   chooseForm();
   tableName.value = route.query.tableName;
-  traitAndMaterialList(tableName.value).then((res)=>{
-    traitoptions.value=res.data.trait;
-    materialoptions.value=res.data.material;
-  }).catch((err)=>{
+  traitAndMaterialList(tableName.value).then((res) => {
+    traitoptions.value = res.data.trait;
+    materialoptions.value = res.data.material;
+  }).catch((err) => {
     $modal.msgError(res.msg);
   })
 });
@@ -654,14 +584,12 @@ onBeforeRouteLeave(() => {
 });
 </script>
 
-<style scoped lang="less"> 
-  .search-form{
-    margin-left: 50px;
-  }
+<style scoped lang="less"> .search-form {
+   margin-left: 50px;
+ }
 </style>
 <style lang="less" scoped>
-
-.footer{
+.footer {
   position: absolute;
   left: 2.5%;
   bottom: 0;
@@ -679,27 +607,31 @@ onBeforeRouteLeave(() => {
 :deep(.el-main, .el-footer) {
   padding: 0%;
 }
+
 .scrollbar-wrapper {
-  height: 400px; /* 设置容器的高度 */
-  overflow-y: auto; /* 启用纵向滚动条 */
+  height: 400px;
+  /* 设置容器的高度 */
+  overflow-y: auto;
+  /* 启用纵向滚动条 */
 }
 
 :deep(.el-dialog__header) {
   margin: 0%;
-  background-color: #9abeaf;
+  background-color: #0F5C32;
+
   span {
     color: white;
   }
 }
-el-main{
+
+el-main {
   height: 100px;
   overflow: auto;
 }
 </style>
 
 <style lang="less" scoped>
-
-.footer{
+.footer {
   position: absolute;
   left: 2.5%;
   padding: 0%;
@@ -716,14 +648,18 @@ el-main{
 :deep(.el-main, .el-footer) {
   padding: 0%;
 }
+
 .scrollbar-wrapper {
-  height: 400px; /* 设置容器的高度 */
-  overflow-y: auto; /* 启用纵向滚动条 */
+  height: 400px;
+  /* 设置容器的高度 */
+  overflow-y: auto;
+  /* 启用纵向滚动条 */
 }
 
 :deep(.el-dialog__header) {
   margin: 0%;
-  background-color: #1FB864;
+  background-color: #0F5C32;
+
   span {
     color: white;
   }

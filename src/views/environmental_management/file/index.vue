@@ -153,17 +153,17 @@
         <el-form-item label="是否公开" prop="fileStatus" v-show="dialogStatus === 'create'">
           <el-switch v-model="dataForm.fileStatus" />
         </el-form-item>
-        <el-form-item label="地区：" prop="remark" v-show="dialogStatus === 'create'">
+        <el-form-item label="地区：" prop="area" v-show="dialogStatus === 'create' || 'other'">
           <el-input v-model="dataForm.area" placeholder="输入地区" />
         </el-form-item>
-        <el-form-item label="经度：" prop="remark" v-show="dialogStatus === 'create'">
+        <el-form-item label="经度：" prop="longitude" v-show="dialogStatus === 'create'|| 'other'">
           <el-input v-model="dataForm.longitude" placeholder="输入经度" />
         </el-form-item>
-        <el-form-item label="纬度：" prop="remark" v-show="dialogStatus === 'create'">
+        <el-form-item label="纬度：" prop="latitude" v-show="dialogStatus === 'create'|| 'other'">
           <el-input v-model="dataForm.latitude" placeholder="输入纬度" />
         </el-form-item>
         <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
-          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
+          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".xlsx"
             :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
             :on-change="handleUploadFile">
@@ -212,7 +212,7 @@
 <script setup>
 import { ref, getCurrentInstance, nextTick, onMounted, reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { getEnvFileList, delFile, updateFile } from '@/api/environmental_management/file';
+import { getEnvFileList, delFile, updateFile,getEnvFileHistory } from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -267,21 +267,35 @@ const dataForm = reactive({
 //删除按钮状态
 const deleteDisabled = ref(false);
 
+
+
+
 // 校验规则
 const rules = reactive({
-  fileName: [{ required: true, message: "请输入文件名", trigger: "blur" }],
-  description: [
-    { required: false, message: "请输入文件描述备注", trigger: "blur" },
+  fileName: [
+    { required: true, message: "请输入文件名", trigger: "blur" }
   ],
-  dateTime: [{ required: true, message: "请选择一个日期", trigger: "blur" }],
+  area: [
+      { required:true,message:'请输入地区(中文)',trigger:"blue"},
+      { validator:(rules,value,callback) => {
+          // 判断是否为汉字
+          if(!/^[\u4e00-\u9fa5]+$/.test(value)){
+            callback(new Error('地区只能输入中文'))
+          }else{
+            callback();
+          }
+        }, trigger: ["blur","change"] }
+  ],
+  longitude: [
+    { required:true,message:"请输入经度",trigger:"blur"}
+  ],
+  latitude: [
+    { required:true,message:"请输入维度",trigger:"blur"}
+  ]
+
 });
 
-const dataForm2 = reactive({
-  fileName: "",
-  description: "",
-  dateTime: "",
-  fileStatus: false,
-});
+
 
 const drawer = ref(false); // 文件详情窗口开启状态
 const fileName = ref(""); // 选中文件名
@@ -325,24 +339,24 @@ const uploadUrl = ref("");
 //文件格式验证
 const handleBeforeUpload = (file) => {
   // 拿到文件后缀名
-  const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
-  console.log(fileType);
-  const isCsv = fileType === "Csv";
-  if (!isxlsx) {
-    $modal.msgError(
-      "只能上传Csv格式的文件！",
-      "error",
-      "vab-hey-message-error"
-    );
-    return false;
-  }
-  return isCsv;
+  // const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+  // console.log(fileType);
+  // const isCsv = fileType === "Csv";
+  // if (!isCsv) {
+  //   $modal.msgError(
+  //     "只能上传Csv格式的文件！",
+  //     "error",
+  //     "vab-hey-message-error"
+  //   );
+  //   return false;
+  // }
+  // return isCsv;
 };
 
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  handleBeforeUpload();
+  // handleBeforeUpload(file);
 };
 
 const createData = async () => {
@@ -355,19 +369,23 @@ const createData = async () => {
       }&fileName=${dataForm.fileName}&area=${dataForm.area}&longitude=${dataForm.longitude
       }&latitude=${dataForm.latitude}`;
 
-    $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled.value = true;
-    console.log("3");
-    console.log("4");
-    tableLoading.value = false;
-    tableName.value = "";
+    $modal.msg("上传数据中，请耐心等待！");
+    try{
+      await upload.value.submit();
+    }catch (err){
+      $modal.msgError(err)
+    }finally {
+      $modal.msgSuccess("上传成功，稍后自动刷新！")
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(() => {
+        getList();
+      }, 4000);
+    }
   }
-  dialogFormVisible.value = false;
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 const tableName = ref("");
@@ -409,37 +427,39 @@ const handleCurrentChange = (val) => {
 
 //文件合并
 
-const mergeData = async () => {
+const mergeData = async (row) => {
   const valid = await form.value.validate();
   console.log(valid);
   if (valid) {
-    console.log(tableName.value, "kkkkkkkkkkkkkkkkkk");
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/sidebarTreeEnv/environment/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
 
-    console.log(uploadUrl.value, "。。。。。。。。。。");
     $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
 
-    console.log("4");
-    tableLoading.value = false;
-    console.log("5");
-    tableName.value = "";
+    try{
+      await upload.value.submit();
+    }catch (err){
+      $modal.msgError(err)
+    }finally {
+      $modal.msgSuccess("合并成功，稍后自动刷新！")
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(async () => {
+        getList();
+      }, 4000);
+    }
+
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 // 文件上传成功回调
-async function uploadFileSuccess(response) {
+async function uploadFileSuccess(response,file,fileList) {
   if (response.code === 200) {
-    $modal.msgSuccess(response.msg);
+    $modal.msgSuccess("上传成功");
   } else {
     $modal.msgError("格式不正确，请下载模板文件比对！");
   }
@@ -712,9 +732,12 @@ const fileVisual2 = (row) => {
 
 //查看文件历史版本
 function openHistory(row) {
+  console.log(row.tableName);
   historyTableLoading.value = true;
   historyFormVisible.value = true;
-  getEnvFileList(tree.value.getCurrentNode().treeId)
+  getEnvFileHistory({
+    tableName:row.tableName
+  })
     .then((res) => {
       tableLoading.value = false;
       historyFileList.value = res.rows.map((item) => ({
@@ -724,7 +747,6 @@ function openHistory(row) {
       historyFileList.value.forEach((item) => {
         allFileId.value.push(item.fileId);
       });
-      total.value = res.total;
       historyTableLoading.value = false;
     })
     .catch((err) => {
@@ -896,7 +918,7 @@ function updateChildNode() {
 function downloadTemplate() {
   //下载
   $download.resource(
-    "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\环境模板文件.csv"
+    "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\环境数据模板文件.xlsx"
   );
 }
 
@@ -1024,7 +1046,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {

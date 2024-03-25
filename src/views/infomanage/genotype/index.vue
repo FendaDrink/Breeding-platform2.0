@@ -476,7 +476,7 @@ const uploadUrl = ref("");
 //文件格式验证
 const handleBeforeUpload = (file) => {
   // 拿到文件后缀名
-  const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+  const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
   const isVcf = fileType === "vcf";
   if (!isVcf) {
     $modal.msgError(
@@ -504,21 +504,25 @@ const createData = async () => {
       }/genotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
       }&status=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
-    $modal.msg("上传数据较大，请耐心等待！");
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
 
-    console.log("4");
-    tableLoading.value = false;
-    console.log("5");
-    tableName.value = "";
+      $modal.msg("上传数据较大，请耐心等待！");
+
+      try{
+        await upload.value.submit();
+      }catch (err){
+        $modal.msgError(err)
+      }finally {
+        $modal.msgSuccess("上传成功，稍后自动刷新！")
+        isDisabled.value = true;
+        tableLoading.value = false;
+        tableName.value = "";
+        dialogFormVisible.value = false;
+        setTimeout(async () => {
+          getList();
+        }, 4000);
+      }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 // 文件上传成功回调
@@ -579,28 +583,24 @@ const mergeData = async () => {
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/genotypeFile/merge?tableName=${tableName.value}`;
+    $modal.msg("上传数据较大，请耐心等待！");
+
     try {
-      $modal.msg("上传数据较大，请耐心等待！");
-      console.log("1");
       await upload.value.submit();
-      console.log("2");
       isDisabled2.value = true;
-      console.log("3");
     } catch (error) {
-      console.error("上传错误: ", error);
+      console.error("合并错误: ", error);
     } finally {
-      console.log("4");
       tableLoading.value = false;
-      console.log("5");
       tableName.value = "";
+      dialogFormVisible.value = false;
       getList();
+      setTimeout(() => {
+        getList();
+      }, 4000);
     }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
+
 };
 
 // 文件合并
@@ -753,13 +753,14 @@ async function updateFileStatus(row) {
 const downloadLoading = ref(false);
 let downloadTimer = null;
 async function handleDownload(row) {
+  console.log(row,'~~~~~');
   if (downloadLoading.value) {
     return;
   }
   $modal.msg("正在下载中，请等待");
   downloadLoading.value = true;
   try {
-    await $download.resource(row.fileUrl);
+    await $download.resource(row.url);
 
     downloadTimer = setTimeout(() => {
       downloadLoading.value = false;
@@ -843,7 +844,6 @@ function openHistory(row) {
       historyFileList.value.forEach((item) => {
         allFileId.value.push(item.fileId);
       });
-      total.value = res.total;
     })
     .catch((err) => {
       tableLoading.value = false;
@@ -1137,7 +1137,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {

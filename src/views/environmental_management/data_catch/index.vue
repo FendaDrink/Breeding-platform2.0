@@ -18,10 +18,10 @@
                         </div>
                     </div>
                     <div class="btn" style="text-align: center;">
+                        <el-button type="success" plain style="width: 110px; margin-top: 20px;"
+                        @click="downloadTemplate">下载模版文件</el-button>
                         <el-button type="success" @click="submit" plain
-                            style="width: 110px; margin-top: 20px;">提交</el-button>
-                        <!-- <el-button type="success" plain style="width: 110px; margin-top: 6px;"
-                        @click="exportGeno('C:\\Users\\Administrator\\Desktop\\sdxx\\xm_2_1\\6210\\vcf_template.vcf')">下载vcf模板</el-button> -->
+                        style="width: 110px; margin-top: 20px;">提交</el-button>
                     </div>
                 </div>
             </div>
@@ -94,16 +94,6 @@
                             </el-popover>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" fixed="right" label="备注">
-                        <template #default="scope">
-                            <el-popover placement="top" trigger="hover">
-                                <text>{{ scope.row.remark===null?'无备注信息': scope.row.remark }}</text>
-                                <template #reference>
-                                    <el-button link type="text" style="color: #1FB864;">查看备注</el-button>
-                                </template>
-                            </el-popover>
-                        </template>
-                    </el-table-column>
                     <el-table-column align="center" fixed="right" label="操作">
                         <template #default="scope">
                             <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
@@ -136,7 +126,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useRoute, useRouter } from "vue-router"
 import { blobValidate } from '@/utils/param'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { postData, getData, deleteData, downloadResultCsv, downloadFile } from '../../../api/environmental_management/data_catch';
+import { postData, getData, deleteData, downloadResultCsv, downloadFile, downloadTemplateAPI} from '../../../api/environmental_management/data_catch';
 
 const router = useRouter()
 
@@ -184,6 +174,24 @@ const getEnvironmentalData = async () => {
         ElMessage.error('获取数据失败')
     }
     console.log(envCatchDataList.value)
+}
+// 下载模版文件
+const downloadTemplate = () => {
+    downloadTemplateAPI().then(res =>{
+        const isLogin = blobValidate(res);
+        if(isLogin){
+            const blob = new Blob([res])
+            saveAs(blob,'模版文件.csv')
+        }else{
+            const resText = data.text();
+            const rspObj = JSON.parse(resText);
+            const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+            Message.error(errMsg);
+        }
+    }).catch(err => {
+        console.log(err)
+        ElMessage.error('下载文件出现错误，请联系管理员！');
+    })
 }
 // 下载csv文件
 const exportCsv = (row) => {
@@ -293,6 +301,8 @@ onMounted(() => {
                 height: 80%;
                 .btn{
                     margin-top: 10%;
+                    display: flex;
+                    justify-content: space-around;
                 }
             }
         }

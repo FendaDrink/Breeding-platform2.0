@@ -106,7 +106,7 @@ export default {
         console.log("getMaterialLists");
         const tableName = this.$route.query.tableName;
         getMaterialList(tableName).then(res => {
-          if (res.code === 200) {
+          if (res.code === 200 & res.data.length!=0) {
             // this.options = res.data; // 将获取到的数据赋值给options数组
             this.tableData = res.data.map(item => ({ label: item, value: item })); // 将获取到的数据赋值给options数组
             this.options = res.data.map((item, index) => ({ label: item, value: item, index: index })); // 将获取到的数据赋值给options数组
@@ -474,50 +474,119 @@ export default {
 }
 </script>
 
+
 <!-- 卡片样式 -->
 <style lang="less" scoped>
- .card-header {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
+:deep(.el-radio) {
+  width: 30%;
+}
+
+
 :deep(.el-card__header) {
-  background: #9abeaf;
+  // background: rgba(143, 219, 177,0.1);
+  background-color: #0F5C32;
   height: 60px !important;
   display: flex;
-  vertical-align: middle;
-  padding-left: 50px !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
+
     font-weight: 700;
     font-size: 20px;
     color: white;
+    text-align: center;
     letter-spacing: 2px;
   }
+
+
 }
 
-:deep(.el-table__header) {
-  border-bottom: 1px solid black;
-  border-top: 1px solid #ebeef5;
-
-  th {
-    font-weight: 800;
-    font-size: 16PX;
-    background: #FAFAFA !important;
-    letter-spacing: 2px;
-    height: 60px !important;
-  }
+.card-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  background-color: #fff;
+  width: auto;
+  min-width:150px;
 }
 
-:deep(.el-table__cell) {
-  .cell {
-    word-break: break-word;
-  }
+.card-header:before,
+.card-header:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.card-header:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  left: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 60px 60px;
+  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
+  // border-color: transparent transparent #f0f0f0 transparent;
+  border-color: transparent transparent #fff transparent;
+  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
+}
+
+.card-header:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* 将三角形定位在box的底部 */
+  right: -60px;
+  /* 紧贴box的左边 */
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 60px 0 0 60px;
+  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
+  border-color: transparent transparent transparent #fff;
+  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
 }
 
 .card-container {
+  // width: 97%;
+  // border-radius: 50px;
+  // margin: auto;
+  // margin-top: 10px;
+
+  // :deep(.el-card__body) {
+  //   padding: 15px 20px 20px 20px !important;
+  // }
+
+  //padding: 20px 20px 0px;
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
+  margin-right: 0px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {
@@ -525,7 +594,6 @@ export default {
     text-align: center;
     position: relative;
     z-index: 1;
-    margin: 0 0 20px;
   }
 
   h1 i {
@@ -538,6 +606,161 @@ export default {
     bottom: 0;
     z-index: 0;
     opacity: .5;
+  }
+}
+
+:deep(.el-button) {
+  --el-button-border-color: #dcdfe6;
+  --el-button-bg-color: #ffffff;
+  --el-button-text-color: #606266;
+  --el-button-disabled-text-color: #a8abb2;
+  --el-button-disabled-bg-color: #ffffff;
+  --el-button-disabled-border-color: #e4e7ed;
+  --el-button-divide-border-color: rgba(255, 255, 255, .5);
+  --el-button-hover-text-color: #409eff;
+  --el-button-hover-bg-color: #ecf5ff;
+  --el-button-hover-border-color: #c6e2ff;
+  --el-button-active-text-color: #409eff;
+  --el-button-active-border-color: #409eff;
+  --el-button-active-bg-color: #ecf5ff;
+}
+
+:deep(.el-button--primary.is-plain) {
+  --el-button-text-color: #409eff !important;
+  --el-button-bg-color: #ecf5ff !important;
+  --el-button-border-color: #a0cfff !important;
+  --el-button-hover-text-color: #ffffff !important;
+  --el-button-hover-bg-color: #409eff !important;
+  --el-button-hover-border-color: #409eff !important;
+  --el-button-active-text-color: #ffffff !important;
+}
+
+.el-button--primary {
+  --el-button-text-color: #ffffff;
+  --el-button-bg-color: #409eff;
+  --el-button-border-color: #409eff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #79bbff;
+  --el-button-hover-border-color: #79bbff;
+  --el-button-active-bg-color: #337ecc;
+  --el-button-active-border-color: #337ecc;
+  --el-button-disabled-text-color: #337ecc;
+  --el-button-disabled-bg-color: #a0cfff;
+  --el-button-disabled-border-color: #a0cfff;
+}
+
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--danger.is-plain {
+  --el-button-text-color: #f56c6c;
+  --el-button-bg-color: #fef0f0;
+  --el-button-border-color: #fab6b6;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #f56c6c;
+  --el-button-hover-border-color: #f56c6c;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--info.is-plain {
+  --el-button-text-color: #909399;
+  --el-button-bg-color: #f4f4f5;
+  --el-button-border-color: #c8c9cc;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #909399;
+  --el-button-hover-border-color: #909399;
+  --el-button-active-text-color: #ffffff;
+}
+
+.el-button--warning.is-plain {
+  --el-button-text-color: #e6a23c;
+  --el-button-bg-color: #fdf6ec;
+  --el-button-border-color: #f3d19e;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #e6a23c;
+  --el-button-hover-border-color: #e6a23c;
+  --el-button-active-text-color: #ffffff;
+}
+
+:deep(.el-table__cell) {
+  .cell {
+    word-break: break-word;
+  }
+}
+
+//一级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #107c10;
+  height: 28px;
+
+  .el-tree-node__label {
+    font-size: 18px;
+    font-family: "PingFang SC";
+  }
+}
+
+//二级节点选择器
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
+  height: 26px;
+
+  .el-tree-node__label {
+    font-size: 16px;
+  }
+}
+
+//三级节点选择器 
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 400;
+  height: 23px;
+
+  .el-tree-node__label {
+    font-size: 14px;
+  }
+}
+</style>
+
+<!-- 响应式 -->
+<style lang="less" scoped>
+:deep(.el-input__inner) {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+.my-input {
+  width: 200px;
+}
+
+@media (max-width: 1550px) {
+  .my_item {
+    margin-right: 5px;
+    /* 缩小元素之间的间距 */
+  }
+
+  .my-input {
+    width: 150px;
+    /* 缩小输入框的宽度 */
+  }
+}
+
+@media (max-width: 1450px) {
+  .my_item {
+    margin-right: 5px;
+    /* 缩小元素之间的间距 */
+  }
+
+  .my-input {
+    width: 120px;
+    /* 缩小输入框的宽度 */
   }
 }
 </style>
@@ -597,22 +820,6 @@ export default {
 
 
 
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
 
 
 .green-button {
@@ -705,10 +912,6 @@ export default {
 
 .footer {
   height: fit-content;
-}
-.right-box {
-  margin-left: 20px;
-  margin-right: 20px;
 }
 </style>
 
@@ -952,87 +1155,5 @@ export default {
   .el-tree-node__expand-icon {
     color: #424F63;
   }
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  position: relative;
-  background-color: #fff;
-}
-
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
-}
-
-:deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
-  height: 60px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
-
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
-  span {
-
-    font-weight: 700;
-    font-size: 20px;
-    color: white;
-    text-align: center;
-    letter-spacing: 2px;
-  }
-
-
 }
 </style>

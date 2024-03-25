@@ -309,7 +309,7 @@ export default {
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background:#1FB864;
+  background:#0F5C32;
   height: 60px !important;
 
   span {
@@ -507,7 +507,8 @@ export default {
   height: 60px;
   position: relative;
   background-color: #fff;
-  width: 150px;
+  width: auto;
+  min-width:150px;
 }
 
 .card-header:before,

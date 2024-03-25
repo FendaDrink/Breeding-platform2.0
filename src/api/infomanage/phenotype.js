@@ -9,6 +9,16 @@ export function listFile(query) {
     params: query
   });
 }
+
+// 查询文件历史
+export function listFileHistory(query){
+  return request({
+    url:'/phenotypeFile/getFileHistory',
+    method:'get',
+    params:query
+  })
+}
+
 export function listFileGeno(query) {
   return request({
     url: '/genotypeFile/list',
