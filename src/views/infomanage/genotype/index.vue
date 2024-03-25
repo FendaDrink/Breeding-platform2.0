@@ -475,8 +475,10 @@ const uploadUrl = ref("");
 //文件上传前触发
 //文件格式验证
 const handleBeforeUpload = (file) => {
+  console.log(file)
   // 拿到文件后缀名
   const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
+  console.log(fileType);
   const isVcf = fileType === "vcf";
   if (!isVcf) {
     $modal.msgError(
@@ -491,8 +493,7 @@ const handleBeforeUpload = (file) => {
 
 const handleUploadFile = (file) => {
   // Handle file upload
-  console.log(file);
-  handleBeforeUpload();
+  handleBeforeUpload(file);
 };
 
 // 文件创建

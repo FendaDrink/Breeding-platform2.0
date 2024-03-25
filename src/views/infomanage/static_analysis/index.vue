@@ -241,7 +241,7 @@ const defaultProps = ref({
   label: "treeName",
 });
 
-const treeType = ref(4);
+const treeType = ref(2);
 
 // 加载
 const loadingText = ref("加载中...");
