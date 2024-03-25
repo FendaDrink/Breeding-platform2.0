@@ -136,3 +136,32 @@ export function traitAndMaterialList(tableName){
     }
   })
 }
+
+//大文件合并接口
+export function mergeChunkApi(fileName,treeId,isShow){
+  return request({
+    url:'/system/picture/mergeChunks',
+    method:'post',
+    params:{
+      fileName,
+      treeId,
+      isShow
+    }
+  })
+}
+
+// 大文件传输完毕确认接口
+export function uploadFileEndApi({treeId,status,remark,fileName,pointStatus,filePath}){
+  return request({
+    url:'/phenotypeFile/loadUp',
+    method:'post',
+    params:{
+      treeId,
+      status,
+      remark,
+      fileName,
+      pointStatus,
+      filePath
+    }
+  })
+}
