@@ -490,7 +490,6 @@ onMounted(() => {
 
 /* 所有标签 */
 
-
 .echart_wrapper {
   display: flex;
   flex-wrap: wrap;

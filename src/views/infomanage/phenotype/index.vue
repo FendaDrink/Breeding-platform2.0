@@ -191,7 +191,7 @@
 <script setup name="phenoType">
 import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import {listFile, updateFile, delFile, listFileHistory} from "@/api/infomanage/phenoType";
+import {listFile, updateFile, delFile, mergeChunkApi, uploadFileEndApi} from "@/api/infomanage/phenotype";
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -384,38 +384,150 @@ const handleBeforeUpload = (file) => {
   return isCsv;
 };
 
-/* const handleUploadFile = (file) => {
-  // Handle file upload
-  console.log(file);
-}; */
+let isNormalFile = 1
+let url = ''
+async function openCreateData() {
+  //判断文件大小
+  if (uploadFileList.value[0].raw.size > 1024 * 1024 * 50) {
+    isNormalFile = 0;
+  } else {
+    isNormalFile = 1;
+  }
+  if (isNormalFile === 0) {
+    //是大文件，调用大文件上传接口
+    await upLoadHugeFile();
+  } else {
+    createData();
+  }
+}
+
 
 const createData = async () => {
   const valid = await form.value.validate();
-  console.log(valid);
   if (valid) {
-    uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-      }&fileName=${dataForm.fileName}&pointStatus=${0}`;
-    $modal.msg("上传数据较大，请耐心等待！");
-
-    try{
-      await upload.value.submit();
-    }catch (err){
-      $modal.msgError(err)
-    }finally {
-      $modal.msgSuccess("上传成功，稍后自动刷新！")
-      isDisabled.value = true;
-      tableLoading.value = false;
-      tableName.value = "";
-      dialogFormVisible.value = false;
-      setTimeout(async () => {
-        getList();
-      }, 4000);
-    }
+    uploadUrl.value = `${
+        import.meta.env.VITE_APP_UPLOAD_URL
+    }/phenotypeFile/upload?treeId=${
+        tree.value.getCurrentNode().treeId
+    }&status=${dataForm.fileStatus ? 1 : 0}&remark=${
+        dataForm.remark
+    }&fileName=${
+        dataForm.fileName
+    }&pointStatus=${isNormalFile}`;
+    await upload.value.submit();
+    isDisabled.value = true;
+    tableLoading.value = false;
+    tableName.value = "";
+    url="";
   }
 };
 
+// 分片上传
+const uploadChunk = (formData)=>{
+  console.log('任务开始');
+  return axios.post(
+      `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + getToken(),
+        },
+      }
+  )
+}
+
+// 检查文件编码格式
+const chectCharDet = () => {
+  ElMessage.info('上传文件较大，正在检查文件编码格式...')
+  return new Promise((resolve,reject)=>{
+    const file = uploadFileList.value[0].raw;
+    const reader = new FileReader();
+    let isUTF8 = false
+    reader.onload = (event) => {
+      const fileData = event.target.result;
+      // 遍历字符串，检查是否有汉字
+      const strList = fileData.split('');
+      isUTF8 = strList.some((str) => isZh(str));
+      resolve(isUTF8)
+    }
+    reader.readAsText(file);
+  })
+}
+
+// 判断是否有汉字
+const isZh = (str) => {
+  let re=/[^\u4e00-\u9fa5]/;
+  if (re.test(str)) return false ;
+  return true ;
+};
+
+//大文件分块上传
+const upLoadHugeFile = async () => {
+  const isUTF8 = await chectCharDet()
+  if(!isUTF8) return ElMessage.warning('请将文件转为utf-8编码后进行上传！')
+  ElMessage.info('文件体积较大，正在上传，请耐心等待')
+  return new Promise(async (reslove,reject)=>{
+    if (!uploadFileList.value[0]) return;
+    //获取文件并将其修改为file对象
+    const file = uploadFileList.value[0].raw;
+    //分片大小
+    const chunkSize = 20 * 1024 * 1024; // 20*1MB
+    //分片数
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    // 创建分片上传任务
+    const tasks = [];
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * chunkSize;
+      const end = Math.min(file.size, start + chunkSize);
+      const chunk = file.slice(start, end);
+      const temp = new File([chunk], file.name);
+
+      // 创建formData对象
+      const formData = new FormData();
+      formData.append("file", temp);
+      formData.append("totalChunks", totalChunks);
+      formData.append("currentChunk", i);
+      tasks.push(
+          uploadChunk(formData)
+      )
+    }
+    // 上传分片
+    const uploadRes = await Promise.all(tasks);
+    console.log(uploadRes);
+    if(uploadRes.some(item=>item.data.code !== 200)){
+      // 上传失败
+      $modal.msgError('上传失败');
+      return;
+    }
+    // 合并分片
+    try{
+      const mergeRes = await mergeChunkApi(file.name, tree.value.getCurrentNode().treeId, 1)
+      url = mergeRes.data.replace(/\\/g, "/");
+      const params = {
+        treeId:tree.value.getCurrentNode().treeId,
+        status:dataForm.fileStatus ? 1 : 0,
+        remark:dataForm.remark,
+        fileName:dataForm.fileName,
+        pointStatus:isNormalFile,
+        filePath:url
+      }
+      console.log('params',params);
+      // 发送文件信息用于后端保存文件
+      uploadFileSuccess({code:200,msg:'上传成功，文件较大，请等待后台处理'});
+      await uploadFileEndApi(params)
+      getList();
+    }catch(err){
+      $modal.msgError('上传失败');
+      console.error(err);
+      return;
+    }finally{
+      console.log('合并结束');
+      // 执行成功回调
+      reslove();
+    }
+  })
+}
 const tableName = ref("");
 
 //文件合并
@@ -811,22 +923,6 @@ const resetQuery = () => {
 
 // 树控件
 const routesData = ref([
-  /*  {
-    treeName: "Level one 1",
-    treeId: "1",
-    children: [
-      {
-        treeName: "Level two 1-1",
-        treeId: "11",
-        children: [
-          {
-            treeName: "Level three 1-1-1",
-            treeId: "111",
-          },
-        ],
-      },
-    ],
-  }, */
 ]);
 
 // 树表单
