@@ -1,30 +1,31 @@
 <template>
   <div style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <div class="photoInfo" draggable="true" @dragstart="moveStart" @dragend="moveEnd" v-show="isShowTest">
       <el-card class="box-card info-card">
         <template #header>
-          <span>图片信息</span>
+          <span>{{ $t('phenotype.showImage.dialog.other.imageInfo') }}</span>
         </template>
         <div class="text item">
-          <span class="label">材料名：</span>
+          <span class="label">{{ $t('phenotype.showImage.dialog.other.materialName') }}</span>
           <span class="value">{{ photoInfo.name }}</span>
         </div>
         <div class="text item">
-          <span class="label">拍照时间：</span>
+          <span class="label">{{ $t('phenotype.showImage.dialog.other.shootingDate') }}</span>
           <span class="value">{{ photoInfo.shotTime }}</span>
         </div>
         <div class="text item">
-          <span class="label">上传时间：</span>
+          <span class="label">{{ $t('phenotype.showImage.dialog.other.uploadDate') }}</span>
           <span class="value">{{ photoInfo.createTime }}</span>
         </div>
         <div class="text item">
-          <span class="label">上传者：</span>
+          <span class="label">{{ $t('phenotype.showImage.dialog.other.uploader') }}</span>
           <span class="value">{{ photoInfo.createBy }}</span>
         </div>
       </el-card>
     </div>
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
-      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+      :element-loading-text="$t('loadingText')" element-loading-background="rgba(0, 0, 0, 0.8)">
       <!-- 树 -->
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
         style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;">
@@ -91,7 +92,7 @@
           <!-- 如果为非叶子节点 -->
           <div v-if="tree && tree.getCurrentNode()?.children.length !== 0"
             style="max-height: calc(100vh - 290px); font-size: 20px;">
-            <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.description') }}</span>{{ form.keyword ? form.keyword : "$t('phenotype.showImage.dialog.other.dateSelction_empty')" }}
+            <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.description') }}</span>{{ form.keyword ? form.keyword : $t('phenotype.showImage.dialog.other.dateSelction_empty') }}
             <br />
             <!-- 选择日期组件 -->
             <div style="margin-top:10px">
@@ -308,6 +309,7 @@
         </div>
       </template>
     </el-dialog>
+  </el-config-provider>
   </div>
 </template>
 
@@ -365,6 +367,40 @@ import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
 const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 
+const messages = {
+  lastWeek: computed(() => i18n.t('phenotype.showImage.message.lastWeek')).value,
+  lastMonth: computed(() => i18n.t('phenotype.showImage.message.lastMonth')).value,
+  last3Month: computed(() => i18n.t('phenotype.showImage.message.last3Month')).value,
+  chooseAll: computed(() => i18n.t('phenotype.showImage.message.chooseAll')).value,
+  chooseAllCancle: computed(() => i18n.t('phenotype.showImage.message.chooseAllCancle')).value,
+  mytool1: computed(() => i18n.t('phenotype.showImage.message.mytool1')).value,
+  mytool2: computed(() => i18n.t('phenotype.showImage.message.mytool2')).value,
+  noChooseImage: computed(() => i18n.t('phenotype.showImage.message.noChooseImage')),
+  downloadImageConfirm: computed(() => i18n.t('phenotype.showImage.message.downloadImageConfirm')).value,
+  downloadImageSuccess: computed(() => i18n.t('phenotype.showImage.message.downloadImageSuccess')).value,
+  downloadImageFail: computed(() => i18n.t('phenotype.showImage.message.downloadImageFail')).value,
+  zipFail: computed(() => i18n.t('phenotype.showImage.message.zipFail')).value,
+  deleteImageConfirm: computed(() => i18n.t('phenotype.showImage.message.deleteImageConfirm')).value,
+  deleteImageSuccess: computed(() => i18n.t('phenotype.showImage.message.deleteImageSuccess')).value,
+  deleteImageFail: computed(() => i18n.t('phenotype.showImage.message.deleteImageFail')).value,
+  updateOnlyOne: computed(() => i18n.t('phenotype.showImage.message.updateOnlyOne')).value,
+  fullInfo: computed(() => i18n.t('phenotype.showImage.message.fullInfo')).value,
+  updateFail: computed(() => i18n.t('phenotype.showImage.message.updateFail')).value,
+  untitled: computed(() => i18n.t('phenotype.showImage.message.untitled')).value,
+  downloading: computed(() => i18n.t('phenotype.showImage.message.downloading')).value,
+  isRightName: computed(() => i18n.t('phenotype.showImage.message.isRightName')).value,
+  suspendSubmitImage: computed(() => i18n.t('phenotype.showImage.message.suspendSubmitImage')).value,
+  uploadLimit: computed(() => i18n.t('phenotype.showImage.message.uploadLimit')).value,
+  uploadImageError: computed(() => i18n.t('phenotype.showImage.message.uploadImageError')).value,
+  resetSearch: computed(() => i18n.t('phenotype.showImage.message.resetSearch')).value,
+  searchSuccess: computed(() => i18n.t('phenotype.showImage.message.searchSuccess')),
+  searchFail: computed(() => i18n.t('phenotype.showImage.message.searchFail')).value,
+  searchNothing: computed(() => i18n.t('phenotype.showImage.message.searchNothing')).value,
+  autoUploadSuccess: computed(() => i18n.t('phenotype.showImage.message.autoUploadSuccess')).value,
+  autoUploadFail: computed(() => i18n.t('phenotype.showImage.message.autoUploadFail')).value
+};
+
+
 const router = useRouter();
 use([
   GridComponent,
@@ -403,7 +439,7 @@ function treeIdRank() {
 //日期选择的数据
 const shortcuts = [
   {
-    text: '最近一周',
+    text: messages.lastWeek,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -412,7 +448,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近一个月',
+    text: messages.lastMonth,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -421,7 +457,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近三个月',
+    text: messages.last3Month,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -463,8 +499,8 @@ function changeSelected() {
     if (isChooseAll) option2.value.legend.selected[key] = false;
     else option2.value.legend.selected[key] = true;
   })
-  if (!isChooseAll) ElMessage({ message: '已全选！', type: 'success' });
-  else ElMessage({ message: '已取消全选！', type: 'success' });
+  if (!isChooseAll) ElMessage({ message: messages.chooseAll, type: 'success' });
+  else ElMessage({ message: messages.chooseAllCancle, type: 'success' });
 }
 
 // 改变图例展开/折叠
@@ -544,7 +580,7 @@ async function chooseDate() {
         //全选/取消全选工具
         myTool1: {
           show: true,
-          title: '全选/取消全选',
+          title: messages.mytool1,
           icon: 'path://M542.127 8c-277.027 0-502.434 225.407-502.434 502.434s225.371 502.434 502.434 502.434 502.434-225.371 502.434-502.434-225.371-502.434-502.434-502.434zM784.582 427.558l-288.598 291.731c-0.223 0.13-0.406 0.309-0.535 0.524 0.135-0.232 0.135-0.087 0.026-0.014-4.519 3.886-10.065 6.708-16.175 8.006 4.896-0.287 0.769 1.622-3.716 2.559 4.234-1.349-0.426-0.381-5.311-0.377-4.843-0.003-9.531-1-13.795-2.803-5.535-3.328-10.364-7.74-14.155-12.956 4.965 7.769 0.452 3.883-2.896-0.879 5.511 6.135 5.474 5.989 5.401 5.916s-0.219-0.109-0.291-0.219l-141.986-145.823c-6.62-6.539-10.72-15.617-10.72-25.652 0-19.911 16.141-36.052 36.052-36.052 10.394 0 19.761 4.399 26.341 11.436l116.347 119.554 262.783-265.648c6.546-6.666 15.654-10.798 25.727-10.798 19.908 0 36.046 16.138 36.046 36.046 0 9.946-4.028 18.951-10.543 25.473z',
           onclick: function () {
             changeSelected()
@@ -552,7 +588,7 @@ async function chooseDate() {
         },
         myTool2: {
           show: true,
-          title: '展开/收起图例',
+          title: messages.mytool2,
           icon: 'path://M729.6 931.2l-416-425.6 416-416c9.6-9.6 9.6-25.6 0-35.2-9.6-9.6-25.6-9.6-35.2 0l-432 435.2c-9.6 9.6-9.6 25.6 0 35.2l432 441.6c9.6 9.6 25.6 9.6 35.2 0C739.2 956.8 739.2 940.8 729.6 931.2z',
           onclick: function () {
             changeUnfold()
@@ -782,10 +818,10 @@ function handleSelectionChange(selection) {
 // 下载选中的图片到文件夹
 async function downloadSelectedImages() {
   if (checkedPictures.value.length == 0) {
-    $modal.msg("您没有选择图片！");
+    $modal.msg(messages.noChooseImage);
   } else {
     $modal
-      .confirm("是否下载选中的图片?")
+      .confirm(messages.downloadImageConfirm)
       .then(async () => {
         loadingDialogVisible.value = true;
         const zip = new JSZip();
@@ -797,24 +833,24 @@ async function downloadSelectedImages() {
           } catch (error) {
             loadingDialogVisible.value = false;
             console.error(`下载图片失败: ${error}`);
-            $modal.msgError("下载选中图片失败");
+            $modal.msgError(messages.downloadImageFail);
           }
         })
         Promise.all(downloadPromises).then(() => {
           zip.generateAsync({ type: "blob" }).then((content) => {
             saveAs(content, "images.zip");
             loadingDialogVisible.value = false;
-            $modal.msgSuccess("下载选中图片成功");
+            $modal.msgSuccess(messages.downloadImageSuccess);
           }).catch((err) => {
             console.log(err)
             loadingDialogVisible.value = false;
-            $modal.msgError("生成压缩包失败");
+            $modal.msgError(messages.zipFail);
           })
         }).catch((err) => {
           console.log(err)
           loadingDialogVisible.value = false;
           console.error('Error downloading images:', err);
-          $modal.msgError("下载选中图片失败");
+          $modal.msgError(messages.downloadImageFail);
         });
       })
   }
@@ -824,10 +860,10 @@ async function downloadSelectedImages() {
 // 全选状态的判定
 async function deleteSelectedImages() {
   if (checkedPictures.value.length == 0) {
-    $modal.msg("您没有选择图片！");
+    $modal.msg(messages.noChooseImage);
   } else {
     $modal
-      .confirm("是否删除该图片?")
+      .confirm(messages.deleteImageConfirm)
       .then(async () => {
         buttonLoading.value = true;
         const curNode = tree.value.getCurrentNode();
@@ -841,7 +877,7 @@ async function deleteSelectedImages() {
           // 调用删除接口
           return deleteImageByIdAndUrl(pictureId, pictureUrl).catch((error) => {
             console.error(`删除图片失败: ${error}`);
-            $modal.msgError("删除选中图片失败");
+            $modal.msgError(messages.deleteImageFail);
           });
         });
 
@@ -850,11 +886,11 @@ async function deleteSelectedImages() {
           await Promise.all(deletePromises);
 
           // 删除成功
-          $modal.msgSuccess("删除选中图片成功");
+          $modal.msgSuccess(messages.deleteImageSuccess);
           rowClick(curNode);
         } catch (error) {
           // 如果有任何一个删除操作失败，都会进入这里
-          $modal.msgError("删除选中图片失败");
+          $modal.msgError(messages.deleteImageFail);
         } finally {
           // 无论成功或失败，最后都要停止 loading
           buttonLoading.value = false;
@@ -872,19 +908,19 @@ async function deleteSelectedImages() {
 function deleteImage(pictureId, pictureUrl) {
   buttonLoading.value = true;
   $modal
-    .confirm("是否删除该图片?")
+    .confirm(messages.deleteImageConfirm)
     .then(() => {
       const curNode = tree.value.getCurrentNode();
       const savedPageNum = localStorage.getItem("currentPageNum");
       deleteImageByIdAndUrl(pictureId, pictureUrl).then(
         () => {
-          $modal.msgSuccess("删除图片成功");
+          $modal.msgSuccess(messages.deleteImageSuccess);
           currentpageNum.value = savedPageNum ? parseInt(savedPageNum) : 1;
           rowClick(curNode);
           buttonLoading.value = false;
         },
         () => {
-          $modal.msgError("删除图片失败");
+          $modal.msgError(messages.deleteImageFail);
           buttonLoading.value = false;
         }
       );
@@ -910,9 +946,9 @@ function addImage(imageUrl) {
 //编辑选中图片
 function editCheckedPhotoInfo() {
   if (checkedPictures.value.length == 0) {
-    $modal.msg("您没有选择图片！");
+    $modal.msg(messages.noChooseImage);
   } else if (checkedPictures.value.length > 1) {
-    $modal.msg("您只能选择一张图片进行编辑！");
+    $modal.msg(messages.updateOnlyOne);
   } else {
     const checkedPicture = imageSrcList.value.find(
       (item) => item.pictureId === checkedPictures.value[0]
@@ -924,7 +960,7 @@ function editCheckedPhotoInfo() {
 //选中图片跳转至图片分析
 function photoAnalyze() {
   if (checkedPictures.value.length == 0) {
-    $modal.msg("您没有选择图片！");
+    $modal.msg(messages.noChooseImage);
     return
   }
 
@@ -932,7 +968,7 @@ function photoAnalyze() {
 
   checkedPictures.value.forEach(id => {
     imageSrcList.value.forEach(item => {
-      if (id === item.pictureId) queryName.push(item.name ? item.name : '未命名');
+      if (id === item.pictureId) queryName.push(item.name ? item.name : messages.untitled);
     })
   })
   sessionStorage.setItem("isfromRouter", true);
@@ -1030,7 +1066,7 @@ async function downloadPython() {
   }
 
   downloadLoading.value = true;
-  $modal.msg("正在下载中，请稍后");
+  $modal.msg(messages.downloading);
 
   try {
     await $download.resource(
@@ -1139,7 +1175,7 @@ const checkImageName = () => {
   }).then(() => {
     console.log(222);
     if (!isRightName.value) {
-      $modal.confirm("存在图片名称格式不规范，这可能导致后续无法正常查询该图片，是否继续上传？").then(async () => {
+      $modal.confirm(messages.isRightName).then(async () => {
         await submitImage()
       }).catch(() => {
         return
@@ -1183,7 +1219,7 @@ const confirmEditPhoto = async () => {
   //填充默认值
   //检查表单项是否填写完整
   if (!editPhotoInfo.name || !editPhotoInfo.shotTime) {
-    $modal.msgError('请填写完整信息')
+    $modal.msgError(messages.fullInfo)
     return
   }
   uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
@@ -1247,7 +1283,7 @@ const suspendSubmitImage = (file) => {
   nextTick(async () => {
     await upload.value.abort();
     handleRemove(file);
-    $modal.msg("已取消图片提交！");
+    $modal.msg(messages.suspendSubmitImage);
   });
 
   imageDialog.value = false;
@@ -1317,7 +1353,7 @@ const handleBeforeUpload = (file) => {
   ];
   if (whiteList.indexOf(fileType) === -1) {
     $modal.msgError(
-      "只能上传图片或压缩包格式的文件！",
+      messages.uploadLimit,
       "error",
       "vab-hey-message-error"
     );
@@ -1353,7 +1389,7 @@ async function uploadImageSuccess(res) {
 
 //图片上传失败回调
 function uploadImageError() {
-  $modal.msgError("添加/修改图片失败");
+  $modal.msgError(messages.uploadImageError);
   checkedPictures.value = [];
   submitButtonLoading.value = false
 }
@@ -1381,7 +1417,7 @@ const resetSearchForm = async () => {
   searchForm.createBy = "";
   searchForm.createTime = "";
   updateImageSrcList()
-  $modal.msgSuccess("已重置");
+  $modal.msgSuccess(messages.resetSearch);
   resetLoading.value = false;
 };
 
@@ -1400,7 +1436,7 @@ const searchPhoto = async () => {
   if (!searchForm.name && !searchForm.time && !searchForm.createBy && !searchForm.createTime) {
     imageSrcList.value = imageSrcListCopy.value
     resetPage()
-    $modal.msgSuccess('查询成功')
+    $modal.msgSuccess(messages.searchSuccess)
     searchLoading.value = false;
     return
   }
@@ -1411,11 +1447,11 @@ const searchPhoto = async () => {
       (photo.createTime ? photo.createTime.includes(searchForm.createTime === null ? "" : searchForm.createTime) : !searchForm.createTime)
   })
   if (imageSrcList.value.length === 0) {
-    $modal.msgWarning('未查询到相关图片')
+    $modal.msgWarning(messages.searchNothing)
     searchLoading.value = false;
     return
   }
-  $modal.msgSuccess('查询成功')
+  $modal.msgSuccess(messages.searchSuccess)
   searchLoading.value = false;
   resetPage()
 }
@@ -1445,14 +1481,14 @@ function autoUpload() {
       const curNode = tree.value.getCurrentNode();
       updateByIp(form.ip, form.remotePicture, curNode.treeId).then(
         () => {
-          $modal.msgSuccess("开启自动上传成功");
+          $modal.msgSuccess(messages.autoUploadSuccess);
           rowClick(curNode);
           autoDialog.value = false;
           autoUploadLoading.value = false;
         },
         () => {
           autoUploadLoading.value = false;
-          $modal.msgError("开启自动上传失败");
+          $modal.msgError(messages.autoUploadFail);
         },
         (autoUploadLoading.value = false)
       );
@@ -2373,6 +2409,7 @@ async function rowClick(nodeObj) {
 <style lang="less" scoped>
 .info-card {
   border: none;
+  width: 400px;
 }
 
 .card-header {

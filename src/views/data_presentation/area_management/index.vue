@@ -31,7 +31,7 @@
       <!-- <h1>根据地区搜索性状<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>根据地区搜索性状<i>&nbsp;</i></h1>
+          <h1>{{ $t('phenotype.area.header1') }}<i>&nbsp;</i></h1>
         </div>
       </template>
       <div class="big-wrapper" style="margin-top: 10px">
@@ -88,7 +88,7 @@
       <!-- <h1>根据性状搜索地区<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>根据性状搜索地区<i>&nbsp;</i></h1>
+          <h1>{{ $t('phenotype.area.header2') }}<i>&nbsp;</i></h1>
         </div>
       </template>
       <div class="big-wrapper" style="margin-top: 10px">

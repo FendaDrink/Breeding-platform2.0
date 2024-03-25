@@ -3,12 +3,12 @@
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">{{$t('title')}}</h3>
       <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
+        <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" :placeholder="($t('login.userName'))">
           <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="密码"
+        <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" :placeholder="($t('login.password'))"
           @keyup.enter="handleLogin">
           <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
         </el-input>
@@ -30,7 +30,7 @@
         </div>
       </el-form-item>
     -->
-      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">{{$t('login.remember')}}</el-checkbox>
       <el-form-item style="width:100%;">
         <el-button class="button_style" :loading="loading" size="large" type="primary" style="width:100%;"
           @click.prevent="handleLogin">
@@ -38,7 +38,7 @@
           <span v-else>{{ $t('login.logining') }}</span>
         </el-button>
         <div style="float: right;" v-if="register">
-          <router-link class="link-type" :to="'/register'">立即注册</router-link>
+          <router-link class="link-type" :to="'/register'">{{$t('login.register')}}</router-link>
         </div>
       </el-form-item>
       <!--
@@ -72,12 +72,12 @@ import Cookies from "js-cookie";
 import { encrypt, decrypt } from "@/utils/jsencrypt";
 import useUserStore from '@/store/modules/user'
 
-// 国际化
-import { useI18n } from 'vue-i18n'
-const I18n = useI18n()
-const { locale } = useI18n()
-console.warn('locale', locale.value)
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 const userStore = useUserStore()
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -89,11 +89,18 @@ const loginForm = ref({
   code: "",
   uuid: ""
 });
+const messages = {
+  username: computed(() => i18n.t('login.message.username')).value,
+  password: computed(() => i18n.t('login.message.password')).value,
+  code: computed(() => i18n.t('login.message.code')).value,
+  
+  
+};
 
 const loginRules = {
-  username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
-  password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
-  code: [{ required: true, trigger: "change", message: "请输入验证码" }]
+  username: [{ required: true, trigger: "blur", message: messages.username }],
+  password: [{ required: true, trigger: "blur", message: messages.password }],
+  code: [{ required: true, trigger: "change", message: messages.code }]
 };
 
 const codeUrl = ref("");
@@ -234,7 +241,7 @@ getCookie();
 .login-form {
   border-radius: 6px;
   background: #ffffff;
-  width: 400px;
+  width: 450px;
   padding: 25px 25px 5px 25px;
 
   .el-input {

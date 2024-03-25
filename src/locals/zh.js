@@ -4,11 +4,19 @@ import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import phenptype_zh from '../views/infomanage/phenotype/zh.js'
 export default {
     title: '基因组育种决策平台2.0',
+    loadingText:'加载中...',
     login: {
         login: '登录',
         userName: '用户名',
         password: '密码',
-        logining: '登 录 中...'
+        logining: '登 录 中...',
+        remember:'记住密码',
+        register:'立即注册',
+        message:{
+            username:'Please enter your username.',
+            password:'Please enter your password.',
+            code:'Please enter the verification code'
+        }
     },
     navbar: {
         logout: '退出登录',
