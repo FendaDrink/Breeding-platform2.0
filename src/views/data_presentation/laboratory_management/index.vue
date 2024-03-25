@@ -1,7 +1,8 @@
 <template>
   <div style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
-      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+      :element-loading-text="$t('loadingText')" element-loading-background="rgba(0, 0, 0, 0.8)">
       <!--树-->
       <el-aside width="20%" class="mokuai card shadow element-plus-tree"
         style="min-height: calc(100vh - 180px);margin-top: 10px;border-radius: 8px;padding: 0%;margin-top: 0%;">
@@ -14,7 +15,7 @@
         <el-card class="card-container" v-show="fileChooseShow">
           <template #header>
             <div class="card-header">
-              <h1>表型文件选择<i>&nbsp;</i></h1>
+              <h1>{{ $t('phenotype.laboratory.header.h1') }}<i>&nbsp;</i></h1>
             </div>
           </template>
           <div v-if="fileList.length" class="big-wrapper" style="margin-top: 10px">
@@ -27,13 +28,13 @@
             </div>
             <el-row>
               <el-button @click="chooseForm" v-loading="chooseLoading" size="large" type="success" plain
-                style="width: 80px">确定</el-button>
+                style="width: 80px">{{ $t('phenotype.laboratory.button.ok') }}</el-button>
             </el-row>
           </div>
           <div v-else>此节点下无文件</div>
         </el-card>
         <el-card class="card-container" v-show="routerFileShow">
-          <h1>表型文件选择<i>&nbsp;</i></h1>
+          <h1>{{ $t('phenotype.laboratory.header.h1') }}<i>&nbsp;</i></h1>
           <!-- <template #header>
             <div class="card-header">
               <span>表型文件选择</span>
@@ -41,8 +42,8 @@
           </template> -->
           <div class="big-wrapper" style="margin-top: 10px">
             <div class="form_choose">
-              <h3>文件名 : {{ routerFileName }}</h3>
-              <h3>材料ID : {{ routerMaterialId }}</h3>
+              <h3>{{ $t('phenotype.laboratory.other.fileName') }} {{ routerFileName }}</h3>
+              <h3>{{ $t('phenotype.laboratory.other.materialId') }} {{ routerMaterialId }}</h3>
             </div>
           </div>
         </el-card>
@@ -51,7 +52,7 @@
           <el-card class="card-container" style="margin-bottom: 0;">
             <template #header>
               <div class="card-header">
-                <h1>多试验分析<i>&nbsp;</i></h1>
+                <h1>{{ $t('phenotype.laboratory.header.h2') }}<i>&nbsp;</i></h1>
               </div>
             </template>
             <div style="margin-top: 10px">
@@ -60,22 +61,22 @@
                   <h1>请选择材料</h1>
                 </div> -->
                 <div class="search_table">
-                  <el-select v-model="traitValue" filterable placeholder="请选择材料id">
+                  <el-select v-model="traitValue" filterable :placeholder="$t('phenotype.laboratory.other.selectId')">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                   <el-button style="margin-left: 20px !important" @click="search_trait" v-loading="searchLoading"
-                    icon="Search" type="success" plain>搜索</el-button>
+                    icon="Search" type="success" plain>{{ $t('phenotype.laboratory.button.search') }}</el-button>
                 </div>
               </div>
               <!--  第二部分表单 -->
               <div class="labotatory_form">
                 <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="margin: 30px auto"
                   class="trait-form-table" v-show="laboratorFormShow" stripe>
-                  <el-table-column label="序号" width="80" type="index" align="center" :index="indexMethod" />
-                  <el-table-column prop="traitName" label="性状名" align="center"></el-table-column>
-                  <el-table-column prop="average" label="平均值" align="center"></el-table-column>
-                  <el-table-column prop="maxNum" label="最大值" align="center"></el-table-column>
-                  <el-table-column prop="minNum" label="最小值" align="center"></el-table-column>
+                  <el-table-column :label="$t('phenotype.laboratory.table.index')" width="80" type="index" align="center" :index="indexMethod" />
+                  <el-table-column prop="traitName" :label="$t('phenotype.laboratory.table.traitName')" align="center"></el-table-column>
+                  <el-table-column prop="average" :label="$t('phenotype.laboratory.table.average')" align="center"></el-table-column>
+                  <el-table-column prop="maxNum" :label="$t('phenotype.laboratory.table.maxmum')" align="center"></el-table-column>
+                  <el-table-column prop="minNum" :label="$t('phenotype.laboratory.table.minmum')" align="center"></el-table-column>
                 </el-table>
               </div>
             </div>
@@ -83,6 +84,7 @@
         </div>
       </el-main>
     </el-container>
+  </el-config-provider>
   </div>
 </template>
 
@@ -96,12 +98,29 @@ import {
   getMaterialIdByFileId,
   dataAnalysisByMaterilId,
 } from "@/api/data_presentation/laboratory_management";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
+
+
 const route = useRoute();
 
 const laboratoryShow = ref(false);
 const fileChooseShow = ref(true);
 const routerFileShow = ref(false);
 const traitValue = ref("");
+
+const messages = {
+  search_success: computed(() => i18n.t('phenotype.laboratory.message.search_success')).value,
+  select_success: computed(() => i18n.t('phenotype.laboratory.message.select_success')).value,
+  get_success:computed(() => i18n.t('phenotype.laboratory.message.get_success')).value,
+  
+};
 
 const tableData = reactive([
   {
@@ -137,7 +156,7 @@ function chooseForm() {
       laboratoryShow.value = true;
       laboratoryLoading.value = false;
       chooseLoading.value = false;
-      $modal.msgSuccess("选择成功！");
+      $modal.msgSuccess(messages.select_success);
       console.log(res, "hhhh");
 
       states.value = res.data;
@@ -154,7 +173,7 @@ function chooseForm() {
 
           updateTableData(res.data);
           searchLoading.value = false;
-          $modal.msgSuccess("搜索成功！");
+          $modal.msgSuccess(messages.search_success);
           console.log(res, "res");
         })
         .catch((err) => {
@@ -187,7 +206,7 @@ function search_trait() {
 
       updateTableData(res.data);
       searchLoading.value = false;
-      $modal.msgSuccess("搜索成功！");
+      $modal.msgSuccess(messages.search_success);
       console.log(res, "res");
     })
     .catch((err) => {
@@ -342,7 +361,7 @@ onMounted(async () => {
         laboratorFormShow.value = true;
         laboratorSearchShow.value = false;
         updateTableData(res.data);
-        $modal.msgSuccess("获取信息成功！");
+        $modal.msgSuccess(messages.get_success);
       })
       .catch((err) => {
         console.error(err);
@@ -628,7 +647,8 @@ onMounted(async () => {
   height: 60px;
   position: relative;
   background-color: #fff;
-  width: 150px;
+  width: auto;
+  min-width:150px;
 }
 
 .card-header:before,
