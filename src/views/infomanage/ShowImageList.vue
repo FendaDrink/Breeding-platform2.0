@@ -2299,8 +2299,7 @@ async function rowClick(nodeObj) {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  overflow: auto;
-  max-height: calc(100vh - 190px);
+  max-height: calc(100vh - 150px);
 
   img {
     width: 100%;
@@ -2766,9 +2765,9 @@ async function rowClick(nodeObj) {
 }
 
 //一级节点选择器
-:deep(.el-tree>.el-tree-node> .el-tree-node__content) {
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #80a492;
+  color: #107c10;
   height: 28px;
 
   .el-tree-node__label {
@@ -2778,9 +2777,9 @@ async function rowClick(nodeObj) {
 }
 
 //二级节点选择器
-:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
-  font-weight: 500;
-  color: #99bcac;
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+  font-weight: 600;
+  color: #1FB864;
   height: 26px;
 
   .el-tree-node__label {
@@ -2788,38 +2787,31 @@ async function rowClick(nodeObj) {
   }
 }
 
-//三级节点选择器
-:deep(.el-tree>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__children>.el-tree-node>.el-tree-node__content) {
+//三级节点选择器 
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;
 
   .el-tree-node__label {
     font-size: 14px;
   }
-
 }
+
 
 // 设置高亮颜色
 :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
-  background-color: rgba(rgb(#4f6f46), 0.3) !important;
+  //background-color: rgba(rgb(#4f6f46), 0.3) !important;
+  background-color: rgba(rgb(#424F63), 0.3) !important;
 
   .el-tree-node__label {
-    color: #4f6f46;
+    color: #424F63;
   }
 
   .el-tree-node__expand-icon {
-    color: #4f6f46;
+    color: #424F63;
   }
 }
 
-:deep(.el-tree-node__content:hover) {
-  color: #4f6f46;
-  background-color: rgba(168, 191, 143, 0.3);
-
-  .el-tree-node__expand-icon {
-    color: #4f6f46;
-  }
-}
 
 .mokuai {
   margin-bottom: 0;
@@ -3341,4 +3333,40 @@ async function rowClick(nodeObj) {
     font-size: 14px;
   }
 }
+
+/* 修改前后箭头未点击时的背景颜色 */
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background-color: #fff !important;
+}
+
+/* 修改未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+  background-color: #EEEEEE !important;
+}
+
+/* 未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
+  background-color: #fff !important;
+  color: #000;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #1FB864 !important; //修改默认的背景色
+  color: #fff;
+}
+
+:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.el-pagination ul li:not(:last-child)) {
+  border-right: #DDDDDD 1px solid;
+}
+
+
+:deep(.el-pagination ul) {
+  border: #DDDDDD 1px solid;
+}
 </style>
+
