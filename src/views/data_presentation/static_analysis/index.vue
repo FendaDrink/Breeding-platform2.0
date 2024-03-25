@@ -262,10 +262,10 @@ async function getPictureNumber() {
   isLoading1.value = true;
   arrCount.value = []
   arrName.value = []
-  console.log('测试~~~',routesData.value);
   await treeCount(routesData.value.children[0].treeId,1).then(res => {
     for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName,'')
+      let name = key.replace(routesData.value.children[0].treeName,'').trimStart();
+      if(name==="") name = routesData.value.children[0].treeName;
       arrName.value.push(name);
       arrCount.value.push({
         value: res.data[key],
@@ -439,9 +439,10 @@ async function chooseDate() {
   await treeCountDate(routesData.value.children[0].treeId, startDate.value, endDate.value, 0).then(res => {
     //遍历返回的数据列表并加入echarts中data
     for (let key in res.data) {
-      let name = key.replace(routesData.value.children[0].treeName,'')
+      let name = key.replace(routesData.value.children[0].treeName,'').trimStart();
+      if(name==="") name = routesData.value.children[0].treeName;
       nameArr.value.push(name)
-      Reflect.set(option2.value.legend.selected, name, true);
+      // Reflect.set(option2.value.legend.selected, name, true);
       seriesArr.value.push({
         name: name,
         type: 'line',
