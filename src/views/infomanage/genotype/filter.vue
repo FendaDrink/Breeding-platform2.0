@@ -490,7 +490,7 @@ export default {
 
 :deep(.el-card__header) {
   // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
+  background-color: #0F5C32;
   height: 60px !important;
   display: flex;
   align-items: center;

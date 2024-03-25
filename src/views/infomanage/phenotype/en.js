@@ -159,6 +159,7 @@ export default {
                 nodeAdd: 'Add Node',
                 upload: 'Upload',
                 edit: 'Edit',
+                delete:'Delete',
                 node_update: 'Update Node',
                 node_delete: 'Delete Node',
                 node_detail: 'Node Details',
@@ -286,9 +287,11 @@ export default {
 
                 uploadLimit: "Only image or compressed file formats are allowed for upload!",
                 uploadImageError: "Failed to add/modify the image!",
-                resetSearch: "Reset Successful!",
+                uploadImageSuccess:'Upload Successfully!',
+                uploadImageFail:'Upload Failed!',
+                resetSearch: "Reset Successfully!",
 
-                searchSuccess: "Search Successful!",
+                searchSuccess: "Search Successfully!",
                 searchFail: "Search Failed!",
                 searchNothing: "No related images found!",
 
@@ -303,7 +306,7 @@ export default {
 
                 createSuccess: "Node Added Successfully!",
                 createFail: "Node Addition Failed!",
-                updateSuccess: "Update Successful!",
+                updateSuccess: "Update Successfully!",
                 updateFail: "Update Failed!",
 
                 node_parent: "Please select a parent node!",

@@ -161,6 +161,7 @@ export default {
                 nodeAdd: '添加子节点',
                 upload: '上传',
                 edit: '编辑',
+                delete:'删除',
                 node_update: '修改节点',
                 node_delete: '删除节点',
                 node_detail: '节点详情',
@@ -290,6 +291,8 @@ export default {
 
                 uploadLimit: '只能上传图片或压缩包格式的文件！',
                 uploadImageError: '添加/修改图片失败！',
+                uploadImageSuccess:'上传成功！',
+                uploadImageFail:'上传失败！',
                 resetSearch: '已重置！',
 
                 searchSuccess: '查询成功！',
