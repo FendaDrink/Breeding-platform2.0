@@ -1,47 +1,45 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="性状类型">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="auto">
+        <el-form-item :label="$t('basic.label.trait')">
           <!-- <el-input
           v-model="add.type"
           placeholder="请输入性状名称"
           clearable
           @keyup.enter.native="handleQuery"
         /> -->
-          <el-select v-model="add.type" class="m-2" placeholder="请选择形状类型" clearable>
+          <el-select v-model="add.type" class="m-2" :placeholder="$t('basic.placeholder.trait')" clearable>
             <el-option v-for="item in traitOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="性状名称">
-          <el-input v-model="add.name" placeholder="请输入性状名称" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item :label="$t('basic.label.traitName')">
+          <el-input v-model="add.name" :placeholder="$t('basic.placeholder.traitName')" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleQuery" :loading="isSearching">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
+          <el-button type="primary" icon="Search" @click="handleQuery" :loading="isSearching">{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh" @click="resetQuery" >{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain @click="isModify"
-                     :loading="isModifing"
-                     icon="edit"
-                     v-hasPermi="['system:trait:export']">确认修改</el-button>
+          <el-button type="warning" plain @click="isModify" :loading="isModifing" icon="edit"  v-hasPermi="['system:trait:export']">{{ $t('basic.button.update') }}</el-button>
         </el-col>
 
 
-        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+        <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
       </el-row>
 
       <el-table ref="multipleTable" :data="traitList" v-model="selectArr" @selection-change="handleSelectionChange"
                 @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="性状名称" align="center" prop="traitName" />
-        <el-table-column label="全称" align="center" prop="fullName" />
-        <el-table-column label="缩写" align="center" prop="abbreviationName" />
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.index')" align="center" type="index" width="80" />
+        <el-table-column :label="$t('basic.table.traitName')" align="center" prop="traitName" />
+        <el-table-column :label="$t('basic.table.fullname')" align="center" prop="fullName" />
+        <el-table-column :label="$t('basic.table.abbreviation')" align="center" prop="abbreviationName" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
       </el-table>
 
       <el-pagination
@@ -57,25 +55,26 @@
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="性状名称" prop="traitName">
-          <el-input v-model="form.traitName" placeholder="请输入性状名称" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item :label="$t('basic.label.traitName')" prop="traitName">
+          <el-input v-model="form.traitName" :placeholder="$t('basic.placeholder.traitName')" />
         </el-form-item>
-        <el-form-item label="全称" prop="fullName">
-          <el-input v-model="form.fullName" placeholder="请输入全称" />
+        <el-form-item :label="$t('basic.label.fullname')" prop="fullName">
+          <el-input v-model="form.fullName" :placeholder="$t('basic.placeholder.fullname')" />
         </el-form-item>
-        <el-form-item label="缩写" prop="abbreviationName">
-          <el-input v-model="form.abbreviationName" placeholder="请输入缩写" />
+        <el-form-item :label="$t('basic.label.abbreviation')" prop="abbreviationName">
+          <el-input v-model="form.abbreviationName" :placeholder="$t('basic.placeholder.abbreviation')" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.label.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.comment')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{ $t('basic.button.save') }}</el-button>
+        <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog>
+  </el-config-provider>
   </div>
 </template>
 
@@ -139,6 +138,7 @@ export default {
           {required: true, message: "更新时间不能为空", trigger: "blur"}
         ],
       },
+      locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en)),
       //高亮显示
       tableRowClassName: '',
       add: {
@@ -214,9 +214,9 @@ export default {
         let query = {...this.add, ...this.queryParams}
         selHighL(query).then(res => {
           if ((this.add.type || this.add.name) && res.data == 0 && this.isFirstSearch) {
-            ElMessage.warning("没有符合条件的数据")
+            ElMessage.warning(this.locale.name === 'en' ? "No matching data was found." : "没有符合条件的数据")
           } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
-            ElMessage.success("查询成功")
+            ElMessage.success(this.locale.name === 'en' ? "Search successfully!" : "查询成功！")
           }
           this.isFirstSelection = true
           this.isFirstSearch = false
@@ -268,7 +268,7 @@ export default {
     /** 搜索按钮操作 */
     async handleQuery() {
       if (this.add.type == "" && this.add.name == "") {
-        ElMessage.warning("请输入查询条件")
+        ElMessage.warning(this.locale.name === 'en' ? "Please enter the search criteria." : "请输入查询条件")
         return
       }
       this.queryParams.pageNum = 1;
@@ -312,13 +312,13 @@ export default {
         if (valid) {
           if (this.form.traitId != null) {
             updateTrait(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
+              this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
               this.open = false;
               this.getList();
             });
           } else {
             addTrait(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
+              this.$modal.msgSuccess(this.locale.name === 'en' ? "Add successfully!" : "新增成功！");
               this.open = false;
               this.getList();
             });
@@ -392,14 +392,14 @@ export default {
       obj.list = this.traitId
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过形状类型来修改！！")
+        ElMessage.warning(this.locale.name === 'en' ? "Please modify based on trait type!" : "请通过性状类型来修改！")
       } else {
         this.isModifing = true
         addHigh(obj).then(res => {
           if (res.code == 200) {
-            ElMessage.success("修改成功")
+            ElMessage.success(this.locale.name === 'en' ? "Update successfully!" :"修改成功！")
           } else {
-            ElMessage.error("修改失败")
+            ElMessage.error(this.locale.name === 'en' ? "Update failed!" :"修改失败！")
           }
           this.resetQuery()
           this.isModifing = false
@@ -410,6 +410,67 @@ export default {
   }
 };
 </script>
+
+<script setup>
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
+const messages = {
+  rules: {
+    speciesName: computed(() => i18n.t('basic.rule.speciesName')).value,
+    creator: computed(() => i18n.t('basic.rule.creator')).value,
+    createTime: computed(() => i18n.t('basic.rule.createTime')).value,
+    updater: computed(() => i18n.t('basic.rule.updater')).value,
+    updateTime: computed(() => i18n.t('basic.rule.updateTime')).value,
+    speciesId: computed(() => i18n.t('basic.rule.speciesId')).value,
+    populationName: computed(() => i18n.t('basic.rule.populationName')).value,
+    traitName: computed(() => i18n.t('basic.rule.traitName')).value,
+    fullname: computed(() => i18n.t('basic.rule.fullname')).value,
+    abbreviation: computed(() => i18n.t('basic.rule.abbreviation')).value,
+  },
+  title: {
+    updateSpecies: computed(() => i18n.t('basic.title.updateSpecies')).value,
+    addSpecies: computed(() => i18n.t('basic.title.update_addSpecies')).value,
+  },
+  update_success: computed(() => i18n.t('basic.message.update_success')).value,
+  species_exist: computed(() => i18n.t('basic.message.species_exist')).value,
+  delete_confirm1: computed(() => i18n.t('basic.message.delete_confirm1')).value,
+  delete_confirm2: computed(() => i18n.t('basic.message.delete_confirm2')).value,
+  delete_success: computed(() => i18n.t('basic.message.delete_success')).value,
+
+};
+
+const rules = reactive({
+  traitName: [
+    { required: true, message: messages.rules.traitName, trigger: "blur" }
+  ],
+  fullName: [
+    { required: true, message: messages.rules.fullname, trigger: "blur" }
+  ],
+  abbreviationName: [
+    { required: true, message: messages.rules.abbreviation, trigger: "blur" }
+  ],
+  createBy: [
+    { required: true, message: messages.rules.creator, trigger: "blur" }
+  ],
+  createTime: [
+    { required: true, message: messages.rules.createTime, trigger: "blur" }
+  ],
+  updateBy: [
+    { required: true, message: messages.rules.updater, trigger: "blur" }
+  ],
+  updateTime: [
+    { required: true, message: messages.rules.updateTime, trigger: "blur" }
+  ],
+})
+</script>
+
 <style lang="scss">
 .el-table .success-row {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
@@ -428,6 +489,10 @@ export default {
     font-size: 20px;
     color: white;
     letter-spacing: 2px;
+
+    align-items: center;
+    justify-content: center;
+    display: flex;
   }
 }
 </style>

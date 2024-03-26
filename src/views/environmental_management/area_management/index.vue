@@ -1,36 +1,37 @@
 <template>
   <div class="big_container home" style="width: 100%; height:100%; background-color: #eeeeee; padding-top: 20px;">
+    <el-config-provider :locale="locale">
     <!-- 地图 -->
     <el-card class="card-container">
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="map_sys">
-          <!-- 城市表格 -->
-          <div class="city_form">
-            <el-form label-width="100px" :model="cityForm">
-              <el-form-item class="cityForm_item" label="城市">
-                <el-input disabled v-model="cityForm.city" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" label="国家">
-                <el-input disabled v-model="cityForm.country" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" label="经度">
-                <el-input disabled v-model="cityForm.longitude" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" label="纬度">
-                <el-input disabled v-model="cityForm.latitude" />
-              </el-form-item>
-            </el-form>
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="map_sys">
+            <!-- 城市表格 -->
+            <div class="city_form" style="padding-left: 30px;">
+              <el-form label-width="100px" :model="cityForm" label-position="right">
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_location')">
+                  <el-input disabled v-model="cityForm.city" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_country')">
+                  <el-input disabled v-model="cityForm.country" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_longitude')">
+                  <el-input disabled v-model="cityForm.longitude" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_latitude')">
+                  <el-input disabled v-model="cityForm.latitude" />
+                </el-form-item>
+              </el-form>
+            </div>
+            <!-- 地图 -->
+            <div id="chinaMap" style="width: 750px; height: 450px"></div>
           </div>
-          <!-- 地图 -->
-          <div id="chinaMap" style="width: 750px; height: 450px"></div>
         </div>
-      </div>
-    </el-card>
+      </el-card>
     <el-card class="card-container">
       <!-- <h1>根据地区搜索环境因子<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>根据地区搜索环境因子<i>&nbsp;</i></h1>
+          <h1>{{ $t('environment.area.header1') }}<i>&nbsp;</i></h1>
         </div>
       </template>
       <div class="big-wrapper" style="margin-top: 10px">
@@ -40,7 +41,7 @@
               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
             <el-button icon="search" @click="search_trait" type="success" plain style="margin-left: 25px">
-              搜索
+              {{ $t('environment.area.button_search') }}
             </el-button>
           </div>
         </div>
@@ -52,23 +53,23 @@
             )
           " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
             <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
-            <el-table-column label="序号" width="80" type="index" :index="indexMethod" align="center" />
-            <el-table-column prop="factorName" label="环境因子名" width="130px" align="center">
+            <el-table-column :label="$t('environment.area.table_index')" width="80" type="index" :index="indexMethod" align="center" />
+            <el-table-column prop="factorName" :label="$t('environment.area.table_factorName')" width="130px" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row.factorName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="factorFullName" label="全称" width="280px" align="center">
+            <el-table-column prop="factorFullName" :label="$t('environment.area.table_fullName')" width="280px" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row.factorFullName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="factorAbbreviationName" label="缩写" width="120px" align="center">
+            <el-table-column prop="factorAbbreviationName" :label="$t('environment.area.table_abbreviationName')" width="120px" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row.factorAbbreviationName) }}
               </template>
             </el-table-column>
-            <el-table-column prop="remark" label="备注" align="center">
+            <el-table-column prop="remark" :label="$t('environment.area.table_remark')" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row.remark) }}
               </template>
@@ -87,7 +88,7 @@
       <!-- <h1>根据环境因子搜索地区<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>根据环境因子搜索地区<i>&nbsp;</i></h1>
+          <h1>{{ $t('environment.area.header2') }}<i>&nbsp;</i></h1>
         </div>
       </template>
       <div class="big-wrapper" style="margin-top: 10px">
@@ -99,7 +100,7 @@
             </el-select>
 
             <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
-              搜索
+              {{ $t('environment.area.button_search') }}
             </el-button>
           </div>
         </div>
@@ -111,11 +112,11 @@
             )
           " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"
                     stripe>
-            <el-table-column prop="name" label="名称" align="center"></el-table-column>
-            <el-table-column prop="type" label="数据源类型" align="center"></el-table-column>
-            <el-table-column prop="city" label="城市" align="center"></el-table-column>
-            <el-table-column prop="longitude" label="经度" align="center"></el-table-column>
-            <el-table-column prop="latitude" label="纬度" align="center"></el-table-column>
+            <el-table-column prop="name" :label="$t('environment.area.table_name')" align="center"></el-table-column>
+            <el-table-column prop="type" :label="$t('environment.area.table_type')" align="center"></el-table-column>
+            <el-table-column prop="city" :label="$t('environment.area.table_location')" align="center"></el-table-column>
+            <el-table-column prop="longitude" :label="$t('environment.area.table_longitude')" align="center"></el-table-column>
+            <el-table-column prop="latitude" :label="$t('environment.area.table_latitude')" align="center"></el-table-column>
           </el-table>
           <div class="demo-pagination-block">
             <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
@@ -126,6 +127,7 @@
         </div>
       </div>
     </el-card>
+  </el-config-provider>
   </div>
 </template>
 
@@ -140,6 +142,15 @@ import {
   selectFactorByLocation,
   getAllFactorFromFile,
 } from "@/api/environmental_management/area_management";
+
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 
 // 注册中国地图
 echarts.registerMap("china", chinaData);

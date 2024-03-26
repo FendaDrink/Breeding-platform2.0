@@ -446,6 +446,13 @@ const messages = {
   node_confirm: computed(() => i18n.t('phenotype.showImage.node_confirm')).value,
   node_delete_success: computed(() => i18n.t('phenotype.showImage.message.node_delete_success')).value,
   node_no_image: computed(() => i18n.t('phenotype.showImage.message.node_no_image')).value,
+
+  imageNewName:computed(() => i18n.t('phenotype.showImage.dialog.placeholder.imageNewName')).value,
+  imageNewDate:computed(() => i18n.t('phenotype.showImage.dialog.placeholder.imageNewDate')).value,
+  comment:computed(() => i18n.t('phenotype.showImage.dialog.placeholder.comment')).value,
+
+  treeName:computed(() => i18n.t('phenotype.showImage.rule.treeName')).value,
+  description:computed(() => i18n.t('phenotype.showImage.rule.description')).value,
 };
 
 
@@ -1156,9 +1163,9 @@ const flushDetail = ref(false);
 
 //图片上传与编辑表单校验规则
 const photoRules = reactive({
-  name: [{ required: true, message: "请输入图片新名称", trigger: "blur" }],
-  shotTime: [{ required: true, message: "请输入新的拍摄日期", trigger: "blur" }],
-  remark: [{ required: false, message: "请输入备注", trigger: "blur" }],
+  name: [{ required: true, message: messages.imageNewName, trigger: "blur" }],
+  shotTime: [{ required: true, message: messages.imageNewDate, trigger: "blur" }],
+  remark: [{ required: false, message: messages.comment, trigger: "blur" }],
 });
 
 //校验方法
@@ -1724,9 +1731,9 @@ function resetForm() {
 const dataForm = ref(null);
 
 const rules = reactive({
-  treeName: [{ required: true, message: "请输入节点名称", trigger: "blur" }],
-  isShow: [{ required: true, message: "请选择", trigger: "blur" }],
-  keyword: [{ required: true, message: "请输入描述信息", trigger: "blur" }]
+  treeName: [{ required: true, message: messages.treeName, trigger: "blur" }],
+  isShow: [{ required: true, message: "", trigger: "blur" }],
+  keyword: [{ required: true, message: messages.description, trigger: "blur" }]
 });
 
 const validateIP = (rule, value, callback) => {

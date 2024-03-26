@@ -1,133 +1,138 @@
 <template>
   <div class="big_container home" style="width: 100%; height:100%; background-color: #eeeeee;padding-top: 20px;">
     <el-config-provider :locale="locale">
-    <!-- 地图 -->
-    <el-card class="card-container">
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="map_sys">
-          <!-- 城市表格 -->
-          <div class="city_form" style="padding-left: 30px;">
-            <el-form label-width="100px" :model="cityForm" label-position="right">
-              <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_location')">
-                <el-input disabled v-model="cityForm.city" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_country')">
-                <el-input disabled v-model="cityForm.country" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_longitude')">
-                <el-input disabled v-model="cityForm.longitude" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_latitude')">
-                <el-input disabled v-model="cityForm.latitude" />
-              </el-form-item>
-            </el-form>
-          </div>
-          <!-- 地图 -->
-          <div id="chinaMap" style="width: 750px; height: 450px"></div>
-        </div>
-      </div>
-    </el-card>
-    <el-card class="card-container">
-      <!-- <h1>根据地区搜索性状<i>&nbsp;</i></h1> -->
-      <template #header>
-        <div class="card-header">
-          <h1>{{ $t('phenotype.area.header1') }}<i>&nbsp;</i></h1>
-        </div>
-      </template>
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="area_top">
-          <div class="search_table">
-            <el-select v-model="location" filterable placeholder="请输入地区名">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-            <el-button icon="search" @click="search_trait" type="success" plain style="margin-left: 25px">
-              {{ $t('phenotype.area.button_search') }}
-            </el-button>
+      <!-- 地图 -->
+      <el-card class="card-container">
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="map_sys">
+            <!-- 城市表格 -->
+            <div class="city_form" style="padding-left: 30px;">
+              <el-form label-width="100px" :model="cityForm" label-position="right">
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_location')">
+                  <el-input disabled v-model="cityForm.city" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_country')">
+                  <el-input disabled v-model="cityForm.country" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_longitude')">
+                  <el-input disabled v-model="cityForm.longitude" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_latitude')">
+                  <el-input disabled v-model="cityForm.latitude" />
+                </el-form-item>
+              </el-form>
+            </div>
+            <!-- 地图 -->
+            <div id="chinaMap" style="width: 750px; height: 450px"></div>
           </div>
         </div>
-        <div class="area_form">
-          <el-table v-loading="traitLoading" ref="multipleTable" :data="
-            tableData2.slice(
-              (currentpageNum2 - 1) * pageSize2,
-              currentpageNum2 * pageSize2
-            )
-          " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
-            <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
-            <el-table-column :label="$t('phenotype.area.table_index')" width="80" type="index" :index="indexMethod" align="center" />
-            <el-table-column prop="traitName" :label="$t('phenotype.area.table_traitName')" width="130px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.traitName) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="fullName" :label="$t('phenotype.area.table_fullName')" width="280px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.fullName) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="abbreviationName" :label="$t('phenotype.area.table_abbreviationName')" width="120px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.abbreviationName) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="remark" :label="$t('phenotype.area.table_remark')" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.remark) }}
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="demo-pagination-block">
-            <el-pagination background :total="totalPage2" :current-page="currentpageNum2" :page-size="pageSize2"
-              layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange2"
-              @current-change="handleCurrentChange2" />
+      </el-card>
+      <el-card class="card-container">
+        <!-- <h1>根据地区搜索性状<i>&nbsp;</i></h1> -->
+        <template #header>
+          <div class="card-header">
+            <h1>{{ $t('phenotype.area.header1') }}<i>&nbsp;</i></h1>
+          </div>
+        </template>
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="area_top">
+            <div class="search_table">
+              <el-select v-model="location" filterable :placeholder="请输入地区名">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+              <el-button icon="search" @click="search_trait" type="success" plain style="margin-left: 25px">
+                {{ $t('phenotype.area.button_search') }}
+              </el-button>
+            </div>
+          </div>
+          <div class="area_form">
+            <el-table v-loading="traitLoading" ref="multipleTable" :data="
+              tableData2.slice(
+                (currentpageNum2 - 1) * pageSize2,
+                currentpageNum2 * pageSize2
+              )
+            " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
+              <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
+              <el-table-column :label="$t('phenotype.area.table_index')" width="80" type="index" :index="indexMethod"
+                align="center" />
+              <el-table-column prop="traitName" :label="$t('phenotype.area.table_traitName')" width="130px"
+                align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.traitName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="fullName" :label="$t('phenotype.area.table_fullName')" width="280px" align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.fullName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="abbreviationName" :label="$t('phenotype.area.table_abbreviationName')" width="120px"
+                align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.abbreviationName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="remark" :label="$t('phenotype.area.table_remark')" align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.remark) }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="demo-pagination-block">
+              <el-pagination background :total="totalPage2" :current-page="currentpageNum2" :page-size="pageSize2"
+                layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange2"
+                @current-change="handleCurrentChange2" />
+            </div>
           </div>
         </div>
-      </div>
-    </el-card>
-    <!-- 经纬度信息 -->
-    <el-card class="card-container">
-      <!-- <h1>根据性状搜索地区<i>&nbsp;</i></h1> -->
-      <template #header>
-        <div class="card-header">
-          <h1>{{ $t('phenotype.area.header2') }}<i>&nbsp;</i></h1>
-        </div>
-      </template>
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="area_top">
-          <div class="search_table">
-            <el-select v-model="traitName" filterable remote reserve-keyword placeholder="请输入性状名"
-              :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
-              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
+      </el-card>
+      <!-- 经纬度信息 -->
+      <el-card class="card-container">
+        <!-- <h1>根据性状搜索地区<i>&nbsp;</i></h1> -->
+        <template #header>
+          <div class="card-header">
+            <h1>{{ $t('phenotype.area.header2') }}<i>&nbsp;</i></h1>
+          </div>
+        </template>
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="area_top">
+            <div class="search_table">
+              <el-select v-model="traitName" filterable remote reserve-keyword :placeholder="请输入性状名"
+                :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
+                <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
 
-            <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
-              {{ $t('phenotype.area.button_search') }}
-            </el-button>
+              <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
+                {{ $t('phenotype.area.button_search') }}
+              </el-button>
+            </div>
           </div>
-        </div>
-        <div class="area_form">
-          <el-table v-loading="cityLoading" ref="multipleTable" :data="
-            tableData.slice(
-              (currentpageNum - 1) * pageSize,
-              currentpageNum * pageSize
-            )
-          " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"
-            stripe>
-            <el-table-column prop="name" :label="$t('phenotype.area.table_name')" align="center"></el-table-column>
-            <el-table-column prop="type" :label="$t('phenotype.area.table_type')" align="center"></el-table-column>
-            <el-table-column prop="city" :label="$t('phenotype.area.table_location')" align="center"></el-table-column>
-            <el-table-column prop="longitude" :label="$t('phenotype.area.table_longitude')" align="center"></el-table-column>
-            <el-table-column prop="latitude" :label="$t('phenotype.area.table_latitude')" align="center"></el-table-column>
-          </el-table>
-          <div class="demo-pagination-block">
-            <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
-              @current-change="handleCurrentChange" />
-          </div>
+          <div class="area_form">
+            <el-table v-loading="cityLoading" ref="multipleTable" :data="
+              tableData.slice(
+                (currentpageNum - 1) * pageSize,
+                currentpageNum * pageSize
+              )
+            " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"
+              stripe>
+              <el-table-column prop="name" :label="$t('phenotype.area.table_name')" align="center"></el-table-column>
+              <el-table-column prop="type" :label="$t('phenotype.area.table_type')" align="center"></el-table-column>
+              <el-table-column prop="city" :label="$t('phenotype.area.table_location')" align="center"></el-table-column>
+              <el-table-column prop="longitude" :label="$t('phenotype.area.table_longitude')"
+                align="center"></el-table-column>
+              <el-table-column prop="latitude" :label="$t('phenotype.area.table_latitude')"
+                align="center"></el-table-column>
+            </el-table>
+            <div class="demo-pagination-block">
+              <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
+            </div>
 
+          </div>
         </div>
-      </div>
-    </el-card>
-  </el-config-provider>
+      </el-card>
+    </el-config-provider>
   </div>
 </template>
 
