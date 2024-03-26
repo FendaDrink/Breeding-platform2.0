@@ -89,6 +89,7 @@ export default {
             message_node_confirm: '是否删除该节点？',
             message_node_delete_success: '删除节点成功！',
             message_file_confirm: '是否删除文件？',
+            mergeSuccess:'合并成功！'
 
         },
         file: {
