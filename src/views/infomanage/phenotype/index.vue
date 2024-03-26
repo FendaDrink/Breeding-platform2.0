@@ -146,9 +146,9 @@
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
             :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
             <el-button type="primary">{{ $t('phenotype.index.upload') }}</el-button>
-            <!-- <template #tip>
+            <template #tip>
               <div class="el-upload__tip">select a file to upload</div>
-            </template> -->
+            </template>
           </el-upload>
         </el-form-item>
         <el-form-item>

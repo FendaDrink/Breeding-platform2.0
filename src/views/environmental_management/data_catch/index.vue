@@ -156,7 +156,7 @@ const submit = () => {
             ElMessage.success('提交成功')
             environmentalData.value = []
             setTimeout(() => {
-                router.go(0)
+              getEnvironmentalData();
             }, 1000)
         } else {
             ElMessage.error('提交失败')

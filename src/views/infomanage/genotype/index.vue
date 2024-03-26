@@ -154,13 +154,22 @@
           <el-switch v-model="dataForm.fileStatus" />
         </el-form-item>
         <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
-          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf"
-            :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
-            :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-            :on-change="handleUploadFile">
+          <el-upload
+              v-model:file-list="uploadFileList"
+              class="upload-demo"
+              ref="upload"
+              :limit="1"
+              accept=".vcf"
+              :action="uploadUrl"
+              :auto-upload="false"
+              :headers="{ Authorization: 'Bearer ' + getToken() }"
+              :on-error="uploadFileError"
+              :on-success="uploadFileSuccess"
+              :on-exceed="handleExceed"
+              :on-change="handleUploadFile">
             <el-button type="primary">Click to upload</el-button>
             <template #tip>
-              <div class="el-upload__tip">select a file to upload</div>
+              <div class="el-upload__tip">文件名格式必须为：物种_群体</div>
             </template>
           </el-upload>
         </el-form-item>
@@ -475,7 +484,6 @@ const uploadUrl = ref("");
 //文件上传前触发
 //文件格式验证
 const handleBeforeUpload = (file) => {
-  console.log(file)
   // 拿到文件后缀名
   const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
   console.log(fileType);
@@ -493,7 +501,6 @@ const handleBeforeUpload = (file) => {
 
 const handleUploadFile = (file) => {
   // Handle file upload
-  handleBeforeUpload(file);
 };
 
 // 文件创建
@@ -509,7 +516,7 @@ const createData = async () => {
       $modal.msg("上传数据较大，请耐心等待！");
 
       try{
-        await upload.value.submit();
+        upload.value.submit();
       }catch (err){
         $modal.msgError(err)
       }finally {
@@ -527,17 +534,16 @@ const createData = async () => {
 };
 
 // 文件上传成功回调
-async function uploadFileSuccess(response) {
+async function uploadFileSuccess(response,file,fileList) {
   if (response.code === 200) {
     $modal.msgSuccess(response.msg);
   } else {
     $modal.msgError("格式不正确，请下载模板文件比对！");
   }
   //$modal.msgSuccess("上传成功");
-
   isDisabled.value = false;
   const curNode = tree.value.getCurrentNode();
-  //upload.value.clearFiles();
+  upload.value.clearFiles();
 
   getList();
   rowClick(curNode);

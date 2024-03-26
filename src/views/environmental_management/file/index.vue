@@ -48,8 +48,8 @@
                   <el-table-column label="文件名" width="250" align="center" prop="fileName" />
                   <el-table-column label="开始时间" align="center" prop="start" width="100px" />
                   <el-table-column label="结束时间" align="center" width="200px" prop="end" />
-                  <el-table-column label="经度" align="center" prop="longitude" />
-                  <el-table-column label="纬度" align="center" prop="latitude" />
+                  <el-table-column label="经度" align="center" prop="longitude" width="100px"/>
+                  <el-table-column label="纬度" align="center" prop="latitude" width="100px"/>
                   <el-table-column label="地点" align="center" prop="area" />
                   <el-table-column label="是否公开" align="center" prop="status" v-hasPermi="['system:file:remove']"
                     width="120">
@@ -163,7 +163,7 @@
           <el-input v-model="dataForm.latitude" placeholder="输入纬度" />
         </el-form-item>
         <el-form-item label="上传文件" prop="file" v-show="dialogStatus === 'create' || 'other'">
-          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".xlsx"
+          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1"
             :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
             :on-change="handleUploadFile">
@@ -382,7 +382,7 @@ const createData = async () => {
       dialogFormVisible.value = false;
       setTimeout(() => {
         getList();
-      }, 4000);
+      }, 1000);
     }
   }
 
