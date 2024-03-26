@@ -123,6 +123,8 @@ export default {
 
             message_updateSuccess: 'Update Successfully!',
             message_updateFail: 'Update failed!',
+            export_success:'Export Successfully!',
+            export_fail:'Export Failed!',
 
         },
         area: {

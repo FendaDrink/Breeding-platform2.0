@@ -296,7 +296,7 @@ function updateFileData() {
   modifiFileData(payload)
     .then((res) => {
       console.log(res);
-      $modal.msgSuccess(res.msg);
+      $modal.msgSuccess(i18n.t('phenotype.file.message_updateSuccess'));
 
       // 清空表单输入
       for (const column of columns.value) {
@@ -307,7 +307,7 @@ function updateFileData() {
     })
     .catch((err) => {
       console.error(err);
-      $modal.msgError(err.msg); // 这应该是 res.msg 吗？
+      $modal.msgError(i18n.t('phenotype.file.message_updateFail')); // 这应该是 res.msg 吗？
     });
 }
 

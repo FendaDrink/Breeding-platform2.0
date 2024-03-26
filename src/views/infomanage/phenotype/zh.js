@@ -126,8 +126,10 @@ export default {
 
             tooltip_update: '修改文件信息',
 
-            message_updateSuccess: 'Update Successfully!',
-            message_updateFail: 'Update failed!',
+            message_updateSuccess: '修改成功！',
+            message_updateFail: '修改失败！',
+            export_success:'导出成功！',
+            export_fail:'导出失败！',
         },
         area: {
             button_search: '搜索',

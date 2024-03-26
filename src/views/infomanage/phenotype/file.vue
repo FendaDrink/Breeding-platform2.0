@@ -127,7 +127,7 @@ function searchSubmit() {
     updateTableData(mapTraitsToTableData(res.rows)); // 确保传递正确的数据
     tableColumns.value = [
       { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
-      { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "130px", fixed: "left", },
+      { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "140px", fixed: "left", },
       { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
       { prop: "repeat", label: i18n.t('phenotype.file.table_repeat'), width: "120px" },
       { prop: "kindId", label: i18n.t('phenotype.file.table_kindId'), width: "120px" },
@@ -267,7 +267,7 @@ async function fetchData(pageNumber, pageSize) {
         totalPage.value = res.total;
         tableColumns.value = [
           { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
-          { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "130px", fixed: "left", },
+          { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "140px", fixed: "left", },
           { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
           { prop: "repeat", label: i18n.t('phenotype.file.table_repeat'), width: "120px" },
           { prop: "kindId", label: i18n.t('phenotype.file.table_kindId'), width: "120px" },
@@ -367,12 +367,12 @@ function exportFile() {
   exportPenoFile(tableName.value)
     .then((res) => {
       console.log(res);
-      $modal.msgSuccess(res.msg);
+      $modal.msgSuccess(i18n.t('phenotype.file.export_success'));
       $download.resource(res.data);
     })
     .catch((err) => {
       console.error(err);
-      $modal.msgError(res.msg);
+      $modal.msgError(i18n.t('phenotype.file.export_fail'));
     });
 }
 
@@ -416,7 +416,7 @@ function chooseForm() {
       tableColumns.value = [
 
         { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
-        { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "130px", fixed: "left", },
+        { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "140px", fixed: "left", },
         { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
         { prop: "repeat", label: i18n.t('phenotype.file.table_repeat'), width: "120px" },
         { prop: "kindId", label: i18n.t('phenotype.file.table_kindId'), width: "120px" },
@@ -551,7 +551,7 @@ function updateFileData() {
   modifiFileData(params)
     .then((res) => {
       console.log(res);
-      $modal.msgSuccess(i18n.t('phenotype.file.message_updateSuccsess'));
+      $modal.msgSuccess(i18n.t('phenotype.file.message_updateSuccess'));
       dialogFormVisible.value = false;
       chooseForm();
     })
