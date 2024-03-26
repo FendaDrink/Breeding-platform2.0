@@ -31,7 +31,7 @@
                 style="width: 80px">{{ $t('phenotype.laboratory.button.ok') }}</el-button>
             </el-row>
           </div>
-          <div v-else>此节点下无文件</div>
+          <div v-else>{{ $t('genotype.pca.noFile') }}</div>
         </el-card>
         <el-card class="card-container" v-show="routerFileShow">
           <h1>{{ $t('phenotype.laboratory.header.h1') }}<i>&nbsp;</i></h1>

@@ -1,19 +1,22 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
       <el-button style="margin: 20px; margin-left: calc(95% - 30px)" @click="exportFile" type="warning" size="large"
-          plain>导出</el-button>
+          plain>{{ $t('environment.file.button_export') }}</el-button>
       <el-container>
           <el-main>
               <div class="file_form">
                   <!-- 表格部分 -->
                   <el-table style="width: 95%; margin: auto" ref="multipleTable" v-loading="tableLoading"
                       :data="tableData" tooltip-effect="dark" class="factor-form-table" stripe max-height="100vh - 220px">
-                      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="auto"
+                      <el-table-column :label="$t('environment.file.table_operate')" align="center" class-name="small-padding fixed-width" width="100px"
                           fixed="left">
                           <template #default="scope">
+                            <el-tooltip :content="$t('phenotype.file.tooltip_update')" placement="top">
                               <el-button size="small" type="text" icon="Document" link @click="modifFile(scope.row)"
-                                  class="table_button">修改
+                                  class="table_button">
                               </el-button>
+                            </el-tooltip>
                           </template>
                       </el-table-column>
 
@@ -36,7 +39,7 @@
           </el-footer>
       </el-container>
 
-      <el-dialog title="修改文件详情" v-model="dialogFormVisible" center draggable width="30%">
+      <el-dialog :title="$t('environment.title_update')" v-model="dialogFormVisible" center draggable width="30%">
           <el-scrollbar wrap-class="scrollbar-wrapper">
               <el-container style="height: 500px">
                   <el-form ref="dataTreeForm" :model="form" :rules="rules" label-position="left" label-width="110px"
@@ -52,12 +55,13 @@
           <template #footer>
               <div class="dialog-footer">
                   <el-button type="success" @click.passive="updateFileData" plain>
-                      保存
+                    {{ $t('environment.file.button_save') }}
                   </el-button>
-                  <el-button @click="dialogFormVisible = false" type="info" plain>取消</el-button>
+                  <el-button @click="dialogFormVisible = false" type="info" plain>{{ $t('environment.file.button_cancel') }}</el-button>
               </div>
           </template>
       </el-dialog>
+    </el-config-provider>
   </div>
 </template>
 
@@ -72,6 +76,15 @@ import {
   modifiFileData,
   endUpdate,
 } from "@/api/environment_factors/environment_factors";
+
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 // vue实例
 const {
   proxy: { $modal, $download },
@@ -127,10 +140,10 @@ function fetchData() {
     });
 
     tableColumns.value = [
-      {prop: "environmentId", label: "环境id", width: "80px", fixed: "left",},
-      {prop: "area", label: "地区", width: "80px", fixed: "left"},
-      {prop: "date", label: "日期", width: "120px", fixed: "left"},
-      {prop: "remark", label: "备注", width: "80px", fixed: "left"},
+      {prop: "environmentId", label: i18n.t('environment.file.table_env'), width: "180px", fixed: "left",},
+      {prop: "area", label: i18n.t('environment.file.table_location'), width: "80px", fixed: "left"},
+      {prop: "date", label: i18n.t('environment.file.table_date'), width: "120px", fixed: "left"},
+      {prop: "remark", label: i18n.t('environment.file.table_comment'), width: "120px", fixed: "left"},
 
     ];
 

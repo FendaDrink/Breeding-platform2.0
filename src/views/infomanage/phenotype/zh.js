@@ -51,7 +51,7 @@ export default {
             title_updateNode: '更新节点',
             title_history: '历史版本',
 
-            nodeName: '节点名称：',
+            dialog_nodeName: '节点名称：',
             dialog_status: '是否公开：',
             dialog_fileName: '文件名称：',
             dialog_comment: '备注：',
@@ -77,7 +77,7 @@ export default {
             message_delete_confirm: '是否删除文件？',
             message_delete_success: '删除成功！',
             message_delete_fail: '删除失败！',
-            message_update_succcess: '更新成功！',
+            message_update_success: '更新成功！',
             message_update_fail: '更新失败！',
             message_downloading: '正在下载中，请等待',
             message_node_parent: '请选择父节点！',
@@ -148,7 +148,10 @@ export default {
             label_latitude: '纬度',
 
             header1: '根据地区搜索性状',
-            header2: '根据性状搜索地区'
+            header2: '根据性状搜索地区',
+
+            placeholder_location:'请输入地区名',
+            placeholder_trait:'请输入性状名'
 
 
         },
@@ -280,7 +283,7 @@ export default {
                 fullInfo: '请填写完整信息！',
                 updateFail: '编辑失败！',
 
-                untitled: 'Untitled',
+                untitled: '未命名',
 
 
                 downloading: '正在下载中，请稍后...',
@@ -326,6 +329,10 @@ export default {
                 node_confirm: '是否删除该节点？',
                 node_delete_success: '删除节点成功！',
                 node_no_image: '此节点无图片！',
+            },
+            rule:{
+                treeName:'输入节点名称',
+                keyword:'输入描述信息',
             }
         },
         laboratory: {

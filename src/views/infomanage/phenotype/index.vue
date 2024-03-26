@@ -39,7 +39,8 @@
                 v-hasPermi="['system:logininfor:add']">{{ $t('phenotype.index.file_add') }}</el-button>
               <el-button icon="delete" type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
                 v-hasPermi="['system:logininfor:remove']">{{ $t('phenotype.index.file_delete') }}</el-button>
-              <!-- 表格部分 --><el-container style="min-height: calc(100vh - 400px);">
+              <!-- 表格部分 -->
+              <el-container style="min-height: calc(100vh - 400px);">
                 <el-table v-loading="tableLoading" max-height="100%" :data="fileList"
                   @selection-change="handleSelectionChange" stripe fit class="mytable">
                   <el-table-column type="selection" min-width="55" align="center" fixed="left" />
@@ -233,7 +234,7 @@ const messages = {
   message_delete_confirm: computed(() => i18n.t('phenotype.index.message_delete_confirm')),
   message_delete_success: computed(() => i18n.t('phenotype.index.message_delete_success')),
   message_delete_fail: computed(() => i18n.t('phenotype.index.message_delete_fail')),
-  message_update_success: computed(() => i18n.t('phenotype.index.message_update_succcess')),
+  message_update_success: computed(() => i18n.t('phenotype.index.message_update_success')),
   message_update_fail: computed(() => i18n.t('phenotype.index.message_update_fail')),
   message_downloading: computed(() => i18n.t('phenotype.index.message_downloading')),
   message_node_parent: computed(() => i18n.t('phenotype.index.message_node_parent')),
@@ -292,11 +293,6 @@ const textMaps = {
   other: titles.other.value,
   createNode: titles.createNode.value,
   updateNode: titles.updateNode.value,
-  // create: computed(() => i18n.t('phenotype.index.title_create')),
-  // update:computed(() => i18n.t('phenotype.index.title_update')),
-  // other: computed(() => i18n.t('phenotype.index.title_other')),
-  // createNode: computed(() => i18n.t('phenotype.index.createNode')),
-  // updateNode: computed(() => i18n.t('phenotype.index.updateNode')),
 };
 
 // 表单实例

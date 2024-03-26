@@ -1,5 +1,7 @@
 <template>
   <div style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
+
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
       :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
       <!--树-->
@@ -15,7 +17,7 @@
           <!-- <h1>表型文件选择<i>&nbsp;</i></h1> -->
           <template #header>
             <div class="card-header">
-              <h1>表型文件选择<i>&nbsp;</i></h1>
+              <h1>{{ $t('material.header1') }}<i>&nbsp;</i></h1>
             </div>
           </template>
           <div v-if="fileList.length" class="big-wrapper" style="margin-top: 10px">
@@ -26,12 +28,12 @@
                   date.fileName }}</el-radio>
               </el-radio-group>
               <el-row>
-                <el-button @click="chooseForm" plain size="large" type="success">确定</el-button>
+                <el-button @click="chooseForm" plain size="large" type="success">{{ $t('material.button.confirm') }}</el-button>
               </el-row>
             </div>
           </div>
           <div v-else>
-            此节点下无文件
+            {{ $t('material.noFile') }}
           </div>
         </el-card>
         <div class="gene-form">
@@ -39,87 +41,85 @@
             <!-- <h1>表型文件详情<i>&nbsp;</i></h1> -->
             <template #header>
               <div class="card-header">
-                <h1>表型文件详情<i>&nbsp;</i></h1>
+                <h1>{{ $t('material.header2') }}<i>&nbsp;</i></h1>
               </div>
             </template>
             <div class="material_table" style="width: 100%">
               <!-- 表型表基本信息展示 -->
-              <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch"
-                label-width="68px">
-                <el-form-item label="品种ID" prop="kindId">
-                  <el-input v-model="queryParams.kindId" placeholder="请输入品种ID" clearable @keyup.enter="handleQuery"
+              <el-form :model="queryParams" ref="queryForm" size="large" :inline="true" v-show="showSearch" left
+                label-width="auto">
+                <el-form-item :label="$t('material.label.id')" prop="kindId">
+                  <el-input v-model="queryParams.kindId" :placeholder="$t('material.placeholder.id')" clearable @keyup.enter="handleQuery"
                     class="my-input" />
                 </el-form-item>
-                <el-form-item label="品种名称" prop="kindName">
-                  <el-input v-model="queryParams.kindName" placeholder="请输入品种名称" clearable @keyup.enter="handleQuery"
+                <el-form-item :label="$t('material.label.name')" prop="kindName">
+                  <el-input v-model="queryParams.kindName" :placeholder="$t('material.placeholder.name')" clearable @keyup.enter="handleQuery"
                     class="my-input" />
                 </el-form-item>
-                <el-form-item label="材料编号" prop="materialId">
-                  <el-input v-model="queryParams.materialId" placeholder="请输入材料编号" clearable @keyup.enter="handleQuery"
+                <el-form-item :label="$t('material.label.materialNum')" prop="materialId">
+                  <el-input v-model="queryParams.materialId" :placeholder="$t('material.placeholder.materialNum')" clearable @keyup.enter="handleQuery"
                     class="my-input" />
                 </el-form-item>
-                <el-form-item label="田间编号" prop="fieldId">
-                  <el-input v-model="queryParams.fieldId" placeholder="请输入田间编号" clearable @keyup.enter="handleQuery"
+                <el-form-item :label="$t('material.label.field')" prop="fieldId">
+                  <el-input v-model="queryParams.fieldId" :placeholder="$t('material.placeholder.field')" clearable @keyup.enter="handleQuery"
                     class="my-input" />
                 </el-form-item>
-                <el-form-item label="父本" prop="father">
-                  <el-input v-model="queryParams.father" placeholder="请输入父本" clearable @keyup.enter="handleQuery"
+                <el-form-item :label="$t('material.label.father')" prop="father">
+                  <el-input v-model="queryParams.father" :placeholder="$t('material.placeholder.father')" clearable @keyup.enter="handleQuery"
                     class="my-input" />
                 </el-form-item>
-                <el-form-item label="母本" prop="mother">
-                  <el-input v-model="queryParams.mother" placeholder="请输入母本" clearable @keyup.enter="handleQuery"
+                <el-form-item :label="$t('material.label.mother')" prop="mother">
+                  <el-input v-model="queryParams.mother" :placeholder="$t('material.placeholder.mother')" clearable @keyup.enter="handleQuery"
                     class="my-input" />
-                </el-form-item>
-                <el-form-item>
-                  <el-button icon="Search" plain type="primary" size="large" @click="handleQuery">搜索</el-button>
-                  <el-button icon="Refresh" plain size="large" type="warning" @click="resetQuery">重置</el-button>
                 </el-form-item>
               </el-form>
+              <el-button icon="Search" plain type="primary" size="large" @click="handleQuery">{{ $t('material.button.search') }}</el-button>
+                  <el-button icon="Refresh" plain size="large" type="warning" @click="resetQuery">{{ $t('material.button.reset') }}</el-button>
 
               <el-table v-loading="loading1" :data="tableList" style="width: 100%;">
-                <el-table-column label="序号" type="index" width="80px" align="center">
+                <el-table-column :label="$t('material.table.index')" type="index" width="80px" align="center">
                   <template #default="{ $index }">
                     {{ (currentPageNum - 1) * pageSize + $index + 1 }}
                   </template>
                 </el-table-column>
 
-                <el-table-column label="品种ID" align="center" prop="kindId" width="120px">
+                <el-table-column :label="$t('material.table.id')" align="center" prop="kindId" width="120px">
                   <template #default="scope">{{ scope.row.kindId ? scope.row.kindId : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="品种名称" align="center" prop="kindName" width="120px">
+                <el-table-column :label="$t('material.table.name')" align="center" prop="kindName" width="120px">
                   <template #default="scope">{{ scope.row.kindName ? scope.row.kindName : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="材料编号" align="center" prop="materialId" width="120px">
+                <el-table-column :label="$t('material.table.materialNum')" align="center" prop="materialId" width="120px">
                   <template #default="scope">{{ scope.row.materialId ? scope.row.materialId : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="田间编号" align="center" prop="fieldId" width="120px">
+                <el-table-column :label="$t('material.table.field')" align="center" prop="fieldId" width="120px">
                   <template #default="scope">{{ scope.row.fieldId ? scope.row.fieldId : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="对照类型" align="center" prop="controlType" width="120px">
+                <el-table-column :label="$t('material.table.control')" align="center" prop="controlType" width="120px">
                   <template #default="scope">{{ scope.row.controlType ? scope.row.controlType : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="父本" align="center" prop="father" width="120px">
+                <el-table-column :label="$t('material.table.father')" align="center" prop="father" width="120px">
                   <template #default="scope">{{ scope.row.father ? scope.row.father : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="母本" align="center" prop="mother" width="120px">
+                <el-table-column :label="$t('material.table.mother')" align="center" prop="mother" width="120px">
                   <template #default="scope">{{ scope.row.mother ? scope.row.mother : '-' }}</template>
                 </el-table-column>
-                <el-table-column label="品种谱系" width="auto" align="center">
+                <el-table-column :label="$t('material.table.pedigree')" width="auto" align="center">
 
                   <template #default="{ row }">
-                    <el-tooltip content="系谱图" placement="top">
+                    <el-tooltip :content="$t('material.tooltip.chart')" placement="top">
                       <el-button type="text" size="medium" @click="toGraph(row.materialId)" class="table_button"><el-icon>
                           <PieChart />
                         </el-icon></el-button></el-tooltip>
                   </template>
                 </el-table-column>
 
-                <el-table-column label="操作" width="auto" align="center">
+                <el-table-column :label="$t('material.table.operate')" width="120px" align="center">
                   <template #default="{ row }">
-                    <el-tooltip content="表型" placement="top">
+                    <el-tooltip :content="$t('material.tooltip.phenotype')" placement="top">
                       <el-button @click="handleExitPhenotype(row.materialId, declaredDates)" size="mini"
                         class="table_button" type="text" icon="document"></el-button></el-tooltip>
-                    <el-tooltip content="图片" placement="top">
+                    <el-tooltip :content="$t('material.tooltip.image')" placement="top">
                       <el-button @click="handleExitPicture(row.materialId, declaredDates)" size="mini"
                         class="table_button" type="text" icon="picture"></el-button></el-tooltip>
                   </template>
@@ -136,6 +136,7 @@
         </div>
       </el-main>
     </el-container>
+  </el-config-provider>
   </div>
 </template>
 
@@ -153,6 +154,14 @@ import { useRouter } from "vue-router";
 import { getTree } from "@/api/tree";
 import { listFile } from "@/api/infomanage/phenoType";
 import { listPhenotype } from "@/api/genotype/geno_material";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
 // vue实例
 const {
   proxy: { $modal, $download },
