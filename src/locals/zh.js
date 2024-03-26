@@ -2,6 +2,14 @@
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 
 import phenptype_zh from '../views/infomanage/phenotype/zh.js'
+
+import genotype_zh from '../views/infomanage/genotype/zh.js'
+
+import material_zh from '../views/material_management/zh.js'
+
+import environment_zh from '../views/environmental_management/zh.js'
+
+
 export default {
     title: '基因组育种决策平台2.0',
     loadingText:'加载中...',
@@ -13,9 +21,9 @@ export default {
         remember:'记住密码',
         register:'立即注册',
         message:{
-            username:'Please enter your username.',
-            password:'Please enter your password.',
-            code:'Please enter the verification code'
+            username:'请输入您的账号',
+            password:'请输入您的密码',
+            code:'请输入验证码'
         }
     },
     navbar: {
@@ -32,7 +40,15 @@ export default {
         ok: '确定',
         cancel: '取消',
     },
+
     ...zhLocale,
     
-    ...phenptype_zh
+    ...phenptype_zh,
+
+    ...genotype_zh,
+
+    ...material_zh,
+
+    ...environment_zh,
+
 }

@@ -1,78 +1,82 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-card class="card-container">
-      <el-form :model="queryParams" ref="queryForm" size="larger" :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="物种名称" prop="speciesName">
-          <el-input v-model="queryParams.speciesName" placeholder="请输入物种名称" clearable @keyup.enter.native="handleQuery" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="Search" size="larger" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" size="larger" @click="resetQuery" plain>重置</el-button>
-        </el-form-item>
-      </el-form>
+    <el-config-provider :locale="locale">
+      <el-card class="card-container">
+        <el-form :model="queryParams" ref="queryForm" size="larger" :inline="true" v-show="showSearch" label-width="auto">
+          <el-form-item :label="$t('basic.label.species')" prop="speciesName">
+            <el-input v-model="queryParams.speciesName" :placeholder="$t('basic.placeholder.species')" clearable
+              @keyup.enter.native="handleQuery" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" size="larger" @click="handleQuery">{{ $t('basic.button.search')
+            }}</el-button>
+            <el-button icon="Refresh" size="larger" @click="resetQuery" plain>{{ $t('basic.button.reset') }}</el-button>
+          </el-form-item>
+        </el-form>
 
-      <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
-          <el-button type="primary" plain icon="Plus" @click="handleAdd"
-            v-hasPermi="['system:species:add']">新增</el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-            v-hasPermi="['system:species:edit']">修改</el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-            v-hasPermi="['system:species:remove']">删除</el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button type="warning" plain icon="Download"  @click="handleExport"
-            v-hasPermi="['system:species:export']">导出</el-button>
-        </el-col>
-        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-      </el-row>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:species:add']">{{
+              $t('basic.button.add') }}</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+              v-hasPermi="['system:species:edit']">{{ $t('basic.button.update') }}</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
+              v-hasPermi="['system:species:remove']">{{ $t('basic.button.delete') }}</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['system:species:export']">{{ $t('basic.button.export') }}</el-button>
+          </el-col>
+          <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
+        </el-row>
 
-      <el-table :data="speciesList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="物种名称" align="center" prop="speciesName" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link size="large" type="text" @click="handleUpdate(scope.row)" icon="edit"
-                class="table_button"></el-button></el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button size="large" type="text" @click="handleDelete(scope.row)" icon="delete"
-                class="table_button"></el-button></el-tooltip>
-          </template>
-          <!-- <template #default>
+        <el-table :data="speciesList" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column :label="$t('basic.table.index')" align="center" type="index" width="80" />
+          <el-table-column :label="$t('basic.table.species')" align="center" prop="speciesName" />
+          <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
+          <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
+            <template #default="scope">
+              <el-tooltip :content="$t('basic.button.update')" placement="top">
+                <el-button link size="large" type="text" @click="handleUpdate(scope.row)" icon="edit"
+                  class="table_button"></el-button></el-tooltip>
+              <el-tooltip :content="$t('basic.button.delete')" placement="top">
+                <el-button size="large" type="text" @click="handleDelete(scope.row)" icon="delete"
+                  class="table_button"></el-button></el-tooltip>
+            </template>
+            <!-- <template #default>
         <el-button link type="primary" size="small" @click="handleClick"
           >Detail</el-button
         >
         <el-button link type="primary" size="small">Edit</el-button>
       </template> -->
-        </el-table-column>
-      </el-table>
+          </el-table-column>
+        </el-table>
 
-      <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-        layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
-    </el-card>
-    <!-- 添加或修改【请填写功能名称】对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" :model-value="open">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="物种名称" prop="speciesName">
-          <el-input v-model="form.speciesName" placeholder="请输入物种名称" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+        <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
+          v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+          layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+      </el-card>
+      <!-- 添加或修改【请填写功能名称】对话框 -->
+      <el-dialog :title="title" v-model="open" width="500px" :model-value="open">
+        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+          <el-form-item :label="$t('basic.label.species')" prop="speciesName">
+            <el-input v-model="form.speciesName" :placeholder="$t('basic.placeholder.species')" />
+          </el-form-item>
+          <el-form-item :label="$t('basic.label.comment')" prop="remark">
+            <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.comment')" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="success" plain @click="submitForm">{{ $t('basic.button.save') }}</el-button>
+          <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
+        </div>
+      </el-dialog>
+    </el-config-provider>
   </div>
 </template>
 
@@ -80,6 +84,7 @@
 import { download, checkout, listSpecies, getSpecies, delSpecies, addSpecies, updateSpecies } from "@/api/species/species";
 import { blobValidate } from '@/utils/param'
 import { saveAs } from 'file-saver'
+import { reactive } from "vue";
 export default {
   name: "Species",
   data() {
@@ -112,24 +117,25 @@ export default {
       },
       // 表单参数
       form: {},
+      locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
       // 表单校验
-      rules: {
-        speciesName: [
-          { required: true, message: "物种名称不能为空", trigger: "blur" }
-        ],
-        createBy: [
-          { required: true, message: "创建者不能为空", trigger: "blur" }
-        ],
-        createTime: [
-          { required: true, message: "创建者时间不能为空", trigger: "blur" }
-        ],
-        updateBy: [
-          { required: true, message: "更新者不能为空", trigger: "blur" }
-        ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
-        ],
-      }
+      // rules: {
+      //   speciesName: [
+      //     { required: true, message: "物种名称不能为空", trigger: "blur" }
+      //   ],
+      //   createBy: [
+      //     { required: true, message: "创建者不能为空", trigger: "blur" }
+      //   ],
+      //   createTime: [
+      //     { required: true, message: "创建者时间不能为空", trigger: "blur" }
+      //   ],
+      //   updateBy: [
+      //     { required: true, message: "更新者不能为空", trigger: "blur" }
+      //   ],
+      //   updateTime: [
+      //     { required: true, message: "更新时间不能为空", trigger: "blur" }
+      //   ],
+      // }
     };
   },
   created() {
@@ -196,7 +202,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加物种信息";
+      this.title = this.locale.name === 'en' ? "Add Species Information" : "添加物种信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -208,7 +214,7 @@ export default {
         this.form = response.data;
         this.name = this.form.speciesName
         this.open = true;
-        this.title = "修改";
+        this.title = this.locale.name === 'en' ? "Update Species Information" : "修改物种信息";
       });
     },
     /** 提交按钮 */
@@ -218,7 +224,7 @@ export default {
           if (this.form.speciesId != null) {
             if (this.form.speciesName == this.name) {
               updateSpecies(this.form).then(response => {
-                this.$modal.msgSuccess("修改成功");
+                this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
                 this.open = false;
                 this.getList();
               });
@@ -228,12 +234,12 @@ export default {
                 this.ifAdd = res.data;
                 if (this.ifAdd == 0) {
                   updateSpecies(this.form).then(response => {
-                    this.$modal.msgSuccess("修改成功");
+                    this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
                     this.open = false;
                     this.getList();
                   });
                 }
-                else { this.$modal.msgWarning("该名称已存在！") }
+                else { this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！") }
               })
             }
 
@@ -243,13 +249,13 @@ export default {
               this.ifAdd = res.data
               if (this.ifAdd == 0) {
                 addSpecies(this.form).then(response => {
-                  this.$modal.msgSuccess("新增成功");
+                  this.$modal.msgSuccess(this.locale.name === 'en' ? "Add Successfully!" : "新增成功！");
                   this.open = false;
                   this.getList();
                 });
               }
               else {
-                this.$modal.msgWarning("该名称已存在")
+                this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！")
               }
             })
 
@@ -261,11 +267,11 @@ export default {
     handleDelete(row) {
       console.log("wqewq")
       const speciesIds = row.speciesId || this.speciesId;
-      this.$modal.confirm('是否确认删除编号为"' + speciesIds + '"的数据项？').then(function () {
+      this.$modal.confirm(this.locale.name === 'en' ? 'Are you sure you want to delete the item numbered"' + speciesIds + '"?' : '是否确认删除编号为"' + speciesIds + '"的数据项？').then(function () {
         return delSpecies(speciesIds);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess("删除成功");
+        this.$modal.msgSuccess(this.locale.name === 'en' ? 'Delete successfully!' : "删除成功");
       }).catch(() => { });
     },
     /** 导出按钮操作 */
@@ -294,6 +300,55 @@ export default {
 };
 </script>
 
+<script setup>
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
+const messages = {
+  rules: {
+    speciesName: computed(() => i18n.t('basic.rule.speciesName')).value,
+    creator: computed(() => i18n.t('basic.rule.creator')).value,
+    createTime: computed(() => i18n.t('basic.rule.createTime')).value,
+    updater: computed(() => i18n.t('basic.rule.updater')).value,
+    updateTime: computed(() => i18n.t('basic.rule.updateTime')).value,
+  },
+  title: {
+    updateSpecies: computed(() => i18n.t('basic.title.updateSpecies')).value,
+    addSpecies: computed(() => i18n.t('basic.title.update_addSpecies')).value,
+  },
+  update_success: computed(() => i18n.t('basic.message.update_success')).value,
+  species_exist: computed(() => i18n.t('basic.message.species_exist')).value,
+  delete_confirm1: computed(() => i18n.t('basic.message.delete_confirm1')).value,
+  delete_confirm2: computed(() => i18n.t('basic.message.delete_confirm2')).value,
+  delete_success: computed(() => i18n.t('basic.message.delete_success')).value,
+
+};
+
+const rules = reactive({
+  speciesName: [
+    { required: true, message: messages.rules.speciesName, trigger: "blur" }
+  ],
+  createBy: [
+    { required: true, message: messages.rules.creator, trigger: "blur" }
+  ],
+  createTime: [
+    { required: true, message: messages.rules.createTime, trigger: "blur" }
+  ],
+  updateBy: [
+    { required: true, message: messages.rules.updater, trigger: "blur" }
+  ],
+  updateTime: [
+    { required: true, message: messages.rules.updateTime, trigger: "blur" }
+  ],
+})
+</script>
+
 
 <!-- el-dialog的append-to-body属性会导致el-dialog的样式修改失效，先去掉 -->
 <style lang="less" scoped>
@@ -301,6 +356,8 @@ export default {
   margin-right: 0px;
   background: #0F5C32;
   height: 60px !important;
+  align-items: center;
+  justify-content: center;
 
   span {
 
@@ -308,6 +365,9 @@ export default {
     font-size: 20px;
     color: white;
     letter-spacing: 2px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
   }
 }
 
@@ -355,7 +415,7 @@ export default {
   position: relative;
   background-color: #fff;
   width: auto;
-  min-width:150px;
+  min-width: 150px;
 }
 
 .card-header:before,
@@ -415,7 +475,7 @@ export default {
   background-color: #fff;
   margin: 0px 20px 20px 20px;
   margin-right: 0px;
-  margin-left: 0px ;
+  margin-left: 0px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {

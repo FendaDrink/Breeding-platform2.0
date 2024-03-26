@@ -2,6 +2,12 @@
 import enLocale from 'element-plus/lib/locale/lang/en'
 
 import phenptype_en from '../views/infomanage/phenotype/en.js'
+
+import genotype_en from '../views/infomanage/genotype/en.js'
+
+import material_en from '../views/material_management/en.js'
+
+import environment_en from '../views/environmental_management/en.js'
 export default {
     // title: 'Genomic breeding decision-making platform',
     title: 'Breeding-platform2.0',
@@ -14,9 +20,9 @@ export default {
         remember:'Remember Password',
         register:'Sign Up Now',
         message:{
-            username:'请输入您的账号',
-            password:'请输入您的密码',
-            code:'请输入验证码'
+            username:'Please enter your username.',
+            password:'Please enter your password.',
+            code:'Please enter the verification code'
         }
     },
     navbar: {
@@ -36,4 +42,10 @@ export default {
     ...enLocale,
 
     ...phenptype_en,
+
+    ...genotype_en,
+
+    ...material_en,
+
+    ...environment_en,
 }

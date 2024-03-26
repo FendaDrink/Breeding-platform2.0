@@ -22,7 +22,7 @@ export default {
             table_index: 'Index',
             table_fileName: 'File Name',
             table_speciesName: 'Species Name',
-            table_populationName: 'Population',
+            table_populationName: 'Population Name',
             table_year: 'Year',
             table_location: 'Location',
             table_fileStatus: 'Status',
@@ -68,9 +68,9 @@ export default {
             message_upload_success: "Upload successful!",
             message_delete_select: "No file has been selected!",
             message_delete_confirm: "Are you sure you want to delete the file?",
-            message_delete_success: "Deletion successful!",
+            message_delete_success: "Deletion successfully!",
             message_delete_fail: "Deletion failed!",
-            message_update_succcess: "Update successful!",
+            message_update_success: "Update successfully!",
             message_update_fail: "Update failed!",
             message_downloading: "Downloading, please wait...",
             message_node_parent: "Please select a parent node!",
@@ -87,7 +87,7 @@ export default {
         },
         file: {
             table_speciesName: 'Species',
-            table_populationName: 'Population',
+            table_populationName: 'Population Name',
             table_location: 'Location',
             table_fileStatus: 'Status',
             table_operate: 'Operations',
@@ -146,6 +146,9 @@ export default {
 
             header1: 'Search Traits',
             header2: 'Search Locations',
+
+            placeholder_location: 'Enter the location name.', 
+            placeholder_trait: 'Enter the trait name.',
 
 
         },
@@ -220,7 +223,7 @@ export default {
                     keywords: 'Enter the Keywords separated by commas.',
 
                     imageNewName: 'Enter the new image name.',
-                    imageNewDate: 'Enter the new Date.',
+                    imageNewDate: 'Select the new Date.',
                     comment: 'Enter the comment.',
 
                     ip: 'Enter the IP Adress.',
@@ -318,6 +321,10 @@ export default {
                 node_confirm: "Are you sure you want to delete this node?",
                 node_delete_success: "Node Deleted Successfully!",
                 node_no_image: "This node has no images!"
+            },
+            rule:{
+                treeName:'Enter the node name.',
+                keyword:'Enter the description.',
             }
         },
 
