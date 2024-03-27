@@ -215,6 +215,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      console.log('selecton',selection)
       this.populationId = selection.map(item => item.populationId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
@@ -228,7 +229,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const populationId = row.population_id || this.populationId
+      const populationId = row.population_id || this.populationId[0]
+      console.log(this.populationId,'123')
       getPopulation(populationId).then(response => {
         this.form = response.data;
         this.name = this.form.population_name;

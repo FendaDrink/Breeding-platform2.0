@@ -172,6 +172,7 @@ export function uploadFileEndApi({treeId,status,remark,fileName,pointStatus,file
       fileName,
       pointStatus,
       filePath
-    }
+    },
+    timeout:100000
   })
 }

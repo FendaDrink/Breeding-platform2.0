@@ -153,7 +153,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="success" plain v-if="dialogStatus === 'create'"
-            @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
+            @click="dialogStatus === 'create' ? openCreateData() : updateData()" :disabled="isDisabled">
             {{ $t('phenotype.index.save') }}
           </el-button>
           <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
@@ -199,7 +199,7 @@ import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
-
+import axios from 'axios'
 import { computed } from "@vue/reactivity";
 
 import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言

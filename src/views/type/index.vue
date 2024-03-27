@@ -176,7 +176,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const asTraitTypeId = row.traitTypeId || this.traitTypeIdx
+      let asTraitTypeId = row.traitTypeId || this.traitTypeId[0]
       getType(asTraitTypeId).then(response => {
         console.log(response)
         this.form = response.data;
