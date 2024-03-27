@@ -83,12 +83,12 @@
         </el-table-column>
         <el-table-column fixed="right" label="结果下载">
           <template #default="scope">
-            <el-button link type="text" @click="exportPdf(scope.row)" style="color: #0dbc79;"
+            <el-button link type="text" @click="exportTxt(scope.row)" style="color: #0dbc79;"
               v-show="scope.row.status == 1">
-              导出pdf
+              导出txt
             </el-button>
             <el-button link type="text" disabled v-show="scope.row.status != 1">
-              导出pdf
+              导出txt
             </el-button>
           </template>
         </el-table-column>
@@ -302,10 +302,10 @@ function exportGeno(fileUrl) {
 		ElMessage.error('下载文件出现错误，请联系管理员！');
 	})
 }
-function exportPdf(row) {
+function exportTxt(row) {
 	console.log(row)
 	if (row.status != 1) {
-		ElMessageBox.alert('任务尚未成功时不能导出pdf', '错误', {
+		ElMessageBox.alert('任务尚未成功时不能导出txt', '错误', {
 			// if you want to disable its autofocus
 			// autofocus: false,
 			confirmButtonText: 'OK',
@@ -320,8 +320,8 @@ function exportPdf(row) {
 		console.log(res)
 		const isLogin = blobValidate(res);
 		if (isLogin) {
-			const blob = new Blob([res])
-			saveAs(blob, `breed${row.id}.pdf`)
+			const blob = new Blob([res],{type:'text/plain'})
+			saveAs(blob, `breed${row.id}.txt`)
 		} else {
 			const resText = data.text();
 			const rspObj = JSON.parse(resText);
@@ -375,16 +375,20 @@ onMounted(() => {
     height: 100%;
     // background-color: #d94646;
     border-radius: 5px;
-    background-image: url('@/assets/images/breed.jpg');
+    background-image: url('@/assets/images/corn.jpg');
+    filter: brightness(0.99);
     background-size: cover;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     .main-content{
-      width: 50%;
-      height: 50%;
+      width: 100%;
+      height: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
       .main-title{
-        font-size: 40px;
+        font-size: 400%;
         font-weight: 700;
         text-align: center;
         margin-top: 20px;
@@ -396,9 +400,9 @@ onMounted(() => {
         align-items: center;
         margin-top: 20px;
         .input{
-          width: 70%;
+          width: 45%;
           @media (max-width: 1500px) {
-            width: 95%;
+            width: 55%;
           }
           color: #fff;
           :deep(.el-input){
@@ -406,16 +410,19 @@ onMounted(() => {
           }
           .el-input{
             width: 100%;
+            border-radius: 10px;
             font-size: 110%;
             box-shadow: none;
             :deep(.el-input__inner){
+              height: 52px;
               // box-shadow: none;
               &::placeholder{
                 color: #817d7d;
-                font-size: 80%;
+                font-size: 100%;
               }
             }
             :deep(.el-input-group__prepend){
+              border-radius: 10px 0 0 10px;
               background-color: #1FB864;
               .el-button{
                 .el-icon{
@@ -423,14 +430,19 @@ onMounted(() => {
                   font-size: 120%;
                 }
               }
+              &:hover{
+                background-color: #1ca55a;
+              }
             }
             :deep(.el-input-group__append){
+              border-radius: 0 10px 10px 0;
               background-color: #1FB864;
               color:#fff;
-              width: 18%;
-              border: none;
-              border-radius: 0 5px 5px 0;
+              width: 13%;
               cursor: pointer;
+              &:hover{
+                background-color: #1ca55a;
+              }
             }
             :deep(.el-button){
               width: 100%;
