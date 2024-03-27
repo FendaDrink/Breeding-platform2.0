@@ -20,7 +20,7 @@
       <!-- <h1>染色体密度图<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>染色体密度图<i>&nbsp;</i></h1>
+          <h1>{{ $t('genotype.view.header') }}<i>&nbsp;</i></h1>
         </div>
       </template>
 

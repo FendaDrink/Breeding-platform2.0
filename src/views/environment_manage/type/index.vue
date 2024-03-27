@@ -1,37 +1,38 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="100px">
-        <el-form-item label="环境因子类型">
-          <el-select v-model="add.type" class="m-2" placeholder="请选择环境因子类型" clearable>
+      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="auto">
+        <el-form-item :label="$t('basic.label.factorTypeName')">
+          <el-select v-model="add.type" class="m-2" :placeholder="$t('basic.placeholder.factorTypeName')" clearable>
             <el-option v-for="item in factorOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="环境因子名称">
-          <el-input v-model="add.name" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item :label="$t('basic.label.factorName')">
+          <el-input v-model="add.name" :placeholder="$t('basic.placeholder.factorName')" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="isSearching" icon="Search"  @click="handleQuery" >搜索</el-button>
-          <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
+          <el-button type="primary" :loading="isSearching" icon="Search"  @click="handleQuery" >{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh"  @click="resetQuery" >{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="warning" plain  @click="isModify" :loading="isModifing" icon="edit"
-                     v-hasPermi="['system:factor:export']">确认修改</el-button>
+                     v-hasPermi="['system:factor:export']">{{ $t('basic.button.update') }}</el-button>
         </el-col>
 
-        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+        <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
       </el-row>
 
       <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange"
                 @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="环境因子名称" align="center" prop="factorName" />
-        <el-table-column label="全称" align="center" prop="factorFullName" />
-        <el-table-column label="缩写" align="center" prop="factorAbbreviationName" />
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.index')" type="index" align="center" width="80" />
+        <el-table-column :label="$t('basic.table.factorName')" align="center" prop="factorName" />
+        <el-table-column :label="$t('basic.table.fullname')" align="center" prop="factorFullName" />
+        <el-table-column :label="$t('basic.table.abbreviation')" align="center" prop="factorAbbreviationName" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
@@ -39,7 +40,7 @@
                      layout="total, sizes, prev, pager, next, jumper" @size-change="getHigh" @current-change="getHigh" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px">
+    <!-- <el-dialog :title="title" v-model="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="环境因子名称" prop="factorName">
           <el-input v-model="form.factorName" placeholder="请输入环境因子名称" />
@@ -55,10 +56,11 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{ $t('basic.button.save') }}</el-button>
+        <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
+  </el-config-provider>
   </div>
 </template>
 
@@ -145,6 +147,7 @@ export default {
       isModifing: false,
       flen: 0,
       Tlen: 0,
+      locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en)),
     };
   },
   created() {
@@ -192,9 +195,9 @@ export default {
         this.factorList = responseData.data
         this.total = responseData.total
         if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
-          ElMessage.warning("没有符合条件的数据")
+          ElMessage.warning(this.locale.name === 'en' ? "No matching data was found." : "没有符合条件的数据")
         } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
-          ElMessage.success("查询成功")
+          ElMessage.success(this.locale.name === 'en' ? "Search successfully!" : "查询成功！")
         }
         this.isFirstSelection = true
         this.isFirstSearch = false
@@ -242,7 +245,7 @@ export default {
     /** 搜索按钮操作 */
     async handleQuery() {
       if (this.add.type == "" && this.add.name == "") {
-        ElMessage.warning("请输入查询条件")
+        ElMessage.warning(this.locale.name === 'en' ? "Please enter the search criteria." : "请输入查询条件")
         return
       }
       this.queryParams.pageNum = 1;
@@ -285,13 +288,13 @@ export default {
         if (valid) {
           if (this.form.factorId != null) {
             updateFactor(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
+              this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
               this.open = false;
               this.getList();
             });
           } else {
             addFactor(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
+              this.$modal.msgSuccess(this.locale.name === 'en' ? "Add successfully!" : "新增成功！");
               this.open = false;
               this.getList();
             });
@@ -366,14 +369,14 @@ export default {
       obj.list = this.factorId
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过形状类型来修改！！")
+        ElMessage.warning(this.locale.name === 'en' ? "Please modify based on trait type!" : "请通过性状类型来修改！")
       } else {
         this.isModifing = true
         addHigh(obj).then(res => {
           if (res.code == 200) {
-            ElMessage.success("修改成功")
+            ElMessage.success(this.locale.name === 'en' ? "Update successfully!" :"修改成功！")
           } else {
-            ElMessage.error("修改失败")
+            ElMessage.error(this.locale.name === 'en' ? "Update failed!" :"修改失败！")
           }
           this.resetQuery()
           this.isModifing = false
@@ -384,6 +387,18 @@ export default {
   }
 };
 </script>
+
+<script setup>
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+</script>
+
 <style>
 .el-table .success-row {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
@@ -441,7 +456,8 @@ export default {
   height: 60px;
   position: relative;
   background-color: #fff;
-  width: 150px;
+  width: auto;
+  min-width:150px;
 }
 
 .card-header:before,

@@ -4,18 +4,19 @@
       <!-- <h1>基因型数据筛选<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>基因型数据筛选<i>&nbsp;</i></h1>
+          <h1>{{ $t('genotype.filter.header') }}<i>&nbsp;</i></h1>
         </div>
       </template>
 
       <el-container>
-        <el-main  class="">
+        <el-main class="">
           <!-- <el-container style="height: 350px"> -->
           <!-- 表格部分 -->
           <el-table @row-click="handleEdit" :data="tableData" ref="singleTable" @selection-change="handleSelectionChange"
             stripe fit highlight-current-row height="250" class="mytable el-table__body-wrapper">
-            <el-table-column label="序号" width="80px" type="index" align="center"></el-table-column>
-            <el-table-column label="材料名" align="center" prop="label"></el-table-column>
+            <el-table-column :label="$t('genotype.filter.label.index')" width="80px" type="index"
+              align="center"></el-table-column>
+            <el-table-column :label="$t('genotype.filter.label.name')" align="center" prop="label"></el-table-column>
           </el-table>
           <!-- </el-container> -->
           <div class='wrapper'>
@@ -24,12 +25,13 @@
           <el-slider v-model="sliderValue" range :min=min :max=max :key="sliderKey" @change="sliderChange" ref="slider"
             style="max-width: 100%">
           </el-slider>
-          <el-select v-model="selectedItem" filterable placeholder="请选择" @change="selectChange">
+          <el-select v-model="selectedItem" filterable :placeholder="$t('genotype.filter.label.placeholder')"
+            @change="selectChange">
             <el-option v-for="item in options" :key="item.index" :label="item.label" :value="item.index">
             </el-option>
           </el-select>
           <el-button type="success" plain @click="searchMaterial" class="filter-item my-button" style="margin-left: 20px;"
-            v-model="selectedItem">确认</el-button>
+            icon="search" v-model="selectedItem">{{ $t('genotype.index.search') }}</el-button>
         </el-main>
         <!-- 分页 -->
         <!-- <el-footer class="footer">
@@ -41,15 +43,16 @@
 
 
 
-<el-main>
-      <el-container class="gene-informage-container">
-        <div class="scrollable-content" id="geneInformageContainer">
-        </div>
-        
-      </el-container></el-main>
+      <el-main>
+        <el-container class="gene-informage-container">
+          <div class="scrollable-content" id="geneInformageContainer">
+          </div>
+
+        </el-container></el-main>
     </el-card>
   </div>
 </template>
+
 
 <script>
 import {
@@ -59,6 +62,19 @@ import {
 } from "@/api/tree";
 import * as echarts from "echarts";
 import { onMounted } from "vue";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+const locale = computed(() => {
+  localStorage.getItem('lang') === 'zh-CN' ? zh : en;
+})
+// let t={
+//   t1 : computed(() => i18n.t('genotype.filter.t1')).value,
+//   t2 : computed(() => i18n.t('genotype.filter.t2')).value,
+//   t3 : computed(() => i18n.t('genotype.filter.t3')).value,
+//   t4 : computed(() => i18n.t('genotype.filter.t4')).value,
+// }
 export default {
   data() {
     return {
@@ -106,7 +122,7 @@ export default {
         console.log("getMaterialLists");
         const tableName = this.$route.query.tableName;
         getMaterialList(tableName).then(res => {
-          if (res.code === 200 & res.data.length!=0) {
+          if (res.code === 200 & res.data.length != 0) {
             // this.options = res.data; // 将获取到的数据赋值给options数组
             this.tableData = res.data.map(item => ({ label: item, value: item })); // 将获取到的数据赋值给options数组
             this.options = res.data.map((item, index) => ({ label: item, value: item, index: index })); // 将获取到的数据赋值给options数组
@@ -448,9 +464,16 @@ export default {
           elements2[index].textContent = '';
           elements2[index].textContent = text2;
 
+
           bigdivs[index].addEventListener("mouseover", function () {
             const hoverDiv = document.createElement("div");
-            hoverDiv.innerHTML = "染色体：" + temp + "<br>" + "位置：" + data.position + "<br>" + "标记编号：" + text1 +  "<br>" + "基因信息：" + text2;
+            if(localStorage.getItem('lang') === 'en')
+            {
+              hoverDiv.innerHTML = 'Chrom: ' + temp + "<br>" + 'Position: ' + data.position + "<br>" + 'Marker: ' + text1 + "<br>" + 'Info: ' + text2;
+            }else{
+              hoverDiv.innerHTML = '染色体：' + temp + "<br>" + '位置：' + data.position + "<br>" + '标记编号：' + text1 + "<br>" + '基因信息：' + text2;
+            }
+            
             hoverDiv.className = "hoverDiv";
             bigdivs[index].insertBefore(hoverDiv, bigdivs[index].firstChild);
           });
@@ -475,48 +498,284 @@ export default {
 </script>
 
 
-<!-- 卡片样式 -->
-<style lang="less" scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+<style scoped lang="less">
+.wrapper .chart {
+  height: 30px;
+  margin: 0 auto;
+  width: 100%;
+  //background-color: blue;
+}
+</style>
+
+<style lang="less">
+.gene-informage-container {
+  height: auto;
+  width: 100%;
+  background-color: #F2F4F3;
+  margin-top: 50px;
+  overflow-x: auto;
 }
 
+.scrollable-content {
+  /* 给内容容器设置一个适当的高度，以便内容超过这个高度时出现滚动条 */
+  height: 100%;
+  display: flex;
+  /* 使用flex布局 */
+  //flex-wrap: wrap; /* 当一行放不下所有子元素时换行 */
+}
+
+.child-div {
+  height: 220px;
+  margin: 5px;
+  // background-color:blue;
+  display: inline-block;
+  width: 50px;
+
+}
+
+.child-div:hover {
+  /* Add your hover styles here */
+  background-color: lightgray;
+  border: 1px solid #9ABEAF;
+  cursor: pointer;
+  position: relative;
+}
+
+.additional-div {
+  display: none;
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  background-color: lightblue;
+  z-index: 1;
+}
+
+.hoverDiv {
+  position: absolute;
+  top: 0px;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 999;
+  max-width: 300px;
+  min-width: 200px;
+
+  word-break: break-all !important;
+
+  border-radius: 5px;
+  background-color: rgba(0, 75, 28, 0.9);
+  color: aliceblue;
+  font-size: 13px;
+  text-align: center;
+}
+
+
+
+.upper-child-div {
+  height: 80%;
+  margin: 2px;
+  // background-color: #9ABEAF;
+  //position:absolute;
+
+  // writing-mode: vertical-rl;
+  // text-orientation: upright;
+  //width:30px;
+}
+
+.textDiv {
+  // padding-top:35px;
+  // display: inline-block;
+  // transform: rotate(90deg);
+  // transform-origin: right;
+  // background-color:orange;
+
+  // position:relative;
+  // //top:20px;
+  // right:0;
+  // text-align: center;
+  // width:100%;
+  // height:20px;
+
+  margin-left: 20px;
+  display: block;
+  transform: rotate(90deg);
+  transform-origin: bottom left;
+  white-space: nowrap;
+  color: #2B86CF;
+  font-weight: 600;
+}
+
+.lower-child-div {
+  height: 15%;
+  padding: 3px;
+  margin: 2px;
+  // background-color: green;
+  text-align: right;
+  //width:100%;
+  word-break: break-all;
+  //max-width:150px;
+  //width:auto;
+
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  //max-width: 200px;
+}
+
+// .lower-child-div:hover {
+//   white-space: normal;
+//   overflow: visible;
+//   text-overflow: unset;
+// }
+</style>
+
+<style lang="less" scoped>
+/* 假设 el-checkbox 是表头中的一个子元素 */
+
+:deep(.el-table .el-table__header-wrapper tr th) {
+  background-color: #1FB864 !important;
+  color: rgb(255, 255, 255);
+}
+
+/* 修改前后箭头未点击时的背景颜色 */
+:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
+  background-color: #fff !important;
+}
+
+/* 修改未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
+  background-color: #EEEEEE !important;
+}
+
+/* 未点击时的数字方块背景颜色 */
+:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
+  background-color: #fff !important;
+  color: #000;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #1FB864 !important; //修改默认的背景色
+  color: #fff;
+}
+
+:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:deep(.el-pagination ul li:not(:last-child)) {
+  border-right: #DDDDDD 1px solid;
+}
+
+
+:deep(.el-pagination ul) {
+  border: #DDDDDD 1px solid;
+}
+
+:deep(.el-upload) {
+  width: 100%;
+}
+
+:deep(.el-upload .el-upload-dragger) {
+  width: 100%;
+}
+.green-button {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.green-button:hover {
+  background-color: #1FB864 !important;
+  color: #fff !important;
+  border: 1px solid #1FB864 !important;
+}
+
+.table_button {
+  color: #1FB864;
+}
+
+.table_button:hover {
+  color: #1FB864;
+}
+
+// .el-select-dropdown__item.selected {
+//   color: #1FB864;
+// }
+
+// .el-input {
+//   --el-input-focus-border-color: #1FB864;
+// }
+
+// .el-select {
+//   --el-select-input-focus-border-color: #1FB864;
+// }
+
+/* 开关组件 */
+// :deep(.el-switch.is-checked .el-switch__core) {
+//   border-color: #1FB864;
+//   background-color: #1FB864;
+// }
+
+/* 多选组件 */
+// :deep(.el-checkbox) {
+//   --el-checkbox-checked-input-border-color: #1FB864;
+//   --el-checkbox-checked-bg-color: #1FB864;
+//   --el-checkbox-input-border-color-hover: #1FB864;
+// }
+
+:deep(.el-table__header .el-checkbox) {
+  /* Your styles here */
+  --el-checkbox-checked-input-border-color: #424F63;
+  --el-checkbox-checked-bg-color: #424F63;
+  --el-checkbox-input-border-color-hover: #424F63;
+}
+
+/* 树结构 */
+.el-aside {
+  background-color: #fff !important;
+}
+
+.el-tree {
+  background-color: #fff !important;
+  margin: 0px !important;
+  color: #000;
+  /* 字体大小在上面的代码中修改 */
+}
+
+.div1 {
+  padding: 15px 20px;
+  background-color: #EEEEEE;
+}
+
+.div2 {
+  padding: 15px 20px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.div3 {
+  padding: 20px 20px 0px;
+  background-color: #fff;
+  margin: 0px 0px 20px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+.el-table {
+  background-color: #EEEEEE !important;
+  margin-top: 20px;
+}
+
+.footer {
+  height: fit-content;
+}
+.right-box {
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+}
 :deep(.el-radio) {
   width: 30%;
-}
-
-
-:deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
-  height: 60px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
-
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
-  span {
-
-    font-weight: 700;
-    font-size: 20px;
-    color: white;
-    text-align: center;
-    letter-spacing: 2px;
-  }
-
-
 }
 
 .card-header {
@@ -526,7 +785,8 @@ export default {
   height: 60px;
   position: relative;
   background-color: #fff;
-  width: 150px;
+  width: auto;
+  min-width:150px;
 }
 
 .card-header:before,
@@ -571,21 +831,40 @@ export default {
   /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
 }
 
+:deep(.el-card__header) {
+  background: #1FB864;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px !important;
+
+  h1 {
+    margin: 0%;
+  }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
+  span {
+
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+
+}
+
 .card-container {
-  // width: 97%;
-  // border-radius: 50px;
-  // margin: auto;
-  // margin-top: 10px;
-
-  // :deep(.el-card__body) {
-  //   padding: 15px 20px 20px 20px !important;
-  // }
-
-  //padding: 20px 20px 0px;
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
-  margin-right: 0px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {
@@ -725,192 +1004,6 @@ export default {
   .el-tree-node__label {
     font-size: 14px;
   }
-}
-</style>
-
-<!-- 响应式 -->
-<style lang="less" scoped>
-:deep(.el-input__inner) {
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-}
-
-.my-input {
-  width: 200px;
-}
-
-@media (max-width: 1550px) {
-  .my_item {
-    margin-right: 5px;
-    /* 缩小元素之间的间距 */
-  }
-
-  .my-input {
-    width: 150px;
-    /* 缩小输入框的宽度 */
-  }
-}
-
-@media (max-width: 1450px) {
-  .my_item {
-    margin-right: 5px;
-    /* 缩小元素之间的间距 */
-  }
-
-  .my-input {
-    width: 120px;
-    /* 缩小输入框的宽度 */
-  }
-}
-</style>
-
-<style lang="less" scoped>
-/* 假设 el-checkbox 是表头中的一个子元素 */
-
-:deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
-  color: rgb(255, 255, 255);
-}
-
-/* 修改前后箭头未点击时的背景颜色 */
-:deep(.el-pagination .btn-prev, .el-pagination .btn-next) {
-  background-color: #fff !important;
-}
-
-/* 修改未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled):hover) {
-  background-color: #EEEEEE !important;
-}
-
-/* 未点击时的数字方块背景颜色 */
-:deep(.el-pagination .el-pager li:not(.active):not(.disabled)) {
-  background-color: #fff !important;
-  color: #000;
-}
-
-:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
-  color: #fff;
-}
-
-:deep(.el-pagination ul li, .el-pagination .el-pagination__jump) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-:deep(.el-pagination ul li:not(:last-child)) {
-  border-right: #DDDDDD 1px solid;
-}
-
-
-:deep(.el-pagination ul) {
-  border: #DDDDDD 1px solid;
-}
-
-:deep(.el-upload) {
-  width: 100%;
-}
-
-:deep(.el-upload .el-upload-dragger) {
-  width: 100%;
-}
-
-
-
-
-
-
-
-.green-button {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.green-button:hover {
-  background-color: #1FB864 !important;
-  color: #fff !important;
-  border: 1px solid #1FB864 !important;
-}
-
-.table_button {
-  color: #1FB864;
-}
-
-.table_button:hover {
-  color: #1FB864;
-}
-
-// .el-select-dropdown__item.selected {
-//   color: #1FB864;
-// }
-
-// .el-input {
-//   --el-input-focus-border-color: #1FB864;
-// }
-
-// .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
-// }
-
-/* 开关组件 */
-// :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
-// }
-
-/* 多选组件 */
-// :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
-// }
-
-:deep(.el-table__header .el-checkbox) {
-  /* Your styles here */
-  --el-checkbox-checked-input-border-color: #424F63;
-  --el-checkbox-checked-bg-color: #424F63;
-  --el-checkbox-input-border-color-hover: #424F63;
-}
-
-/* 树结构 */
-.el-aside {
-  background-color: #fff !important;
-}
-
-.el-tree {
-  background-color: #fff !important;
-  margin: 0px !important;
-  color: #000;
-  /* 字体大小在上面的代码中修改 */
-}
-
-.div1 {
-  padding: 15px 20px;
-  background-color: #EEEEEE;
-}
-
-.div2 {
-  padding: 15px 20px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.div3 {
-  padding: 20px 20px 0px;
-  background-color: #fff;
-  margin: 0px 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
-}
-
-.el-table {
-  background-color: #EEEEEE !important;
-  margin-top: 20px;
-}
-
-.footer {
-  height: fit-content;
 }
 </style>
 

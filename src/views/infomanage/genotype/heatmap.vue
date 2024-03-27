@@ -4,24 +4,24 @@
       <!-- <h1>基因热力图<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>基因热力图<i>&nbsp;</i></h1>
+          <h1>{{ $t('genotype.heatmap.header') }}<i>&nbsp;</i></h1>
         </div>
       </template>
 
       <el-container>
-        <el-select v-model="materialSelected" multiple placeholder="请选择材料名" style="width: 500px;" filterable>
+        <el-select v-model="materialSelected" multiple :placeholder="$t('genotype.heatmap.ph.name')" style="width: 500px;" filterable>
           <el-option v-for="item in materialData" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-        <el-select v-model="chrSelected" single placeholder="请选择基因型" style="width: 250px;">
+        <el-select v-model="chrSelected" single :placeholder="$t('genotype.heatmap.ph.gene')" style="width: 250px;">
           <el-option v-for="item in chrData" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-        <el-input v-model="start" type="number" min="0" placeholder="请输入起始值" style="width: 250px;"></el-input>
-        <el-input v-model="end" type="number" min="0" placeholder="请输入终止值" style="width: 250px;"></el-input>
+        <el-input v-model="start" type="number" min="0" :placeholder="$t('genotype.heatmap.ph.start')" style="width: 250px;"></el-input>
+        <el-input v-model="end" type="number" min="0" :placeholder="$t('genotype.heatmap.ph.end')" style="width: 250px;"></el-input>
 
-        <el-button type="primary" plain icon="edit" @click="searchMaterial" class="filter-item my-button"
-          v-model="selectedItem">确认</el-button>
+        <el-button type="success" plain icon="edit" @click="searchMaterial"
+          v-model="selectedItem">{{ $t('genotype.index.search') }}</el-button>
       </el-container>
       <!-- <h1>{{ id }} {{ tableName }}</h1> -->
       <div id="main"  style="width: 80vw; height: 40vw;"></div>
@@ -158,7 +158,38 @@ export default {
       })
     },
     isValid() {
-      if (this.materialSelected.length === 0) {
+      if(localStorage.getItem('lang') === 'en'){
+        if (this.materialSelected.length === 0) {
+        this.$message({
+          showClose: true,
+          message: 'Please select at least one material name.',
+          type: 'error'
+        });
+        return false;
+      } else if (this.materialSelected.length >= 10) {
+        this.$message({
+          showClose: true,
+          message: 'Please narrow down your selection of materials.',
+          type: 'error'
+        });
+        return false;
+      } else if (this.chrSelected.length === 0) {
+        this.$message({
+          showClose: true,
+          message: 'Please select the genotype.',
+          type: 'error'
+        });
+        return false;
+      } else if (this.end < this.start || this.start < 0 || this.end < 0) {
+        this.$message({
+          showClose: true,
+          message: 'Please enter a valid range.',
+          type: 'error'
+        });
+        return false;
+      }
+      }else{
+        if (this.materialSelected.length === 0) {
         this.$message({
           showClose: true,
           message: '请选择至少一个材料名',
@@ -187,6 +218,8 @@ export default {
         });
         return false;
       }
+      }
+      
       return true;
     },
     searchMaterial() {
@@ -347,24 +380,7 @@ export default {
   
 <!-- 卡片样式 -->
 <style lang="less" scoped>
- .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-:deep(.el-card__header) {
-  background: #9abeaf;
-  height: 60px !important;
-  display: flex;
-  vertical-align: middle;
-  padding-left: 50px !important;
-  span {
-    font-weight: 700;
-    font-size: 20px;
-    color: white;
-    letter-spacing: 2px;
-  }
-}
+
 
 :deep(.el-table__header) {
   border-bottom: 1px solid black;
@@ -386,6 +402,16 @@ export default {
 }
 
 .card-container {
+  // width: 97%;
+  // border-radius: 50px;
+  // margin: auto;
+  // margin-top: 10px;
+
+  // :deep(.el-card__body) {
+  //   padding: 15px 20px 20px 20px !important;
+  // }
+
+  //padding: 20px 20px 0px;
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
@@ -396,7 +422,6 @@ export default {
     text-align: center;
     position: relative;
     z-index: 1;
-    margin: 0 0 20px;
   }
 
   h1 i {
@@ -462,27 +487,6 @@ export default {
 
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
-}
-
-
-
-
-
-
-.white-button,
-.el-button--default,
-.el-button--primary {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
-}
-
-.white-button:hover,
-.el-button--default:hover,
-.el-button--primary:hover {
-  background-color: #E6E6E6 !important;
-  color: #000 !important;
-  border: 1px solid #CCCCCC !important;
 }
 
 
@@ -580,6 +584,15 @@ export default {
 .right-box {
   margin-left: 20px;
   margin-right: 20px;
+}
+.el-button--success.is-plain {
+  --el-button-text-color: #67c23a;
+  --el-button-bg-color: #f0f9eb;
+  --el-button-border-color: #b3e19d;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #67c23a;
+  --el-button-hover-border-color: #67c23a;
+  --el-button-active-text-color: #ffffff;
 }
 </style>
 
@@ -877,8 +890,7 @@ export default {
 }
 
 :deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
+  background: #1FB864;
   height: 60px !important;
   display: flex;
   align-items: center;

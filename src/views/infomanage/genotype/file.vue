@@ -1,16 +1,17 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
+    <el-config-provider :locale="locale">
     <el-button style="margin: 20px; margin-left: calc(95% - 30px)" @click="exportFile" type="warning" size="large"
-      plain>导出</el-button>
+      plain>{{ $t('genotype.file.button_export') }}</el-button>
     <el-container>
       <el-main>
         <div class="file_form">
           <!-- 表格部分 -->
           <el-table style="width: 95%; margin: auto" ref="multipleTable" v-loading="tableLoading" :data="tableData"
             tooltip-effect="dark" class="trait-form-table" stripe max-height="100vh - 220px">
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="left">
+            <el-table-column :label="$t('genotype.file.table_operate')" align="center" class-name="small-padding fixed-width" fixed="left" width="100px">
               <template #default="scope">
-                <el-tooltip content="修改文件信息" placement="top">
+                <el-tooltip :content="$t('genotype.file.tooltip_update')" placement="top">
                   <el-button size="small" type="text" icon="Document" link @click="modifFile(scope.row)"
                     class="table_button">
                   </el-button></el-tooltip>
@@ -36,14 +37,14 @@
       </el-footer>
     </el-container>
 
-    <el-dialog title="修改文件详情" v-model="dialogFormVisible" center draggable width="30%">
+    <el-dialog :title="$t('genotype.file.title_update')" v-model="dialogFormVisible" center draggable width="30%">
       <el-scrollbar wrap-class="scrollbar-wrapper">
         <el-container style="height: 500px">
           <el-form ref="dataTreeForm" :model="form" :rules="rules" label-position="left" label-width="110px">
             <!-- 循环遍历列，并生成表单项 -->
             <template v-for="column in columns" :key="column.prop">
               <el-form-item :label="column.label" :prop="column.prop">
-                <el-input v-model="form[column.prop]" placeholder="输入修改的值"
+                <el-input v-model="form[column.prop]" :placeholder="$t('genotype.file.placeholder')"
                   :disabled="isUnmodifiableColumn(column.prop)" />
               </el-form-item>
             </template>
@@ -54,12 +55,13 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="success" plain @click.passive="updateFileData" >
-            保存
+            {{ $t('genotype.file.button_save') }}
           </el-button>
-          <el-button type="info" plain @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="info" plain @click="dialogFormVisible = false">{{ $t('genotype.file.button_cancel') }}</el-button>
         </div>
       </template>
     </el-dialog>
+  </el-config-provider>
   </div>
 </template>
   
@@ -74,6 +76,16 @@ import {
   modifiFileData,
   endUpdate,
 } from "@/api/infomanage/genotype";
+
+
+import { computed } from "@vue/reactivity";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 
 // vue实例
 const {
@@ -93,8 +105,8 @@ const dialogFormVisible = ref(false); // 表单可见
 const form = reactive({});
 
 const rules = reactive({
-  key: [{ required: true, message: "Please input key name", trigger: "blur" }],
-  value: [{ required: true, message: "Please input value", trigger: "blur" }],
+  key: [{ required: true, message: i18n.t('genotype.file.key'), trigger: "blur" }],
+  value: [{ required: true, message: i18n.t('genotype.file.value'), trigger: "blur" }],
 });
 
 function formatTableCell(value) {
@@ -202,7 +214,7 @@ function exportFile() {
   exportGenoFile(tableName.value)
     .then((res) => {
       console.log(res);
-      $modal.msg("文件生成中，请等待！");
+      $modal.msg(i18n.t('genotype.file.wait'));
       $download.resource(res.data);
     })
     .catch((err) => {
@@ -284,7 +296,7 @@ function updateFileData() {
   modifiFileData(payload)
     .then((res) => {
       console.log(res);
-      $modal.msgSuccess(res.msg);
+      $modal.msgSuccess(i18n.t('phenotype.file.message_updateSuccess'));
 
       // 清空表单输入
       for (const column of columns.value) {
@@ -295,7 +307,7 @@ function updateFileData() {
     })
     .catch((err) => {
       console.error(err);
-      $modal.msgError(err.msg); // 这应该是 res.msg 吗？
+      $modal.msgError(i18n.t('phenotype.file.message_updateFail')); // 这应该是 res.msg 吗？
     });
 }
 

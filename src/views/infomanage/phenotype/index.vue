@@ -13,7 +13,6 @@
 
       <!-- //右边的盒子 -->
       <el-container>
-        <!-- //右边的盒子 -->
         <el-main width="78%" style="padding: 0; height: calc(100vh - 150px); " class="right-box">
           <div style="height: auto;">
             <div class="div1">
@@ -39,7 +38,8 @@
                 v-hasPermi="['system:logininfor:add']">{{ $t('phenotype.index.file_add') }}</el-button>
               <el-button icon="delete" type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
                 v-hasPermi="['system:logininfor:remove']">{{ $t('phenotype.index.file_delete') }}</el-button>
-              <!-- 表格部分 --><el-container style="min-height: calc(100vh - 400px);">
+              <!-- 表格部分 -->
+              <el-container style="min-height: calc(100vh - 400px);">
                 <el-table v-loading="tableLoading" max-height="100%" :data="fileList"
                   @selection-change="handleSelectionChange" stripe fit class="mytable">
                   <el-table-column type="selection" min-width="55" align="center" fixed="left" />
@@ -47,7 +47,7 @@
                   <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
                   <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
                   <el-table-column :label="$t('phenotype.index.table_fileName')" width="250" align="center" prop="fileName" />
-                  <el-table-column :label="$t('phenotype.index.table_speciesName')" align="center" prop="speciesName" width="100px" />
+                  <el-table-column :label="$t('phenotype.index.table_speciesName')" align="center" prop="speciesName" width="120px" />
                   <el-table-column :label="$t('phenotype.index.table_populationName')" align="center" width="200px" prop="populationName" />
                   <el-table-column :label="$t('phenotype.index.table_year')" align="center" prop="year" />
                   <el-table-column :label="$t('phenotype.index.table_location')" align="center" prop="location" />
@@ -146,9 +146,9 @@
             :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
             :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
             <el-button type="primary">{{ $t('phenotype.index.upload') }}</el-button>
-            <!-- <template #tip>
+            <template #tip>
               <div class="el-upload__tip">select a file to upload</div>
-            </template> -->
+            </template>
           </el-upload>
         </el-form-item>
         <el-form-item>
@@ -191,7 +191,7 @@
 <script setup name="phenoType">
 import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import {listFile, updateFile, delFile, listFileHistory} from "@/api/infomanage/phenoType";
+import {listFile, updateFile, delFile, mergeChunkApi, uploadFileEndApi} from "@/api/infomanage/phenotype";
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -219,33 +219,33 @@ const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : e
 // )
 
 const messages = {
-  message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')),
-  message_input_fileName: computed(() => i18n.t('phenotype.index.message_input_fileName')),
-  message_input_nodeName: computed(() => i18n.t('phenotype.index.message_input_nodeName')),
-  message_input_status: computed(() => i18n.t('phenotype.index.message_input_status')),
-  message_input_date: computed(() => i18n.t('phenotype.index.message_input_date')),
-  message_upload_csv: computed(() => i18n.t('phenotype.index.message_upload_csv')),
-  message_upload_wait: computed(() => i18n.t('phenotype.index.message_upload_wait')),
-  message_upload_compare: computed(() => i18n.t('phenotype.index.message_upload_compare')),
-  message_upload_fail: computed(() => i18n.t('phenotype.index.message_upload_fail')),
-  message_upload_success: computed(() => i18n.t('phenotype.index.message_upload_success')),
-  message_delete_select: computed(() => i18n.t('phenotype.index.message_delete_select')),
-  message_delete_confirm: computed(() => i18n.t('phenotype.index.message_delete_confirm')),
-  message_delete_success: computed(() => i18n.t('phenotype.index.message_delete_success')),
-  message_delete_fail: computed(() => i18n.t('phenotype.index.message_delete_fail')),
-  message_update_success: computed(() => i18n.t('phenotype.index.message_update_succcess')),
-  message_update_fail: computed(() => i18n.t('phenotype.index.message_update_fail')),
-  message_downloading: computed(() => i18n.t('phenotype.index.message_downloading')),
-  message_node_parent: computed(() => i18n.t('phenotype.index.message_node_parent')),
-  message_node_add_success: computed(() => i18n.t('phenotype.index.message_node_add_success')),
-  message_node_add_fail: computed(() => i18n.t('phenotype.index.message_node_add_fail')),
-  message_node_update_success: computed(() => i18n.t('phenotype.index.message_node_update_success')),
-  message_node_update_fail: computed(() => i18n.t('phenotype.index.message_node_update_fail')),
-  message_node_select: computed(() => i18n.t('phenotype.index.message_node_select')),
-  message_node_confirm: computed(() => i18n.t('phenotype.index.message_node_confirm')),
-  message_node_delete_success: computed(() => i18n.t('phenotype.index.message_node_delete_success')),
-  message_file_confirm: computed(() => i18n.t('phenotype.index.message_file_confirm')),
-  
+  message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')).value,
+  message_input_fileName: computed(() => i18n.t('phenotype.index.message_input_fileName')).value,
+  message_input_nodeName: computed(() => i18n.t('phenotype.index.message_input_nodeName')).value,
+  message_input_status: computed(() => i18n.t('phenotype.index.message_input_status')).value,
+  message_input_date: computed(() => i18n.t('phenotype.index.message_input_date')).value,
+  message_upload_csv: computed(() => i18n.t('phenotype.index.message_upload_csv')).value,
+  message_upload_wait: computed(() => i18n.t('phenotype.index.message_upload_wait')).value,
+  message_upload_compare: computed(() => i18n.t('phenotype.index.message_upload_compare')).value,
+  message_upload_fail: computed(() => i18n.t('phenotype.index.message_upload_fail')).value,
+  message_upload_success: computed(() => i18n.t('phenotype.index.message_upload_success')).value,
+  message_delete_select: computed(() => i18n.t('phenotype.index.message_delete_select')).value,
+  message_delete_confirm: computed(() => i18n.t('phenotype.index.message_delete_confirm')).value,
+  message_delete_success: computed(() => i18n.t('phenotype.index.message_delete_success')).value,
+  message_delete_fail: computed(() => i18n.t('phenotype.index.message_delete_fail')).value,
+  message_update_success: computed(() => i18n.t('phenotype.index.message_update_success')).value,
+  message_update_fail: computed(() => i18n.t('phenotype.index.message_update_fail')).value,
+  message_downloading: computed(() => i18n.t('phenotype.index.message_downloading')).value,
+  message_node_parent: computed(() => i18n.t('phenotype.index.message_node_parent')).value,
+  message_node_add_success: computed(() => i18n.t('phenotype.index.message_node_add_success')).value,
+  message_node_add_fail: computed(() => i18n.t('phenotype.index.message_node_add_fail')).value,
+  message_node_update_success: computed(() => i18n.t('phenotype.index.message_node_update_success')).value,
+  message_node_update_fail: computed(() => i18n.t('phenotype.index.message_node_update_fail')).value,
+  message_node_select: computed(() => i18n.t('phenotype.index.message_node_select')).value,
+  message_node_confirm: computed(() => i18n.t('phenotype.index.message_node_confirm')).value,
+  message_node_delete_success: computed(() => i18n.t('phenotype.index.message_node_delete_success')).value,
+  message_file_confirm: computed(() => i18n.t('phenotype.index.message_file_confirm')).value,
+  mergeSuccess:computed(() => i18n.t('phenotype.index.mergeSuccess')).value,
 };
 
 const titles ={
@@ -292,11 +292,6 @@ const textMaps = {
   other: titles.other.value,
   createNode: titles.createNode.value,
   updateNode: titles.updateNode.value,
-  // create: computed(() => i18n.t('phenotype.index.title_create')),
-  // update:computed(() => i18n.t('phenotype.index.title_update')),
-  // other: computed(() => i18n.t('phenotype.index.title_other')),
-  // createNode: computed(() => i18n.t('phenotype.index.createNode')),
-  // updateNode: computed(() => i18n.t('phenotype.index.updateNode')),
 };
 
 // 表单实例
@@ -384,44 +379,181 @@ const handleBeforeUpload = (file) => {
   return isCsv;
 };
 
-/* const handleUploadFile = (file) => {
-  // Handle file upload
-  console.log(file);
-}; */
+let isNormalFile = 1
+let url = ''
+async function openCreateData() {
+  //判断文件大小
+  if (uploadFileList.value[0].raw.size > 1024 * 1024 * 50) {
+    isNormalFile = 0;
+  } else {
+    isNormalFile = 1;
+  }
+  if (isNormalFile === 0) {
+    //是大文件，调用大文件上传接口
+    await upLoadHugeFile();
+  } else {
+    createData();
+  }
+}
+
 
 const createData = async () => {
   const valid = await form.value.validate();
-  console.log(valid);
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-      }&fileName=${dataForm.fileName}&pointStatus=${0}`;
+    }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
+    }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+    }&fileName=${dataForm.fileName}&pointStatus=${0}`;
+    $modal.msg(messages.message_upload_wait);
 
-    $modal.msg(i18n.t('phenotype.index.message_upload_wait'));
-    await upload.value.submit();
-    isDisabled.value = true;
-    tableLoading.value = false;
-    tableName.value = "";
+    try {
+      await upload.value.submit();
+    } catch (err) {
+      $modal.msgError(err)
+    } finally {
+      $modal.msgSuccess(message.message_upload_success)
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(async () => {
+        getList();
+      }, 4000);
+      uploadUrl.value = `${
+          import.meta.env.VITE_APP_UPLOAD_URL
+      }/phenotypeFile/upload?treeId=${
+          tree.value.getCurrentNode().treeId
+      }&status=${dataForm.fileStatus ? 1 : 0}&remark=${
+          dataForm.remark
+      }&fileName=${
+          dataForm.fileName
+      }&pointStatus=${isNormalFile}`;
+      await upload.value.submit();
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      url = "";
+    }
   }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-};
+}
 
-const tableName = ref("");
+// 分片上传
+  const uploadChunk = (formData) => {
+    console.log('任务开始');
+    return axios.post(
+        `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + getToken(),
+          },
+        }
+    )
+  }
+
+// 检查文件编码格式
+  const chectCharDet = () => {
+    ElMessage.info('上传文件较大，正在检查文件编码格式...')
+    return new Promise((resolve, reject) => {
+      const file = uploadFileList.value[0].raw;
+      const reader = new FileReader();
+      let isUTF8 = false
+      reader.onload = (event) => {
+        const fileData = event.target.result;
+        // 遍历字符串，检查是否有汉字
+        const strList = fileData.split('');
+        isUTF8 = strList.some((str) => isZh(str));
+        resolve(isUTF8)
+      }
+      reader.readAsText(file);
+    })
+  }
+
+// 判断是否有汉字
+  const isZh = (str) => {
+    let re = /[^\u4e00-\u9fa5]/;
+    if (re.test(str)) return false;
+    return true;
+  };
+
+//大文件分块上传
+  const upLoadHugeFile = async () => {
+    const isUTF8 = await chectCharDet()
+    if (!isUTF8) return ElMessage.warning('请将文件转为utf-8编码后进行上传！')
+    ElMessage.info('文件体积较大，正在上传，请耐心等待')
+    return new Promise(async (reslove, reject) => {
+      if (!uploadFileList.value[0]) return;
+      //获取文件并将其修改为file对象
+      const file = uploadFileList.value[0].raw;
+      //分片大小
+      const chunkSize = 20 * 1024 * 1024; // 20*1MB
+      //分片数
+      const totalChunks = Math.ceil(file.size / chunkSize);
+      // 创建分片上传任务
+      const tasks = [];
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(file.size, start + chunkSize);
+        const chunk = file.slice(start, end);
+        const temp = new File([chunk], file.name);
+
+        // 创建formData对象
+        const formData = new FormData();
+        formData.append("file", temp);
+        formData.append("totalChunks", totalChunks);
+        formData.append("currentChunk", i);
+        tasks.push(
+            uploadChunk(formData)
+        )
+      }
+      // 上传分片
+      const uploadRes = await Promise.all(tasks);
+      console.log(uploadRes);
+      if (uploadRes.some(item => item.data.code !== 200)) {
+        // 上传失败
+        $modal.msgError('上传失败');
+        return;
+      }
+      // 合并分片
+      try {
+        const mergeRes = await mergeChunkApi(file.name, tree.value.getCurrentNode().treeId, 1)
+        url = mergeRes.data.replace(/\\/g, "/");
+        const params = {
+          treeId: tree.value.getCurrentNode().treeId,
+          status: dataForm.fileStatus ? 1 : 0,
+          remark: dataForm.remark,
+          fileName: dataForm.fileName,
+          pointStatus: isNormalFile,
+          filePath: url
+        }
+        console.log('params', params);
+        // 发送文件信息用于后端保存文件
+        uploadFileSuccess({code: 200, msg: '上传成功，文件较大，请等待后台处理'});
+        await uploadFileEndApi(params)
+        getList();
+      } catch (err) {
+        $modal.msgError('上传失败');
+        console.error(err);
+        return;
+      } finally {
+        console.log('合并结束');
+        // 执行成功回调
+        reslove();
+      }
+    })
+  }
+  const tableName = ref("");
 
 //文件合并
-function mergeFile(row) {
-  dialogStatus.value = "other";
-  tableName.value = row.tableName;
-  uploadFileList.value = [];
-  resetForm();
-  dialogFormVisible.value = true;
-  isDisabled2.value = false;
-  /* fileList.value = [];
+  function mergeFile(row) {
+    dialogStatus.value = "other";
+    tableName.value = row.tableName;
+    uploadFileList.value = [];
+    resetForm();
+    dialogFormVisible.value = true;
+    isDisabled2.value = false;
+    /* fileList.value = [];
   dialogFormVisible.value = true;
   form.value.validate((valid) => {
     if (valid) {
@@ -436,37 +568,43 @@ function mergeFile(row) {
       });
     }
   }); */
-  //dialogFormVisible.value = false;
-}
+    //dialogFormVisible.value = false;
+  }
 
 //文件合并
 
-const mergeData = async () => {
-  const valid = await form.value.validate();
-  console.log(valid);
-  if (valid) {
-    uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
+  const mergeData = async () => {
+    const valid = await form.value.validate();
+    console.log(valid);
+    if (valid) {
+      uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
-    $modal.msg(i18n.t('phenotype.index.message_upload_wait'));
-    await upload.value.submit();
-    console.log("2");
-    isDisabled2.value = true;
 
-    console.log("4");
-    tableLoading.value = false;
-    console.log("5");
-    tableName.value = "";
-  }
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-};
+      $modal.msg(messages.message_upload_wait);
+
+      try {
+        await upload.value.submit();
+      } catch (err) {
+        $modal.msgError(err)
+      } finally {
+        $modal.msgSuccess(messages.mergeSuccess)
+        console.log("2");
+        isDisabled.value = true;
+        console.log("3");
+        console.log("4");
+        tableLoading.value = false;
+        tableName.value = "";
+        dialogFormVisible.value = false;
+        setTimeout(async () => {
+          getList();
+        }, 4000);
+      }
+    }
+  };
 
 // 文件创建
-/* function createData() {
+  /* function createData() {
   form.value.validate((valid) => {
     if (valid) {
       uploadUrl.value = `${
@@ -492,69 +630,70 @@ const mergeData = async () => {
 } */
 
 // 文件上传成功回调
-async function uploadFileSuccess(response) {
-  if (response.code === 200) {
-    $modal.msgSuccess(response.msg);
-  } else {
-    $modal.msgError(i18n.t('phenotype.index.message_upload_compare'));
+  async function uploadFileSuccess(response) {
+    if (response.code === 200) {
+      $modal.msgSuccess(response.msg);
+    } else {
+      $modal.msgError(i18n.t('phenotype.index.message_upload_compare'));
+    }
+    //$modal.msgSuccess("上传成功");
+
+    isDisabled.value = false;
+    const curNode = tree.value.getCurrentNode();
+    //upload.value.clearFiles();
+
+    getList();
+    rowClick(curNode);
+    dialogFormVisible.value = false;
   }
-  //$modal.msgSuccess("上传成功");
-
-  isDisabled.value = false;
-  const curNode = tree.value.getCurrentNode();
-  //upload.value.clearFiles();
-
-  getList();
-  rowClick(curNode);
-  dialogFormVisible.value = false;
-}
 
 // 文件上传失败回调
-const uploadFileError = (error, file, uploadFileList) => {
-  console.log("File upload error", error);
-  $modal.msgError(i18n.t('phenotype.index.message_upload_fail'));
-};
+  const uploadFileError = (error, file, uploadFileList) => {
+    console.log("File upload error", error);
+    $modal.msgError(i18n.t('phenotype.index.message_upload_fail'));
+  };
 
 //更新文件
-async function updateData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
+  async function updateData() {
+    form.value.validate((valid) => {
+      if (valid) {
+        uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
         }/phenotypeFile/upload?fileName=${dataForm.fileName}&description=${dataForm.description
         }&fileStatus=${dataForm.fileStatus ? 1 : 0}&treeId=${tree.value.getCurrentNode().treeId
         }&dateTime=${parseTime(dataForm.dateTime)}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  });
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
+        nextTick(async () => {
+          tableLoading.value = false;
+          await upload.value.submit();
+          isDisabled.value = true;
+          getList();
+        });
+      }
+    });
+    dialogFormVisible.value = false;
     getList();
-  }, 4000);
-}
+    setTimeout(() => {
+      getList();
+    }, 4000);
+  }
+
 
 //取消文件对话框
-function deleteUploadData() {
-  dialogFormVisible.value = false;
-  isDisabled.value = false;
-  /*rules.value = {}; */
-  if (form.value) {
-    form.value.resetFields();
+  function deleteUploadData() {
+    dialogFormVisible.value = false;
+    isDisabled.value = false;
+    /*rules.value = {}; */
+    if (form.value) {
+      form.value.resetFields();
+    }
+    getList();
   }
-  getList();
-}
 
 //关闭添加文件窗口
-const dialogClosed = () => {
-  getList();
-};
+  const dialogClosed = () => {
+    getList();
+  };
 
-/* const dialogClosed = () => {
+  /* const dialogClosed = () => {
   if (form.value) {
     form.value.resetFields();
   }
@@ -562,14 +701,14 @@ const dialogClosed = () => {
 }; */
 
 // 文件替换
-function handleExceed(files) {
-  upload.value?.clearFiles();
-  const file = files[0];
-  file.uid = genFileId();
-  upload.value?.handleStart(file);
-}
+  function handleExceed(files) {
+    upload.value?.clearFiles();
+    const file = files[0];
+    file.uid = genFileId();
+    upload.value?.handleStart(file);
+  }
 
-/* // 文件修改
+  /* // 文件修改
 async function updateData() {
   form.value.validate((valid) => {
     if (valid) {
@@ -589,436 +728,421 @@ async function updateData() {
 } */
 
 // 文件表格
-const fileList = ref([]); // 文件列表
-const uploadFileList = ref([]); // 上传文件列表
-const historyFileList = ref([]); //历史文件版本
-const ids = ref([]); // 选中数组
-const multiple = ref(false); // 是否多选
+  const fileList = ref([]); // 文件列表
+  const uploadFileList = ref([]); // 上传文件列表
+  const historyFileList = ref([]); //历史文件版本
+  const ids = ref([]); // 选中数组
+  const multiple = ref(false); // 是否多选
 
 // 打开添加文件对话框
-function handleAdd() {
-  dialogStatus.value = "create";
-  uploadFileList.value = [];
-  resetForm();
-  dialogFormVisible.value = true;
-  isDisabled.value = false;
-}
+  function handleAdd() {
+    dialogStatus.value = "create";
+    uploadFileList.value = [];
+    resetForm();
+    dialogFormVisible.value = true;
+    isDisabled.value = false;
+  }
 
 // 删除文件
-function handleDelete() {
-  if (ids.value.length == 0) {
-    $modal.msg(i18n.t('phenotype.index.message_delete_select'));
-  } else {
-    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
-      delFile(ids.value)
-        .then((res) => {
-          console.log("222");
-          $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
-          getList();
-        })
-        .catch((err) => {
-          $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
-        });
-    });
+  function handleDelete() {
+    if (ids.value.length == 0) {
+      $modal.msg(i18n.t('phenotype.index.message_delete_select'));
+    } else {
+      $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+        delFile(ids.value)
+            .then((res) => {
+              console.log("222");
+              $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
+              getList();
+            })
+            .catch((err) => {
+              $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
+            });
+      });
+    }
   }
-}
 
-const allFileId = ref([]);
+  const allFileId = ref([]);
 
 // 请求文件列表
-function getList() {
-  tableLoading.value = true;
-  listFile({
-    ...queryParams,
-    treeId: tree.value.getCurrentNode().treeId,
-    fileStatus: roles[0] === "admin" ? null : 1,
-  })
-    .then((res) => {
-      tableLoading.value = false;
-      fileList.value = res.rows.map((item) => ({
-        ...item,
-        fileStatus: item.status === 1,
-      }));
-      fileList.value.forEach((item) => {
-        allFileId.value.push(item.fileId);
-      });
-      fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
-      uploadFileList.value = fileList.value;
-      total.value = res.total;
+  function getList() {
+    tableLoading.value = true;
+    listFile({
+      ...queryParams,
+      treeId: tree.value.getCurrentNode().treeId,
+      fileStatus: roles[0] === "admin" ? null : 1,
     })
-    .catch((err) => {
-      tableLoading.value = false;
-      $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
-    });
-}
+        .then((res) => {
+          tableLoading.value = false;
+          fileList.value = res.rows.map((item) => ({
+            ...item,
+            fileStatus: item.status === 1,
+          }));
+          fileList.value.forEach((item) => {
+            allFileId.value.push(item.fileId);
+          });
+          fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
+          uploadFileList.value = fileList.value;
+          total.value = res.total;
+        })
+        .catch((err) => {
+          tableLoading.value = false;
+          $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
+        });
+  }
 
 // 选择文件项
-function handleSelectionChange(selection) {
-  ids.value = [];
-  selection.forEach((item) => {
-    ids.value.push(item.fileId);
-  });
-}
+  function handleSelectionChange(selection) {
+    ids.value = [];
+    selection.forEach((item) => {
+      ids.value.push(item.fileId);
+    });
+  }
 
 // 更新是否公开选项
-async function updateFileStatus(row) {
-  updateFile({
-    fileId: row.fileId,
-    status: row.fileStatus,
-  })
-    .then((res) => {
-      $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
+  async function updateFileStatus(row) {
+    updateFile({
+      fileId: row.fileId,
+      status: row.fileStatus,
     })
-    .catch((err) => {
-      $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
-    });
-}
+        .then((res) => {
+          $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
+        })
+        .catch((err) => {
+          $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
+        });
+  }
 
 // 下载文件
-const downloadLoading = ref(false);
-let downloadTimer = null;
-async function handleDownload(row) {
-  if (downloadLoading.value) {
-    return; // Prevent multiple downloads while in progress
-  }
-  $modal.msg(i18n.t('phenotype.index.message_downloading'));
-  downloadLoading.value = true;
-  try {
-    await $download.resource(row.url);
+  const downloadLoading = ref(false);
+  let downloadTimer = null;
 
-    downloadTimer = setTimeout(() => {
+  async function handleDownload(row) {
+    if (downloadLoading.value) {
+      return; // Prevent multiple downloads while in progress
+    }
+    $modal.msg(i18n.t('phenotype.index.message_downloading'));
+    downloadLoading.value = true;
+    try {
+      await $download.resource(row.url);
+
+      downloadTimer = setTimeout(() => {
+        downloadLoading.value = false;
+        clearTimeout(downloadTimer);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
       downloadLoading.value = false;
-      clearTimeout(downloadTimer);
-    }, 5000);
-  } catch (error) {
-    console.log(error);
-    downloadLoading.value = false;
+    }
   }
-}
 
 // 修改文件
-function handleUpdate(row) {
-  dataForm.fileId = row.fileId;
-  dataForm.fileName = row.fileName;
-  dataForm.description = row.description;
-  dataForm.fileStatus = row.fileStatus;
-  dataForm.dateTime = row.dateTime;
-  dialogFormVisible.value = true;
-  dialogStatus.value = "update";
-}
+  function handleUpdate(row) {
+    dataForm.fileId = row.fileId;
+    dataForm.fileName = row.fileName;
+    dataForm.description = row.description;
+    dataForm.fileStatus = row.fileStatus;
+    dataForm.dateTime = row.dateTime;
+    dialogFormVisible.value = true;
+    dialogStatus.value = "update";
+  }
 
 // 删除文件
-function deleteFile(row) {
-  $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
-    delFile([row.fileId])
-      .then((res) => {
-        $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
-        getList();
-      })
-      .catch((err) => {
-        $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
-      });
-  });
-}
+  function deleteFile(row) {
+    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+      delFile([row.fileId])
+          .then((res) => {
+            $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
+            getList();
+          })
+          .catch((err) => {
+            $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
+          });
+    });
+  }
 
 //跳转文件详情
-const openfile = (row) => {
-  console.log(row.tableName, "klkl");
-  router.push({
-    path: "/phenotype/file", // 跳转到的目标页面的路由名称
-    query: { id: row.fileId, tableName: row.tableName },
-  });
-};
+  const openfile = (row) => {
+    console.log(row.tableName, "klkl");
+    router.push({
+      path: "/phenotype/file", // 跳转到的目标页面的路由名称
+      query: {id: row.fileId, tableName: row.tableName},
+    });
+  };
 
 //跳转可视化
-const fileVisual = (row) => {
-  router.push({
-    path: "/phenotype/fileVisual", // 跳转到的目标页面的路由名称
-    query: { id: row.fileId, tableName: row.tableName },
-  });
-};
+  const fileVisual = (row) => {
+    router.push({
+      path: "/phenotype/fileVisual", // 跳转到的目标页面的路由名称
+      query: {id: row.fileId, tableName: row.tableName},
+    });
+  };
 
 //查看文件历史版本
-function openHistory(row) {
-  historyTableLoading.value = true;
-  historyFormVisible.value = true;
-  listFileHistory({
-    ...queryParams,
-    treeId: tree.value.getCurrentNode().treeId,
-    fileStatus: roles[0] === "admin" ? null : 1,
-    tableName: row.tableName,
-  })
-    .then((res) => {
-      tableLoading.value = false;
-      historyFileList.value = res.rows.map((item) => ({
-        ...item,
-        fileStatus: item.status === 1,
-      }));
-      historyFileList.value.forEach((item) => {
-        allFileId.value.push(item.fileId);
-      });
-      historyTableLoading.value = false;
+  function openHistory(row) {
+    historyTableLoading.value = true;
+    historyFormVisible.value = true;
+    listFileHistory({
+      ...queryParams,
+      treeId: tree.value.getCurrentNode().treeId,
+      fileStatus: roles[0] === "admin" ? null : 1,
+      tableName: row.tableName,
     })
-    .catch((err) => {
-      tableLoading.value = false;
-      historyTableLoading.value = false;
-      $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
-    });
-}
+        .then((res) => {
+          tableLoading.value = false;
+          historyFileList.value = res.rows.map((item) => ({
+            ...item,
+            fileStatus: item.status === 1,
+          }));
+          historyFileList.value.forEach((item) => {
+            allFileId.value.push(item.fileId);
+          });
+          historyTableLoading.value = false;
+        })
+        .catch((err) => {
+          tableLoading.value = false;
+          historyTableLoading.value = false;
+          $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
+        });
+  }
 
 // 表单提交
-const total = ref(2);
-const queryParams = reactive({
-  pageNum: 1,
-  pageSize: 10,
-  treeId: "",
-  fileId: "",
-  fileName: "",
-  description: "",
-  fileStatus: "",
-  dateTime: "",
-});
-const showSearch = ref(true);
-const queryForm = ref(null); // 查询表单dom元素
-const handleQuery = async () => {
-  // 查询回调
-  queryParams.treeId = tree.value.getCurrentNode().treeId;
+  const total = ref(2);
+  const queryParams = reactive({
+    pageNum: 1,
+    pageSize: 10,
+    treeId: "",
+    fileId: "",
+    fileName: "",
+    description: "",
+    fileStatus: "",
+    dateTime: "",
+  });
+  const showSearch = ref(true);
+  const queryForm = ref(null); // 查询表单dom元素
+  const handleQuery = async () => {
+    // 查询回调
+    queryParams.treeId = tree.value.getCurrentNode().treeId;
 
-  getList();
-};
+    getList();
+  };
 
-const resetQuery = () => {
-  queryParams.pageNum = 1;
-  queryParams.pageSize = 10;
-  queryParams.treeId = 0;
-  queryParams.fileId = "";
-  queryParams.fileName = "";
-  queryParams.description = "";
-  queryParams.fileStatus = true;
-  getList();
-};
+  const resetQuery = () => {
+    queryParams.pageNum = 1;
+    queryParams.pageSize = 10;
+    queryParams.treeId = 0;
+    queryParams.fileId = "";
+    queryParams.fileName = "";
+    queryParams.description = "";
+    queryParams.fileStatus = true;
+    getList();
+  };
 
 // 树控件
-const routesData = ref([
-  /*  {
-    treeName: "Level one 1",
-    treeId: "1",
-    children: [
-      {
-        treeName: "Level two 1-1",
-        treeId: "11",
-        children: [
-          {
-            treeName: "Level three 1-1-1",
-            treeId: "111",
-          },
-        ],
-      },
-    ],
-  }, */
-]);
+  const routesData = ref([]);
 
 // 树表单
-const treeForm = reactive({
-  treeName: "",
-  isShow: true,
-});
+  const treeForm = reactive({
+    treeName: "",
+    isShow: true,
+  });
 
-const dialogTreeFormVisible = ref(false); // 树表单可见
-const historyFormVisible = ref(false); //历史上传记录表单
-const dataTreeForm = ref(null); // 树表单dom实例
-const dialogTreeStatus = ref("createNode");
+  const dialogTreeFormVisible = ref(false); // 树表单可见
+  const historyFormVisible = ref(false); //历史上传记录表单
+  const dataTreeForm = ref(null); // 树表单dom实例
+  const dialogTreeStatus = ref("createNode");
 //树表单验证规则
-const treeRules = reactive({
-  treeName: [
-    { required: true, message: messages.message_input_nodeName, trigger: "blur" },
-  ],
-  isShow: [{ required: true, message: messages.message_input_status, trigger: "blur" }],
-});
+  const treeRules = reactive({
+    treeName: [
+      {required: true, message: messages.message_input_nodeName, trigger: "blur"},
+    ],
+    isShow: [{required: true, message: messages.message_input_status, trigger: "blur"}],
+  });
 
 // 树组件节点属性
-const defaultProps = ref({
-  children: "children",
-  label: "treeName",
-});
-
-const treeType = ref(4); // 树的种类
-const tree = ref(null); // 数的dom实例
-const firstLeafNode = ref(null);
-const firstLeafNodeKey = ref(null);
-
-const getTreeList = () => {
-  getTree(treeType.value, 0, 1).then((res) => {
-    routesData.value = res.data.children;
-    const firstLeafNodeParent = findFirstLeafNodeParent(routesData.value);
-
-    if (firstLeafNodeParent) {
-      nextTick(() => {
-        const treeComponent = tree.value;
-
-        if (treeComponent) {
-          treeComponent.setCurrentKey(firstLeafNodeParent.treeId);
-          rowClick(firstLeafNodeParent);
-        }
-      });
-    }
+  const defaultProps = ref({
+    children: "children",
+    label: "treeName",
   });
-};
+
+  const treeType = ref(4); // 树的种类
+  const tree = ref(null); // 数的dom实例
+  const firstLeafNode = ref(null);
+  const firstLeafNodeKey = ref(null);
+
+  const getTreeList = () => {
+    getTree(treeType.value, 0, 1).then((res) => {
+      routesData.value = res.data.children;
+      const firstLeafNodeParent = findFirstLeafNodeParent(routesData.value);
+
+      if (firstLeafNodeParent) {
+        nextTick(() => {
+          const treeComponent = tree.value;
+
+          if (treeComponent) {
+            treeComponent.setCurrentKey(firstLeafNodeParent.treeId);
+            rowClick(firstLeafNodeParent);
+          }
+        });
+      }
+    });
+  };
 
 // 递归查找第一个叶子节点的父节点的函数
-function findFirstLeafNodeParent(nodes, parentNode = null) {
-  for (const node of nodes) {
-    if (!node.children || node.children.length === 0) {
-      // 如果当前节点是叶子节点，返回其父节点
-      return parentNode;
-    } else {
-      const firstLeafParent = findFirstLeafNodeParent(node.children, node);
-      if (firstLeafParent) {
-        return firstLeafParent;
+  function findFirstLeafNodeParent(nodes, parentNode = null) {
+    for (const node of nodes) {
+      if (!node.children || node.children.length === 0) {
+        // 如果当前节点是叶子节点，返回其父节点
+        return parentNode;
+      } else {
+        const firstLeafParent = findFirstLeafNodeParent(node.children, node);
+        if (firstLeafParent) {
+          return firstLeafParent;
+        }
       }
     }
+    return null;
   }
-  return null;
-}
 
 // 递归查找第一个叶子节点的函数
-function findFirstLeafNode(nodes) {
-  for (const node of nodes) {
-    if (!node.children || node.children.length === 0) {
-      return node;
-    } else {
-      const firstLeaf = findFirstLeafNode(node.children);
-      if (firstLeaf) {
-        return firstLeaf;
+  function findFirstLeafNode(nodes) {
+    for (const node of nodes) {
+      if (!node.children || node.children.length === 0) {
+        return node;
+      } else {
+        const firstLeaf = findFirstLeafNode(node.children);
+        if (firstLeaf) {
+          return firstLeaf;
+        }
       }
     }
+    return null;
   }
-  return null;
-}
 
 // 重置树表单
-function resetTreeForm() {
-  treeForm.treeName = "";
-  treeForm.isShow = true;
-}
+  function resetTreeForm() {
+    treeForm.treeName = "";
+    treeForm.isShow = true;
+  }
 
 // 添加节点
-function addChildNode() {
-  if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
-    $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
-    return;
+  function addChildNode() {
+    if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
+      $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
+      return;
+    }
+    resetTreeForm();
+    dialogTreeStatus.value = "createNode";
+    dialogTreeFormVisible.value = true;
   }
-  resetTreeForm();
-  dialogTreeStatus.value = "createNode";
-  dialogTreeFormVisible.value = true;
-}
 
 // 修改节点
-function updateChildNode() {
-  if (!tree.value.getCurrentNode()) {
-    $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
-    return;
+  function updateChildNode() {
+    if (!tree.value.getCurrentNode()) {
+      $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
+      return;
+    }
+    resetTreeForm();
+    dialogTreeStatus.value = "updateNode";
+    dialogTreeFormVisible.value = true;
   }
-  resetTreeForm();
-  dialogTreeStatus.value = "updateNode";
-  dialogTreeFormVisible.value = true;
-}
 
 //下载模板文件
-function downloadTemplate() {
-  //下载
-  $download.resource(
-    "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\表型数据模板.csv"
-  );
-}
+  function downloadTemplate() {
+    //下载
+    $download.resource(
+        "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\表型数据模板.csv"
+    );
+  }
 
 // 创建树节点
-function createTreeData() {
-  dataTreeForm.value.validate((valid) => {
-    if (valid) {
-      const id = tree.value.getCurrentNode()
-        ? tree.value.getCurrentNode().treeId
-        : 0;
-      addNode({
-        isShow: treeForm.isShow ? 1 : 0,
-        treeName: treeForm.treeName,
-        parentId: id,
-        treeType: treeType.value,
-      }).then(
-        () => {
-          $modal.msgSuccess(i18n.t('phenotype.index.message_node_add_success'));
-          getTreeList();
-        },
-        () => {
-          $modal.msgError(i18n.t('phenotype.index.message_node_add_fail'));
-        }
-      );
-      dialogTreeFormVisible.value = false;
-    }
-  });
-}
+  function createTreeData() {
+    dataTreeForm.value.validate((valid) => {
+      if (valid) {
+        const id = tree.value.getCurrentNode()
+            ? tree.value.getCurrentNode().treeId
+            : 0;
+        addNode({
+          isShow: treeForm.isShow ? 1 : 0,
+          treeName: treeForm.treeName,
+          parentId: id,
+          treeType: treeType.value,
+        }).then(
+            () => {
+              $modal.msgSuccess(i18n.t('phenotype.index.message_node_add_success'));
+              getTreeList();
+            },
+            () => {
+              $modal.msgError(i18n.t('phenotype.index.message_node_add_fail'));
+            }
+        );
+        dialogTreeFormVisible.value = false;
+      }
+    });
+  }
 
 // 更新树节点
-function updateTreeData() {
-  dataTreeForm.value.validate((valid) => {
-    if (valid) {
-      updateNode({
-        isShow: treeForm.isShow ? 1 : 0,
-        treeName: treeForm.treeName,
-        treeId: tree.value.getCurrentNode().treeId,
-      }).then(
-        () => {
-          $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
-          getTreeList();
-        },
-        () => {
-          $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
-        }
-      );
-      dialogTreeFormVisible.value = false;
-    }
-  });
-}
+  function updateTreeData() {
+    dataTreeForm.value.validate((valid) => {
+      if (valid) {
+        updateNode({
+          isShow: treeForm.isShow ? 1 : 0,
+          treeName: treeForm.treeName,
+          treeId: tree.value.getCurrentNode().treeId,
+        }).then(
+            () => {
+              $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
+              getTreeList();
+            },
+            () => {
+              $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
+            }
+        );
+        dialogTreeFormVisible.value = false;
+      }
+    });
+  }
 
 //删除节点
-function deleteNode() {
-  if (!tree.value.getCurrentNode()) {
-    $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
-    return;
-  }
-  $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
-    const curNode = tree.value.getCurrentNode();
-    const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
-    deleteNodes(curNodeTreeIds).then(() => {
-      $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
-      getTreeList();
+  function deleteNode() {
+    if (!tree.value.getCurrentNode()) {
+      $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
+      return;
+    }
+    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+      const curNode = tree.value.getCurrentNode();
+      const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
+      deleteNodes(curNodeTreeIds).then(() => {
+        $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
+        getTreeList();
+      });
     });
-  });
-}
+  }
 
 //树控件点击回调
-function rowClick(nodeObj) {
-  if (nodeObj.disabled) {
-    return;
-  }
-  /* resetForm(); */
-  treeRules.value = {};
-  /* rules.value = {};  */
-  treeForm.treeName = nodeObj.treeName;
-  if (nodeObj.isShow == 1) {
-    treeForm.isShow == true;
-  } else {
-    treeForm.isShow == false;
+  function rowClick(nodeObj) {
+    if (nodeObj.disabled) {
+      return;
+    }
+    /* resetForm(); */
+    treeRules.value = {};
+    /* rules.value = {};  */
+    treeForm.treeName = nodeObj.treeName;
+    if (nodeObj.isShow == 1) {
+      treeForm.isShow == true;
+    } else {
+      treeForm.isShow == false;
+    }
+
+    queryParams.treeId = nodeObj.treeId;
+    resetQuery();
+    getList();
   }
 
-  queryParams.treeId = nodeObj.treeId;
-  resetQuery();
-  getList();
-}
+  onMounted(() => {
+    getTreeList();
+  })
 
-onMounted(() => {
-  getTreeList();
-});
 
 
 </script>
@@ -1099,7 +1223,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #1FB864;
+  background: #0F5C32;
   margin-top: 10px;
 
   .el-dialog__title {
@@ -1497,7 +1621,8 @@ onMounted(() => {
   }
 }
 
-三级节点选择器 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
+//三级节点选择器 
+:deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;
 

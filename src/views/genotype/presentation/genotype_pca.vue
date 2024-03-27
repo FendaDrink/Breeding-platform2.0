@@ -15,7 +15,7 @@
           <!-- <h1>表型文件选择<i>&nbsp;</i></h1> -->
           <template #header>
             <div class="card-header">
-              <h1>表型文件选择<i>&nbsp;</i></h1>
+              <h1>{{ $t('genotype.pca.header') }}<i>&nbsp;</i></h1>
             </div>
           </template>
           <div v-if="fileList.length" class="big-wrapper" style="margin-top: 10px">
@@ -26,13 +26,13 @@
                   date.fileName }}</el-radio>
               </el-radio-group>
               <el-row>
-                <el-button plain @click="chooseForm" size="large" type="success" >确定</el-button>
+                <el-button plain @click="chooseForm" size="large" type="success" >{{ $t('genotype.index.search') }}</el-button>
                 <!--<el-button @click="handleExitPca(declaredDates)" size="large" type="primary" style="width: 80px">PCA分析</el-button>-->
               </el-row>
             </div>
           </div>
           <div v-else>
-            此节点下无文件
+            {{ $t('genotype.pca.noFile') }}
           </div>
         </el-card>
         <div class="gene-form">
@@ -716,7 +716,8 @@ onMounted(() => {
   height: 60px;
   position: relative;
   background-color: #fff;
-  width: 150px;
+  width: auto;
+  min-width:150px;
 }
 
 .card-header:before,

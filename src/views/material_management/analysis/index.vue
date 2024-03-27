@@ -1,226 +1,235 @@
 <template>
   <div v-loading="pageLoad" style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
-    <el-tabs type="border-card" class="demo-tabs" @tab-click="handleTabClick">
-      <el-tab-pane label="文件选择" style="width: 100%;">
-        <el-card class="card-container" style="margin: 0px !important;">
-          <template #header>
-            <div class="card-header">
-              <h1>文件选择管理<i>&nbsp;</i></h1>
-            </div>
-          </template>
-          <!-- <h1>文件选择管理<i>&nbsp;</i></h1> -->
-          <!-- <div class="uu">
+    <el-config-provider :locale="locale">
+      <el-tabs type="border-card" class="demo-tabs" @tab-click="handleTabClick">
+        <el-tab-pane :label="$t('geneCompare.other.fileSelect')" style="width: 100%;">
+          <el-card class="card-container" style="margin: 0px !important;">
+            <template #header>
+              <div class="card-header">
+                <h1>{{ $t('geneCompare.header1') }}<i>&nbsp;</i></h1>
+              </div>
+            </template>
+            <!-- <h1>文件选择管理<i>&nbsp;</i></h1> -->
+            <!-- <div class="uu">
       文件选择管理
       </div> -->
-          <div class="pheno-box">
-            <!-- <div class="w">
+            <div class="pheno-box">
+              <!-- <div class="w">
             <div class="mb-2 flex items-center text-sm">
               <h4>表型数据集</h4>
             </div>
           </div> -->
-            <el-aside width="20%" class="mokuai card shadow element-plus-tree"
-              style="border-radius: 8px;padding: 0%;margin-top: 20px;">
-              <el-tree v-loading="tree2Load" :style="{ height: scrollerHeight, overflow: 'auto' }" ref="tree"
-                :data="phenoRouteData" :props="defaultProps" node-key="treeId" default-expand-all highlight-current
-                :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
-                class="permission-tree" :expand-on-click-node="false" accordion />
+              <el-aside width="20%" class="mokuai card shadow element-plus-tree"
+                style="border-radius: 8px;padding: 0%;margin-top: 20px;">
+                <el-tree v-loading="tree2Load" :style="{ height: scrollerHeight, overflow: 'auto' }" ref="tree"
+                  :data="phenoRouteData" :props="defaultProps" node-key="treeId" default-expand-all highlight-current
+                  :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
+                  class="permission-tree" :expand-on-click-node="false" accordion />
 
-            </el-aside>
-            <el-main width="78%" style="padding: 0" class="right-box">
-              <div class="table-box">
-                <el-table @select="phandleSelection" v-loading="phenoTableLoad" :data="phenoTableData"
-                  style="width: 100%;" :cell-style="{ 'text-align': 'center' }"
-                  :header-cell-style="{ 'text-align': 'center' }">
-                  <el-table-column type="selection" width="55" />
-                  <el-table-column prop="fileName" label="文件名" width="240" />
-                  <el-table-column prop="speciesName" label="物种名称" width="180" />
-                  <el-table-column prop="populationName" label="群体名称" width="180" />
-                  <el-table-column prop="year" label="采集年份" width="180" />
-                  <el-table-column fixed="right" label="数据类型">
-                    <template #default>
-                      <el-button link type="text" @click="changePhenoToOrigin" class="table_button">原始数据</el-button>
-                      <el-button link type="text" @click="changePhenoToNewest" class="table_button">最新数据</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </el-main>
-          </div>
+              </el-aside>
+              <el-main width="78%" style="padding: 0" class="right-box">
+                <div class="table-box">
+                  <el-table @select="phandleSelection" v-loading="phenoTableLoad" :data="phenoTableData"
+                    style="width: 100%;" :cell-style="{ 'text-align': 'center' }"
+                    :header-cell-style="{ 'text-align': 'center' }">
+                    <el-table-column type="selection" width="55" />
+                    <el-table-column prop="fileName" :label="$t('geneCompare.table.fileName')" width="240" />
+                    <el-table-column prop="speciesName" :label="$t('geneCompare.table.species')" width="180" />
+                    <el-table-column prop="populationName" :label="$t('geneCompare.table.population')" width="180" />
+                    <el-table-column prop="year" :label="$t('geneCompare.table.year')" width="180" />
+                    <el-table-column fixed="right" :label="$t('geneCompare.table.dataType')">
+                      <template #default>
+                        <el-button link type="text" @click="changePhenoToOrigin" class="table_button">{{
+                          $t('geneCompare.button.data1') }}</el-button>
+                        <el-button link type="text" @click="changePhenoToNewest" class="table_button">{{
+                          $t('geneCompare.button.data2') }}</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </el-main>
+            </div>
 
-          <div class="geno-box">
-            <!-- <div class="mb-2 flex items-center text-sm">
+            <div class="geno-box">
+              <!-- <div class="mb-2 flex items-center text-sm">
               <h4>基因型数据集</h4>
             </div> -->
-            <el-aside width="20%" class="mokuai card shadow element-plus-tree"
-              style="border-radius: 8px;padding: 0%;margin-top: 20px;">
-              <el-tree v-loading="tree1Load" ref="tree1" :data="genoRouteData" :props="defaultProps" node-key="treeId"
-                default-expand-all highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey"
-                @node-click="rowClick1" class="permission-tree" :expand-on-click-node="false" accordion />
-            </el-aside>
+              <el-aside width="20%" class="mokuai card shadow element-plus-tree"
+                style="border-radius: 8px;padding: 0%;margin-top: 20px;">
+                <el-tree v-loading="tree1Load" ref="tree1" :data="genoRouteData" :props="defaultProps" node-key="treeId"
+                  default-expand-all highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey"
+                  @node-click="rowClick1" class="permission-tree" :expand-on-click-node="false" accordion />
+              </el-aside>
 
-            <el-main width="78%" style="padding: 0" class="right-box">
-              <div class="table-box">
-                <el-table @select="ghandleSelection" v-loading="genoTableLoad" :data="genoTableData" style="width: 100%;"
-                  :cell-style="{ 'text-align': 'center' }" :header-cell-style="{ 'text-align': 'center' }">
-                  <el-table-column type="selection" width="55" />
-                  <el-table-column prop="fileName" label="文件名" width="240" />
-                  <el-table-column prop="speciesName" label="物种名称" width="180" />
-                  <el-table-column prop="populationName" label="群体名称" width="180" />
-                  <el-table-column fixed="right" label="数据类型">
-                    <template #default>
-                      <el-button link type="text" @click="changeGenoToOrigin" class="table_button">原始数据</el-button>
-                      <el-button link type="text" @click="changeGenoToNewest" class="table_button">最新数据</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
+              <el-main width="78%" style="padding: 0" class="right-box">
+                <div class="table-box">
+                  <el-table @select="ghandleSelection" v-loading="genoTableLoad" :data="genoTableData"
+                    style="width: 100%;" :cell-style="{ 'text-align': 'center' }"
+                    :header-cell-style="{ 'text-align': 'center' }">
+                    <el-table-column type="selection" width="55" />
+                    <el-table-column prop="fileName" :label="$t('geneCompare.table.fileName')" width="240" />
+                    <el-table-column prop="speciesName" :label="$t('geneCompare.table.species')" width="180" />
+                    <el-table-column prop="populationName" :label="$t('geneCompare.table.population')" width="180" />
+                    <el-table-column fixed="right" :label="$t('geneCompare.table.dataType')">
+                      <template #default>
+                        <el-button link type="text" @click="changeGenoToOrigin" class="table_button">{{
+                          $t('geneCompare.button.data1') }}</el-button>
+                        <el-button link type="text" @click="changeGenoToNewest" class="table_button">{{
+                          $t('geneCompare.button.data2') }}</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
 
-              </div>
-            </el-main>
-          </div>
-        </el-card>
-      </el-tab-pane>
-      <el-tab-pane label="文件上传" style="width: 100%;">
-        <el-card class="card-container" style="margin: 0px !important;">
-          <template #header>
-            <div class="card-header">
-              <h1>上传文件管理<i>&nbsp;</i></h1>
+                </div>
+              </el-main>
             </div>
-          </template>
-          <!-- <h1>上传文件管理<i>&nbsp;</i></h1> -->
-          <!-- <div class="uu">
+          </el-card>
+        </el-tab-pane>
+        <el-tab-pane :label="$t('geneCompare.other.fileUpload')" style="width: 100%;">
+          <el-card class="card-container" style="margin: 0px !important;">
+            <template #header>
+              <div class="card-header">
+                <h1>{{ $t('geneCompare.header2') }}<i>&nbsp;</i></h1>
+              </div>
+            </template>
+            <!-- <h1>上传文件管理<i>&nbsp;</i></h1> -->
+            <!-- <div class="uu">
           上传文件管理
         </div> -->
-          <div class="upload-box">
-            <div class="pheno-upload">
-              <div class="mb-2 flex items-center text-sm">
-                <h4>表型文件</h4>
-              </div>
-              <el-upload v-model:file-list="fileList.phenoFile" class="upload-demo" action="#" :headers="headers"
-                method="post" :auto-upload="false" multiple :limit="2">
-                <template #trigger>
-                  <el-button plain type="success" style="margin-right: 5px;">点击上传</el-button>
-                </template>
+            <div class="upload-box">
+              <div class="pheno-upload">
+                <div class="mb-2 flex items-center text-sm">
+                  <h4>{{ $t('geneCompare.other.phenoFile') }}</h4>
+                </div>
+                <el-upload v-model:file-list="fileList.phenoFile" class="upload-demo" action="#" :headers="headers"
+                  method="post" :auto-upload="false" multiple :limit="2">
+                  <template #trigger>
+                    <el-button plain type="success" style="margin-right: 5px;">{{ $t('geneCompare.button.upload')
+                    }}</el-button>
+                  </template>
 
-              </el-upload>
-            </div>
-            <div class="pheno-upload">
-              <div class="mb-2 flex items-center text-sm">
-                <h4>基因型文件</h4>
+                </el-upload>
               </div>
-              <el-upload v-model:file-list="fileList.genoFile" class="upload-demo" action="#" :headers="headers"
-                method="post" :auto-upload="false" multiple :limit="2">
-                <template #trigger>
-                  <el-button plain type="success" style="margin-right: 5px;">点击上传</el-button>
-                </template>
-              </el-upload>
-            </div>
+              <div class="pheno-upload">
+                <div class="mb-2 flex items-center text-sm">
+                  <h4>{{ $t('geneCompare.other.genoFile') }}</h4>
+                </div>
+                <el-upload v-model:file-list="fileList.genoFile" class="upload-demo" action="#" :headers="headers"
+                  method="post" :auto-upload="false" multiple :limit="2">
+                  <template #trigger>
+                    <el-button plain type="success" style="margin-right: 5px;">{{ $t('geneCompare.button.upload')
+                    }}</el-button>
+                  </template>
+                </el-upload>
+              </div>
 
+            </div>
+            <div class="center-box">
+              <div class="card-box">
+                <div class="title-box">{{ $t('geneCompare.other.mode1') }}</div>
+                <div class="ul-box">
+                  <el-checkbox-group v-model="checkedmethods" @change="handleCheckedCitiesChange">
+                    <el-checkbox v-for="item in methods" :label="item" size="large">{{ item }}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
+              </div>
+              <div class="card-box">
+                <div class="title-box">{{ $t('geneCompare.other.mode2') }}</div>
+                <div class="ul-box">
+                  <el-checkbox-group v-model="checkedmethods1" @change="handleCheckedCitiesChange">
+                    <el-checkbox v-for="item in methods1" :label="item" size="large">{{ item }}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
+              </div>
+              <div class="card-box">
+                <div class="title-box">{{ $t('geneCompare.other.mode3') }}</div>
+                <div class="ul-box">
+                  <el-checkbox-group v-model="checkedmethods2" @change="handleCheckedCitiesChange">
+                    <el-checkbox v-for="item in methods2" :label="item" size="large">{{ item }}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-tab-pane>
+      </el-tabs>
+
+
+      <div class="submit-box">
+        <el-button @click="submitform" plain type="success"
+          style="width: 20%;margin-top: 20px; margin-bottom: 20px; font-size: 24px;" size="large">
+          {{ $t('geneCompare.button.submit') }}
+        </el-button>
+      </div>
+      <el-card class="card-container" style="margin: 15px; margin-bottom: 0px;">
+        <template #header>
+          <div class="card-header">
+            <h1>{{ $t('geneCompare.header1') }}<i>&nbsp;</i></h1>
           </div>
-          <div class="center-box">
-            <div class="card-box">
-              <div class="title-box">统计学习模型：</div>
-              <div class="ul-box">
-                <el-checkbox-group v-model="checkedmethods" @change="handleCheckedCitiesChange">
-                  <el-checkbox v-for="item in methods" :label="item" size="large">{{ item }}</el-checkbox>
-                </el-checkbox-group>
-              </div>
-            </div>
-            <div class="card-box">
-              <div class="title-box">机器学习模型：</div>
-              <div class="ul-box">
-                <el-checkbox-group v-model="checkedmethods1" @change="handleCheckedCitiesChange">
-                  <el-checkbox v-for="item in methods1" :label="item" size="large">{{ item }}</el-checkbox>
-                </el-checkbox-group>
-              </div>
-            </div>
-            <div class="card-box">
-              <div class="title-box">深度学习模型：</div>
-              <div class="ul-box">
-                <el-checkbox-group v-model="checkedmethods2" @change="handleCheckedCitiesChange">
-                  <el-checkbox v-for="item in methods2" :label="item" size="large">{{ item }}</el-checkbox>
-                </el-checkbox-group>
-              </div>
-            </div>
-          </div>
-        </el-card>
-      </el-tab-pane>
-    </el-tabs>
-
-
-    <div class="submit-box">
-      <el-button @click="submitform" plain type="success"
-        style="width: 20%;margin-top: 20px; margin-bottom: 20px; font-size: 24px;" size="large">
-        提交
-      </el-button>
-    </div>
-    <el-card class="card-container" style="margin: 15px; margin-bottom: 0px;">
-      <template #header>
-        <div class="card-header">
-          <h1>文件选择管理<i>&nbsp;</i></h1>
-        </div>
-      </template>
-      <!-- <h1>文件选择管理<i>&nbsp;</i></h1> -->
-      <!-- <div class="uu">
+        </template>
+        <!-- <h1>文件选择管理<i>&nbsp;</i></h1> -->
+        <!-- <div class="uu">
         任务信息展示
       </div> -->
-      <div style="background: #fff; border-radius: 10px; margin-top: 10px;padding: 10px;">
-        <el-table stripe v-loading="tableDataLoad" :data="tableData" style="width: 100%" @select="handleSelect"
-          :cell-style="{ 'text-align': 'center' }" :header-cell-style="{ 'text-align': 'center' }">
-          <el-table-column label="序号" type="index" width="80" />
-          <el-table-column prop="breedId" label="任务编号" width="180" />
-          <el-table-column label="表型文件">
-            <template #default="scope">
-              <span style="color: #1FB864; cursor: pointer;" @click="DownloadPhenoFile(scope.row)">
-                {{ scope.row.phenofileName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column label="基因型文件">
-            <template #default="scope">
-              <span style="color: #1FB864; cursor: pointer;" @click="DownloadGenoFile(scope.row)">
-                {{ scope.row.genofileName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="submitTime" label="提交时间" />
-          <el-table-column prop="finishTime" label="完成时间" />
-          <el-table-column prop="status" label="任务状态" />
-          <el-table-column prop="result" label="结果">
-            <template #default="scope">
-              <el-button link type="text" @click="hanldeResult(scope.row)" class="table_button">
-                预测结果
-              </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column fixed="right" label="结果下载">
-            <template #default="scope">
-              <el-button link type="text" @click="DownloadPdf(scope.row)" class="table_button">
-                下载
-              </el-button>
-            </template>
-          </el-table-column>
+        <div style="background: #fff; border-radius: 10px; margin-top: 10px;padding: 10px;">
+          <el-table stripe v-loading="tableDataLoad" :data="tableData" style="width: 100%" @select="handleSelect"
+            :cell-style="{ 'text-align': 'center' }" :header-cell-style="{ 'text-align': 'center' }">
+            <el-table-column :label="$t('geneCompare.table.index')" type="index" width="80" />
+            <el-table-column prop="breedId" :label="$t('geneCompare.table.taskId')" width="180" />
+            <el-table-column :label="$t('geneCompare.table.phenoFile')">
+              <template #default="scope">
+                <span style="color: #1FB864; cursor: pointer;" @click="DownloadPhenoFile(scope.row)">
+                  {{ scope.row.phenofileName }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('geneCompare.table.genoFile')">
+              <template #default="scope">
+                <span style="color: #1FB864; cursor: pointer;" @click="DownloadGenoFile(scope.row)">
+                  {{ scope.row.genofileName }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createBy" :label="$t('geneCompare.table.creator')" />
+            <el-table-column prop="submitTime" :label="$t('geneCompare.table.submitTime')" />
+            <el-table-column prop="finishTime" :label="$t('geneCompare.table.finishTime')" />
+            <el-table-column prop="status" :label="$t('geneCompare.table.taskStatus')" />
+            <el-table-column prop="result" :label="$t('geneCompare.table.result')">
+              <template #default="scope">
+                <el-button link type="text" @click="hanldeResult(scope.row)" class="table_button">
+                  {{ $t('geneCompare.button.result') }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" :label="$t('geneCompare.table.result')">
+              <template #default="scope">
+                <el-button link type="text" @click="DownloadPdf(scope.row)" class="table_button">
+                  {{ $t('geneCompare.button.download') }}
+                </el-button>
+              </template>
+            </el-table-column>
 
-        </el-table>
-        <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-          v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-          layout="total, sizes,prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
-      </div>
-      <el-dialog v-model="dialogVisible" title="预测结果">
-        <h5>模型预测结果如下</h5>
-        <h6 v-for="item in arr">
-          {{ item }}
-        </h6>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="dialogVisible = false">
-              确认
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </el-card>
+          </el-table>
+          <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
+            v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+            layout="total, sizes,prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+        </div>
+        <el-dialog v-model="dialogVisible" :title="$t('geneCompare.other.title')">
+          <h5>{{ $t('geneCompare.other.tip') }}</h5>
+          <h6 v-for="item in arr">
+            {{ item }}
+          </h6>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="dialogVisible = false">{{ $t('geneCompare.button.cancel') }}</el-button>
+              <el-button type="primary" @click="dialogVisible = false">
+                {{ $t('geneCompare.button.confirm') }}
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
+      </el-card>
+    </el-config-provider>
   </div>
 </template>
 
@@ -232,6 +241,22 @@ import { ElMessage } from "element-plus";
 import { reactive, ref, onMounted, nextTick, computed } from "vue";
 import { getBreed, getResult } from "../../../api/system/breed";
 import { blobValidate } from '@/utils/param'
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
+const messages = {
+  status1: computed(() => i18n.t('geneCompare.other.status1')).value,
+  status2: computed(() => i18n.t('geneCompare.other.status2')).value,
+  status3: computed(() => i18n.t('geneCompare.other.status3')).value,
+  busy: computed(() => i18n.t('geneCompare.other.busy')).value,
+  download_error: computed(() => i18n.t('geneCompare.other.download_error')).value,
+  select_success: computed(() => i18n.t('geneCompare.other.select_success')).value,
+}
+
 let pageLoad = ref(false)
 let dialogVisible = ref(false)
 let fileList = ref({
@@ -287,9 +312,9 @@ function getList() {
     total.value = res.total
     tableData.value = res.rows
     tableData.value.forEach(item => {
-      if (item.status == 0) item.status = "运行中"
-      else if (item.status == 1) item.status = "完成"
-      else item.status = "失败"
+      if (item.status == 0) item.status = messages.status1
+      else if (item.status == 1) item.status = messages.status2
+      else item.status = messages.status3
       if (item.createBy == null) item.createBy = "-"
       if (item.finishTime == null) item.finishTime = "-"
     })
@@ -473,7 +498,7 @@ async function submitform() {
     await ppp(formObj.value, formdata).then(res => {
       pageLoad.value = false
     }).catch(err => {
-      ElMessage.warning("系统繁忙，请稍后再试...")
+      ElMessage.warning(messages.busy)
       pageLoad.value = false
     });
     getList()
@@ -506,7 +531,7 @@ function DownloadGenoFile(row) {
     }
   }).catch(err => {
     console.log(err)
-    ElMessage.error('下载文件出现错误，请联系管理员！');
+    ElMessage.error(messages.download_error);
   })
 }
 let result = reactive({
@@ -544,23 +569,23 @@ function DownloadPhenoFile(row) {
     }
   }).catch(err => {
     console.log(err)
-    ElMessage.error('下载文件出现错误，请联系管理员！');
+    ElMessage.error(messages.download_error);
   })
 }
 function changePhenoToOrigin() {
   formObj.value.phenoDataType = "原始数据"
-  ElMessage.success("选择成功！")
+  ElMessage.success(messages.select_success)
 }
 function changePhenoToNewest() {
   formObj.value.phenoDataType = "最新数据"
-  ElMessage.success("选择成功！")
+  ElMessage.success(messages.select_success)
 }
 function changeGenoToOrigin() {
   formObj.value.genoDataType = "原始数据"
 }
 function changeGenoToNewest() {
   formObj.value.phenoDataType = "最新数据"
-  ElMessage.success("选择成功！")
+  ElMessage.success(messages.select_success)
 }
 async function DownloadPdf(row) {
   console.log(row)
@@ -587,7 +612,7 @@ async function DownloadPdf(row) {
   }).catch(err => {
     console.log(err)
     pageLoad.value = false
-    ElMessage.error('下载文件出现错误，请联系管理员！');
+    ElMessage.error(messages.download_error);
   })
 
 }
@@ -1306,7 +1331,8 @@ h1 i {
   height: 60px;
   position: relative;
   background-color: #fff;
-  width: 150px;
+  width: auto;
+  min-width: 150px;
 }
 
 .card-header:before,

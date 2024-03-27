@@ -1,145 +1,159 @@
 <template>
   <div class="big_container home" style="width: 100%; height:100%; background-color: #eeeeee;padding-top: 20px;">
-    <!-- 地图 -->
-    <el-card class="card-container">
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="map_sys">
-          <!-- 城市表格 -->
-          <div class="city_form">
-            <el-form label-width="100px" :model="cityForm">
-              <el-form-item class="cityForm_item" label="城市">
-                <el-input disabled v-model="cityForm.city" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" label="国家">
-                <el-input disabled v-model="cityForm.country" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" label="经度">
-                <el-input disabled v-model="cityForm.longitude" />
-              </el-form-item>
-              <el-form-item class="cityForm_item" label="纬度">
-                <el-input disabled v-model="cityForm.latitude" />
-              </el-form-item>
-            </el-form>
-          </div>
-          <!-- 地图 -->
-          <div id="chinaMap" style="width: 750px; height: 450px"></div>
-        </div>
-      </div>
-    </el-card>
-    <el-card class="card-container">
-      <!-- <h1>根据地区搜索性状<i>&nbsp;</i></h1> -->
-      <template #header>
-        <div class="card-header">
-          <h1>根据地区搜索性状<i>&nbsp;</i></h1>
-        </div>
-      </template>
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="area_top">
-          <div class="search_table">
-            <el-select v-model="location" filterable placeholder="请输入地区名">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-            <el-button icon="search" @click="search_trait" type="success" plain style="margin-left: 25px">
-              搜索
-            </el-button>
+    <el-config-provider :locale="locale">
+      <!-- 地图 -->
+      <el-card class="card-container">
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="map_sys">
+            <!-- 城市表格 -->
+            <div class="city_form" style="padding-left: 30px;">
+              <el-form label-width="100px" :model="cityForm" label-position="right">
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_location')">
+                  <el-input disabled v-model="cityForm.city" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_country')">
+                  <el-input disabled v-model="cityForm.country" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_longitude')">
+                  <el-input disabled v-model="cityForm.longitude" />
+                </el-form-item>
+                <el-form-item class="cityForm_item" :label="$t('phenotype.area.label_latitude')">
+                  <el-input disabled v-model="cityForm.latitude" />
+                </el-form-item>
+              </el-form>
+            </div>
+            <!-- 地图 -->
+            <div id="chinaMap" style="width: 750px; height: 450px"></div>
           </div>
         </div>
-        <div class="area_form">
-          <el-table v-loading="traitLoading" ref="multipleTable" :data="
-            tableData2.slice(
-              (currentpageNum2 - 1) * pageSize2,
-              currentpageNum2 * pageSize2
-            )
-          " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
-            <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
-            <el-table-column label="序号" width="80" type="index" :index="indexMethod" align="center" />
-            <el-table-column prop="traitName" label="性状名" width="130px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.traitName) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="fullName" label="全称" width="280px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.fullName) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="abbreviationName" label="缩写" width="120px" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.abbreviationName) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="remark" label="备注" align="center">
-              <template #default="scope">
-                {{ formatTableCell(scope.row.remark) }}
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="demo-pagination-block">
-            <el-pagination background :total="totalPage2" :current-page="currentpageNum2" :page-size="pageSize2"
-                           layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange2"
-                           @current-change="handleCurrentChange2" />
+      </el-card>
+      <el-card class="card-container">
+        <!-- <h1>根据地区搜索性状<i>&nbsp;</i></h1> -->
+        <template #header>
+          <div class="card-header">
+            <h1>{{ $t('phenotype.area.header1') }}<i>&nbsp;</i></h1>
+          </div>
+        </template>
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="area_top">
+            <div class="search_table">
+              <el-select v-model="location" filterable :placeholder="请输入地区名">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+              <el-button icon="search" @click="search_trait" type="success" plain style="margin-left: 25px">
+                {{ $t('phenotype.area.button_search') }}
+              </el-button>
+            </div>
+          </div>
+          <div class="area_form">
+            <el-table v-loading="traitLoading" ref="multipleTable" :data="
+              tableData2.slice(
+                (currentpageNum2 - 1) * pageSize2,
+                currentpageNum2 * pageSize2
+              )
+            " tooltip-effect="dark" style="width: 100%" class="gene-form-table" stripe>
+              <!-- <el-table-column prop="traitId" label="性状代码"></el-table-column> -->
+              <el-table-column :label="$t('phenotype.area.table_index')" width="80" type="index" :index="indexMethod"
+                align="center" />
+              <el-table-column prop="traitName" :label="$t('phenotype.area.table_traitName')" width="130px"
+                align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.traitName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="fullName" :label="$t('phenotype.area.table_fullName')" width="280px" align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.fullName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="abbreviationName" :label="$t('phenotype.area.table_abbreviationName')" width="120px"
+                align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.abbreviationName) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="remark" :label="$t('phenotype.area.table_remark')" align="center">
+                <template #default="scope">
+                  {{ formatTableCell(scope.row.remark) }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="demo-pagination-block">
+              <el-pagination background :total="totalPage2" :current-page="currentpageNum2" :page-size="pageSize2"
+                layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange2"
+                @current-change="handleCurrentChange2" />
+            </div>
           </div>
         </div>
-      </div>
-    </el-card>
-    <!-- 经纬度信息 -->
-    <el-card class="card-container">
-      <!-- <h1>根据性状搜索地区<i>&nbsp;</i></h1> -->
-      <template #header>
-        <div class="card-header">
-          <h1>根据性状搜索地区<i>&nbsp;</i></h1>
-        </div>
-      </template>
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="area_top">
-          <div class="search_table">
-            <el-select v-model="traitName" filterable remote reserve-keyword placeholder="请输入性状名"
-                       :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
-              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
+      </el-card>
+      <!-- 经纬度信息 -->
+      <el-card class="card-container">
+        <!-- <h1>根据性状搜索地区<i>&nbsp;</i></h1> -->
+        <template #header>
+          <div class="card-header">
+            <h1>{{ $t('phenotype.area.header2') }}<i>&nbsp;</i></h1>
+          </div>
+        </template>
+        <div class="big-wrapper" style="margin-top: 10px">
+          <div class="area_top">
+            <div class="search_table">
+              <el-select v-model="traitName" filterable remote reserve-keyword :placeholder="请输入性状名"
+                :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
+                <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
 
-            <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
-              搜索
-            </el-button>
+              <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
+                {{ $t('phenotype.area.button_search') }}
+              </el-button>
+            </div>
           </div>
-        </div>
-        <div class="area_form">
-          <el-table v-loading="cityLoading" ref="multipleTable" :data="
-            tableData.slice(
-              (currentpageNum - 1) * pageSize,
-              currentpageNum * pageSize
-            )
-          " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"
-                    stripe>
-            <el-table-column prop="name" label="名称" align="center"></el-table-column>
-            <el-table-column prop="type" label="数据源类型" align="center"></el-table-column>
-            <el-table-column prop="city" label="城市" align="center"></el-table-column>
-            <el-table-column prop="longitude" label="经度" align="center"></el-table-column>
-            <el-table-column prop="latitude" label="纬度" align="center"></el-table-column>
-          </el-table>
-          <div class="demo-pagination-block">
-            <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
-                           layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange" />
-          </div>
+          <div class="area_form">
+            <el-table v-loading="cityLoading" ref="multipleTable" :data="
+              tableData.slice(
+                (currentpageNum - 1) * pageSize,
+                currentpageNum * pageSize
+              )
+            " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"
+              stripe>
+              <el-table-column prop="name" :label="$t('phenotype.area.table_name')" align="center"></el-table-column>
+              <el-table-column prop="type" :label="$t('phenotype.area.table_type')" align="center"></el-table-column>
+              <el-table-column prop="city" :label="$t('phenotype.area.table_location')" align="center"></el-table-column>
+              <el-table-column prop="longitude" :label="$t('phenotype.area.table_longitude')"
+                align="center"></el-table-column>
+              <el-table-column prop="latitude" :label="$t('phenotype.area.table_latitude')"
+                align="center"></el-table-column>
+            </el-table>
+            <div class="demo-pagination-block">
+              <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
+            </div>
 
+          </div>
         </div>
-      </div>
-    </el-card>
+      </el-card>
+    </el-config-provider>
   </div>
 </template>
 
 <script setup>
 import * as echarts from "echarts";
-import {reactive, ref, nextTick, onMounted} from "vue";
+import { reactive, ref, nextTick, onMounted } from "vue";
 import chinaData from "echarts/map/json/china.json";
-import {FIRST_LAST_KEYS} from "element-plus";
+import { FIRST_LAST_KEYS } from "element-plus";
 import {
   getMap,
   getTraitByCity,
   selectTraitByLocation,
   getAllTraitFromFile,
 } from "@/api/data_presentation/area_management";
+
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
 
 // 注册中国地图
 echarts.registerMap("china", chinaData);
@@ -154,7 +168,7 @@ const cityForm = ref({
 
 // vue实例
 const {
-  proxy: {$modal, $download},
+  proxy: { $modal, $download },
 } = getCurrentInstance();
 
 //搜索
@@ -172,7 +186,7 @@ function getMaps() {
     if (res.code === 200) {
       const mapData = MapOption.series[0].data;
       res.data.forEach((item) => {
-        const {count, location} = item;
+        const { count, location } = item;
         const mapItem = mapData.find((dataItem) => dataItem.name === location);
         if (mapItem) {
           mapItem.value = count;
@@ -180,11 +194,11 @@ function getMaps() {
         if (item.location !== undefined) {
           states.value.push(item.location);
           options.value = states.value.map((item) => {
-            return {value: item, label: item};
+            return { value: item, label: item };
           });
         }
         options.value = states.value.map((item) => {
-          return {value: item, label: item};
+          return { value: item, label: item };
         });
       });
     }
@@ -240,13 +254,13 @@ const states2 = ref([]);
 
 const listSet = computed(() => {
   return states2.value.map((item) => {
-    return {value: item, label: item};
+    return { value: item, label: item };
   });
 });
 
 watch(states2, () => {
   listSet.value = states2.value.map((item) => {
-    return {value: item, label: item};
+    return { value: item, label: item };
   });
 });
 
@@ -310,7 +324,7 @@ const MapOption = {
       },
       roam: true,
       zoom: 2, // 初始缩放级别
-      scaleLimit: {min: 1, max: 5}, // 设置缩放范围
+      scaleLimit: { min: 1, max: 5 }, // 设置缩放范围
       emphasis: {
         label: {
           color: "#fff",
@@ -324,40 +338,40 @@ const MapOption = {
         },
       },
       data: [
-        {name: "北京", value: 0, selected: true},
-        {name: "天津", value: 0},
-        {name: "上海", value: 0},
-        {name: "重庆", value: 0},
-        {name: "河北", value: 0},
-        {name: "河南", value: 0},
-        {name: "云南", value: 0},
-        {name: "辽宁", value: 0},
-        {name: "黑龙江", value: 0},
-        {name: "湖南", value: 0},
-        {name: "安徽", value: 0},
-        {name: "山东", value: 0},
-        {name: "新疆", value: 0},
-        {name: "江苏", value: 0},
-        {name: "浙江", value: 0},
-        {name: "江西", value: 0},
-        {name: "湖北", value: 0},
-        {name: "广西", value: 0},
-        {name: "甘肃", value: 0},
-        {name: "山西", value: 0},
-        {name: "内蒙古", value: 0},
-        {name: "陕西", value: 0},
-        {name: "吉林", value: 0},
-        {name: "福建", value: 0},
-        {name: "贵州", value: 0},
-        {name: "广东", value: 0},
-        {name: "青海", value: 0},
-        {name: "西藏", value: 0},
-        {name: "四川", value: 0},
-        {name: "宁夏", value: 0},
-        {name: "海南", value: 0},
-        {name: "台湾", value: 0},
-        {name: "香港", value: 0},
-        {name: "澳门", value: 0},
+        { name: "北京", value: 0, selected: true },
+        { name: "天津", value: 0 },
+        { name: "上海", value: 0 },
+        { name: "重庆", value: 0 },
+        { name: "河北", value: 0 },
+        { name: "河南", value: 0 },
+        { name: "云南", value: 0 },
+        { name: "辽宁", value: 0 },
+        { name: "黑龙江", value: 0 },
+        { name: "湖南", value: 0 },
+        { name: "安徽", value: 0 },
+        { name: "山东", value: 0 },
+        { name: "新疆", value: 0 },
+        { name: "江苏", value: 0 },
+        { name: "浙江", value: 0 },
+        { name: "江西", value: 0 },
+        { name: "湖北", value: 0 },
+        { name: "广西", value: 0 },
+        { name: "甘肃", value: 0 },
+        { name: "山西", value: 0 },
+        { name: "内蒙古", value: 0 },
+        { name: "陕西", value: 0 },
+        { name: "吉林", value: 0 },
+        { name: "福建", value: 0 },
+        { name: "贵州", value: 0 },
+        { name: "广东", value: 0 },
+        { name: "青海", value: 0 },
+        { name: "西藏", value: 0 },
+        { name: "四川", value: 0 },
+        { name: "宁夏", value: 0 },
+        { name: "海南", value: 0 },
+        { name: "台湾", value: 0 },
+        { name: "香港", value: 0 },
+        { name: "澳门", value: 0 },
       ],
     },
   ],
@@ -366,8 +380,8 @@ const MapOption = {
       type: "piecewise",
       show: false,
       pieces: [
-        {min: 0, max: 0},
-        {min: 0, max: 9999},
+        { min: 0, max: 0 },
+        { min: 0, max: 9999 },
       ],
       textStyle: {
         color: "#828994",
@@ -1019,6 +1033,7 @@ window.addEventListener("DOMContentLoaded", function () {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
+
 .green-button {
   background-color: #1FB864 !important;
   color: #fff !important;
