@@ -411,7 +411,7 @@ const createData = async () => {
     } catch (err) {
       $modal.msgError(err)
     } finally {
-      $modal.msgSuccess(message.message_upload_success)
+      $modal.msgSuccess(messages.message_upload_success)
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
@@ -419,20 +419,6 @@ const createData = async () => {
       setTimeout(async () => {
         getList();
       }, 4000);
-      uploadUrl.value = `${
-          import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${
-          tree.value.getCurrentNode().treeId
-      }&status=${dataForm.fileStatus ? 1 : 0}&remark=${
-          dataForm.remark
-      }&fileName=${
-          dataForm.fileName
-      }&pointStatus=${isNormalFile}`;
-      await upload.value.submit();
-      isDisabled.value = true;
-      tableLoading.value = false;
-      tableName.value = "";
-      url = "";
     }
   }
 }
@@ -632,6 +618,7 @@ const createData = async () => {
 // 文件上传成功回调
   async function uploadFileSuccess(response) {
     if (response.code === 200) {
+      console.log(response,'***')
       $modal.msgSuccess(response.msg);
     } else {
       $modal.msgError(i18n.t('phenotype.index.message_upload_compare'));
@@ -782,7 +769,7 @@ async function updateData() {
             allFileId.value.push(item.fileId);
           });
           fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
-          uploadFileList.value = fileList.value;
+          // uploadFileList.value = fileList.value;
           total.value = res.total;
         })
         .catch((err) => {
@@ -1300,7 +1287,7 @@ async function updateData() {
 
 .upload {
   width: 100%;
-  // border:1px solid #ccc;
+  display: block;
 }
 
 .mokuai {

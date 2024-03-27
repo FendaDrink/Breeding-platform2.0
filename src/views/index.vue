@@ -15,14 +15,11 @@
       <!-- 科研项目 -->
       <div class="container-stage" style="margin-top: 30px;">
         <div class="stage-row">
-          <div class="stage-col" v-for="(item, index) in typeList" :key="index">
+          <div class="stage-col" v-for="(item, index) in typeList" @click="goTo(item.url)" :key="index">
             <div class="col-container">
               <img :src="item.logo" alt=""/>
               <div class="overlay">
                 <span>{{ item.title }}</span>
-                <h4>
-                  <a href="">{{ item.titleDescription }}</a>
-                </h4>
               </div>
             </div>
           </div>
@@ -33,38 +30,40 @@
 </template>
 
 <script setup name="Index">
-import useUserStore from "@/store/modules/user";
 import type1 from "@/assets/img/1.jpg"
 import type2 from "@/assets/img/2.jpg"
 import type3 from "@/assets/img/3.jpg"
 import type4 from "@/assets/img/4.jpg"
-const user = useUserStore();
-const version = ref("3.8.2");
+import {useRouter} from "vue-router";
 
-function goTarget(url) {
-  window.open(url, "__blank");
+const router = useRouter()
+
+const goTo = (url) => {
+  router.push({
+    path:url,
+  })
 }
 
 const typeList = reactive([
   {
     logo: type1,
     title: "表型管理",
-    description:"这是作物表型管理平台的表型管理部分"
+    url:"/phenotype/phenotype"
   },
   {
     logo: type2,
     title: "基因型管理",
-    description:"这是作物表型管理平台的图片管理部分"
+    url:"/genotype/geno"
   },
   {
     logo: type3,
     title: "图片管理",
-    description:"这是作物表型管理平台的图片自动上传部分"
+    url:"/admin/info/photos"
   },
   {
     logo: type4,
     title: "材料管理",
-    description:"这是作物表型管理平台的图片自动上传部分"
+    url:"/material_management/info"
   },
 ])
 
