@@ -245,7 +245,7 @@ import {
   selectDetailByFileId,
   selectHistoryDetailByFileId,
   delFile,
-  updateFile,
+  updateFile, genoHistoryListFile,
 } from "@/api/infomanage/genotype";
 import { getJsonByCSV, jsonToTable } from "@/utils/tree";
 import useUserStore from "@/store/modules/user";
@@ -885,7 +885,7 @@ const openHeatmap = (row) => {
 //查看文件历史版本
 function openHistory(row) {
   historyFormVisible.value = true;
-  genoListFile({
+  genoHistoryListFile({
     ...queryParams,
     treeId: tree.value.getCurrentNode().treeId,
     fileStatus: roles[0] === "admin" ? null : 1,
