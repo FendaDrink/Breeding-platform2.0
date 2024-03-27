@@ -434,7 +434,7 @@ const createData = async () => {
     tableName.value = "";
     url="";
   }
-};
+}
 
 // 分片上传
 const uploadChunk = (formData)=>{
