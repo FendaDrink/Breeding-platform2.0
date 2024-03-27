@@ -382,7 +382,7 @@ const handleUploadFile = (file) =>{
   // Handle file upload
   console.log(file);
   // 获取文件名
-  dataForm.fileName = file.name.split('.')[0];
+  dataForm.fileName = dataForm.fileName ? dataForm.fileName :file.name.split('.')[0];
 }
 
 let isNormalFile = 1

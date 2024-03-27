@@ -572,7 +572,7 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  dataForm.fileName = file.name.split('.')[0];
+  dataForm.fileName =  dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
 };
 
 // 文件创建
@@ -641,7 +641,9 @@ const mergeData = async () => {
   const valid = await form.value.validate();
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/genotypeFile/merge?tableName=${tableName.value}`;
+      }/genotypeFile/merge?tableName=${tableName.value
+      }&fileName=${dataForm.fileName
+      }&remark=${dataForm.remark}`;
 
     $modal.msg(text.message.upload_wait);
 
