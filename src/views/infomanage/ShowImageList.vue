@@ -48,7 +48,7 @@
               <el-button plain type="success" class="my-button" @click.prevent="updateChildNode" icon="edit"
                 v-hasPermi="['system:node:update']">{{ $t('phenotype.showImage.button.node_update') }}</el-button>
               <!-- 可能要做隐藏 -->
-              <template v-if="tree && tree.getCurrentNode()?.children.length === 0">
+              <template v-if="tree?.getCurrentNode()?.children.length === 0">
                 <el-button plain type="primary" class="my-button" @click.prevent="addImage"
                   v-hasPermi="['system:image:add']">{{ $t('phenotype.showImage.button.image_add') }}</el-button>
                 <el-button plain type="info" class="my-button" @click.prevent="addNodeMsg"
@@ -62,7 +62,7 @@
               {{ $t('phenotype.showImage.label.current_status') }}
               <el-switch v-hasPermi="['system:node:update']" v-model="nodeIsShow" @change="switchChange()" />
             </div>
-            <template v-if="tree && tree.getCurrentNode()?.children.length == 0">
+            <template v-if="tree?.getCurrentNode()?.children.length == 0">
               <!-- 搜索部分 -->
               <div class="search-container">
                 <el-input clearable v-model.trim="searchForm.name" prefix-icon="Search" style="margin-right:5px;"
@@ -96,7 +96,7 @@
             </template>
             <!-- 内容部分 -->
             <!-- 如果为非叶子节点 -->
-            <div v-if="tree && tree.getCurrentNode()?.children.length !== 0"
+            <div v-if="tree?.getCurrentNode()?.children.length !== 0"
               style="max-height: calc(100vh - 290px); font-size: 20px;">
               <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.description') }}</span>{{
                 form.keyword ? form.keyword : $t('phenotype.showImage.dialog.other.dateSelction_empty') }}
@@ -125,11 +125,11 @@
               </el-card>
             </div>
 
-            <div v-if="imageSrcList.length === 0 && tree && tree.getCurrentNode()?.children.length === 0"
+            <div v-if="imageSrcList.length === 0 && tree?.getCurrentNode()?.children.length === 0"
               style="max-height: calc(100vh - 290px);font-size: 20px;">
               {{ $t('phenotype.showImage.dialog.other.noImage') }}
             </div>
-            <div class="image_box img-list" v-if="tree && tree.getCurrentNode()?.children.length === 0"
+            <div class="image_box img-list" v-if="tree?.getCurrentNode()?.children.length === 0"
               style="max-height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
               <div class="imgCard_container">
                 <el-checkbox-group class="imgCard_container" v-model="checkedPictures" @change="handleSelectionChange">
@@ -192,7 +192,7 @@
           </el-main>
 
           <!--分页组件-->
-          <el-footer class="footer" v-if="tree && tree.getCurrentNode()?.children.length === 0">
+          <el-footer class="footer" v-if="tree?.getCurrentNode()?.children.length === 0">
             <div class="demo-pagination-block">
               <el-pagination background :current-page="currentpageNum" :page-sizes="[24, 32, 40]" :page-size="pageSize"
                 layout="total, sizes, prev, pager, next, jumper" :total="totalPage" @size-change="handleSizeChange"
