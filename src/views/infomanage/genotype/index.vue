@@ -572,6 +572,7 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
+  dataForm.fileName = file.name.split('.')[0];
 };
 
 // 文件创建
@@ -774,6 +775,7 @@ function getList() {
     })
     .catch((err) => {
       tableLoading.value = false;
+      console.log(err);
       $modal.msgError(text.message.getListFailed);
     });
 }
@@ -1431,6 +1433,7 @@ onMounted(() => {
 
 :deep(.el-upload) {
   width: 100%;
+  display: inline-block;
 }
 
 :deep(.el-upload .el-upload-dragger) {

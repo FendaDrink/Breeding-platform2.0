@@ -181,7 +181,7 @@
           </el-form-item>
           <el-form-item :label="$t('environment.index.dialog_upload')" prop="file"
             v-show="dialogStatus === 'create' || 'other'">
-            <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".xlsx"
+            <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1"
               :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
               :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
               :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
@@ -325,7 +325,6 @@ const messages = {
   message_longitude: computed(() => i18n.t('environment.index.message_longitude')).value,
   message_latitude: computed(() => i18n.t('environment.index.message_latitude')).value,
   message_merge_success: computed(() => i18n.t('environment.index.message_merge_success')).value,
-
 };
 
 // 表单实例
@@ -438,11 +437,12 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
+  // 获取文件名
+  dataForm.fileName = file.name.split('.')[0];
 };
 
 const createData = async () => {
   const valid = await form.value.validate();
-  console.log(valid);
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
@@ -456,14 +456,10 @@ const createData = async () => {
     } catch (err) {
       $modal.msgError(err)
     } finally {
-      $modal.msgSuccess(messages.message_upload_success)
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
       dialogFormVisible.value = false;
-      setTimeout(() => {
-        getList();
-      }, 1000);
     }
   }
 
@@ -741,7 +737,7 @@ async function handleDownload(row) {
   if (downloadLoading.value) {
     return; // Prevent multiple downloads while in progress
   }
-  $modal.msg(messages.downloadLoading);
+  $modal.msg(messages.message_downloading);
   downloadLoading.value = true;
   try {
     await $download.resource(row.url);
@@ -1133,6 +1129,7 @@ onMounted(() => {
   .el-button--primary {
     background: rgb(85, 123, 116);
   }
+  margin:0 auto;
 }
 </style>
 <style lang="less" scoped>
@@ -1361,6 +1358,7 @@ onMounted(() => {
 
 :deep(.el-upload) {
   width: 100%;
+  display:inline-block;
 }
 
 :deep(.el-upload .el-upload-dragger) {
