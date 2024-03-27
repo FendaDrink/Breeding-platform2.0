@@ -13,7 +13,6 @@
 
       <!-- //右边的盒子 -->
       <el-container>
-        <!-- //右边的盒子 -->
         <el-main width="78%" style="padding: 0; height: calc(100vh - 150px); " class="right-box">
           <div style="height: auto;">
             <div class="div1">
@@ -220,33 +219,33 @@ const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : e
 // )
 
 const messages = {
-  message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')),
-  message_input_fileName: computed(() => i18n.t('phenotype.index.message_input_fileName')),
-  message_input_nodeName: computed(() => i18n.t('phenotype.index.message_input_nodeName')),
-  message_input_status: computed(() => i18n.t('phenotype.index.message_input_status')),
-  message_input_date: computed(() => i18n.t('phenotype.index.message_input_date')),
-  message_upload_csv: computed(() => i18n.t('phenotype.index.message_upload_csv')),
-  message_upload_wait: computed(() => i18n.t('phenotype.index.message_upload_wait')),
-  message_upload_compare: computed(() => i18n.t('phenotype.index.message_upload_compare')),
-  message_upload_fail: computed(() => i18n.t('phenotype.index.message_upload_fail')),
-  message_upload_success: computed(() => i18n.t('phenotype.index.message_upload_success')),
-  message_delete_select: computed(() => i18n.t('phenotype.index.message_delete_select')),
-  message_delete_confirm: computed(() => i18n.t('phenotype.index.message_delete_confirm')),
-  message_delete_success: computed(() => i18n.t('phenotype.index.message_delete_success')),
-  message_delete_fail: computed(() => i18n.t('phenotype.index.message_delete_fail')),
-  message_update_success: computed(() => i18n.t('phenotype.index.message_update_success')),
-  message_update_fail: computed(() => i18n.t('phenotype.index.message_update_fail')),
-  message_downloading: computed(() => i18n.t('phenotype.index.message_downloading')),
-  message_node_parent: computed(() => i18n.t('phenotype.index.message_node_parent')),
-  message_node_add_success: computed(() => i18n.t('phenotype.index.message_node_add_success')),
-  message_node_add_fail: computed(() => i18n.t('phenotype.index.message_node_add_fail')),
-  message_node_update_success: computed(() => i18n.t('phenotype.index.message_node_update_success')),
-  message_node_update_fail: computed(() => i18n.t('phenotype.index.message_node_update_fail')),
-  message_node_select: computed(() => i18n.t('phenotype.index.message_node_select')),
-  message_node_confirm: computed(() => i18n.t('phenotype.index.message_node_confirm')),
-  message_node_delete_success: computed(() => i18n.t('phenotype.index.message_node_delete_success')),
-  message_file_confirm: computed(() => i18n.t('phenotype.index.message_file_confirm')),
-  
+  message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')).value,
+  message_input_fileName: computed(() => i18n.t('phenotype.index.message_input_fileName')).value,
+  message_input_nodeName: computed(() => i18n.t('phenotype.index.message_input_nodeName')).value,
+  message_input_status: computed(() => i18n.t('phenotype.index.message_input_status')).value,
+  message_input_date: computed(() => i18n.t('phenotype.index.message_input_date')).value,
+  message_upload_csv: computed(() => i18n.t('phenotype.index.message_upload_csv')).value,
+  message_upload_wait: computed(() => i18n.t('phenotype.index.message_upload_wait')).value,
+  message_upload_compare: computed(() => i18n.t('phenotype.index.message_upload_compare')).value,
+  message_upload_fail: computed(() => i18n.t('phenotype.index.message_upload_fail')).value,
+  message_upload_success: computed(() => i18n.t('phenotype.index.message_upload_success')).value,
+  message_delete_select: computed(() => i18n.t('phenotype.index.message_delete_select')).value,
+  message_delete_confirm: computed(() => i18n.t('phenotype.index.message_delete_confirm')).value,
+  message_delete_success: computed(() => i18n.t('phenotype.index.message_delete_success')).value,
+  message_delete_fail: computed(() => i18n.t('phenotype.index.message_delete_fail')).value,
+  message_update_success: computed(() => i18n.t('phenotype.index.message_update_success')).value,
+  message_update_fail: computed(() => i18n.t('phenotype.index.message_update_fail')).value,
+  message_downloading: computed(() => i18n.t('phenotype.index.message_downloading')).value,
+  message_node_parent: computed(() => i18n.t('phenotype.index.message_node_parent')).value,
+  message_node_add_success: computed(() => i18n.t('phenotype.index.message_node_add_success')).value,
+  message_node_add_fail: computed(() => i18n.t('phenotype.index.message_node_add_fail')).value,
+  message_node_update_success: computed(() => i18n.t('phenotype.index.message_node_update_success')).value,
+  message_node_update_fail: computed(() => i18n.t('phenotype.index.message_node_update_fail')).value,
+  message_node_select: computed(() => i18n.t('phenotype.index.message_node_select')).value,
+  message_node_confirm: computed(() => i18n.t('phenotype.index.message_node_confirm')).value,
+  message_node_delete_success: computed(() => i18n.t('phenotype.index.message_node_delete_success')).value,
+  message_file_confirm: computed(() => i18n.t('phenotype.index.message_file_confirm')).value,
+  mergeSuccess:computed(() => i18n.t('phenotype.index.mergeSuccess')).value,
 };
 
 const titles ={
@@ -401,6 +400,25 @@ async function openCreateData() {
 const createData = async () => {
   const valid = await form.value.validate();
   if (valid) {
+    uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
+      }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
+      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+      }&fileName=${dataForm.fileName}&pointStatus=${0}`;
+    $modal.msg(messages.message_upload_wait);
+
+    try{
+      await upload.value.submit();
+    }catch (err){
+      $modal.msgError(err)
+    }finally {
+      $modal.msgSuccess(message.message_upload_success)
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
+      setTimeout(async () => {
+        getList();
+      }, 4000);
     uploadUrl.value = `${
         import.meta.env.VITE_APP_UPLOAD_URL
     }/phenotypeFile/upload?treeId=${
@@ -562,14 +580,14 @@ const mergeData = async () => {
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
 
-    $modal.msg("上传数据较大，请耐心等待！");
+    $modal.msg(messages.message_upload_wait);
 
     try{
       await upload.value.submit();
     }catch (err){
       $modal.msgError(err)
     }finally {
-      $modal.msgSuccess("合并成功，稍后自动刷新！")
+      $modal.msgSuccess(messages.mergeSuccess)
       console.log("2");
       isDisabled.value = true;
       console.log("3");

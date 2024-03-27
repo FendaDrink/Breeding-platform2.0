@@ -82,6 +82,7 @@ export default {
             message_node_confirm: "Are you sure you want to delete this node?",
             message_node_delete_success: "Node deletion successful!",
             message_file_confirm: "Are you sure you want to delete the file?",
+            mergeSuccess:'Merge Successfully!'
 
 
         },
@@ -122,6 +123,8 @@ export default {
 
             message_updateSuccess: 'Update Successfully!',
             message_updateFail: 'Update failed!',
+            export_success:'Export Successfully!',
+            export_fail:'Export Failed!',
 
         },
         area: {

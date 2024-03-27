@@ -89,7 +89,7 @@
                 <el-table-column :label="$t('material.table.name')" align="center" prop="kindName" width="120px">
                   <template #default="scope">{{ scope.row.kindName ? scope.row.kindName : '-' }}</template>
                 </el-table-column>
-                <el-table-column :label="$t('material.table.materialNum')" align="center" prop="materialId" width="120px">
+                <el-table-column :label="$t('material.table.materialNum')" align="center" prop="materialId" width="150px">
                   <template #default="scope">{{ scope.row.materialId ? scope.row.materialId : '-' }}</template>
                 </el-table-column>
                 <el-table-column :label="$t('material.table.field')" align="center" prop="fieldId" width="120px">
@@ -119,7 +119,7 @@
                     <el-tooltip :content="$t('material.tooltip.phenotype')" placement="top">
                       <el-button @click="handleExitPhenotype(row.materialId, declaredDates)" size="mini"
                         class="table_button" type="text" icon="document"></el-button></el-tooltip>
-                    <el-tooltip :content="$t('material.tooltip.image')" placement="top">
+                    <el-tooltip :content="$t('material.tooltip.Image')" placement="top">
                       <el-button @click="handleExitPicture(row.materialId, declaredDates)" size="mini"
                         class="table_button" type="text" icon="picture"></el-button></el-tooltip>
                   </template>
