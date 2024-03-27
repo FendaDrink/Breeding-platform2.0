@@ -381,6 +381,8 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) =>{
   // Handle file upload
   console.log(file);
+  // 获取文件名
+  dataForm.fileName = file.name.split('.')[0];
 }
 
 let isNormalFile = 1
@@ -1735,6 +1737,7 @@ async function updateData() {
 
 :deep(.el-upload) {
   width: 100%;
+  display: inline-block;
 }
 
 :deep(.el-upload .el-upload-dragger) {
