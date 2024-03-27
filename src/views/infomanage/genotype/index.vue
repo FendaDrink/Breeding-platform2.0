@@ -169,7 +169,7 @@
             <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf"
               :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
               :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-              :on-change="handleUploadFile">
+              :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
               <el-button type="primary">{{ $t('genotype.index.upload') }}</el-button>
               <!-- <template #tip>
               <div class="el-upload__tip">select a file to upload</div>
@@ -556,7 +556,7 @@ const uploadUrl = ref("");
 //文件格式验证
 const handleBeforeUpload = (file) => {
   // 拿到文件后缀名
-  const fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+  const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
   const isVcf = fileType === "vcf";
   if (!isVcf) {
     $modal.msgError(
@@ -572,7 +572,6 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  handleBeforeUpload();
 };
 
 // 文件创建
