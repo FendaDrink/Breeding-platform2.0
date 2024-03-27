@@ -184,7 +184,7 @@
             <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".xlsx"
               :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
               :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-              :on-change="handleUploadFile">
+              :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
               <el-button type="primary">{{ $t('environment.index.upload') }}</el-button>
               <!--            <template #tip>-->
               <!--              <div class="el-upload__tip">select a file to upload</div>-->
@@ -438,7 +438,6 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  // handleBeforeUpload(file);
 };
 
 const createData = async () => {
@@ -464,7 +463,7 @@ const createData = async () => {
       dialogFormVisible.value = false;
       setTimeout(() => {
         getList();
-      }, 4000);
+      }, 1000);
     }
   }
 
@@ -522,16 +521,12 @@ const mergeData = async (row) => {
     try {
       await upload.value.submit();
     } catch (err) {
-      $modal.msgError(err)
+      console.error(err)
     } finally {
-      $modal.msgSuccess(messages.message_merge_success)
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
       dialogFormVisible.value = false;
-      setTimeout(async () => {
-        getList();
-      }, 4000);
     }
 
   }
@@ -539,25 +534,24 @@ const mergeData = async (row) => {
 };
 
 // 文件上传成功回调
-async function uploadFileSuccess(response, file, fileList) {
+async function uploadFileSuccess(response) {
   if (response.code === 200) {
     $modal.msgSuccess(messages.message_upload_success);
   } else {
-    $modal.msgError(messages.message_upload_compare);
+    $modal.msgError(response.msg);
   }
-  //$modal.msgSuccess("上传成功");
 
   isDisabled.value = false;
   const curNode = tree.value.getCurrentNode();
   //upload.value.clearFiles();
 
-  getList();
+  // getList();
   rowClick(curNode);
   dialogFormVisible.value = false;
 }
 
 // 文件上传失败回调
-const uploadFileError = (error, file, uploadFileList) => {
+const uploadFileError = (error) => {
   console.log("File upload error", error);
   $modal.msgError(messages.message_upload_fail);
 };
@@ -711,7 +705,6 @@ function getList() {
       allFileId.value.push(item.fileId);
     });
     fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
-    uploadFileList.value = fileList.value;
     total.value = fileList.value.length;
   }).catch((err) => {
     tableLoading.value = false;

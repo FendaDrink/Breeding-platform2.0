@@ -171,9 +171,9 @@
               :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
               :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
               <el-button type="primary">{{ $t('genotype.index.upload') }}</el-button>
-              <!-- <template #tip>
-              <div class="el-upload__tip">select a file to upload</div>
-            </template> -->
+              <template #tip>
+                <div class="el-upload__tip">select a file to upload</div>
+              </template>
             </el-upload>
           </el-form-item>
           <el-form-item>
@@ -591,14 +591,10 @@ const createData = async () => {
     } catch (err) {
       $modal.msgError(err)
     } finally {
-      $modal.msgSuccess(text.message.upload_success)
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
       dialogFormVisible.value = false;
-      setTimeout(async () => {
-        getList();
-      }, 4000);
     }
   }
 
@@ -609,21 +605,20 @@ async function uploadFileSuccess(response) {
   if (response.code === 200) {
     $modal.msgSuccess(text.message.upload_success);
   } else {
-    $modal.msgError(text.message.upload_compare);
+    $modal.msgError(response.msg);
   }
-  //$modal.msgSuccess("上传成功");
 
   isDisabled.value = false;
   const curNode = tree.value.getCurrentNode();
   //upload.value.clearFiles();
 
-  getList();
+  // getList();
   rowClick(curNode);
   dialogFormVisible.value = false;
 }
 
 // 文件上传失败回调
-const uploadFileError = (error, file, uploadFileList) => {
+const uploadFileError = (error) => {
   console.log("File upload error", error);
   $modal.msgError(text.message.upload_fail);
 };
@@ -632,51 +627,32 @@ const tableName = ref("");
 
 //文件合并
 function mergeFile(row) {
+  uploadFileList.value = [];
   dialogStatus.value = "other";
   tableName.value = row.tableName;
   uploadFileList.value = [];
-  resetForm();
+  // resetForm();
   dialogFormVisible.value = true;
   isDisabled2.value = false;
-  /* fileList.value = [];
-  dialogFormVisible.value = true;
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/penotypeFile/merge?tableName=${row.tableName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  }); */
-  //dialogFormVisible.value = false;
 }
 
 const mergeData = async () => {
   const valid = await form.value.validate();
-  console.log(valid);
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/genotypeFile/merge?tableName=${tableName.value}`;
-    $modal.msg(text.message.update_fail);
+
+    $modal.msg(text.message.upload_wait);
 
     try {
       await upload.value.submit();
       isDisabled2.value = true;
     } catch (error) {
-      console.error("合并错误: ", error);
+      console.error(error);
     } finally {
       tableLoading.value = false;
       tableName.value = "";
       dialogFormVisible.value = false;
-      getList();
-      setTimeout(() => {
-        getList();
-      }, 4000);
     }
   }
 
@@ -794,7 +770,6 @@ function getList() {
         allFileId.value.push(item.fileId);
       });
       fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
-      uploadFileList.value = fileList.value;
       total.value = res.total;
     })
     .catch((err) => {
