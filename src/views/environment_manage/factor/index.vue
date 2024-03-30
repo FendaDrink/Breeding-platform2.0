@@ -171,7 +171,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = this.locale.name === 'en' ? "Add Trait Type" : "添加性状类型";
+      this.title = this.locale === 'en' ? "Add Trait Type" : "添加性状类型";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -182,7 +182,7 @@ export default {
         this.form = response.data;
         this.name = this.form.factorTypeName
         this.open = true;
-        this.title = this.locale.name === 'en' ? "Update Trait Type" : "修改性状类型";
+        this.title = this.locale === 'en' ? "Update Trait Type" : "修改性状类型";
       });
     },
     /** 提交按钮 */
@@ -193,7 +193,7 @@ export default {
           if (this.form.factorTypeId != null) {
             if (this.name == this.form.factorTypeName) {
               updateType(this.form).then(response => {
-                this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+                this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                 this.open = false;
                 this.getList();
               });
@@ -203,12 +203,12 @@ export default {
                 this.ifAdd = res.data;
                 if (this.ifAdd == 0) {
                   updateType(this.form).then(response => {
-                    this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+                    this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                     this.open = false;
                     this.getList();
                   });
                 }
-                else { this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！") }
+                else { this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！") }
               })
             }
 
@@ -218,13 +218,13 @@ export default {
               this.ifAdd = res.data;
               if (this.ifAdd == 0) {
                 addType(this.form).then(response => {
-                  this.$modal.msgSuccess(this.locale.name === 'en' ? "Add Successfully!" : "新增成功！")
+                  this.$modal.msgSuccess(this.locale === 'en' ? "Add Successfully!" : "新增成功！")
                   this.open = false;
                   this.getList();
                 });
               }
               else {
-                this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！")
+                this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！")
               }
             })
 
@@ -235,11 +235,11 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const asfactorTypeIds = row.factorTypeId || this.factorTypeId;
-      this.$modal.confirm(this.locale.name === 'en' ? 'Are you sure you want to delete the item numbered"' + asfactorTypeIds + '"?' : '是否确认删除编号为"' + asfactorTypeIds + '"的数据项？').then(function () {
+      this.$modal.confirm(this.locale === 'en' ? 'Are you sure you want to delete the item numbered"' + asfactorTypeIds + '"?' : '是否确认删除编号为"' + asfactorTypeIds + '"的数据项？').then(function () {
         return delType(asfactorTypeIds);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess(this.locale.name === 'en' ? 'Delete successfully!' : "删除成功");
+        this.$modal.msgSuccess(this.locale === 'en' ? 'Delete successfully!' : "删除成功");
       }).catch(() => { });
     },
     /** 导出按钮操作 */

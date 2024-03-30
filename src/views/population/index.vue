@@ -223,7 +223,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = this.locale.name === 'en' ? "Add Population Information" : "添加群体信息";
+      this.title = this.locale === 'en' ? "Add Population Information" : "添加群体信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -233,7 +233,7 @@ export default {
         this.form = response.data;
         this.name = this.form.population_name;
         this.open = true;
-        this.title = this.locale.name === 'en' ? "Update Population Information" : "修改群体信息";
+        this.title = this.locale === 'en' ? "Update Population Information" : "修改群体信息";
       });
     },
     /** 提交按钮 */
@@ -244,7 +244,7 @@ export default {
           if (this.form.population_id != null) {
             if (this.form.population_name == this.name) {
               updatePopulation(this.form).then(response => {
-                this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+                this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                 this.open = false;
                 this.handle_List();
               });
@@ -254,12 +254,12 @@ export default {
                 this.ifAdd = res.data;
                 if (this.ifAdd == 0) {
                   updatePopulation(this.form).then(response => {
-                    this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+                    this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                     this.open = false;
                     this.handle_List();
                   });
                 }
-                else { this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！") }
+                else { this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！") }
               })
             }
 
@@ -270,13 +270,13 @@ export default {
               this.ifAdd = res.data
               if (this.ifAdd == 0) {
                 addPopulation(this.form).then(response => {
-                  this.$modal.msgSuccess(this.locale.name === 'en' ? "Add Successfully!" : "新增成功！")
+                  this.$modal.msgSuccess(this.locale === 'en' ? "Add Successfully!" : "新增成功！")
                   this.open = false;
                   this.handle_List();
                 });
               }
               else {
-                this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！")
+                this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！")
               }
             })
 
@@ -289,11 +289,11 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const populationIds = row.population_id || this.populationId;
-      this.$modal.confirm(this.locale.name === 'en' ? 'Are you sure you want to delete the item numbered"' + populationIds + '"?' : '是否确认删除编号为"' + populationIds + '"的数据项？').then(function () {
+      this.$modal.confirm(this.locale === 'en' ? 'Are you sure you want to delete the item numbered"' + populationIds + '"?' : '是否确认删除编号为"' + populationIds + '"的数据项？').then(function () {
         return delPopulation(populationIds);
       }).then(() => {
         this.handle_List();
-        this.$modal.msgSuccess(this.locale.name === 'en' ? 'Delete successfully!' : "删除成功");
+        this.$modal.msgSuccess(this.locale === 'en' ? 'Delete successfully!' : "删除成功");
       }).catch(() => { });
     },
     /** 导出按钮操作 */
