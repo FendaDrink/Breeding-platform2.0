@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, toRefs } from "vue";
+import {ref, reactive, onMounted, toRefs, computed} from "vue";
 import { useRoute } from "vue-router";
 import { onBeforeRouteLeave } from "vue-router";
 
@@ -107,7 +107,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const traitFileId = ref(60);
 

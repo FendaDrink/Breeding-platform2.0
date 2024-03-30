@@ -77,6 +77,7 @@
                             class="table_button">
                           </el-button>
                         </el-tooltip>
+                        <!-- 需要修改 -->
                         <el-tooltip :content="$t('environment.index.tooltip_view1')" placement="top">
                           <el-button size="medium" type="text" icon="place" link @click="fileVisual1(scope.row)"
                             class="table_button">
@@ -246,7 +247,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const router = useRouter();
 

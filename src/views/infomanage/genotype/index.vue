@@ -263,7 +263,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 
 const text = {
@@ -1128,7 +1128,7 @@ function deleteNode() {
     $modal.msgWarning(text.message.delete_select);
     return;
   }
-  $modal.confirm(text.message.delete_confirm).then(() => {
+  $modal.confirm(text.message.node_confirm).then(() => {
     const curNode = tree.value.getCurrentNode();
     const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
     deleteNodes(curNodeTreeIds).then(() => {
