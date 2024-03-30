@@ -156,12 +156,12 @@ export default {
       });
     },
     // 取消按钮
-    cancel() {
+    cancel(row) {
       this.open = false;
       this.reset();
     },
     // 表单重置
-    reset() {
+    reset(row) {
       this.form = {
         speciesId: null,
         speciesName: null,
@@ -174,12 +174,12 @@ export default {
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    handleQuery(row) {
       this.queryParams.pageNum = 1;
       this.getList();
     },
     /** 重置按钮操作 */
-    resetQuery() {
+    resetQuery(row) {
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -199,10 +199,11 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd(row) {
       this.reset();
       this.open = true;
-      this.title = this.locale.name === 'en' ? "Add Species Information" : "添加物种信息";
+      this.title = this.locale === 'en' ? "Add Species Information" : "添加物种信息";
+      // this.title = "添加物种信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -214,17 +215,18 @@ export default {
         this.form = response.data;
         this.name = this.form.speciesName
         this.open = true;
-        this.title = this.locale.name === 'en' ? "Update Species Information" : "修改物种信息";
+        this.title = this.locale === 'en' ? "Update Species Information" : "修改物种信息";
+        // this.title = "修改物种信息";
       });
     },
     /** 提交按钮 */
-    submitForm() {
+    submitForm(row) {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.speciesId != null) {
             if (this.form.speciesName == this.name) {
               updateSpecies(this.form).then(response => {
-                this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+                this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                 this.open = false;
                 this.getList();
               });
@@ -234,12 +236,12 @@ export default {
                 this.ifAdd = res.data;
                 if (this.ifAdd == 0) {
                   updateSpecies(this.form).then(response => {
-                    this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+                    this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                     this.open = false;
                     this.getList();
                   });
                 }
-                else { this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！") }
+                else { this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！") }
               })
             }
 
@@ -249,13 +251,13 @@ export default {
               this.ifAdd = res.data
               if (this.ifAdd == 0) {
                 addSpecies(this.form).then(response => {
-                  this.$modal.msgSuccess(this.locale.name === 'en' ? "Add Successfully!" : "新增成功！");
+                  this.$modal.msgSuccess(this.locale === 'en' ? "Add Successfully!" : "新增成功！");
                   this.open = false;
                   this.getList();
                 });
               }
               else {
-                this.$modal.msgWarning(this.locale.name === 'en' ? "This species name already exists!" : "该名称已存在！")
+                this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！")
               }
             })
 
@@ -267,15 +269,17 @@ export default {
     handleDelete(row) {
       console.log("wqewq")
       const speciesIds = row.speciesId || this.speciesId;
-      this.$modal.confirm(this.locale.name === 'en' ? 'Are you sure you want to delete the item numbered"' + speciesIds + '"?' : '是否确认删除编号为"' + speciesIds + '"的数据项？').then(function () {
-        return delSpecies(speciesIds);
+      this.$modal.confirm(this.locale === 'en' ? 'Are you sure you want to delete the item numbered"' + speciesIds + '"?' : '是否确认删除编号为"' + speciesIds + '"的数据项？').then(function () {
+      // this.$modal.confirm('是否确认删除编号为"' + speciesIds + '"的数据项？').then(function () {
+      return delSpecies(speciesIds);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess(this.locale.name === 'en' ? 'Delete successfully!' : "删除成功");
+        this.$modal.msgSuccess(this.locale === 'en' ? 'Delete successfully!' : "删除成功");
+        this.$modal.msgSuccess("删除成功");
       }).catch(() => { });
     },
     /** 导出按钮操作 */
-    handleExport() {
+    handleExport(row) {
       const species_id = this.speciesId
       // let formdata = new FormData()
       // formdata.append("species_id",species_id)

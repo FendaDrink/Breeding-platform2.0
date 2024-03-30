@@ -195,9 +195,9 @@ export default {
         this.factorList = responseData.data
         this.total = responseData.total
         if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
-          ElMessage.warning(this.locale.name === 'en' ? "No matching data was found." : "没有符合条件的数据")
+          ElMessage.warning(this.locale === 'en' ? "No matching data was found." : "没有符合条件的数据")
         } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
-          ElMessage.success(this.locale.name === 'en' ? "Search successfully!" : "查询成功！")
+          ElMessage.success(this.locale === 'en' ? "Search successfully!" : "查询成功！")
         }
         this.isFirstSelection = true
         this.isFirstSearch = false
@@ -245,7 +245,7 @@ export default {
     /** 搜索按钮操作 */
     async handleQuery() {
       if (this.add.type == "" && this.add.name == "") {
-        ElMessage.warning(this.locale.name === 'en' ? "Please enter the search criteria." : "请输入查询条件")
+        ElMessage.warning(this.locale === 'en' ? "Please enter the search criteria." : "请输入查询条件")
         return
       }
       this.queryParams.pageNum = 1;
@@ -288,13 +288,13 @@ export default {
         if (valid) {
           if (this.form.factorId != null) {
             updateFactor(this.form).then(response => {
-              this.$modal.msgSuccess(this.locale.name === 'en' ? "Update successfully!" : "修改成功！");
+              this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
               this.open = false;
               this.getList();
             });
           } else {
             addFactor(this.form).then(response => {
-              this.$modal.msgSuccess(this.locale.name === 'en' ? "Add successfully!" : "新增成功！");
+              this.$modal.msgSuccess(this.locale === 'en' ? "Add successfully!" : "新增成功！");
               this.open = false;
               this.getList();
             });
@@ -369,14 +369,14 @@ export default {
       obj.list = this.factorId
       obj.type = this.add.type
       if (obj.type == "" || obj.type == null) {
-        ElMessage.warning(this.locale.name === 'en' ? "Please modify based on trait type!" : "请通过性状类型来修改！")
+        ElMessage.warning(this.locale === 'en' ? "Please modify based on trait type!" : "请通过性状类型来修改！")
       } else {
         this.isModifing = true
         addHigh(obj).then(res => {
           if (res.code == 200) {
-            ElMessage.success(this.locale.name === 'en' ? "Update successfully!" :"修改成功！")
+            ElMessage.success(this.locale === 'en' ? "Update successfully!" :"修改成功！")
           } else {
-            ElMessage.error(this.locale.name === 'en' ? "Update failed!" :"修改失败！")
+            ElMessage.error(this.locale === 'en' ? "Update failed!" :"修改失败！")
           }
           this.resetQuery()
           this.isModifing = false
