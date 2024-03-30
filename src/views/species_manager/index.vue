@@ -156,12 +156,12 @@ export default {
       });
     },
     // 取消按钮
-    cancel() {
+    cancel(row) {
       this.open = false;
       this.reset();
     },
     // 表单重置
-    reset() {
+    reset(row) {
       this.form = {
         speciesId: null,
         speciesName: null,
@@ -174,12 +174,12 @@ export default {
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    handleQuery(row) {
       this.queryParams.pageNum = 1;
       this.getList();
     },
     /** 重置按钮操作 */
-    resetQuery() {
+    resetQuery(row) {
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -199,7 +199,7 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd(row) {
       this.reset();
       this.open = true;
       this.title = this.locale.name === 'en' ? "Add Species Information" : "添加物种信息";
@@ -218,7 +218,7 @@ export default {
       });
     },
     /** 提交按钮 */
-    submitForm() {
+    submitForm(row) {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.speciesId != null) {
@@ -275,7 +275,7 @@ export default {
       }).catch(() => { });
     },
     /** 导出按钮操作 */
-    handleExport() {
+    handleExport(row) {
       const species_id = this.speciesId
       // let formdata = new FormData()
       // formdata.append("species_id",species_id)
