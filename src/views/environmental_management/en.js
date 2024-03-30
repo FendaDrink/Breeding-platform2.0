@@ -70,7 +70,7 @@ export default {
             message_getListFailed: "Retrieving list failed!",
             message_input_fileName: "File name cannot be empty!",
             message_input_nodeName: "Node name cannot be empty!",
-            message_input_nodeName: "Comment name cannot be empty!",
+            message_input_commentName: "Comment name cannot be empty!",
             message_input_status: "Please select a status!",
             message_input_date: "Please select a date!",
             message_upload_vcf: "Only CSV file format is allowed for upload!",

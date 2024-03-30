@@ -34,7 +34,8 @@ export default {
 
 
             tooltip_detail: '文件详情',
-            tooltip_view: '可视化',
+            tooltip_view1: '环境分类可视化',
+            tooltip_view2: '环境因子可视化',
             tooltip_delete: '删除',
             tooltip_histoicalVersions: '查看历史版本',
             tooltip_merge: '合并',
@@ -75,6 +76,7 @@ export default {
             message_getListFailed: '获取列表失败！',
             message_input_fileName: '文件名不能为空！',
             message_input_nodeName: '节点名不能为空！',
+            message_input_commentName:'备注不能为空！',
             message_input_status: '选择状态！',
             message_input_date: '请选择日期！',
             message_upload_vcf: '只能上传vcf格式的文件！',

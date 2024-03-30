@@ -77,6 +77,7 @@
 import { download, checkout, listType, getType, delType, addType, updateType } from "@/api/system/type";
 import { blobValidate } from '@/utils/param'
 import { saveAs } from 'file-saver'
+import { computed } from "@vue/reactivity";
 export default {
   name: "Type",
   data() {
@@ -271,7 +272,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const messages = {
   rules: {

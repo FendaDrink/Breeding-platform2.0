@@ -263,7 +263,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 
 const text = {
@@ -572,7 +572,7 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  dataForm.fileName = file.name.split('.')[0];
+  dataForm.fileName =  dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
 };
 
 // 文件创建
@@ -641,7 +641,9 @@ const mergeData = async () => {
   const valid = await form.value.validate();
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-      }/genotypeFile/merge?tableName=${tableName.value}`;
+      }/genotypeFile/merge?tableName=${tableName.value
+      }&fileName=${dataForm.fileName
+      }&remark=${dataForm.remark}`;
 
     $modal.msg(text.message.upload_wait);
 
@@ -1126,7 +1128,7 @@ function deleteNode() {
     $modal.msgWarning(text.message.delete_select);
     return;
   }
-  $modal.confirm(text.message.delete_confirm).then(() => {
+  $modal.confirm(text.message.node_confirm).then(() => {
     const curNode = tree.value.getCurrentNode();
     const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
     deleteNodes(curNodeTreeIds).then(() => {
