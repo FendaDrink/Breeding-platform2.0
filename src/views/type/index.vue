@@ -1,75 +1,71 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-<!--    <el-config-provider :locale="locale">-->
-      <el-card>
-        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item :label="$t('basic.label.trait')" prop="traitTypeId" label-width="auto">
-            <el-input v-model="queryParams.traitTypeName" :placeholder="$t('basic.placeholder.trait')" clearable
-              @keyup.enter.native="handleQuery" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">{{ $t('basic.button.search') }}</el-button>
-            <el-button icon="Refresh" @click="resetQuery">{{ $t('basic.button.reset') }}</el-button>
-          </el-form-item>
-        </el-form>
+    <el-card>
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form-item label="性状类型名称" prop="traitTypeId" label-width="80">
+          <el-input v-model="queryParams.traitTypeName" placeholder="请输入性状类型名称" clearable
+            @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="Search" @click="handleQuery" >搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
+        </el-form-item>
+      </el-form>
 
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:type:add']">{{
-              $t('basic.button.add') }}</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-              v-hasPermi="['system:type:edit']">{{ $t('basic.button.update') }}</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" plain icon="delete" :disabled="multiple" @click="handleDelete"
-              v-hasPermi="['system:type:remove']">{{ $t('basic.button.delete') }}</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:type:export']">{{
-              $t('basic.button.export') }}</el-button>
-          </el-col>
-          <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
-        </el-row>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:type:add']"
+            >新增</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+            v-hasPermi="['system:type:edit']" >修改</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="danger" plain icon="delete" :disabled="multiple" @click="handleDelete"
+            v-hasPermi="['system:type:remove']" >删除</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:type:export']"
+            >导出</el-button>
+        </el-col>
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
 
-        <el-table :data="typeList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" align="center" />
-          <el-table-column :label="$t('basic.table.index')" align="center" type="index" width="80" />
-          <el-table-column :label="$t('basic.table.trait')" align="center" prop="traitTypeName" />
-          <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
-          <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
-            <template #default="scope">
-              <el-tooltip :content="$t('basic.tooltip.update')" placement="top">
-                <el-button link type="text" @click="handleUpdate(scope.row)" class="table_button"
-                  icon="edit"></el-button></el-tooltip>
-              <el-tooltip :content="$t('basic.tooltip.delete')" placement="top">
-                <el-button type="text" @click="handleDelete(scope.row)" class="table_button"
-                  icon="delete"></el-button></el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-table :data="typeList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="序号" type="index" width="50" />
+        <el-table-column label="性状类型名称" align="center" prop="traitTypeName" />
+        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-tooltip content="修改" placement="top">
+              <el-button link type="text" @click="handleUpdate(scope.row)" class="table_button" icon="edit"></el-button></el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button type="text" @click="handleDelete(scope.row)" class="table_button" icon="delete"></el-button></el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
 
-        <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-          v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-          layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
-      </el-card>
-      <!-- 添加或修改【请填写功能名称】对话框 -->
-      <el-dialog :title="title" v-model="open" width="500px">
-        <el-form ref="form" :model="form" :rules="rules">
-          <el-form-item :label="$t('basic.label.trait')" prop="traitTypeName">
-            <el-input v-model="form.traitTypeName" :placeholder="$t('basic.placeholder.trait')" />
-          </el-form-item>
-          <el-form-item :label="$t('basic.label.comment')" prop="remark">
-            <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.comment')" />
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="success" plain @click="submitForm">{{ $t('basic.button.save') }}</el-button>
-          <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
-        </div>
-      </el-dialog>
-<!--    </el-config-provider>-->
+      <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
+        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+    </el-card>
+    <!-- 添加或修改【请填写功能名称】对话框 -->
+    <el-dialog :title="title" v-model="open" width="500px">
+      <el-form ref="form" :model="form" :rules="rules">
+        <el-form-item label="性状类型名称" prop="traitTypeName">
+          <el-input v-model="form.traitTypeName" placeholder="请输入性状类型名称" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="success" plain @click="submitForm">确 定</el-button>
+        <el-button type="info" plain @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -77,7 +73,6 @@
 import { download, checkout, listType, getType, delType, addType, updateType } from "@/api/system/type";
 import { blobValidate } from '@/utils/param'
 import { saveAs } from 'file-saver'
-import { computed } from "@vue/reactivity";
 export default {
   name: "Type",
   data() {
@@ -112,7 +107,28 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en)),
+      rules: {
+        traitTypeId: [
+          { required: true, message: "性状类型ID不能为空", trigger: "blur" }
+        ], traitTypeName: [
+          { required: true, message: "性状类型名称不能为空", trigger: "blur" }
+        ],
+        traitId: [
+          { required: true, message: "性状ID不能为空", trigger: "blur" }
+        ],
+        createBy: [
+          { required: true, message: "创建者不能为空", trigger: "blur" }
+        ],
+        createTime: [
+          { required: true, message: "创建时间不能为空", trigger: "blur" }
+        ],
+        updateBy: [
+          { required: true, message: "更新者不能为空", trigger: "blur" }
+        ],
+        updateTime: [
+          { required: true, message: "更新时间不能为空", trigger: "blur" }
+        ],
+      }
     };
   },
   created() {
@@ -172,18 +188,18 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = this.locale === 'en' ? "Add Trait Type" : "添加性状类型";
+      this.title = "添加";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const asTraitTypeId = row.traitTypeId || this.traitTypeIdx
+      const asTraitTypeId = row.traitTypeId || this.traitTypeIdx``
       getType(asTraitTypeId).then(response => {
         console.log(response)
         this.form = response.data;
         this.name = this.form.traitTypeName
         this.open = true;
-        this.title = this.locale === 'en' ? "Update Trait Type" : "修改性状类型";
+        this.title = "修改";
       });
     },
     /** 提交按钮 */
@@ -194,7 +210,7 @@ export default {
           if (this.form.traitTypeId != null) {
             if (this.name == this.form.traitTypeName) {
               updateType(this.form).then(response => {
-                this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
+                this.$modal.msgSuccess("修改成功");
                 this.open = false;
                 this.getList();
               });
@@ -204,12 +220,12 @@ export default {
                 this.ifAdd = res.data;
                 if (this.ifAdd == 0) {
                   updateType(this.form).then(response => {
-                    this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
+                    this.$modal.msgSuccess("修改成功");
                     this.open = false;
                     this.getList();
                   });
                 }
-                else { this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！") }
+                else { this.$modal.msgWarning("该名称已存在！") }
               })
             }
 
@@ -219,13 +235,13 @@ export default {
               this.ifAdd = res.data;
               if (this.ifAdd == 0) {
                 addType(this.form).then(response => {
-                  this.$modal.msgSuccess(this.locale === 'en' ? "Add Successfully!" : "新增成功！")
+                  this.$modal.msgSuccess("新增成功");
                   this.open = false;
                   this.getList();
                 });
               }
               else {
-                this.$modal.msgWarning(this.locale === 'en' ? "This species name already exists!" : "该名称已存在！")
+                this.$modal.msgWarning("该名称已存在！")
               }
             })
 
@@ -236,11 +252,11 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const asTraitTypeIds = row.traitTypeId || this.traitTypeId;
-      this.$modal.confirm(this.locale === 'en' ? 'Are you sure you want to delete the item numbered"' + asTraitTypeIds + '"?' : '是否确认删除编号为"' + asTraitTypeIds + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除编号为"' + asTraitTypeIds + '"的数据项？').then(function () {
         return delType(asTraitTypeIds);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess(this.locale === 'en' ? 'Delete successfully!' : "删除成功");
+        this.$modal.msgSuccess("删除成功");
       }).catch(() => { });
     },
     /** 导出按钮操作 */
@@ -263,72 +279,11 @@ export default {
   }
 };
 </script>
-
-<script setup>
-import { computed } from "@vue/reactivity";
-
-import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
-import en from 'element-plus/lib/locale/lang/en' // 英文语言
-
-import { useI18n } from 'vue-i18n'
-const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
-
-const messages = {
-  rules: {
-    speciesName: computed(() => i18n.t('basic.rule.speciesName')).value,
-    creator: computed(() => i18n.t('basic.rule.creator')).value,
-    createTime: computed(() => i18n.t('basic.rule.createTime')).value,
-    updater: computed(() => i18n.t('basic.rule.updater')).value,
-    updateTime: computed(() => i18n.t('basic.rule.updateTime')).value,
-    speciesId: computed(() => i18n.t('basic.rule.speciesId')).value,
-    populationName: computed(() => i18n.t('basic.rule.populationName')).value,
-    traitTypeId: computed(() => i18n.t('basic.rule.traitTypeId')).value,
-    traitTypeName: computed(() => i18n.t('basic.rule.traitTypeName')).value,
-    traitId: computed(() => i18n.t('basic.rule.traitId')).value,
-  },
-  title: {
-    updateSpecies: computed(() => i18n.t('basic.title.updateSpecies')).value,
-    addSpecies: computed(() => i18n.t('basic.title.update_addSpecies')).value,
-  },
-  update_success: computed(() => i18n.t('basic.message.update_success')).value,
-  species_exist: computed(() => i18n.t('basic.message.species_exist')).value,
-  delete_confirm1: computed(() => i18n.t('basic.message.delete_confirm1')).value,
-  delete_confirm2: computed(() => i18n.t('basic.message.delete_confirm2')).value,
-  delete_success: computed(() => i18n.t('basic.message.delete_success')).value,
-
-};
-
-const rules = reactive({
-  traitTypeId: [
-    { required: true, message: messages.rules.traitTypeId, trigger: "blur" }
-  ],
-  traitTypeName: [
-    { required: true, message: messages.rules.traitTypeName, trigger: "blur" }
-  ],
-  traitId: [
-    { required: true, message: messages.rules.traitId, trigger: "blur" }
-  ],
-  createBy: [
-    { required: true, message: messages.rules.creator, trigger: "blur" }
-  ],
-  createTime: [
-    { required: true, message: messages.rules.createTime, trigger: "blur" }
-  ],
-  updateBy: [
-    { required: true, message: messages.rules.updater, trigger: "blur" }
-  ],
-  updateTime: [
-    { required: true, message: messages.rules.updateTime, trigger: "blur" }
-  ],
-})
-</script>
-
 <!-- el-dialog的append-to-body属性会导致el-dialog的样式修改失效，先去掉 -->
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
-  background: #0F5C32;
+  background:#0F5C32;
   height: 60px !important;
 
   span {
@@ -337,10 +292,6 @@ const rules = reactive({
     font-size: 20px;
     color: white;
     letter-spacing: 2px;
-
-    align-items: center;
-    justify-content: center;
-    display: flex;
   }
 }
 </style>
@@ -532,7 +483,7 @@ const rules = reactive({
   position: relative;
   background-color: #fff;
   width: auto;
-  min-width: 150px;
+  min-width:150px;
 }
 
 .card-header:before,
