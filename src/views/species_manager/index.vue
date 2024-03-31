@@ -116,7 +116,15 @@ export default {
         speciesName: "",
       },
       // 表单参数
-      form: {},
+      form: {
+        speciesId: null,
+        speciesName: null,
+        createBy: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null,
+        remark: null
+      },
       locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en)),
       // 表单校验
       // rules: {
