@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-config-provider :locale="locale">
+<!--    <el-config-provider :locale="locale">-->
     <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)"
       :element-loading-text="$t('loadingText')" element-loading-background="rgba(0, 0, 0, 0.8)">
       <!--树-->
@@ -84,7 +84,7 @@
         </div>
       </el-main>
     </el-container>
-  </el-config-provider>
+<!--  </el-config-provider>-->
   </div>
 </template>
 

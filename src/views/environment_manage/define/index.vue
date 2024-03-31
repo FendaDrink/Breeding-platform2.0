@@ -1,6 +1,6 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-config-provider :locale="locale">
+<!--    <el-config-provider :locale="locale">-->
     <el-card>
       <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch">
         <el-form-item :label="$t('basic.label.factorName')" prop="factorName">
@@ -69,7 +69,7 @@
           <el-input v-model="form.factorName" :placeholder="$t('basic.placeholder.factorName')" />
         </el-form-item>
         <el-form-item :label="$t('basic.label.fullname')" prop="factorFullName">
-          <el-input v-model="form.factorFullName" :placeholder="$t('basic.placeholder.fullName')" />
+          <el-input v-model="form.factorFullName" :placeholder="$t('basic.placeholder.fullname')" />
         </el-form-item>
         <el-form-item :label="$t('basic.label.abbreviation')" prop="factorAbbreviationName">
           <el-input v-model="form.factorAbbreviationName" :placeholder="$t('basic.placeholder.abbreviation')" />
@@ -83,7 +83,7 @@
         <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog>
-    </el-config-provider>
+<!--    </el-config-provider>-->
   </div>
 </template>
 
@@ -284,6 +284,7 @@ import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
+import {reactive} from "vue";
 const i18n = useI18n();
 const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 

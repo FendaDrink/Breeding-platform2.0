@@ -1,6 +1,6 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-config-provider :locale="locale">
+<!--    <el-config-provider :locale="locale">-->
       <el-card class="card-container">
         <el-form :model="queryParams" ref="queryForm" size="larger" :inline="true" v-show="showSearch" label-width="auto">
           <el-form-item :label="$t('basic.label.species')" prop="speciesName">
@@ -76,7 +76,7 @@
           <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
         </div>
       </el-dialog>
-    </el-config-provider>
+<!--    </el-config-provider>-->
   </div>
 </template>
 
@@ -117,7 +117,7 @@ export default {
       },
       // 表单参数
       form: {},
-      locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+      locale: computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en)),
       // 表单校验
       // rules: {
       //   speciesName: [
@@ -224,7 +224,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.speciesId != null) {
-            if (this.form.speciesName == this.name) {
+            if (this.form.speciesName === this.name) {
               updateSpecies(this.form).then(response => {
                 this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                 this.open = false;
@@ -234,7 +234,7 @@ export default {
             else {
               checkout(this.form).then(res => {
                 this.ifAdd = res.data;
-                if (this.ifAdd == 0) {
+                if (this.ifAdd === 0) {
                   updateSpecies(this.form).then(response => {
                     this.$modal.msgSuccess(this.locale === 'en' ? "Update successfully!" : "修改成功！");
                     this.open = false;
@@ -249,7 +249,7 @@ export default {
           } else {
             checkout(this.form).then(res => {
               this.ifAdd = res.data
-              if (this.ifAdd == 0) {
+              if (this.ifAdd === 0) {
                 addSpecies(this.form).then(response => {
                   this.$modal.msgSuccess(this.locale === 'en' ? "Add Successfully!" : "新增成功！");
                   this.open = false;

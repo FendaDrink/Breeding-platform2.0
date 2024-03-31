@@ -1,6 +1,6 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-config-provider :locale="locale">
+<!--    <el-config-provider :locale="locale">-->
       <el-card>
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="auto">
           <el-form-item :label="$t('basic.label.factorTypeName')" prop="factorTypeId" label-width="auto">
@@ -69,7 +69,7 @@
           <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
         </div>
       </el-dialog>
-    </el-config-provider>
+<!--    </el-config-provider>-->
   </div>
 </template>
 
@@ -130,7 +130,7 @@ export default {
       });
     },
     // 取消按钮
-    cancel() {
+    cancel(row) {
       this.open = false;
       this.reset();
     },
@@ -149,14 +149,14 @@ export default {
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    handleQuery(row) {
       // 按照输入框内容过滤数据
       this.queryParams.pageNum = 1;
       this.getList()
 
     },
     /** 重置按钮操作 */
-    resetQuery() {
+    resetQuery(row) {
       this.queryParams.factorTypeName = ""
       this.handleQuery();
     },
@@ -168,7 +168,7 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd(row) {
       this.reset();
       this.open = true;
       this.title = this.locale === 'en' ? "Add Trait Type" : "添加性状类型";
@@ -186,7 +186,7 @@ export default {
       });
     },
     /** 提交按钮 */
-    submitForm() {
+    submitForm(row) {
       console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
@@ -243,7 +243,7 @@ export default {
       }).catch(() => { });
     },
     /** 导出按钮操作 */
-    handleExport() {
+    handleExport(row) {
       const factor_type_id = this.factorTypeId
       download(factor_type_id).then(res => {
         const isLogin = blobValidate(res);
