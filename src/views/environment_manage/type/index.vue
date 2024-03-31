@@ -1,6 +1,6 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-config-provider :locale="locale">
+<!--    <el-config-provider :locale="locale">-->
     <el-card>
       <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="auto">
         <el-form-item :label="$t('basic.label.factorTypeName')">
@@ -60,7 +60,7 @@
         <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog> -->
-  </el-config-provider>
+<!--  </el-config-provider>-->
   </div>
 </template>
 
