@@ -238,7 +238,7 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
+import {ref, getCurrentInstance, nextTick, onMounted, reactive} from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
   genoListFile,
