@@ -313,7 +313,6 @@ export default {
                 createSuccess: "Node Added Successfully!",
                 createFail: "Node Addition Failed!",
                 updateSuccess: "Update Successfully!",
-                updateFail: "Update Failed!",
 
                 node_parent: "Please select a parent node!",
                 node_add_success: "Node Added Successfully!",
