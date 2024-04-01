@@ -189,7 +189,6 @@
 </template>
 
 <script setup name="phenoType">
-import axios from 'axios';
 import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
