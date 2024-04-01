@@ -392,10 +392,13 @@ onMounted(() => {
         align-items: flex-end;
         justify-content: center;
         height: 50%;
-        font-size: 400%;
+        font-size: 390%;
         font-weight: 700;
         text-align: center;
-        color:#fff
+        // color: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
       }
       .input-wrapper{
         flex: 1;
@@ -404,9 +407,9 @@ onMounted(() => {
         justify-content: center;
         align-items: flex-start;
         .input{
-          width: 45%;
+          width: 58%;
           @media (max-width: 1500px) {
-            width: 55%;
+            width: 68%;
           }
           color: #fff;
           :deep(.el-input){
@@ -418,7 +421,7 @@ onMounted(() => {
             font-size: 110%;
             box-shadow: none;
             :deep(.el-input__inner){
-              height: 52px;
+              height: 60px;
               // box-shadow: none;
               &::placeholder{
                 color: #817d7d;
