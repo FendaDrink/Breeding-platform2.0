@@ -172,6 +172,9 @@ export default {
       listPopulation(this.queryParams).then(response => {
         console.log(response)
         this.populationList = response.rows;
+        this.populationList.forEach(item => {
+          if (item.remark == null || !item.remark.length) item.remark = "-"
+        })
         this.total = response.total;
         this.loading = false;
       });
@@ -214,7 +217,7 @@ export default {
         console.log(response)
         this.populationList = response.rows;
         this.populationList.forEach(item => {
-          if (item.remark == null) item.remark = "-"
+          if (item.remark === null || !item.remark.length) item.remark = "-"
         })
         this.total = response.total;
         this.loading = false;

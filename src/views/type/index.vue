@@ -4,7 +4,7 @@
       <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
         <el-form-item label="性状类型名称" prop="traitTypeId" label-width="80">
           <el-input v-model="queryParams.traitTypeName" placeholder="请输入性状类型名称" clearable
-            @keyup.enter.native="handleQuery" />
+                    @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery" >搜索</el-button>
@@ -15,19 +15,19 @@
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:type:add']"
-            >新增</el-button>
+          >新增</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-            v-hasPermi="['system:type:edit']" >修改</el-button>
+                     v-hasPermi="['system:type:edit']" >修改</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="danger" plain icon="delete" :disabled="multiple" @click="handleDelete"
-            v-hasPermi="['system:type:remove']" >删除</el-button>
+                     v-hasPermi="['system:type:remove']" >删除</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:type:export']"
-            >导出</el-button>
+          >导出</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
@@ -48,8 +48,8 @@
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-        layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+                     v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+                     layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
@@ -142,7 +142,7 @@ export default {
         console.log(response)
         this.typeList = response.rows;
         this.typeList.forEach(item => {
-          if (item.remark == null) item.remark = "-"
+          if (item.remark == null || !item.remark.length) item.remark = "-"
         })
         this.total = response.total;
         this.loading = false;
@@ -674,7 +674,7 @@ export default {
   }
 }
 
-//三级节点选择器 
+//三级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;
