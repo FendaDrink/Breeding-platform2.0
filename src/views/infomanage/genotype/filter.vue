@@ -64,11 +64,10 @@ import * as echarts from "echarts";
 import { onMounted } from "vue";
 
 import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
-import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import en from 'element-plus/lib/locale/lang/en'
+import {computed} from "@vue/reactivity"; // 英文语言
 
-const locale = computed(() => {
-  localStorage.getItem('lang') === 'zh-CN' ? zh : en;
-})
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 // let t={
 //   t1 : computed(() => i18n.t('genotype.filter.t1')).value,
 //   t2 : computed(() => i18n.t('genotype.filter.t2')).value,

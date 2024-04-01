@@ -9,6 +9,15 @@ export function genoListFile(query) {
     });
   }
 
+// 查询历史文件
+export function genoHistoryListFile(query){
+  return request({
+    url:'/genotypeFile/getFileHistory',
+    method:'get',
+    params:query
+  })
+}
+
   //查看文件详情
 export function selectDetailByFileId(query) {
   return request({
