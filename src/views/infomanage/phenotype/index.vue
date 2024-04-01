@@ -189,7 +189,6 @@
 </template>
 
 <script setup name="phenoType">
-import axios from 'axios';
 import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
@@ -207,7 +206,7 @@ import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
-
+import axios from 'axios'
 import { computed } from "@vue/reactivity";
 
 import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
@@ -571,6 +570,7 @@ const createData = async () => {
 // 文件上传成功回调
   async function uploadFileSuccess(response) {
     if (response.code === 200) {
+      console.log(response,'***')
       $modal.msgSuccess(response.msg);
     } else {
       $modal.msgError(response.msg);
@@ -1237,7 +1237,7 @@ async function updateData() {
 
 .upload {
   width: 100%;
-  // border:1px solid #ccc;
+  display: block;
 }
 
 .mokuai {

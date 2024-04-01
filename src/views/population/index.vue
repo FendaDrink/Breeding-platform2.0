@@ -172,6 +172,9 @@ export default {
       listPopulation(this.queryParams).then(response => {
         console.log(response)
         this.populationList = response.rows;
+        this.populationList.forEach(item => {
+          if (item.remark == null || !item.remark.length) item.remark = "-"
+        })
         this.total = response.total;
         this.loading = false;
       });
@@ -214,7 +217,7 @@ export default {
         console.log(response)
         this.populationList = response.rows;
         this.populationList.forEach(item => {
-          if (item.remark == null) item.remark = "-"
+          if (item.remark === null || !item.remark.length) item.remark = "-"
         })
         this.total = response.total;
         this.loading = false;
@@ -234,6 +237,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      console.log('selecton',selection)
       this.populationId = selection.map(item => item.populationId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
@@ -247,7 +251,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const populationId = row.population_id || this.populationId
+      const populationId = row.population_id || this.populationId[0]
+      console.log(this.populationId,'123')
       getPopulation(populationId).then(response => {
         this.form = response.data;
         this.name = this.form.population_name;
