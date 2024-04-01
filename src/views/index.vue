@@ -21,7 +21,7 @@
               <div class="overlay">
                 <span>{{ item.title }}</span>
                 <h4>
-                  <a href="">{{ item.titleDescription }}</a>
+                  <a href="#">{{ item.titleDescription }}</a>
                 </h4>
               </div>
             </div>
@@ -38,6 +38,7 @@ import type1 from "@/assets/img/1.jpg"
 import type2 from "@/assets/img/2.jpg"
 import type3 from "@/assets/img/3.jpg"
 import type4 from "@/assets/img/4.jpg"
+import {reactive, ref} from "vue";
 const user = useUserStore();
 const version = ref("3.8.2");
 
@@ -49,7 +50,8 @@ const typeList = reactive([
   {
     logo: type1,
     title: "表型管理",
-    description:"这是作物表型管理平台的表型管理部分"
+    description:"这是作物表型管理平台的表型管理部分",
+    url:'www.baidu.com'
   },
   {
     logo: type2,

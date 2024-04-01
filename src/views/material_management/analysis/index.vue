@@ -246,7 +246,7 @@ import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 import en from 'element-plus/lib/locale/lang/en' // 英文语言
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const messages = {
   status1: computed(() => i18n.t('geneCompare.other.status1')).value,

@@ -153,7 +153,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="success" plain v-if="dialogStatus === 'create'"
-            @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
+            @click="dialogStatus === 'create' ? openCreateData() : updateData()" :disabled="isDisabled">
             {{ $t('phenotype.index.save') }}
           </el-button>
           <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
@@ -189,9 +189,17 @@
 </template>
 
 <script setup name="phenoType">
+import axios from 'axios';
 import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import {listFile, updateFile, delFile, mergeChunkApi, uploadFileEndApi} from "@/api/infomanage/phenotype";
+import {
+  listFile,
+  updateFile,
+  delFile,
+  mergeChunkApi,
+  uploadFileEndApi,
+  listFileHistory
+} from "@/api/infomanage/phenotype";
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -207,16 +215,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
-// const locale = computed(()=>{
-//   return i18n.locale;
-// })
-// watch(
-//   ()=>locale,
-//   ()=>{
-//     console.log(locale);
-//   },{immediate:true}
-// )
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const messages = {
   message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')).value,
@@ -379,20 +378,27 @@ const handleBeforeUpload = (file) => {
   return isCsv;
 };
 
+const handleUploadFile = (file) =>{
+  // Handle file upload
+  console.log(file);
+  // 获取文件名
+  dataForm.fileName = dataForm.fileName ? dataForm.fileName :file.name.split('.')[0];
+}
+
 let isNormalFile = 1
 let url = ''
 async function openCreateData() {
-  //判断文件大小
+  // 判断文件大小
   if (uploadFileList.value[0].raw.size > 1024 * 1024 * 50) {
     isNormalFile = 0;
   } else {
     isNormalFile = 1;
   }
   if (isNormalFile === 0) {
-    //是大文件，调用大文件上传接口
+    // 是大文件，调用大文件上传接口
     await upLoadHugeFile();
   } else {
-    createData();
+    await createData();
   }
 }
 
@@ -411,28 +417,10 @@ const createData = async () => {
     } catch (err) {
       $modal.msgError(err)
     } finally {
-      $modal.msgSuccess(message.message_upload_success)
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
       dialogFormVisible.value = false;
-      setTimeout(async () => {
-        getList();
-      }, 4000);
-      uploadUrl.value = `${
-          import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${
-          tree.value.getCurrentNode().treeId
-      }&status=${dataForm.fileStatus ? 1 : 0}&remark=${
-          dataForm.remark
-      }&fileName=${
-          dataForm.fileName
-      }&pointStatus=${isNormalFile}`;
-      await upload.value.submit();
-      isDisabled.value = true;
-      tableLoading.value = false;
-      tableName.value = "";
-      url = "";
     }
   }
 }
@@ -550,25 +538,9 @@ const createData = async () => {
     dialogStatus.value = "other";
     tableName.value = row.tableName;
     uploadFileList.value = [];
-    resetForm();
+    // resetForm();
     dialogFormVisible.value = true;
     isDisabled2.value = false;
-    /* fileList.value = [];
-  dialogFormVisible.value = true;
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/penotypeFile/merge?tableName=${row.tableName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  }); */
-    //dialogFormVisible.value = false;
   }
 
 //文件合并
@@ -586,63 +558,29 @@ const createData = async () => {
       try {
         await upload.value.submit();
       } catch (err) {
-        $modal.msgError(err)
+        console.error(error);
       } finally {
-        $modal.msgSuccess(messages.mergeSuccess)
-        console.log("2");
         isDisabled.value = true;
-        console.log("3");
-        console.log("4");
         tableLoading.value = false;
         tableName.value = "";
         dialogFormVisible.value = false;
-        setTimeout(async () => {
-          getList();
-        }, 4000);
       }
     }
   };
-
-// 文件创建
-  /* function createData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      uploadUrl.value = `${
-        import.meta.env.VITE_APP_UPLOAD_URL
-      }/phenotypeFile/upload?treeId=${
-        tree.value.getCurrentNode().treeId
-      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${
-        dataForm.remark
-      }&fileName=${dataForm.fileName}`;
-      nextTick(async () => {
-        tableLoading.value = false;
-        await upload.value.submit();
-        isDisabled.value = true;
-        getList();
-      });
-    }
-  });
-  dialogFormVisible.value = false;
-  getList();
-  setTimeout(() => {
-    getList();
-  }, 4000);
-} */
 
 // 文件上传成功回调
   async function uploadFileSuccess(response) {
     if (response.code === 200) {
       $modal.msgSuccess(response.msg);
     } else {
-      $modal.msgError(i18n.t('phenotype.index.message_upload_compare'));
+      $modal.msgError(response.msg);
     }
-    //$modal.msgSuccess("上传成功");
 
     isDisabled.value = false;
     const curNode = tree.value.getCurrentNode();
     //upload.value.clearFiles();
 
-    getList();
+    // getList();
     rowClick(curNode);
     dialogFormVisible.value = false;
   }
@@ -782,7 +720,6 @@ async function updateData() {
             allFileId.value.push(item.fileId);
           });
           fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
-          uploadFileList.value = fileList.value;
           total.value = res.total;
         })
         .catch((err) => {
@@ -1109,7 +1046,7 @@ async function updateData() {
       $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
       return;
     }
-    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+    $modal.confirm(i18n.t('phenotype.index.message_node_confirm')).then(() => {
       const curNode = tree.value.getCurrentNode();
       const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
       deleteNodes(curNodeTreeIds).then(() => {
@@ -1800,6 +1737,7 @@ async function updateData() {
 
 :deep(.el-upload) {
   width: 100%;
+  display: inline-block;
 }
 
 :deep(.el-upload .el-upload-dragger) {

@@ -347,6 +347,7 @@ import {
   provide,
   toRaw
 } from "vue";
+import { computed } from "@vue/reactivity";
 import { getTreeNodeIdsByNode, getImageUrlByUrl } from "@/utils/tree";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import { getToken } from "@/utils/auth";
@@ -382,14 +383,13 @@ import { CanvasRenderer } from 'echarts/renderers';
 import VChart, { THEME_KEY } from "vue-echarts";
 import axios from "axios";
 
-import { I18nD } from "vue-i18n";
-
 import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const messages = {
   lastWeek: computed(() => i18n.t('phenotype.showImage.message.lastWeek')).value,
@@ -1979,8 +1979,9 @@ function deleteNode() {
     $modal.msgWarning(messages.node_select);
     return;
   }
-  $modal.confirm(messages.node_confirm).then(() => {
-    const curNode = tree.value.getCurrentNode();
+  // 需要修改
+  $modal.confirm('是否删除该节点？').then(() => {
+      const curNode = tree.value.getCurrentNode();
     const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
     deleteNodes(curNodeTreeIds).then(() => {
       $modal.msgSuccess(messages.node_delete_success);
