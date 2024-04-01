@@ -24,7 +24,7 @@
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange"
+      <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange" :cell-style="emptyHandler"
                 @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
@@ -185,16 +185,15 @@ export default {
       this.resetForm("form");
 
     },
+    // 处理空白单元格
+    emptyHandler({row,column}){
+      row[column.property] = row[column.property] || '-'
+    },
     getHigh() {
       this.loading = true;
       getLightLine({...this.queryParams, ...this.add}).then(response => {
         const responseData=response.data
         this.factorList = responseData.data
-        this.factorList.forEach(item => {
-          if (item.remark == null || !item.remark.length) item.remark = "-"
-          if (item.factorAbbreviationName == null || !item.factorAbbreviationName.length) item.factorAbbreviationName = "-"
-          if (item.factorFullName == null || !item.factorFullName.length) item.factorFullName = "-"
-        })
         this.total = responseData.total
         if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
           ElMessage.warning("没有符合条件的数据")

@@ -31,7 +31,7 @@
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table :data="speciesList" @selection-change="handleSelectionChange">
+      <el-table :data="speciesList" @selection-change="handleSelectionChange" :cell-style="emptyHandler">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
         <el-table-column label="物种名称" align="center" prop="speciesName" />
@@ -136,15 +136,16 @@ export default {
     this.getList();
   },
   methods: {
+    // 处理空白单元格
+    emptyHandler({row,column}){
+      row[column.property] = row[column.property] || '-'
+    },
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
       listSpecies(this.queryParams).then(response => {
         console.log(response)
         this.speciesList = response.rows;
-        this.speciesList.forEach(item => {
-          if (item.remark == null || !item.remark.length) item.remark = "-"
-        })
         this.total = response.total;
         this.loading = false;
       });
