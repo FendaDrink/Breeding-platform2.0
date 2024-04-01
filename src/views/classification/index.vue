@@ -34,7 +34,7 @@
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table ref="multipleTable" :data="traitList" v-model="selectArr" @selection-change="handleSelectionChange"
+      <el-table ref="multipleTable" :data="traitList" v-model="selectArr" @selection-change="handleSelectionChange" :cell-style="emptyHandler"
                 @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" type="index" width="50" />
@@ -201,6 +201,10 @@ export default {
       this.len = ""
       this.resetForm("form");
 
+    },
+    // 处理空白单元格
+    emptyHandler({row,column}){
+      row[column.property] = row[column.property] || '-'
     },
     getHigh() {
       this.loading = true;
