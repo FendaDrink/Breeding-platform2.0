@@ -148,7 +148,9 @@ export default {
         ],
       },
       //种群名称下拉选项
-      species_nameOptions: []
+      species_nameOptions: [],
+      // 转下划线的字段名集合
+      underlineFields: ["kindId", "kindName", "speciesId", "createBy", "createTime", "updateBy", "updateTime", "remark"]
     };
   },
   created() {
@@ -170,12 +172,23 @@ export default {
     emptyHandler({row,column}){
       row[column.property] = row[column.property] || '-'
     },
+    // 驼峰转下划线
+    toLine(name) {
+      return name.replace(/([A-Z])/g, "_$1").toLowerCase();
+    },
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
       listPopulation(this.queryParams).then(response => {
         console.log(response)
-        this.populationList = response.rows;
+        this.populationList = response.rows.map(item=>{
+          // 驼峰转下划线
+          let obj = {}
+          for(let key in item){
+            obj[this.toLine(key)] = item[key]
+          }
+          return obj
+        });
         this.total = response.total;
         this.loading = false;
       });
