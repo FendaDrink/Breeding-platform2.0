@@ -117,6 +117,10 @@ const searchForm = reactive({
 })
 
 function searchSubmit() {
+  if(!searchForm.searchMaterialId.length && !searchForm.searchTraitId.length){
+    reset();
+    return
+  }
   searchBox({
     fileId: traitFileId.value,
     searchMaterialId: searchForm.searchMaterialId,
@@ -180,7 +184,14 @@ function searchSubmit() {
 function reset() {
   searchForm.searchMaterialId = [];
   searchForm.searchTraitId = [];
-  searchSubmit();
+  chooseForm();
+  tableName.value = route.query.tableName;
+  traitAndMaterialList(tableName.value).then((res) => {
+    traitoptions.value = res.data.trait;
+    materialoptions.value = res.data.material;
+  }).catch((err) => {
+    $modal.msgError(res.msg);
+  })
 }
 
 
