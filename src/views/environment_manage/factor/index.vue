@@ -142,7 +142,7 @@ export default {
         console.log(response)
         this.typeList = response.rows;
         this.typeList.forEach(item => {
-          if (item.remark == null) item.remark = "-"
+          if (item.remark == null || !item.remark.length) item.remark = "-"
         })
         this.total = response.total;
         this.loading = false;

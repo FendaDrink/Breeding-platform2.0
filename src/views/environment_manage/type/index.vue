@@ -157,7 +157,7 @@ export default {
       this.loading = true;
       let query = { ...this.queryParams, ...this.add }
       listFactor(query).then(response => {
-        console.log(response)
+        console.log(response);
         this.loading = false;
       });
     },
@@ -190,6 +190,11 @@ export default {
       getLightLine({...this.queryParams, ...this.add}).then(response => {
         const responseData=response.data
         this.factorList = responseData.data
+        this.factorList.forEach(item => {
+          if (item.remark == null || !item.remark.length) item.remark = "-"
+          if (item.factorAbbreviationName == null || !item.factorAbbreviationName.length) item.factorAbbreviationName = "-"
+          if (item.factorFullName == null || !item.factorFullName.length) item.factorFullName = "-"
+        })
         this.total = responseData.total
         if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
           ElMessage.warning("没有符合条件的数据")
