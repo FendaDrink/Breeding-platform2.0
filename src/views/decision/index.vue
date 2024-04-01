@@ -83,12 +83,12 @@
         </el-table-column>
         <el-table-column fixed="right" label="结果下载">
           <template #default="scope">
-            <el-button link type="text" @click="exportTxt(scope.row)" style="color: #0dbc79;"
+            <el-button link type="text" @click="exportPDf(scope.row)" style="color: #0dbc79;"
               v-show="scope.row.status == 1">
-              导出txt
+              导出pdf
             </el-button>
             <el-button link type="text" disabled v-show="scope.row.status != 1">
-              导出txt
+              导出pdf
             </el-button>
           </template>
         </el-table-column>
@@ -302,10 +302,10 @@ function exportGeno(fileUrl) {
 		ElMessage.error('下载文件出现错误，请联系管理员！');
 	})
 }
-function exportTxt(row) {
+function exportPDf(row) {
 	console.log(row)
 	if (row.status != 1) {
-		ElMessageBox.alert('任务尚未成功时不能导出txt', '错误', {
+		ElMessageBox.alert('任务尚未成功时不能导出pdf', '错误', {
 			// if you want to disable its autofocus
 			// autofocus: false,
 			confirmButtonText: 'OK',
@@ -321,7 +321,7 @@ function exportTxt(row) {
 		const isLogin = blobValidate(res);
 		if (isLogin) {
 			const blob = new Blob([res],{type:'text/plain'})
-			saveAs(blob, `breed${row.id}.txt`)
+			saveAs(blob, `breed${row.id}.pdf`)
 		} else {
 			const resText = data.text();
 			const rspObj = JSON.parse(resText);
@@ -383,22 +383,26 @@ onMounted(() => {
     align-items: flex-start;
     .main-content{
       width: 100%;
-      height: 60%;
+      height: 50%;
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: center;
       .main-title{
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        height: 50%;
         font-size: 400%;
         font-weight: 700;
         text-align: center;
-        margin-top: 20px;
         color:#fff
       }
       .input-wrapper{
+        flex: 1;
+        margin-top: 10px;
         display: flex;
         justify-content: center;
-        align-items: center;
-        margin-top: 20px;
+        align-items: flex-start;
         .input{
           width: 45%;
           @media (max-width: 1500px) {
