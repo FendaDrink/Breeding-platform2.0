@@ -138,7 +138,7 @@
 
 <script setup>
 import * as echarts from "echarts";
-import { reactive, ref, nextTick, onMounted } from "vue";
+import {reactive, ref, nextTick, onMounted, computed} from "vue";
 import chinaData from "echarts/map/json/china.json";
 import { FIRST_LAST_KEYS } from "element-plus";
 import {
@@ -153,7 +153,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 // 注册中国地图
 echarts.registerMap("china", chinaData);

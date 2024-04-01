@@ -215,7 +215,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => (localStorage.getItem('lang') === 'zh-CN' ? zh : en))
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const messages = {
   message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')).value,
@@ -382,7 +382,7 @@ const handleUploadFile = (file) =>{
   // Handle file upload
   console.log(file);
   // 获取文件名
-  dataForm.fileName = file.name.split('.')[0];
+  dataForm.fileName = dataForm.fileName ? dataForm.fileName :file.name.split('.')[0];
 }
 
 let isNormalFile = 1
@@ -1047,7 +1047,7 @@ async function updateData() {
       $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
       return;
     }
-    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+    $modal.confirm(i18n.t('phenotype.index.message_node_confirm')).then(() => {
       const curNode = tree.value.getCurrentNode();
       const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
       deleteNodes(curNodeTreeIds).then(() => {
