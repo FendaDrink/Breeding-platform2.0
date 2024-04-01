@@ -143,7 +143,7 @@ export default {
         console.log(response)
         this.speciesList = response.rows;
         this.speciesList.forEach(item => {
-          if (item.remark == null) item.remark = "-"
+          if (item.remark == null || !item.remark.length) item.remark = "-"
         })
         this.total = response.total;
         this.loading = false;
@@ -547,7 +547,7 @@ export default {
   }
 }
 
-//三级节点选择器 
+//三级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 400;
   height: 23px;

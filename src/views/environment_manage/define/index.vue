@@ -162,6 +162,11 @@ export default {
       this.loading = true;
       listFactor(this.queryParams).then(response => {
         this.factorList = response.rows;
+        this.factorList.forEach(item => {
+          if (item.remark == null || !item.remark.length) item.remark = "-"
+          if (item.factorAbbreviationName == null || !item.factorAbbreviationName.length) item.factorAbbreviationName = "-"
+          if (item.factorFullName == null || !item.factorFullName.length) item.factorFullName = "-"
+        })
         this.total = response.total;
         this.loading = false;
       });
