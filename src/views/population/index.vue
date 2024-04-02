@@ -251,8 +251,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      console.log('selecton',selection)
-      this.populationId = selection.map(item => item.populationId)
+      this.populationId = selection.map(item => item.population_id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
