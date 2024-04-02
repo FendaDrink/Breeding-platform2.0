@@ -395,10 +395,11 @@ onMounted(() => {
         font-size: 390%;
         font-weight: 700;
         text-align: center;
-        // color: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+        color:rgba(39, 238, 128, .8)
+        // color: #1FB864;
+        // background-clip: text;
+        // -webkit-text-fill-color: transparent;
+        // background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
       }
       .input-wrapper{
         flex: 1;
