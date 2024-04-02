@@ -1,8 +1,6 @@
 // zh.js
 export default {
     phenotype: {
-
-
         index: {
             node_add: '添加子节点',
             node_update: '更新节点',
@@ -321,7 +319,6 @@ export default {
                 createFail: '添加节点失败！',
 
                 updateSuccess: '修改成功！',
-                updateFail: '修改失败！',
 
                 node_parent: '请选择父节点！',
                 node_add_success: '添加节点成功！',

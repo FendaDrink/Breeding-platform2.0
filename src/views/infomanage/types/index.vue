@@ -1,5 +1,5 @@
 <template>
-<ShowImageList :treeType="1"></ShowImageList>
+  <ShowImageList :treeType="1"></ShowImageList>
 </template>
 
 <script setup name="pnenoTypes">

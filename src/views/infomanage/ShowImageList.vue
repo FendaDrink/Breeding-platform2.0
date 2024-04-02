@@ -87,8 +87,8 @@
                 $t('phenotype.showImage.button.image_update') }}</el-button>
               <el-button type="info" style="margin: 0 10px" @click="downloadSelectedImages" plain class="my-button">{{
                 $t('phenotype.showImage.button.image_download') }}</el-button>
-              <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{
-                $t('phenotype.showImage.button.image_analyse') }}</el-button>
+              <!-- <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{
+                $t('phenotype.showImage.button.image_analyse') }}</el-button> -->
               <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
                 size="large" class="my-button">
                 <p>{{ $t('phenotype.showImage.label.select_all') }}</p>
@@ -125,13 +125,16 @@
               </el-card>
             </div>
 
-            <div v-if="imageSrcList.length === 0 && tree?.getCurrentNode()?.children.length === 0"
+            <div v-if="imageSrcList.length === 0 && tree?.getCurrentNode()?.children.length === 0 && !isImageLoading"
               style="max-height: calc(100vh - 290px);font-size: 20px;">
               {{ $t('phenotype.showImage.dialog.other.noImage') }}
             </div>
-            <div class="image_box img-list" v-if="tree?.getCurrentNode()?.children.length === 0"
-              style="max-height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
-              <div class="imgCard_container">
+            <div class="image_box img-list"
+              v-loading="isImageLoading"
+              element-loading-background="transparent"
+              v-if="tree?.getCurrentNode()?.children.length === 0"
+              style="height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
+              <div class="imgCard_container" >
                 <el-checkbox-group class="imgCard_container" v-model="checkedPictures" @change="handleSelectionChange">
                   <el-card class="image_item item" :style="{ width: myWidth, height: myHeight }" v-for="(item, index) in imageSrcList.slice(
                     (currentpageNum - 1) * pageSize,
@@ -266,7 +269,7 @@
               :limit="photo.limit" :on-exceed="handleExceed" :on-preview="handlePictureCardPreview"
               :on-error="uploadImageError" :on-success="uploadImageSuccess" :on-change="handleUploadFile"
               :multiple="true">
-              <el-button type="primary">{{ $t('phenotype.showImage.button.upload') }}</el-button>
+              <el-button type="primary green-button">{{ $t('phenotype.showImage.button.upload') }}</el-button>
 
               <template #tip>
                 <div class="el-upload__tip">{{ $t('phenotype.showImage.dialog.tip.t1') }}<span
@@ -286,7 +289,6 @@
             <div class="dialog-footer">
               <el-button type="success" plain :loading="submitButtonLoading"
                 @click.passive="dialogStatus === 'updataPhoto' ? checkImageName() : confirmEditPhoto()">
-                <!-- {{ dialogStatus === 'updataPhoto' ? '添加' : '修改' }} -->
                 {{ $t('phenotype.showImage.button.save') }}
               </el-button>
               <el-button @click="suspendSubmitImage" type="info" plain>{{ $t('phenotype.showImage.button.cancel')
@@ -303,7 +305,8 @@
                 <el-date-picker format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" clearable
                   v-model="editPhotoInfo.shotTime"
                   :placeholder="$t('phenotype.showImage.dialog.placeholder.imageNewDate')" type="datetime"
-                  prop="treeName" />
+                  prop="treeName"
+                  width="100px"/>
               </el-form-item>
               <el-form-item :label="$t('phenotype.showImage.dialog.label.comment')" prop="remark">
                 <el-input clearable v-model="editPhotoInfo.remark"
@@ -365,8 +368,6 @@ import JSZip, { file } from "jszip";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
 
-
-
 // 引入echarts
 import { use } from "echarts/core";
 import 'echarts/lib/component/dataZoom'
@@ -419,7 +420,7 @@ const messages = {
   uploadImageSuccess:computed(() => i18n.t('phenotype.showImage.message.uploadImageSuccess')).value,
   uploadImageFail:computed(() => i18n.t('phenotype.showImage.message.uploadImageFail')).value,
   resetSearch: computed(() => i18n.t('phenotype.showImage.message.resetSearch')).value,
-  searchSuccess: computed(() => i18n.t('phenotype.showImage.message.searchSuccess')),
+  searchSuccess: computed(() => i18n.t('phenotype.showImage.message.searchSuccess')).value,
   searchFail: computed(() => i18n.t('phenotype.showImage.message.searchFail')).value,
   searchNothing: computed(() => i18n.t('phenotype.showImage.message.searchNothing')).value,
   autoUploadSuccess: computed(() => i18n.t('phenotype.showImage.message.autoUploadSuccess')).value,
@@ -436,7 +437,6 @@ const messages = {
   createFail: computed(() => i18n.t('phenotype.showImage.message.createFail')).value,
 
   updateSuccess: computed(() => i18n.t('phenotype.showImage.message.updateSuccess')).value,
-  updateFail: computed(() => i18n.t('phenotype.showImage.message.updateFail')).value,
   node_parent: computed(() => i18n.t('phenotype.showImage.message.node_parent')).value,
   node_add_success: computed(() => i18n.t('phenotype.showImage.message.node_add_success')).value,
   node_add_fail: computed(() => i18n.t('phenotype.showImage.message.node_add_fail')).value,
@@ -747,12 +747,17 @@ const isLoading2 = ref(false);
 // 图片
 const imageSrcList = ref([]);
 
+// loading动画
+const isImageLoading = ref(false);
+
 //用于更新imageSrcList
 const imageSrcListCopy = ref([]);
 const updateImageSrcList = async () => {
   const curNode = tree.value.getCurrentNode();
+  isImageLoading.value = true;
   imageSrcList.value = await getImagesBynodeId(curNode.treeId);
   imageSrcListCopy.value = imageSrcList.value;
+  isImageLoading.value = false;
   resetPage();
 }
 
@@ -2237,7 +2242,7 @@ async function rowClick(nodeObj) {
   content: "";
   position: absolute;
   top: 0;
-  left: 1;
+  left: 1px;
   right: 0;
   bottom: 0;
   width: 200px;
@@ -2303,6 +2308,11 @@ async function rowClick(nodeObj) {
 </style>
 
 <style lang="scss" scoped>
+
+:deep(.el-date-editor.el-input){
+  width: 100%;
+}
+
 .image_box {
   width: 100%;
   display: flex;
@@ -2316,16 +2326,14 @@ async function rowClick(nodeObj) {
 
 .image_item {
   box-sizing: border-box;
+  height: 186px;
   margin: 10px 5px;
   border-right: 6px solid #E1E1E1;
 }
 
 .img-list {
-  //padding-left: 1%;
-  //padding-right: 1%;
   width: 100%;
   position: relative;
-  right: 0;
 }
 
 .img-list .item {
