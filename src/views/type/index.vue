@@ -252,7 +252,20 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const asTraitTypeIds = row.traitTypeId || this.traitTypeId;
-      this.$modal.confirm('是否确认删除编号为"' + asTraitTypeIds + '"的数据项？').then(function () {
+      // 获取名称
+      let traitTypeNames = []
+      if(row.traitTypeName) {
+        traitTypeNames.push(row.traitTypeName)
+      } else {
+        this.typeList.forEach(item => {
+          if (this.traitTypeId.includes(item.traitTypeId)) {
+            traitTypeNames.push(item.traitTypeName)
+          }
+        })
+      }
+
+
+      this.$modal.confirm('是否确认删除名称为"' + traitTypeNames + '"的性状类别？').then(function () {
         return delType(asTraitTypeIds);
       }).then(() => {
         this.getList();

@@ -134,18 +134,6 @@ export default {
         factorAbbreviationName: [
           { required: false, message: "缩写不能为空", trigger: "blur" }
         ],
-        // createBy: [
-        //   { required: true, message: "创建者不能为空", trigger: "blur" }
-        // ],
-        // createTime: [
-        //   { required: true, message: "创建时间不能为空", trigger: "blur" }
-        // ],
-        // updateBy: [
-        //   { required: true, message: "更新者不能为空", trigger: "blur" }
-        // ],
-        // updateTime: [
-        //   { required: true, message: "更新时间不能为空", trigger: "blur" }
-        // ],
       },
       //环境因子名称下拉框
       factorOptions: []
@@ -271,7 +259,14 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const factorIds = row.factorId || this.factorId;
-      this.$modal.confirm('是否确认删除序号为"' + factorIds + '"的数据项？').then(function () {
+      // 获取名称
+      let factorNames = []
+      if (row.factorId) {
+        factorNames.push(row.factorName)
+      } else {
+        factorNames = this.factorList.filter(item => this.factorId.includes(item.factorId)).map(item => item.factorName)
+      }
+      this.$modal.confirm('是否确认删除名称为"' + factorNames + '"的环境因子？').then(function () {
         return delFactor(factorIds);
       }).then(() => {
         this.getList();

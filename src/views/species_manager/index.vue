@@ -260,9 +260,15 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      console.log("wqewq")
       const speciesIds = row.speciesId || this.speciesId;
-      this.$modal.confirm('是否确认删除编号为"' + speciesIds + '"的数据项？').then(function () {
+      // 获取名称
+      let speciesNames = []
+      if(row.speciesName){
+        speciesNames.push(row.speciesName)
+      }else{
+        speciesNames = this.speciesList.filter(item => speciesIds.includes(item.speciesId)).map(item => item.speciesName)
+      }
+      this.$modal.confirm('是否确认删除名称为"' + speciesNames + '"的物种？').then(function () {
         return delSpecies(speciesIds);
       }).then(() => {
         this.getList();

@@ -349,8 +349,6 @@ export default {
     handleExport() {
       const population_id = this.populationId
       console.log(population_id)
-      // let formdata = new FormData()
-      // formdata.append("species_id",species_id)
       download(population_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {
