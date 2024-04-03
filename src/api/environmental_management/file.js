@@ -35,3 +35,34 @@ export function delFile(fileId) {
     });
 }
 
+//大文件合并接口
+export function mergeChunkApi(fileName,treeId,isShow){
+    return request({
+        url:'/system/picture/mergeChunks',
+        method:'post',
+        params:{
+            fileName,
+            treeId,
+            isShow
+        }
+    })
+}
+
+// 大文件传输完毕确认接口
+export function uploadFileEndApi({treeId,status,remark,fileName,filePath,area,longitude,latitude}){
+    return request({
+        url:'/sidebarTreeEnv/envFile/loadUp',
+        method:'post',
+        params:{
+            treeId,
+            status,
+            remark,
+            fileName,
+            filePath,
+            area,
+            longitude,
+            latitude
+        },
+        timeout:100000
+    })
+}
