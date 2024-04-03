@@ -578,17 +578,20 @@ const handleUploadFile = (file) => {
 // 文件创建
 const createData = async () => {
   const valid = await form.value.validate();
-  console.log(valid);
+  dialogFormVisible.value = false;
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/genotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
       }&status=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
 
-    $modal.msg(text.message.upload_wait);
-
     try {
       await upload.value.submit();
+      $modal.msg('上传成功，请等待后台进行处理');
+      dialogFormVisible.value = false;
+      setTimeout(()=>{
+        getList();
+      },1000)
     } catch (err) {
       $modal.msgError(err)
     } finally {
@@ -604,16 +607,12 @@ const createData = async () => {
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
   if (response.code === 200) {
-    $modal.msgSuccess(text.message.upload_success);
+    $modal.msgSuccess(response.msg);
   } else {
     $modal.msgError(response.msg);
   }
-
   isDisabled.value = false;
   const curNode = tree.value.getCurrentNode();
-  //upload.value.clearFiles();
-
-  // getList();
   rowClick(curNode);
   dialogFormVisible.value = false;
 }
@@ -1144,11 +1143,7 @@ function rowClick(nodeObj) {
   treeRules.value = {};
   /* rules.value = {};  */
   treeForm.treeName = nodeObj.treeName;
-  if (nodeObj.isShow == 1) {
-    treeForm.isShow == true;
-  } else {
-    treeForm.isShow == false;
-  }
+  treeForm.isShow = nodeObj.isShow === 1;
 
   queryParams.treeId = nodeObj.treeId;
   resetQuery();
