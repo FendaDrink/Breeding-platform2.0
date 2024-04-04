@@ -586,19 +586,15 @@ const createData = async () => {
       }&fileName=${dataForm.fileName}`;
 
     try {
-      await upload.value.submit();
-      $modal.msg('上传成功，请等待后台进行处理');
       dialogFormVisible.value = false;
-      setTimeout(()=>{
-        getList();
-      },1000)
+      await upload.value.submit();
+      await uploadFileSuccess({code:200,msg:'上传成功，请等待后台进行处理'});
     } catch (err) {
       $modal.msgError(err)
     } finally {
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
-      dialogFormVisible.value = false;
     }
   }
 
