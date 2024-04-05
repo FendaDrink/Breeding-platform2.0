@@ -66,10 +66,7 @@
                     <el-table-column align="center" fixed="right" label="输入文件下载">
                         <template #default="scope">
                             <el-button link type="text" @click="exportFile(scope.row)" style="color: #0dbc79;"
-                                v-show="scope.row.status == 2">
-                                {{ scope.row.inputCondition.split('\\').pop() }}
-                            </el-button>
-                            <el-button link type="text" disabled v-show="scope.row.status != 2">
+                            >
                                 {{ scope.row.inputCondition.split('\\').pop() }}
                             </el-button>
                         </template>
