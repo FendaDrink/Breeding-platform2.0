@@ -7,170 +7,158 @@
           <h1>染色体密度图<i>&nbsp;</i></h1>
         </div>
       </template>
-
-      <div
-        class="echart"
-        id="chr"
-        style="width: 100%; height: 450px;"
-      ></div>
+      <v-chart style="width: 100%; height: 450px" class="echart" :option="option" autoresize v-loading="isLoading" />
+<!--      <div-->
+<!--        class="echart"-->
+<!--        id="chr"-->
+<!--        style="width: 100%; height: 450px;"-->
+<!--      ></div>-->
     </el-card>
   </div>
 </template>
 
-<script>
+<script setup>
 import * as echarts from "echarts";
-import{
-  test
-}from "@/api/tree";
-export default {
-  name: "Chart",
-  data() {
-    return {
-      isLoading:true,
-      xData: Array.from({ length: 6000 }, (_, index) => index + 1),
-      myChartStyle: { float: "left", width: "100%", height: "400px" }, //图表样式
-      maxNum: 0,
-      data:[],
-      yData:[]
-    };
-  },
-  mounted() {
-    this.initTem();
-  },
-  methods: {
-    initTem() {
-      // 模拟数据。改成自己数据时删掉
-      const tableName = this.$route.query.tableName;
-      console.log(tableName);
-      test(tableName).then((res) => {
-        this.data = res.data;
+import {test} from "@/api/tree";
+import {onMounted, reactive, ref} from "vue";
+import VChart from "vue-echarts";
+import {useRoute} from "vue-router";
 
-        const that = this;
-        this.data = this.data.map(function (item) {
-          that.maxNum = Math.max(that.maxNum, item[2]);
-          return [item[1], item[0] - 1, item[2] || "-"];
-        });
+const isLoading = ref(true);
+const xData = ref(Array.from({ length: 6000 }, (_, index) => index + 1));
+const maxNum = ref(0);
+const data = ref([]);
+const yData = ref([]);
 
-        let ySum = this.data[this.data.length - 1][1] + 1;
-        for(let i = 1;i<=ySum;i++)
-        {
-          this.yData.push("chr" + i.toString().padStart(2, '0'));
-        }
-
-        let xNum = -1;
-        for(let i = 0;i<res.data.length;i++)
-        {
-          if(res.data[i][1]>xNum) xNum = res.data[i][1];
-        }
-        this.xData = Array.from({length: xNum + 1}, (_, i) => i + 1);
-
-        const option = {
-          xAxis: {
-            type: "category",
-            nameLocation: "middle",
-            nameGap: 30,
-            data: this.xData,
-            splitArea: {
-              show: false,
-            },
-            axisTick: {
-              show: true,
-            },
-            axisLine: {
-              show: true,
-            },
-          },
-          yAxis: {
-            type: "category",
-            data: this.yData,
-            axisLine: {
-              show: true,
-            },
-            axisTick: {
-              show: false,
-            },
-            splitArea: {
-              show: false,
-            },
-            splitLine: {
-              show: true,
-              lineStyle: {
-                color: "#ffff",
-                width: 5,
-              },
-            },
-          },
-          tooltip: {
-            trigger: "item",
-            formatter: function (params) {
-              let res =
-                  "Variation Density<br>" +
-                  params.data[0] +
-                  "Mb: " +
-                  params.data[2];
-              return res;
-            },
-          },
-          visualMap: {
-            min: 1, //1,//365,
-            max: this.maxNum, //13313,//78178,
-            calculable: true,
-            // orient: 'horizontal',
-            left: "right",
-            text: ["High", "Low"],
-            // bottom: '5%',
-            inRange: {
-              color: ["#0d6e11", "#feff08", "#d01c10"],
-            },
-          },
-          series: [
-            {
-              type: "heatmap",
-              // data: this.chartHotData,
-              data: this.data,
-              label: {
-                normal: {
-                  show: false,
-                },
-              },
-              emphasis: {
-                shadowBlur: 10,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-              zlevel: -1,
-            },
-          ],
-          dataZoom: [
-            {
-              height: 15, //高度
-              type: "slider",
-              xAxisIndex: [0], //控制第一个x轴
-              bottom: 18, //图表底部距离
-              moveHandleSize: 0,
-              borderColor: "#eee", //滑动通道的边框颜色
-              fillerColor: '#1FB864', //滑动条颜色
-              backgroundColor: '#eee',//未选中的滑动条的颜色
-              showDataShadow: true,//是否显示数据阴影 默认auto
-              rangeMode: ['value', 'value'],
-              handleIcon: "arrow",
-              showDetail: false,
-            }
-          ]
-        };
-        const myChartHot = echarts.init(document.getElementById("chr"));
-        myChartHot.setOption(option);
-        this.isLoading = false;
-        //随着屏幕大小调节图表
-        window.addEventListener("resize", () => {
-          this.isLoading = true;
-          myChartHot.resize();
-          this.isLoading = false;
-        });
-      });
-
+const option = ref({
+  xAxis: {
+    type: "category",
+    nameLocation: "middle",
+    nameGap: 30,
+    data: xData,
+    splitArea: {
+      show: false,
+    },
+    axisTick: {
+      show: true,
+    },
+    axisLine: {
+      show: true,
     },
   },
-};
+  yAxis: {
+    type: "category",
+    data: yData,
+    axisLine: {
+      show: true,
+    },
+    axisTick: {
+      show: false,
+    },
+    splitArea: {
+      show: false,
+    },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: "#ffff",
+        width: 5,
+      },
+    },
+  },
+  tooltip: {
+    trigger: "item",
+    formatter: function (params) {
+      return "Variation Density<br>" +
+          params.data[0] +
+          "Mb: " +
+          params.data[2];
+    },
+  },
+  visualMap: {
+    min: 1, //1,//365,
+    max: maxNum, //13313,//78178,
+    calculable: true,
+    // orient: 'horizontal',
+    left: "right",
+    text: ["High", "Low"],
+    // bottom: '5%',
+    inRange: {
+      color: ["#0d6e11", "#feff08", "#d01c10"],
+    },
+  },
+  series: [
+    {
+      type: "heatmap",
+      data: data,
+      label: {
+        normal: {
+          show: false,
+        },
+      },
+      emphasis: {
+        shadowBlur: 10,
+        shadowColor: "rgba(0, 0, 0, 0.5)",
+      },
+      zlevel: -1,
+    },
+  ],
+  dataZoom: [
+    {
+      height: 15, //高度
+      type: "slider",
+      xAxisIndex: [0], //控制第一个x轴
+      bottom: 18, //图表底部距离
+      moveHandleSize: 0,
+      borderColor: "#eee", //滑动通道的边框颜色
+      fillerColor: '#1FB864', //滑动条颜色
+      backgroundColor: '#eee',//未选中的滑动条的颜色
+      showDataShadow: true,//是否显示数据阴影 默认auto
+      rangeMode: ['value', 'value'],
+      handleIcon: "arrow",
+      showDetail: false,
+    }
+  ]
+})
+
+onMounted(()=>{
+  initTem();
+})
+
+const { query, params } = useRoute()
+const initTem = () => {
+  // 模拟数据。改成自己数据时删掉
+  const tableName = query.tableName;
+  console.log(tableName);
+  test(tableName).then((res) => {
+    data.value = res.data;
+    data.value = data.value.map(function (item) {
+      maxNum.value = Math.max(maxNum.value, item[2]);
+      return [item[1], item[0] - 1, item[2] || "-"];
+    });
+
+    let ySum = data.value[data.value.length - 1][1] + 1;
+    for(let i = 1;i<=ySum;i++)
+    {
+      yData.value.push("chr" + i.toString().padStart(2, '0'));
+    }
+
+    let xNum = -1;
+    for(let i = 0;i<res.data.length;i++)
+    {
+      if(res.data[i][1]>xNum) xNum = res.data[i][1];
+    }
+    xData.value = Array.from({length: xNum + 1}, (_, i) => i + 1);
+    isLoading.value = false;
+  });
+}
+
+// onresize(()=>{
+//   //随着屏幕大小调节图表
+//   isLoading.value = true;
+//   myChartHot.resize();
+//   isLoading.value = false;
+// })
 </script>
 
 <!-- 卡片样式 -->
