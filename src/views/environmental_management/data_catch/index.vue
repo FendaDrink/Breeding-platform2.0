@@ -9,6 +9,7 @@
                             <label for="inputHelpBlock">上传环境信息文件</label>
                             <el-upload class="upload-demo" v-model:file-list="environmentalData" accept=".csv"
                                 action="#" :headers="headers" method="post" :auto-upload="false" multiple :limit="1"
+                                :before-upload="handleBeforeUpload"
                                 drag>
                                 <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                                 <div class="el-upload__text">
@@ -145,8 +146,29 @@ const queryParams = ref({
 // 环境分析任务总数
 const total = ref(10)
 
+// .csv文件上传前校验
+const handleBeforeUpload = (file) => {
+    const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
+    const isCsv = fileType === "csv";
+    if (!isCsv) {
+        $modal.msgError("请上传.csv文件");
+        return false;
+    }
+    return isCsv;
+}
+
 // .csv文件上传
 const submit = () => {
+    if (environmentalData.value.length === 0) {
+        ElMessage.warning('请上传文件')
+        return
+    }
+    console.log(environmentalData.value[0].name)
+    // 文件.csv校验
+    if (environmentalData.value[0].name.split('.').pop() !== 'csv') {
+        ElMessage.warning('请上传.csv文件')
+        return
+    }
     const formData = new FormData()
     formData.append('file', environmentalData.value[0].raw)
     console.log(formData.get('file'))
