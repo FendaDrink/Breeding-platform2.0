@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 20px;">
-    <el-card class="card-container right-box" v-loading="isLoading">
+    <el-card class="card-container right-box">
       <!-- <h1>染色体密度图<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
