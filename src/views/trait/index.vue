@@ -275,7 +275,16 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const traitIds = row.traitId || this.traitId;
-      this.$modal.confirm('是否确认删除编号为"' + traitIds + '"的数据项？').then(function () {
+      // 获取数据名称
+      let traitNames = []
+      if (row.traitId) {
+        traitNames.push(row.traitName)
+      } else {
+        traitNames = this.traitList.filter(item => this.traitId.includes(item.traitId)).map(item => item.traitName)
+      }
+
+
+      this.$modal.confirm('是否确认删除名称为"' + traitNames + '"性状？').then(function () {
         return delTrait(traitIds);
       }).then(() => {
         this.getList();

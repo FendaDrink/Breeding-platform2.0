@@ -389,8 +389,6 @@ function exportFile() {
 
 const fileList = [];
 
-
-
 //获取第一个表格
 const columns = ref([]); // 表头数据
 const tableData = reactive([]); //表格数据
@@ -420,12 +418,9 @@ function chooseForm() {
     pageNum: queryParams.pageNum,
   })
     .then((res) => {
-      console.log(res, "9090");
       let i = ref(0);
-
       totalPage.value = res.total;
       tableColumns.value = [
-
         { prop: "speciesName", label: i18n.t('phenotype.file.table_speciesName'), width: "80px", fixed: "left" },
         { prop: "populationName", label: i18n.t('phenotype.file.table_populationName'), width: "140px", fixed: "left", },
         { prop: "location", label: i18n.t('phenotype.file.table_location'), width: "80px", fixed: "left" },
@@ -502,8 +497,6 @@ function mapTraitsToTableData(data) {
   });
 }
 
-const selectedRow = ref(null);
-
 function modifFile(row) {
   dialogFormVisible.value = true;
 
@@ -514,11 +507,11 @@ function modifFile(row) {
     "repeat",
     "father",
     "mother",
-    "control_type",
+    "controlType",
     "location",
-    "kind_id",
-    "field_id",
-    "kind_name",
+    "kindId",
+    "fieldId",
+    "kindName",
     "populationId",
     "speciesName",
     "populationName",
@@ -543,10 +536,10 @@ function updateFileData() {
     mother: form.mother,
     repeat: form.repeat,
     location: form.location,
-    kind_id: form.kind_id,
-    kind_name: form.kind_name,
-    field_id: form.field_id,
-    control_type: form.control_type,
+    kind_id: form.kindId,
+    kind_name: form.kindName,
+    field_id: form.fieldId,
+    control_type: form.controlType,
     populationId: form.populationId,
     speciesName: form.speciesName,
     populationName: form.populationName,

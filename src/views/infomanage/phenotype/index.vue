@@ -387,6 +387,7 @@ const handleUploadFile = (file) =>{
 let isNormalFile = 1
 let url = ''
 async function openCreateData() {
+  dialogFormVisible.value = false;
   // 判断文件大小
   if (uploadFileList.value[0].raw.size > 1024 * 1024 * 50) {
     isNormalFile = 0;
@@ -496,7 +497,6 @@ const createData = async () => {
       }
       // 上传分片
       const uploadRes = await Promise.all(tasks);
-      console.log(uploadRes);
       if (uploadRes.some(item => item.data.code !== 200)) {
         // 上传失败
         $modal.msgError('上传失败');
@@ -516,13 +516,15 @@ const createData = async () => {
         }
         console.log('params', params);
         // 发送文件信息用于后端保存文件
-        uploadFileSuccess({code: 200, msg: '上传成功，文件较大，请等待后台处理'});
-        await uploadFileEndApi(params)
+        await uploadFileSuccess({code: 200, msg: '文件较大，请等待后台处理'});
+        await uploadFileEndApi(params).then(res=>{
+          $modal.msgSuccess('后台已处理，上传成功');
+        })
+        tableLoading.value = false;
         getList();
       } catch (err) {
         $modal.msgError('上传失败');
         console.error(err);
-        return;
       } finally {
         console.log('合并结束');
         // 执行成功回调
@@ -546,7 +548,7 @@ const createData = async () => {
 
   const mergeData = async () => {
     const valid = await form.value.validate();
-    console.log(valid);
+    dialogFormVisible.value = false;
     if (valid) {
       uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
@@ -569,8 +571,15 @@ const createData = async () => {
 
 // 文件上传成功回调
   async function uploadFileSuccess(response) {
+    if( response.code === 200 && isNormalFile === 0){
+      $modal.msgSuccess(response.msg);
+      return;
+    }else if(isNormalFile === 0){
+      $modal.msgError(response.msg);
+      return;
+    }
+
     if (response.code === 200) {
-      console.log(response,'***')
       $modal.msgSuccess(response.msg);
     } else {
       $modal.msgError(response.msg);

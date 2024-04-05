@@ -251,8 +251,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      console.log('selecton',selection)
-      this.populationId = selection.map(item => item.populationId)
+      this.populationId = selection.map(item => item.population_id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -327,7 +326,19 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const populationIds = row.population_id || this.populationId;
-      this.$modal.confirm('是否确认删除编号为"' + populationIds + '"的数据项？').then(function () {
+      // 根据id查找要删除的群体名称
+      let populationNames = []
+      if(row.population_id){
+        populationNames.push(row.population_name)
+      }else{
+        this.populationList.forEach(item => {
+          if(this.populationId.includes(item.population_id)){
+            populationNames.push(item.population_name)
+          }
+        })
+      }
+
+      this.$modal.confirm('是否确认删除名称为"' + populationNames + '"的群体？').then(function () {
         return delPopulation(populationIds);
       }).then(() => {
         this.handle_List();
@@ -338,8 +349,6 @@ export default {
     handleExport() {
       const population_id = this.populationId
       console.log(population_id)
-      // let formdata = new FormData()
-      // formdata.append("species_id",species_id)
       download(population_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {

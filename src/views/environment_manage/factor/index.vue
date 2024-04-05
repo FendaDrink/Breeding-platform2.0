@@ -255,7 +255,16 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const asfactorTypeIds = row.factorTypeId || this.factorTypeId;
-      this.$modal.confirm('是否确认删除编号为"' + asfactorTypeIds + '"的数据项？').then(function () {
+      // 获取名称
+      let factorTypeNames = []
+      if (row.factorTypeName) {
+        factorTypeNames = [row.factorTypeName]
+      } else {
+        factorTypeNames = this.typeList.filter(item => this.factorTypeId.includes(item.factorTypeId)).map(item => item.factorTypeName)
+      }
+
+
+      this.$modal.confirm('是否确认删除名称为"' + factorTypeNames + '"的环境因子类别？').then(function () {
         return delType(asfactorTypeIds);
       }).then(() => {
         this.getList();
