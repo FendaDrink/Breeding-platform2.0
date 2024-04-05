@@ -139,11 +139,10 @@ export default {
       xData: Array.from({ length: 6000 }, (_, index) => index + 1),
       myChartStyle: { float: "left", width: "100%", height: "400px" }, //图表样式
       maxNum: 0,
-      xData: []
     };
   },
-  mounted() {
-    this.initTem();
+  async mounted() {
+    await this.initTem();
   },
   methods: {
     initTem() {
@@ -180,9 +179,9 @@ export default {
         console.log(xNum,"iiii");
 
         const option = {
-          title: {
-            text: this.chartHotname,
-          },
+          // title: {
+          //   text: this.chartHotname,
+          // },
           xAxis: {
             type: "category",
             nameLocation: "middle",
@@ -228,7 +227,6 @@ export default {
                 params.data[2];
               return res;
             },
-            // position: 'top'
           },
           visualMap: {
             min: 1, //1,//365,
