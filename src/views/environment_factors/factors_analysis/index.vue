@@ -920,7 +920,7 @@ onMounted(async () => {
 
 :deep(.el-card__header) {
   background: #1FB864;
-  height: 60px !important;
+  height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;

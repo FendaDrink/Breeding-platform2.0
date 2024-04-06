@@ -39,7 +39,7 @@
           </el-footer>
       </el-container>
 
-      <el-dialog :title="$t('environment.title_update')" v-model="dialogFormVisible" center draggable width="30%">
+      <el-dialog title="修改文件" v-model="dialogFormVisible" center draggable width="30%">
           <el-scrollbar wrap-class="scrollbar-wrapper">
               <el-container style="height: 500px">
                   <el-form ref="dataTreeForm" :model="form" :rules="rules" label-position="left" label-width="110px"
