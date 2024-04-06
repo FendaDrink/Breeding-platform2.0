@@ -52,24 +52,27 @@ export default {
 <!-- 卡片样式 -->
 <style lang="less" scoped>
 .card-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50px;
 }
 
 :deep(.el-card__header) {
-	background: #9abeaf;
-	height: 60px !important;
-	display: flex;
-	vertical-align: middle;
-	padding-left: 50px !important;
+  background: #1fb864;
+  height: 52px !important;
+  display: flex;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  vertical-align: middle;
+  padding-left: 50px !important;
 
-	span {
-		font-weight: 700;
-		font-size: 20px;
-		color: white;
-		letter-spacing: 2px;
-	}
+  span {
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    letter-spacing: 2px;
+  }
 }
 
 :deep(.el-table__header) {

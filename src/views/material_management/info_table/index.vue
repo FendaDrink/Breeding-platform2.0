@@ -17,7 +17,7 @@
           <!-- <h1>表型文件选择<i>&nbsp;</i></h1> -->
           <template #header>
             <div class="card-header">
-              <h1>{{ $t('material.header1') }}<i>&nbsp;</i></h1>
+              <span>{{ $t('material.header1') }}</span>
             </div>
           </template>
           <div v-if="fileList.length" class="big-wrapper" style="margin-top: 10px">
@@ -37,11 +37,11 @@
           </div>
         </el-card>
         <div class="gene-form">
-          <el-card class="card-container" style="padding-bottom: 25px; margin-bottom: 0px; !important">
+          <el-card class="card-container" style=" margin-bottom: 0px; !important">
             <!-- <h1>表型文件详情<i>&nbsp;</i></h1> -->
             <template #header>
               <div class="card-header">
-                <h1>{{ $t('material.header2') }}<i>&nbsp;</i></h1>
+                <span>{{ $t('material.header2') }}</span>
               </div>
             </template>
             <div class="material_table" style="width: 100%">
@@ -543,116 +543,40 @@ onMounted(() => {
 
 <!-- 卡片样式 -->
 <style lang="less" scoped>
+.shadow {
+  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-radius: 50px;
 }
-
-:deep(.el-radio) {
-  width: 30%;
-}
-
 
 :deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
-  height: 60px !important;
+  background: #1fb864;
+  height: 52px !important;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  vertical-align: middle;
+  padding-left: 50px !important;
 
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
-
     font-weight: 700;
     font-size: 20px;
     color: white;
-    text-align: center;
     letter-spacing: 2px;
   }
-
-
-}
-
-.card-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60px;
-  position: relative;
-  background-color: #fff;
-  width: auto;
-  min-width:150px;
-}
-
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
 }
 
 .card-container {
-  // width: 97%;
-  // border-radius: 50px;
-  // margin: auto;
-  // margin-top: 10px;
-
-  // :deep(.el-card__body) {
-  //   padding: 15px 20px 20px 20px !important;
-  // }
-
-  //padding: 20px 20px 0px;
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
   margin-right: 0px;
+  border-radius: 50px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {

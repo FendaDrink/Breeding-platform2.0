@@ -87,8 +87,8 @@
                 $t('phenotype.showImage.button.image_update') }}</el-button>
               <el-button type="info" style="margin: 0 10px" @click="downloadSelectedImages" plain class="my-button">{{
                 $t('phenotype.showImage.button.image_download') }}</el-button>
-              <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{
-                $t('phenotype.showImage.button.image_analyse') }}</el-button>
+<!--              <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{-->
+<!--                $t('phenotype.showImage.button.image_analyse') }}</el-button>-->
               <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
                 size="large" class="my-button">
                 <p>{{ $t('phenotype.showImage.label.select_all') }}</p>
@@ -110,11 +110,10 @@
                   :end-placeholder="$t('phenotype.showImage.dialog.other.date_end')" :shortcuts="shortcuts" :size="size"
                   style="margin-right: 20px;" @change="chooseDate" />
               </div>
-              <el-card class="card-container" style="margin-top:10px;">
+              <el-card class="card-container" style="margin-top:10px;border-radius:50px!important;">
                 <template #header>
                   <div class="card-header">
-                    <h1 class="header-title">{{ $t('phenotype.showImage.dialog.other.phenoAnalysis') }}<i
-                        class="underline">&nbsp;</i></h1>
+                    <span>{{ $t('phenotype.showImage.dialog.other.phenoAnalysis') }}</span>
                   </div>
                 </template>
                 <!-- 表型图片统计 -->
@@ -2475,10 +2474,19 @@ async function rowClick(nodeObj) {
   align-items: center;
 }
 
-:deep(.el-card__header) {
-  background: #0F5C32;
-  height: 60px !important;
+.card-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50px;
+}
+
+:deep(.el-card__header) {
+  background: #1fb864;
+  height: 52px !important;
+  display: flex;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
   vertical-align: middle;
   padding-left: 50px !important;
 
@@ -3123,22 +3131,6 @@ async function rowClick(nodeObj) {
   width: 30%;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  position: relative;
-  background-color: #fff;
-}
-
-.card-header .header-title {
-  font-size: 20px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
 .underline {
   background-color: #1FB864;
   height: 5px;
@@ -3151,77 +3143,28 @@ async function rowClick(nodeObj) {
   opacity: 0.5;
 }
 
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50px;
 }
 
 :deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
-  height: 60px !important;
+  background: #1fb864;
+  height: 52px !important;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  vertical-align: middle;
+  padding-left: 50px !important;
 
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
-
     font-weight: 700;
     font-size: 20px;
     color: white;
-    text-align: center;
     letter-spacing: 2px;
   }
-
-
 }
 
 :deep(.el-button) {
