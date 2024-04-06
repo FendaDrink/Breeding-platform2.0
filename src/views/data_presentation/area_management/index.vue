@@ -117,7 +117,7 @@
               stripe>
               <el-table-column prop="name" :label="$t('phenotype.area.table_name')" align="center"></el-table-column>
               <el-table-column prop="type" :label="$t('phenotype.area.table_type')" align="center"></el-table-column>
-              <el-table-column prop="city" :label="$t('phenotype.area.table_location')" align="center"></el-table-column>
+              <el-table-column prop="city" :label="$t('phenotype.area.label_location')" align="center"></el-table-column>
               <el-table-column prop="longitude" :label="$t('phenotype.area.table_longitude')"
                 align="center"></el-table-column>
               <el-table-column prop="latitude" :label="$t('phenotype.area.table_latitude')"
@@ -734,12 +734,13 @@ async function search_trait() {
 
 function matchedData(data) {
   // 根据省份名称匹配经纬度
-  return data.map((province) => ({
+  return data.map((province) => (
+      {
     name: province,
     type: "Local", // 请替换为真实的数据源类型
-    city: provinceData[province].city,
-    longitude: provinceData[province].longitude,
-    latitude: provinceData[province].latitude,
+    city: provinceData[province]?.city,
+    longitude: provinceData[province]?.longitude,
+    latitude: provinceData[province]?.latitude,
     year: "年份", // 请替换为真实的年份
   }));
 }
