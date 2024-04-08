@@ -611,7 +611,7 @@ canvas{
 
 :deep(.el-card__header) {
   background: #1FB864;
-  height: 60px !important;
+  height: 52px !important;
   display: flex;
   vertical-align: middle;
   padding-left: 50px !important;
@@ -625,15 +625,16 @@ canvas{
 }
 
 :deep(.el-table__header) {
-  border-bottom: 1px solid black;
+  border-bottom: none ;
   border-top: 1px solid #ebeef5;
 
   th {
     font-weight: 800;
     font-size: 16PX;
-    background: #FAFAFA !important;
+    background: #1fb864 !important;
+    color:#FFFFFF;
     letter-spacing: 2px;
-    height: 60px !important;
+    height: 40px !important;
   }
 }
 

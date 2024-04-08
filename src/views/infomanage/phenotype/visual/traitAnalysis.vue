@@ -1035,7 +1035,7 @@ onMounted( () => {
 
 :deep(.el-card__header) {
   background: #1FB864;
-  height: 60px !important;
+  height: 52px !important;
   display: flex;
   vertical-align: middle;
   padding-left: 50px !important;
