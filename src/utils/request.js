@@ -22,7 +22,12 @@ const service = axios.create({
 })
 
 // request拦截器
+window._axiosPromiseArr = [];
 service.interceptors.request.use(config => {
+  //发起请求时保存页面所有请求
+  config.cancelToken = new axios.CancelToken(cancel => {
+    window._axiosPromiseArr.push({ cancel })
+  });
   // 是否需要设置 token
   const isToken = (config.headers || {}).isToken === false
   // 是否需要防止数据重复提交

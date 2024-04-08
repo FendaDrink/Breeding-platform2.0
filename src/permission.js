@@ -14,6 +14,12 @@ NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/auth-redirect', '/bind', '/register', '/searching', '/searching/index', '/searching/result', '/searching/highSearch', 'user/bigDataCenter', '/test', '/src'];
 
 router.beforeEach((to, from, next) => {
+  // 跳转路由前取消所有上一个页面未发送的请求
+  window._axiosPromiseArr.forEach((ele,index) => {
+    ele.cancel() // 路由跳转之前，终止上一个页面正在请求的内容
+    // 清空请求的参数
+    delete window._axiosPromiseArr[index];
+  });
   NProgress.start();
   if (getToken()) {
     to.meta.title && useSettingsStore().setTitle(to.meta.title);
