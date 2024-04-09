@@ -4,7 +4,8 @@ import request from '@/utils/request';
 export const getMap = () => {
     return request({
         url: '/sidebarTreeEnv/envFile/getAreaData',
-        method: 'get'
+        method: 'get',
+        timeout:10000000
     })
 }
 
@@ -27,7 +28,8 @@ export function selectFactorByLocation(area){
         method:'get',
         params:{
             area
-        }
+        },
+        timeout:10000000
     })
 }
 
@@ -36,5 +38,6 @@ export function getAllFactorFromFile() {
     return request({
         url: '/sidebarTreeEnv/envFile/getAllFactorFromFile',
         method: 'get',
+        timeout:10000000
     })
 }
