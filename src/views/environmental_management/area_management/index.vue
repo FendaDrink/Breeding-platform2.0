@@ -95,10 +95,9 @@
         <div class="area_top">
           <div class="search_table">
             <el-select v-model="factorName" filterable remote reserve-keyword placeholder="请输入环境因子名"
-                       :remote-method="remoteMethod" :loading="reqLoading" @change="Screening(value)">
+                       :remote-method="remoteMethod" :loading="reqLoading">
               <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
-
             <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
               {{ $t('environment.area.button_search') }}
             </el-button>
@@ -665,7 +664,7 @@ async function search_city() {
     cityLoading.value = true;
     const res = await getLocationByFactor(factorName.value);
     if (res.code === 200) {
-      res.data.map((item) => {
+      res.data.forEach((item) => {
         if (item !== null) {
           areaData.value.push(item);
         }

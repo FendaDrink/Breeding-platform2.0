@@ -157,8 +157,8 @@ export default {
             label_longitude: '经度',
             label_latitude: '纬度',
 
-            header1: '根据地区搜索性状',
-            header2: '根据性状搜索地区'
+            header1: '根据地区搜索环境因子',
+            header2: '根据环境因子搜索地区'
 
 
         },
