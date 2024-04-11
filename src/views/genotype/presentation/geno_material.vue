@@ -818,7 +818,7 @@ onMounted(() => {
 //一级节点选择器
 :deep(.el-tree>.el-tree-node> .el-tree-node__content) {
   font-weight: 600;
-  color:#1FB864;
+  color:var(--theme-color);
   height: 28px;
   .el-tree-node__label{
     font-size: 18px;
@@ -891,7 +891,7 @@ onMounted(() => {
   align-items: center;
 }
 :deep(.el-card__header){
-  background: #1FB864;
+  background: var(--theme-color);
   height: 60px  !important;
   display: flex;
   vertical-align: middle;

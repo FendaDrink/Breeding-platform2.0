@@ -560,7 +560,7 @@ onMounted(() => {
   th {
     font-weight: 800;
     font-size: 16PX;
-    background: #1fb864 !important;
+    background: var(--theme-color) !important;
     letter-spacing: 2px;
     height: 60px !important;
   }
@@ -609,8 +609,8 @@ canvas {
 }
 
 :deep(.el-card__header) {
-  background: #1FB864;
-  height: 60px !important;
+  background: var(--theme-color);
+  height: 52px !important;
   display: flex;
   vertical-align: middle;
   padding-left: 50px !important;
@@ -630,7 +630,7 @@ canvas {
   th {
     font-weight: 800;
     font-size: 16PX;
-    background: #1fb864 !important;
+    background: var(--theme-color) !important;
     color:#fff;
     letter-spacing: 2px;
     height: 40px !important;

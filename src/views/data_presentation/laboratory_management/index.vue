@@ -15,7 +15,7 @@
         <el-card class="card-container" v-show="fileChooseShow">
           <template #header>
             <div class="card-header">
-              <h1>{{ $t('phenotype.laboratory.header.h1') }}<i>&nbsp;</i></h1>
+              <h1><span>{{$t('phenotype.laboratory.header.h1')}}</span> </h1>
             </div>
           </template>
           <div v-if="fileList.length" class="big-wrapper" style="margin-top: 10px">
@@ -35,11 +35,6 @@
         </el-card>
         <el-card class="card-container" v-show="routerFileShow">
           <h1>{{ $t('phenotype.laboratory.header.h1') }}<i>&nbsp;</i></h1>
-          <!-- <template #header>
-            <div class="card-header">
-              <span>表型文件选择</span>
-            </div>
-          </template> -->
           <div class="big-wrapper" style="margin-top: 10px">
             <div class="form_choose">
               <h3>{{ $t('phenotype.laboratory.other.fileName') }} {{ routerFileName }}</h3>
@@ -52,7 +47,7 @@
           <el-card class="card-container" style="margin-bottom: 0;">
             <template #header>
               <div class="card-header">
-                <h1>{{ $t('phenotype.laboratory.header.h2') }}<i>&nbsp;</i></h1>
+                <h1><span>{{ $t('phenotype.laboratory.header.h2') }}</span></h1>
               </div>
             </template>
             <div style="margin-top: 10px">
@@ -69,7 +64,7 @@
                 </div>
               </div>
               <!--  第二部分表单 -->
-              <div class="labotatory_form">
+              <div class="laboratory-table" v-loading="isLaboratoryTableLoading">
                 <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="margin: 30px auto"
                   class="trait-form-table" v-show="laboratorFormShow" stripe>
                   <el-table-column :label="$t('phenotype.laboratory.table.index')" width="80" type="index" align="center" :index="indexMethod" />
@@ -123,13 +118,6 @@ const messages = {
 };
 
 const tableData = reactive([
-  {
-    traitId: 266,
-    traitName: "茎腐病",
-    average: 0.0,
-    maxNum: 0.0,
-    minNum: 0.0,
-  },
 ]);
 
 //用于更新tableData的函数
@@ -139,12 +127,14 @@ function updateTableData(data) {
 
 const traitFileId = ref(1);
 const laboratoryLoading = ref(false);
-
+const isLaboratoryTableLoading = ref(false)
 const chooseLoading = ref(false);
 
 //请求性状信息
 function chooseForm() {
+
   laboratoryLoading.value = true;
+  isLaboratoryTableLoading.value = true
   laboratoryShow.value = true;
   laboratorSearchShow.value = true;
   chooseLoading.value = true;
@@ -172,6 +162,7 @@ function chooseForm() {
           laboratorFormShow.value = true;
 
           updateTableData(res.data);
+          isLaboratoryTableLoading.value = false
           searchLoading.value = false;
           $modal.msgSuccess(messages.search_success);
           console.log(res, "res");
@@ -427,12 +418,14 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
+.laboratory-table{
+  min-height: 300px;
+}
 
 .card-container {
   padding: 0px;
-  background-color: #fff;
-  margin: 0px 20px 20px 20px;
-  margin-right: 0;
+  margin: 0 0 20px 20px;
+  border-radius: 50px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {
@@ -444,7 +437,7 @@ onMounted(async () => {
   }
 
   h1 i {
-    background-color: #1FB864;
+    background-color: var(--theme-color);
     height: 5px;
     width: 150px;
     margin-left: -75px;
@@ -522,7 +515,7 @@ onMounted(async () => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -543,7 +536,7 @@ onMounted(async () => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -570,23 +563,23 @@ onMounted(async () => {
 }
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 :deep(.el-table__header .el-checkbox) {
@@ -642,82 +635,27 @@ onMounted(async () => {
 
 .card-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  height: 60px;
-  position: relative;
-  background-color: #fff;
-  width: auto;
-  min-width:150px;
-}
-
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+  border-radius: 50px;
 }
 
 :deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
-  height: 60px !important;
+  background: var(--theme-color);
+  height: 52px !important;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  vertical-align: middle;
+  padding-left: 50px !important;
 
   h1 {
     margin: 0%;
   }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
-
     font-weight: 700;
     font-size: 20px;
     color: white;
-    text-align: center;
     letter-spacing: 2px;
   }
 
@@ -815,7 +753,7 @@ onMounted(async () => {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -835,7 +773,7 @@ onMounted(async () => {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 
@@ -843,7 +781,6 @@ onMounted(async () => {
 <style lang="less" scoped>
 :deep(.permission-tree) {
   margin: 5px;
-  // background: #f2fbf7;
   min-width: 98%;
   display: inline-block;
   width: auto;

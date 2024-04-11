@@ -194,7 +194,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="success" plain v-if="dialogStatus === 'create'"
-              @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
+              @click="dialogStatus === 'create' ? openCreateData() : updateData()" :disabled="isDisabled">
               {{ $t('environment.index.save') }}
             </el-button>
             <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
@@ -233,7 +233,7 @@
 <script setup>
 import { ref, getCurrentInstance, nextTick, onMounted, reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { getEnvFileList, delFile, updateFile, getEnvFileHistory } from '@/api/environmental_management/file';
+import { getEnvFileList, delFile, updateFile, getEnvFileHistory,uploadFileEndApi,mergeChunkApi } from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -246,6 +246,8 @@ import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
+import {ElMessage} from "element-plus";
+import axios from "axios";
 const i18n = useI18n();
 const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
@@ -442,8 +444,29 @@ const handleUploadFile = (file) => {
   dataForm.fileName = dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
 };
 
+let isNormalFile = 1
+let url = ''
+// 大文件上传
+async function openCreateData() {
+  tableLoading.value = true;
+  dialogFormVisible.value = false;
+  // 判断文件大小
+  if (uploadFileList.value[0].raw.size > 1024 * 1024 * 10) {
+    isNormalFile = 0;
+  } else {
+    isNormalFile = 1;
+  }
+  if (isNormalFile === 0) {
+    // 是大文件，调用大文件上传接口
+    await upLoadHugeFile();
+  } else {
+    await createData();
+  }
+}
+
 const createData = async () => {
   const valid = await form.value.validate();
+  dialogFormVisible.value = false;
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/sidebarTreeEnv/envFile/upload?treeId=${tree.value.getCurrentNode().treeId
@@ -466,6 +489,115 @@ const createData = async () => {
 
 };
 
+// 分片上传
+const uploadChunk = (formData) => {
+  console.log('任务开始');
+  return axios.post(
+      `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + getToken(),
+        },
+      }
+  )
+}
+
+// 检查文件编码格式
+const chectCharDet = () => {
+  ElMessage.info('上传文件较大，正在检查文件编码格式...')
+  return new Promise((resolve, reject) => {
+    const file = uploadFileList.value[0].raw;
+    const reader = new FileReader();
+    let isUTF8 = false
+    reader.onload = (event) => {
+      const fileData = event.target.result;
+      // 遍历字符串，检查是否有汉字
+      const strList = fileData.split('');
+      isUTF8 = strList.some((str) => isZh(str));
+      resolve(isUTF8)
+    }
+    reader.readAsText(file);
+  })
+}
+
+// 判断是否有汉字
+const isZh = (str) => {
+  let re = /[^\u4e00-\u9fa5]/;
+  return !re.test(str);
+};
+
+//大文件分块上传
+const upLoadHugeFile = async () => {
+  const isUTF8 = await chectCharDet()
+  if (!isUTF8) return ElMessage.warning('请将文件转为utf-8编码后进行上传！')
+  ElMessage.info('文件体积较大，正在上传，请耐心等待')
+  return new Promise(async (resolve, reject) => {
+    if (!uploadFileList.value[0]) return;
+    //获取文件并将其修改为file对象
+    const file = uploadFileList.value[0].raw;
+    //分片大小
+    const chunkSize = 5 * 1024 * 1024; // 5*1MB
+    //分片数
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    // 创建分片上传任务
+    const tasks = [];
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * chunkSize;
+      const end = Math.min(file.size, start + chunkSize);
+      const chunk = file.slice(start, end);
+      const temp = new File([chunk], file.name);
+
+      // 创建formData对象
+      const formData = new FormData();
+      formData.append("file", temp);
+      formData.append("totalChunks", totalChunks);
+      formData.append("currentChunk", i);
+      tasks.push(
+          uploadChunk(formData)
+      )
+    }
+    // 上传分片
+    const uploadRes = await Promise.all(tasks);
+    console.log(uploadRes);
+    if (uploadRes.some(item => item.data.code !== 200)) {
+      // 上传失败
+      $modal.msgError('上传失败');
+      return;
+    }
+    // 合并分片
+    try {
+      const mergeRes = await mergeChunkApi(file.name, tree.value.getCurrentNode().treeId, 1)
+      url = mergeRes.data.replace(/\\/g, "/");
+      const params = {
+        treeId: tree.value.getCurrentNode().treeId,
+        status: dataForm.fileStatus ? 1 : 0,
+        remark: dataForm.remark,
+        fileName: dataForm.fileName,
+        filePath: url,
+        area:dataForm.area,
+        longitude:dataForm.longitude,
+        latitude:dataForm.latitude
+      }
+      // 发送文件信息用于后端保存文件
+      await uploadFileSuccess({code: 200, msg: '文件较大，请等待后台处理'})
+      await uploadFileEndApi(params).then(res=>{
+        $modal.msgSuccess('后台已处理，上传成功');
+      })
+      tableLoading.value = false;
+      getList();
+    } catch (err) {
+      $modal.msgError('上传失败');
+      console.error(err);
+    } finally {
+      console.log('合并结束');
+      // 执行成功回调
+      resolve();
+    }
+  })
+}
+
 const tableName = ref("");
 
 //文件合并
@@ -476,22 +608,6 @@ function mergeFile(row) {
   resetForm();
   dialogFormVisible.value = true;
   isDisabled2.value = false;
-  /* fileList.value = [];
-  dialogFormVisible.value = true;
-  form.value.validate((valid) => {
-    if (valid) {
-    uploadUrl.value = `${
-      import.meta.env.VITE_APP_UPLOAD_URL
-    }/penotypeFile/merge?tableName=${row.tableName}`;
-    nextTick(async () => {
-      tableLoading.value = false;
-      await upload.value.submit();
-      isDisabled.value = true;
-      getList();
-    });
-    }
-  }); */
-  //dialogFormVisible.value = false;
 }
 
 
@@ -507,7 +623,7 @@ const handleCurrentChange = (val) => {
 
 const mergeData = async (row) => {
   const valid = await form.value.validate();
-  console.log(valid);
+  dialogFormVisible.value = false;
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/sidebarTreeEnv/environment/merge?tableName=${tableName.value}&remark=${dataForm.remark
@@ -523,7 +639,6 @@ const mergeData = async (row) => {
       isDisabled.value = true;
       tableLoading.value = false;
       tableName.value = "";
-      dialogFormVisible.value = false;
     }
 
   }
@@ -532,6 +647,13 @@ const mergeData = async (row) => {
 
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
+  if( response.code === 200 && isNormalFile === 0){
+    $modal.msgSuccess(response.msg);
+    return;
+  }else if(isNormalFile === 0){
+    $modal.msgError(response.msg);
+    return;
+  }
   if (response.code === 200) {
     $modal.msgSuccess(messages.message_upload_success);
   } else {
@@ -544,7 +666,6 @@ async function uploadFileSuccess(response) {
 
   // getList();
   rowClick(curNode);
-  dialogFormVisible.value = false;
 }
 
 // 文件上传失败回调
@@ -607,25 +728,6 @@ function handleExceed(files) {
   upload.value?.handleStart(file);
 }
 
-/* // 文件修改
-async function updateData() {
-  form.value.validate((valid) => {
-  if (valid) {
-    tableLoading.value = true;
-    updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
-    .then((res) => {
-      tableLoading.value = false;
-      dialogFormVisible.value = false;
-      getList();
-    })
-    .catch((err) => {
-      loading.value = false;
-      $modal.msgError("修改失败");
-    });
-  }
-  });
-} */
-
 // 文件表格
 const fileList = ref([]); // 文件列表
 const uploadFileList = ref([]); // 上传文件列表
@@ -644,7 +746,7 @@ function handleAdd() {
 
 // 删除文件
 function handleDelete() {
-  if (ids.value.length == 0) {
+  if (ids.value.length === 0) {
     $modal.msg(messages.message_delete_select);
   } else {
     $modal.confirm(messages.message_delete_confirm).then(() => {
@@ -664,31 +766,6 @@ function handleDelete() {
 const allFileId = ref([]);
 
 // 请求文件列表
-// function getList() {
-// 	tableLoading.value = true;
-
-// 	listFile({
-// 		...queryParams,
-// 		treeId: tree.value.getCurrentNode().treeId,
-// 		fileStatus: roles[0] === "admin" ? null : 1,
-// 	})
-// 		.then((res) => {
-// 			tableLoading.value = false;
-// 			fileList.value = res.rows.map((item) => ({
-// 				...item,
-// 				fileStatus: item.status === 1,
-// 			}));
-// 			fileList.value.forEach((item) => {
-// 				allFileId.value.push(item.fileId);
-// 			});
-// 			total.value = res.total;
-// 		})
-// 		.catch((err) => {
-// 			tableLoading.value = false;
-// 			$modal.msgError("获取列表失败");
-// 		});
-// }
-
 
 function getList() {
   tableLoading.value = true;
@@ -1118,7 +1195,7 @@ onMounted(() => {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: var(--theme-color);
   margin-top: 10px;
 
   .el-dialog__title {
@@ -1318,7 +1395,7 @@ onMounted(() => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -1339,7 +1416,7 @@ onMounted(() => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -1367,48 +1444,48 @@ onMounted(() => {
 }
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -1461,7 +1538,7 @@ onMounted(() => {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 
@@ -1758,7 +1835,7 @@ onMounted(() => {
 
 :deep(.el-card__header) {
   // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
+  background-color: var(--theme-color);
   height: 60px !important;
   display: flex;
   align-items: center;
@@ -1888,7 +1965,7 @@ onMounted(() => {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {

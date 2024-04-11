@@ -20,7 +20,7 @@
                         :on-change="handleUploadFile"
                         :before-upload="handleBeforeUpload">
                         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                        <div>将.vcf格式文件拖到此处，或<a href="javascript:;" style="color: #1FB864;">点击上传</a></div>
+                        <div>将.vcf格式文件拖到此处，或<a href="javascript:;" style="color: var(--theme-color);">点击上传</a></div>
                       </el-upload>
                       <div class="btns">
                         <div class="close">
@@ -31,7 +31,7 @@
                     <template #reference>
                       <el-button class="no-inherit" @click="showPopover=!showPopover">
                         <!-- <el-icon v-if="!showPopover" :color="showPopover?'#fff':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon> -->
-                        <svg t="1710852877805" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1564" width="22" height="22"><path d="M62.659316 898.116869 155.237045 329.102536c1.693495-9.590827 10.725469-16.93495 19.757442-16.93495l713.52591 0 0-84.674752c0-9.590827-7.338479-16.93495-16.93495-16.93495l-429.018743 0L366.923925 120.238148 22.579934 120.238148c-9.596472 0-16.93495 7.344123-16.93495 16.93495L5.644983 881.181918c0 9.590827 7.338479 16.93495 16.93495 16.93495L62.659316 898.116869z" :fill="showPopover?'#ffffff':'#1FB864'" stroke="white" stroke-width="40" p-id="1565"></path><path d="M998.597574 382.16538 228.057332 382.16538c-9.037619 0-18.063947 7.338479-19.192944 16.370452L121.367144 882.310915c-1.693495 9.037619 4.515987 16.370452 13.54796 16.370452l770.540243 0c9.031974 0 18.063947-7.338479 19.187299-16.370452L1012.145535 398.535832C1013.83903 390.068357 1007.629548 382.16538 998.597574 382.16538z" :fill="showPopover?'#ffffff':'#1FB864'" stroke="white" stroke-width="40" p-id="1566"></path></svg>
+                        <svg t="1710852877805" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1564" width="22" height="22"><path d="M62.659316 898.116869 155.237045 329.102536c1.693495-9.590827 10.725469-16.93495 19.757442-16.93495l713.52591 0 0-84.674752c0-9.590827-7.338479-16.93495-16.93495-16.93495l-429.018743 0L366.923925 120.238148 22.579934 120.238148c-9.596472 0-16.93495 7.344123-16.93495 16.93495L5.644983 881.181918c0 9.590827 7.338479 16.93495 16.93495 16.93495L62.659316 898.116869z" :fill="showPopover?'#ffffff':'var(--theme-color)'" stroke="white" stroke-width="40" p-id="1565"></path><path d="M998.597574 382.16538 228.057332 382.16538c-9.037619 0-18.063947 7.338479-19.192944 16.370452L121.367144 882.310915c-1.693495 9.037619 4.515987 16.370452 13.54796 16.370452l770.540243 0c9.031974 0 18.063947-7.338479 19.187299-16.370452L1012.145535 398.535832C1013.83903 390.068357 1007.629548 382.16538 998.597574 382.16538z" :fill="showPopover?'#ffffff':'var(--theme-color)'" stroke="white" stroke-width="40" p-id="1566"></path></svg>
                       </el-button>
                     </template>
                   </el-popover>
@@ -96,7 +96,7 @@
           <template #default="scope">
             <el-popover placement="top" trigger="hover" :content="scope.row.info?scope.row.info:'无'">
               <template #reference>
-                <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
+                <el-button link type="text" style="color: var(--theme-color);">查看提示信息</el-button>
               </template>
             </el-popover>
           </template>
@@ -105,7 +105,7 @@
           <template #default="scope">
             <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
               <template #reference>
-                <el-button link type="text" style="color: #1FB864;">
+                <el-button link type="text" style="color: var(--theme-color);">
                   删除
                 </el-button>
               </template>
@@ -395,10 +395,11 @@ onMounted(() => {
         font-size: 390%;
         font-weight: 700;
         text-align: center;
-        // color: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+        color:rgba(255,255,255,1)
+        // color: var(--theme-color);
+        // background-clip: text;
+        // -webkit-text-fill-color: transparent;
+        // background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
       }
       .input-wrapper{
         flex: 1;
@@ -413,7 +414,7 @@ onMounted(() => {
           }
           color: #fff;
           :deep(.el-input){
-            --el-input-border-color:#1FB864 !important;
+            --el-input-border-color:var(--theme-color) !important;
           }
           .el-input{
             width: 100%;
@@ -430,10 +431,10 @@ onMounted(() => {
             }
             :deep(.el-input-group__prepend){
               border-radius: 10px 0 0 10px;
-              background-color: #1FB864;
+              background-color: var(--theme-color);
               .el-button{
                 .el-icon{
-                  // background-color: #1FB864;
+                  // background-color: var(--theme-color);
                   font-size: 120%;
                 }
               }
@@ -443,7 +444,7 @@ onMounted(() => {
             }
             :deep(.el-input-group__append){
               border-radius: 0 10px 10px 0;
-              background-color: #1FB864;
+              background-color: var(--theme-color);
               color:#fff;
               width: 13%;
               cursor: pointer;
@@ -531,7 +532,7 @@ onMounted(() => {
   }
 
   h1 i {
-    background-color: #1FB864;
+    background-color: var(--theme-color);
     height: 5px;
     width: 150px;
     margin-left: -75px;
@@ -629,7 +630,7 @@ onMounted(() => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -650,7 +651,7 @@ onMounted(() => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -677,48 +678,48 @@ onMounted(() => {
 }
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -782,7 +783,7 @@ onMounted(() => {
 }
 
 :deep(.el-textarea :hover) {
-  border-color: #1FB864 !important;
+  border-color: var(--theme-color) !important;
   outline: none !important;
 }
 
@@ -797,28 +798,28 @@ onMounted(() => {
 
 
 :deep(.el-button) {
-  --el-button-border-color: #1FB864;
+  --el-button-border-color: var(--theme-color);
   --el-button-bg-color: #ffffff;
   --el-button-text-color: #606266;
   --el-button-disabled-text-color: #a8abb2;
   --el-button-disabled-bg-color: #ffffff;
   --el-button-disabled-border-color: #e4e7ed;
   --el-button-divide-border-color: rgba(255, 255, 255, .5);
-  --el-button-hover-text-color: #1FB864;
+  --el-button-hover-text-color: var(--theme-color);
   --el-button-hover-bg-color: #ecf5ff;
-  --el-button-hover-border-color: #1FB864;
-  --el-button-active-text-color: #1FB864;
-  --el-button-active-border-color: #1FB864;
+  --el-button-hover-border-color: var(--theme-color);
+  --el-button-active-text-color: var(--theme-color);
+  --el-button-active-border-color: var(--theme-color);
   --el-button-active-bg-color: #ecf5ff;
 }
 
 :deep(.el-button--primary.is-plain) {
-  --el-button-text-color: #1FB864 !important;
+  --el-button-text-color: var(--theme-color) !important;
   --el-button-bg-color: #ecf5ff !important;
-  --el-button-border-color: #1FB864 !important;
+  --el-button-border-color: var(--theme-color) !important;
   --el-button-hover-text-color: #ffffff !important;
-  --el-button-hover-bg-color: #1FB864 !important;
-  --el-button-hover-border-color: #1FB864 !important;
+  --el-button-hover-bg-color: var(--theme-color) !important;
+  --el-button-hover-border-color: var(--theme-color) !important;
   --el-button-active-text-color: #ffffff !important;
 }
 
@@ -827,13 +828,13 @@ onMounted(() => {
   --el-button-bg-color: #21c96c;
   --el-button-border-color: #21c96c;
   --el-button-hover-text-color: #ffffff;
-  --el-button-hover-bg-color: #1FB864;
-  --el-button-hover-border-color: #1FB864;
-  --el-button-active-bg-color: #1FB864;
-  --el-button-active-border-color: #1FB864;
-  --el-button-disabled-text-color: #1FB864;
-  --el-button-disabled-bg-color: #1FB864;
-  --el-button-disabled-border-color: #1FB864;
+  --el-button-hover-bg-color: var(--theme-color);
+  --el-button-hover-border-color: var(--theme-color);
+  --el-button-active-bg-color: var(--theme-color);
+  --el-button-active-border-color: var(--theme-color);
+  --el-button-disabled-text-color: var(--theme-color);
+  --el-button-disabled-bg-color: var(--theme-color);
+  --el-button-disabled-border-color: var(--theme-color);
 }
 
 .el-button--success.is-plain {
@@ -869,6 +870,6 @@ onMounted(() => {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>

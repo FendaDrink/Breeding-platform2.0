@@ -212,7 +212,7 @@ const option2 = ref({
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1FB864', //滑动条颜色
+      fillerColor: 'var(--theme-color)', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -335,7 +335,7 @@ async function getPictureNumber() {
           // handleSize: 10,//左右2个滑动条的大小
           moveHandleSize: 0,
           borderColor: "#eee", //滑动通道的边框颜色
-          fillerColor: '#1FB864', //滑动条颜色
+          fillerColor: 'var(--theme-color)', //滑动条颜色
           backgroundColor: '#eee',//未选中的滑动条的颜色
           showDataShadow: true,//是否显示数据阴影 默认auto
           rangeMode: ['value', 'value'],
@@ -966,8 +966,8 @@ onMounted(async () => {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
-  height: 60px !important;
+  background: var(--theme-color);
+  height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
@@ -1136,7 +1136,7 @@ onMounted(async () => {
 
     span,
     .el-icon {
-      color: #1FB864;
+      color: var(--theme-color);
     }
   }
 }

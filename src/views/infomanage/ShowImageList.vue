@@ -87,8 +87,6 @@
                 $t('phenotype.showImage.button.image_update') }}</el-button>
               <el-button type="info" style="margin: 0 10px" @click="downloadSelectedImages" plain class="my-button">{{
                 $t('phenotype.showImage.button.image_download') }}</el-button>
-              <!-- <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{
-                $t('phenotype.showImage.button.image_analyse') }}</el-button> -->
               <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
                 size="large" class="my-button">
                 <p>{{ $t('phenotype.showImage.label.select_all') }}</p>
@@ -110,11 +108,10 @@
                   :end-placeholder="$t('phenotype.showImage.dialog.other.date_end')" :shortcuts="shortcuts" :size="size"
                   style="margin-right: 20px;" @change="chooseDate" />
               </div>
-              <el-card class="card-container" style="margin-top:10px;">
+              <el-card class="card-container" style="margin-top:10px;border-radius:50px!important;">
                 <template #header>
                   <div class="card-header">
-                    <h1 class="header-title">{{ $t('phenotype.showImage.dialog.other.phenoAnalysis') }}<i
-                        class="underline">&nbsp;</i></h1>
+                    <span>{{ $t('phenotype.showImage.dialog.other.phenoAnalysis') }}</span>
                   </div>
                 </template>
                 <!-- 表型图片统计 -->
@@ -273,7 +270,7 @@
 
               <template #tip>
                 <div class="el-upload__tip">{{ $t('phenotype.showImage.dialog.tip.t1') }}<span
-                    v-if="dialogStatus === 'updataPhoto'">{{ $t('phenotype.showImage.dialog.tip.t2') }}</span><br />{{
+                    v-if="dialogStatus === 'updatePhoto'">{{ $t('phenotype.showImage.dialog.tip.t2') }}</span><br />{{
                       $t('phenotype.showImage.dialog.tip.t3') }}<br />基因型_2023-09-01
                   23.26.02.png</div>
               </template>
@@ -288,7 +285,7 @@
             </el-upload>
             <div class="dialog-footer">
               <el-button type="success" plain :loading="submitButtonLoading"
-                @click.passive="dialogStatus === 'updataPhoto' ? checkImageName() : confirmEditPhoto()">
+                @click.passive="dialogStatus === 'updatePhoto' ? checkImageName() : confirmEditPhoto()">
                 {{ $t('phenotype.showImage.button.save') }}
               </el-button>
               <el-button @click="suspendSubmitImage" type="info" plain>{{ $t('phenotype.showImage.button.cancel')
@@ -340,7 +337,7 @@
   </div>
 </template>
 
-<script setup name="showImageList">
+<script setup>
 import {
   ref,
   reactive,
@@ -418,6 +415,7 @@ const messages = {
   uploadLimit: computed(() => i18n.t('phenotype.showImage.message.uploadLimit')).value,
   uploadImageError: computed(() => i18n.t('phenotype.showImage.message.uploadImageError')).value,
   uploadImageSuccess:computed(() => i18n.t('phenotype.showImage.message.uploadImageSuccess')).value,
+  updateImageSuccess:computed(() => i18n.t('phenotype.showImage.message.updateImageSuccess')).value,
   uploadImageFail:computed(() => i18n.t('phenotype.showImage.message.uploadImageFail')).value,
   resetSearch: computed(() => i18n.t('phenotype.showImage.message.resetSearch')).value,
   searchSuccess: computed(() => i18n.t('phenotype.showImage.message.searchSuccess')).value,
@@ -454,7 +452,6 @@ const messages = {
   treeName:computed(() => i18n.t('phenotype.showImage.rule.treeName')).value,
   description:computed(() => i18n.t('phenotype.showImage.rule.description')).value,
 };
-
 
 const router = useRouter();
 use([
@@ -672,7 +669,7 @@ async function chooseDate() {
         // handleSize: 10,//左右2个滑动条的大小
         moveHandleSize: 0,
         borderColor: "#eee", //滑动通道的边框颜色
-        fillerColor: '#1FB864', //滑动条颜色
+        fillerColor: 'var(--theme-color)', //滑动条颜色
         backgroundColor: '#eee',//未选中的滑动条的颜色
         showDataShadow: true,//是否显示数据阴影 默认auto
         rangeMode: ['value', 'value'],
@@ -716,7 +713,7 @@ const props = defineProps({
 //允许的格式
 const acceptType = () => {
   let type = '.jpg,.png'
-  dialogStatus.value === 'updataPhoto' ? type += ',.bmp,.webp,.jpeg,.zip,.rar' : ''
+  dialogStatus.value === 'updatePhoto' ? type += ',.bmp,.webp,.jpeg,.zip,.rar' : ''
   return type;
 }
 
@@ -1001,7 +998,7 @@ const photo = reactive({
 function addImage(imageUrl) {
   photo.limit = 20;
   fileList.value = [];
-  dialogStatus.value = "updataPhoto";
+  dialogStatus.value = "updatePhoto";
   imageDialog.value = true;
 }
 
@@ -1432,7 +1429,10 @@ async function uploadImageSuccess(res) {
     $modal.msgError(messages.uploadImageFail);
     return
   } else {
-    $modal.msgSuccess(messages.uploadImageSuccess);
+    dialogStatus === 'uploadPhoto' ?
+        $modal.msgSuccess(messages.uploadImageSuccess)
+        :
+        $modal.msgSuccess(messages.updateImageSuccess)
     checkedPictures.value = [];
   }
   if (fileList.value.every((it) => it.status == "success")) {
@@ -1682,7 +1682,7 @@ option.value = {
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1FB864', //滑动条颜色
+      fillerColor: 'var(--theme-color)', //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -1703,14 +1703,14 @@ const dialogStatus = ref("create");
 const textMap = {
   create: "添加节点",
   update: "修改节点",
-  updataPhoto: "上传图片",
+  updatePhoto: "上传图片",
   editPhoto: "编辑图片",
 };
 
 const textMaps = {
   create: computed(() => i18n.t('phenotype.showImage.title.node_create')).value,
   update: computed(() => i18n.t('phenotype.showImage.title.node_update')).value,
-  updataPhoto: computed(() => i18n.t('phenotype.showImage.title.image_upload')).value,
+  updatePhoto: computed(() => i18n.t('phenotype.showImage.title.image_upload')).value,
   editPhoto: computed(() => i18n.t('phenotype.showImage.title.image_update')).value,
 };
 
@@ -2060,7 +2060,7 @@ async function rowClick(nodeObj) {
   top: 0;
   left: 0;
   height: 100%;
-  //background-color: #1FB864;
+  //background-color: var(--theme-color);
 }
 
 .progress-text {
@@ -2282,7 +2282,7 @@ async function rowClick(nodeObj) {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: var(--theme-color);
   margin-top: 10px;
 
   .el-dialog__title {
@@ -2302,8 +2302,8 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-switch.is-checked .el-switch__core) {
-  border-color: #1fb864;
-  background-color: #1fb864;
+  border-color: var(--theme-color);
+  background-color: var(--theme-color);
 }
 </style>
 
@@ -2472,21 +2472,25 @@ async function rowClick(nodeObj) {
 
 <!-- 卡片样式 -->
 <style lang="less" scoped>
-.info-card {
-  border: none;
-  width: 400px;
-}
-
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-:deep(.el-card__header) {
-  background: #0F5C32;
-  height: 60px !important;
+.card-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50px;
+}
+
+:deep(.el-card__header) {
+  background: var(--theme-color);
+  height: 52px !important;
+  display: flex;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
   vertical-align: middle;
   padding-left: 50px !important;
 
@@ -2509,6 +2513,12 @@ async function rowClick(nodeObj) {
     letter-spacing: 2px;
     height: 60px !important;
   }
+}
+
+.info-card {
+  border: none;
+  border-radius: 50px;
+  width: 400px;
 }
 
 :deep(.el-table__cell) {
@@ -2795,7 +2805,7 @@ async function rowClick(nodeObj) {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -2887,7 +2897,7 @@ async function rowClick(nodeObj) {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 
@@ -3131,24 +3141,8 @@ async function rowClick(nodeObj) {
   width: 30%;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  position: relative;
-  background-color: #fff;
-}
-
-.card-header .header-title {
-  font-size: 20px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
 .underline {
-  background-color: #1FB864;
+  background-color: var(--theme-color);
   height: 5px;
   width: 150px;
   margin-left: -75px;
@@ -3159,77 +3153,28 @@ async function rowClick(nodeObj) {
   opacity: 0.5;
 }
 
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50px;
 }
 
 :deep(.el-card__header) {
-  // background: rgba(143, 219, 177,0.1);
-  background-color: #1FB864;
-  height: 60px !important;
+  background: var(--theme-color);
+  height: 52px !important;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  vertical-align: middle;
+  padding-left: 50px !important;
 
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
-
     font-weight: 700;
     font-size: 20px;
     color: white;
-    text-align: center;
     letter-spacing: 2px;
   }
-
-
 }
 
 :deep(.el-button) {
@@ -3333,7 +3278,7 @@ async function rowClick(nodeObj) {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -3367,7 +3312,7 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 

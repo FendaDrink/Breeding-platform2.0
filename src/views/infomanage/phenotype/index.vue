@@ -275,14 +275,6 @@ const historyTableLoading = ref(false);
 // 对话框
 const dialogFormVisible = ref(false);
 const dialogStatus = ref("");
-const textMap = {
-  create: "添加文件",
-  update: "修改文件",
-  other: "选择合并文件",
-  createNode: "添加节点",
-  updateNode: "修改节点",
-};
-
 
 const textMaps = {
   create: titles.create.value,
@@ -387,6 +379,7 @@ const handleUploadFile = (file) =>{
 let isNormalFile = 1
 let url = ''
 async function openCreateData() {
+  dialogFormVisible.value = false;
   // 判断文件大小
   if (uploadFileList.value[0].raw.size > 1024 * 1024 * 50) {
     isNormalFile = 0;
@@ -409,8 +402,6 @@ const createData = async () => {
     }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
     }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
     }&fileName=${dataForm.fileName}&pointStatus=${0}`;
-    $modal.msg(messages.message_upload_wait);
-
     try {
       await upload.value.submit();
     } catch (err) {
@@ -496,7 +487,6 @@ const createData = async () => {
       }
       // 上传分片
       const uploadRes = await Promise.all(tasks);
-      console.log(uploadRes);
       if (uploadRes.some(item => item.data.code !== 200)) {
         // 上传失败
         $modal.msgError('上传失败');
@@ -516,13 +506,15 @@ const createData = async () => {
         }
         console.log('params', params);
         // 发送文件信息用于后端保存文件
-        uploadFileSuccess({code: 200, msg: '上传成功，文件较大，请等待后台处理'});
-        await uploadFileEndApi(params)
+        await uploadFileSuccess({code: 200, msg: '文件较大，请等待后台处理'});
+        await uploadFileEndApi(params).then(res=>{
+          $modal.msgSuccess('后台已处理，上传成功');
+        })
+        tableLoading.value = false;
         getList();
       } catch (err) {
         $modal.msgError('上传失败');
         console.error(err);
-        return;
       } finally {
         console.log('合并结束');
         // 执行成功回调
@@ -546,7 +538,7 @@ const createData = async () => {
 
   const mergeData = async () => {
     const valid = await form.value.validate();
-    console.log(valid);
+    dialogFormVisible.value = false;
     if (valid) {
       uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
@@ -569,8 +561,15 @@ const createData = async () => {
 
 // 文件上传成功回调
   async function uploadFileSuccess(response) {
+    if( response.code === 200 && isNormalFile === 0){
+      $modal.msgSuccess(response.msg);
+      return;
+    }else if(isNormalFile === 0){
+      $modal.msgError(response.msg);
+      return;
+    }
+
     if (response.code === 200) {
-      console.log(response,'***')
       $modal.msgSuccess(response.msg);
     } else {
       $modal.msgError(response.msg);
@@ -1160,7 +1159,7 @@ async function updateData() {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: var(--theme-color);
   margin-top: 10px;
 
   .el-dialog__title {
@@ -1550,7 +1549,7 @@ async function updateData() {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -1696,7 +1695,7 @@ async function updateData() {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -1717,7 +1716,7 @@ async function updateData() {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -1767,48 +1766,48 @@ async function updateData() {
 
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -1928,6 +1927,6 @@ async function updateData() {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>

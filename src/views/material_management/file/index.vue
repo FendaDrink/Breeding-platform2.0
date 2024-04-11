@@ -369,7 +369,7 @@ onBeforeRouteLeave(() => {
 
 :deep(.el-dialog__header) {
   margin: 0%;
-  background-color: #0F5C32;
+  background-color: var(--theme-color);
 
   span {
     color: white;
@@ -382,7 +382,7 @@ onBeforeRouteLeave(() => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -403,7 +403,7 @@ onBeforeRouteLeave(() => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -452,48 +452,48 @@ onBeforeRouteLeave(() => {
 
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -546,7 +546,7 @@ onBeforeRouteLeave(() => {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 

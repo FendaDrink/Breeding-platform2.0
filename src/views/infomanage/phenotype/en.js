@@ -294,6 +294,7 @@ export default {
                 uploadLimit: "Only image or compressed file formats are allowed for upload!",
                 uploadImageError: "Failed to add/modify the image!",
                 uploadImageSuccess:'Upload Successfully!',
+                updateImageSuccess:'Update Successfully',
                 uploadImageFail:'Upload Failed!',
                 resetSearch: "Reset Successfully!",
 

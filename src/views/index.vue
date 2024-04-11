@@ -67,7 +67,6 @@ const typeList = reactive([
   },
 ])
 
-
 </script>
 
 <style scoped lang="less">

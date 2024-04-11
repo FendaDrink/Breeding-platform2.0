@@ -4,7 +4,7 @@
       <!-- <h1>基因型数据筛选<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <h1>{{ $t('genotype.filter.header') }}<i>&nbsp;</i></h1>
+          <span>{{ $t('genotype.filter.header') }}</span>
         </div>
       </template>
 
@@ -632,7 +632,7 @@ export default {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -653,7 +653,7 @@ export default {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -679,48 +679,48 @@ export default {
   width: 100%;
 }
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -779,91 +779,33 @@ export default {
 
 .card-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  height: 60px;
-  position: relative;
-  background-color: #fff;
-  width: auto;
-  min-width:150px;
-}
-
-.card-header:before,
-.card-header:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.card-header:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  left: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 60px 60px;
-  /* 第一个0表示上边框无宽度，第二个0表示右边框无宽度，第三个值控制三角形的高度（即底部边框宽度），第四个值控制三角形的宽度 */
-  // border-color: transparent transparent #f0f0f0 transparent;
-  border-color: transparent transparent #fff transparent;
-  /* 最后一个透明色表示右下角是透明的，形成直角三角形 */
-}
-
-.card-header:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  /* 将三角形定位在box的底部 */
-  right: -60px;
-  /* 紧贴box的左边 */
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 60px 0 0 60px;
-  /* 第一个值控制三角形的高度（现在是顶部边框宽度），第二个值为0表示无右边框，第三和第四个值分别表示下边框和左边框宽度 */
-  border-color: transparent transparent transparent #fff;
-  /* 第一个值是三角形的颜色，后面三个透明色分别表示右下、左下和左上角是透明的，形成朝左的直角三角形 */
+  border-radius: 50px;
 }
 
 :deep(.el-card__header) {
-  background: #1FB864;
-  height: 60px !important;
+  background: var(--theme-color);
+  height: 52px !important;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px !important;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  vertical-align: middle;
+  padding-left: 50px !important;
 
-  h1 {
-    margin: 0%;
-  }
-
-  // width: 100px; /* 梯形底部宽度 */
-  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
-  // border-top: 60px solid red; /* 这将成为梯形的高度 */
-  // border-right: 0;
-  // border-bottom: 0;
-  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
-
     font-weight: 700;
     font-size: 20px;
     color: white;
-    text-align: center;
     letter-spacing: 2px;
   }
-
-
 }
 
 .card-container {
   padding: 0px;
   background-color: #fff;
   margin: 0px 20px 20px 20px;
+  border-radius: 50px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {
@@ -874,7 +816,7 @@ export default {
   }
 
   h1 i {
-    background-color: #1FB864;
+    background-color: var(--theme-color);
     height: 5px;
     width: 150px;
     margin-left: -75px;
@@ -987,7 +929,7 @@ export default {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -1008,7 +950,7 @@ export default {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 

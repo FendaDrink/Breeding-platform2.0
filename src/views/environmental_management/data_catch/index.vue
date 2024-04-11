@@ -9,6 +9,7 @@
                             <label for="inputHelpBlock">上传环境信息文件</label>
                             <el-upload class="upload-demo" v-model:file-list="environmentalData" accept=".csv"
                                 action="#" :headers="headers" method="post" :auto-upload="false" multiple :limit="1"
+                                :before-upload="handleBeforeUpload"
                                 drag>
                                 <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                                 <div class="el-upload__text">
@@ -65,10 +66,7 @@
                     <el-table-column align="center" fixed="right" label="输入文件下载">
                         <template #default="scope">
                             <el-button link type="text" @click="exportFile(scope.row)" style="color: #0dbc79;"
-                                v-show="scope.row.status == 2">
-                                {{ scope.row.inputCondition.split('\\').pop() }}
-                            </el-button>
-                            <el-button link type="text" disabled v-show="scope.row.status != 2">
+                            >
                                 {{ scope.row.inputCondition.split('\\').pop() }}
                             </el-button>
                         </template>
@@ -89,7 +87,7 @@
                             <el-popover placement="top" trigger="hover">
                                 <text>{{ scope.row.info===''?'无提示信息':scope.row.info }}</text>
                                 <template #reference>
-                                    <el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
+                                    <el-button link type="text" style="color: var(--theme-color);">查看提示信息</el-button>
                                 </template>
                             </el-popover>
                         </template>
@@ -98,7 +96,7 @@
                         <template #default="scope">
                             <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
                                 <template #reference>
-                                    <el-button link type="text" style="color: #1FB864;">
+                                    <el-button link type="text" style="color: var(--theme-color);">
                                         删除
                                     </el-button>
                                 </template>
@@ -145,8 +143,29 @@ const queryParams = ref({
 // 环境分析任务总数
 const total = ref(10)
 
+// .csv文件上传前校验
+const handleBeforeUpload = (file) => {
+    const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
+    const isCsv = fileType === "csv";
+    if (!isCsv) {
+        $modal.msgError("请上传.csv文件");
+        return false;
+    }
+    return isCsv;
+}
+
 // .csv文件上传
 const submit = () => {
+    if (environmentalData.value.length === 0) {
+        ElMessage.warning('请上传文件')
+        return
+    }
+    console.log(environmentalData.value[0].name)
+    // 文件.csv校验
+    if (environmentalData.value[0].name.split('.').pop() !== 'csv') {
+        ElMessage.warning('请上传.csv文件')
+        return
+    }
     const formData = new FormData()
     formData.append('file', environmentalData.value[0].raw)
     console.log(formData.get('file'))
@@ -405,7 +424,7 @@ onMounted(() => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-    background-color: #1FB864 !important;
+    background-color: var(--theme-color) !important;
     color: rgb(255, 255, 255);
 }
 
@@ -426,7 +445,7 @@ onMounted(() => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-    background-color: #1FB864 !important; //修改默认的背景色
+    background-color: var(--theme-color) !important; //修改默认的背景色
     color: #fff;
 }
 
@@ -446,48 +465,48 @@ onMounted(() => {
 
 
 .green-button {
-    background-color: #1FB864 !important;
+    background-color: var(--theme-color) !important;
     color: #fff !important;
-    border: 1px solid #1FB864 !important;
+    border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-    background-color: #1FB864 !important;
+    background-color: var(--theme-color) !important;
     color: #fff !important;
-    border: 1px solid #1FB864 !important;
+    border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-    color: #1FB864;
+    color: var(--theme-color);
 }
 
 .table_button:hover {
-    color: #1FB864;
+    color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -551,7 +570,7 @@ onMounted(() => {
 }
 
 :deep(.el-textarea :hover) {
-    border-color: #1FB864 !important;
+    border-color: var(--theme-color) !important;
     outline: none !important;
 }
 
@@ -569,28 +588,28 @@ onMounted(() => {
 
 
 :deep(.el-button) {
-    --el-button-border-color: #1FB864;
+    --el-button-border-color: var(--theme-color);
     --el-button-bg-color: #ffffff;
     --el-button-text-color: #606266;
     --el-button-disabled-text-color: #a8abb2;
     --el-button-disabled-bg-color: #ffffff;
     --el-button-disabled-border-color: #e4e7ed;
     --el-button-divide-border-color: rgba(255, 255, 255, .5);
-    --el-button-hover-text-color: #1FB864;
+    --el-button-hover-text-color: var(--theme-color);
     --el-button-hover-bg-color: #ecf5ff;
-    --el-button-hover-border-color: #1FB864;
-    --el-button-active-text-color: #1FB864;
-    --el-button-active-border-color: #1FB864;
+    --el-button-hover-border-color: var(--theme-color);
+    --el-button-active-text-color: var(--theme-color);
+    --el-button-active-border-color: var(--theme-color);
     --el-button-active-bg-color: #ecf5ff;
 }
 
 :deep(.el-button--primary.is-plain) {
-    --el-button-text-color: #1FB864 !important;
+    --el-button-text-color: var(--theme-color) !important;
     --el-button-bg-color: #ecf5ff !important;
-    --el-button-border-color: #1FB864 !important;
+    --el-button-border-color: var(--theme-color) !important;
     --el-button-hover-text-color: #ffffff !important;
-    --el-button-hover-bg-color: #1FB864 !important;
-    --el-button-hover-border-color: #1FB864 !important;
+    --el-button-hover-bg-color: var(--theme-color) !important;
+    --el-button-hover-border-color: var(--theme-color) !important;
     --el-button-active-text-color: #ffffff !important;
 }
 
@@ -599,13 +618,13 @@ onMounted(() => {
     --el-button-bg-color: #21c96c;
     --el-button-border-color: #21c96c;
     --el-button-hover-text-color: #ffffff;
-    --el-button-hover-bg-color: #1FB864;
-    --el-button-hover-border-color: #1FB864;
-    --el-button-active-bg-color: #1FB864;
-    --el-button-active-border-color: #1FB864;
-    --el-button-disabled-text-color: #1FB864;
-    --el-button-disabled-bg-color: #1FB864;
-    --el-button-disabled-border-color: #1FB864;
+    --el-button-hover-bg-color: var(--theme-color);
+    --el-button-hover-border-color: var(--theme-color);
+    --el-button-active-bg-color: var(--theme-color);
+    --el-button-active-border-color: var(--theme-color);
+    --el-button-disabled-text-color: var(--theme-color);
+    --el-button-disabled-bg-color: var(--theme-color);
+    --el-button-disabled-border-color: var(--theme-color);
 }
 
 .el-button--success.is-plain {
@@ -641,6 +660,6 @@ onMounted(() => {
 
 <style>
 :root {
-    --el-color-primary: #1FB864;
+    --el-color-primary: var(--theme-color);
 }
 </style>

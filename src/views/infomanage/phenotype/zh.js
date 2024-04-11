@@ -297,6 +297,7 @@ export default {
                 uploadImageError: '添加/修改图片失败！',
                 uploadImageSuccess:'上传成功！',
                 uploadImageFail:'上传失败！',
+                updateImageSuccess: '编辑成功！',
                 resetSearch: '已重置！',
 
                 searchSuccess: '查询成功！',

@@ -163,7 +163,7 @@ export function mergeChunkApi(fileName,treeId,isShow){
 // 大文件传输完毕确认接口
 export function uploadFileEndApi({treeId,status,remark,fileName,pointStatus,filePath}){
   return request({
-    url:'/phenotypeFile/loadUp',
+    url:'/sidebarTreeEnv/envFile/loadUp',
     method:'post',
     params:{
       treeId,
