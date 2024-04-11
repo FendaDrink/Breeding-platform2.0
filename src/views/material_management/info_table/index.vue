@@ -555,7 +555,7 @@ onMounted(() => {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
@@ -587,7 +587,7 @@ onMounted(() => {
   }
 
   h1 i {
-    background-color: #1FB864;
+    background-color: var(--theme-color);
     height: 5px;
     width: 150px;
     margin-left: -75px;
@@ -700,7 +700,7 @@ onMounted(() => {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -759,7 +759,7 @@ onMounted(() => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -780,7 +780,7 @@ onMounted(() => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -813,48 +813,48 @@ onMounted(() => {
 
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 // .el-select-dropdown__item.selected {
-//   color: #1FB864;
+//   color: var(--theme-color);
 // }
 
 // .el-input {
-//   --el-input-focus-border-color: #1FB864;
+//   --el-input-focus-border-color: var(--theme-color);
 // }
 
 // .el-select {
-//   --el-select-input-focus-border-color: #1FB864;
+//   --el-select-input-focus-border-color: var(--theme-color);
 // }
 
 /* 开关组件 */
 // :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: #1FB864;
-//   background-color: #1FB864;
+//   border-color: var(--theme-color);
+//   background-color: var(--theme-color);
 // }
 
 /* 多选组件 */
 // :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: #1FB864;
-//   --el-checkbox-checked-bg-color: #1FB864;
-//   --el-checkbox-input-border-color-hover: #1FB864;
+//   --el-checkbox-checked-input-border-color: var(--theme-color);
+//   --el-checkbox-checked-bg-color: var(--theme-color);
+//   --el-checkbox-input-border-color-hover: var(--theme-color);
 // }
 
 :deep(.el-table__header .el-checkbox) {
@@ -907,7 +907,7 @@ onMounted(() => {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 

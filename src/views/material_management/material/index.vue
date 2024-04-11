@@ -439,7 +439,7 @@
 								<el-table-column prop="id" label="任务编号" width="180" />
 								<el-table-column label="材料名称">
 									<template #default="scope">
-										<span style="color: #1FB864; cursor: pointer;" @click="DownloadGenoFile(scope.row)">
+										<span style="color: var(--theme-color); cursor: pointer;" @click="DownloadGenoFile(scope.row)">
 											{{ scope.row.materialName }}
 										</span>
 									</template>
@@ -500,7 +500,7 @@
 										<el-popover placement="top" title="Info" trigger="hover"
 											:content="getPopoverContent(scope.row.info)">
 											<template #reference>
-												<el-button link type="text" style="color: #1FB864;">查看提示信息</el-button>
+												<el-button link type="text" style="color: var(--theme-color);">查看提示信息</el-button>
 											</template>
 										</el-popover>
 									</template>
@@ -509,7 +509,7 @@
 									<template #default="scope">
 										<el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
 											<template #reference>
-												<el-button link type="text" style="color: #1FB864;">
+												<el-button link type="text" style="color: var(--theme-color);">
 													删除
 												</el-button>
 											</template>
@@ -897,7 +897,7 @@ function addcircleActive() {
 }
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-	background-color: #1FB864 !important;
+	background-color: var(--theme-color) !important;
 	color: rgb(255, 255, 255);
 }
 
@@ -919,7 +919,7 @@ function addcircleActive() {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-	background-color: #1FB864 !important; //修改默认的背景色
+	background-color: var(--theme-color) !important; //修改默认的背景色
 	color: #fff;
 }
 
@@ -974,15 +974,15 @@ function addcircleActive() {
 }
 
 .el-select-dropdown__item.selected {
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .el-input {
-	--el-input-focus-border-color: #1FB864;
+	--el-input-focus-border-color: var(--theme-color);
 }
 
 .el-select {
-	--el-select-input-focus-border-color: #1FB864;
+	--el-select-input-focus-border-color: var(--theme-color);
 }
 
 
@@ -1005,7 +1005,7 @@ function addcircleActive() {
 }
 
 .font-green {
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .font-blue {
@@ -1212,7 +1212,7 @@ textarea {
 }
 
 .jwcolor {
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 body {
@@ -1222,7 +1222,7 @@ body {
 .page-wrapper {}
 
 .header-navbar {
-	background: #1FB864;
+	background: var(--theme-color);
 	background-clip: padding-box;
 	margin: 0;
 	min-height: 50px;
@@ -1481,7 +1481,7 @@ body {
 .index-left-nav>li.openli>a,
 .index-left-nav>li ul li.openli>a {
 	background-image: url(../../../images/v1.0/minus.png);
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .index-left-nav>li.active>a,
@@ -1490,7 +1490,7 @@ body {
 .index-left-nav>li>a:focus,
 .index-left-nav>li>a:hover {
 	background-color: #353f4f;
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .index-left-nav li.baselink a {
@@ -1509,7 +1509,7 @@ body {
 .index-left-nav .sub-menu-list>li.active a,
 .index-left-nav .sub-menu-list>li>a:hover {
 	background-color: #2a323f;
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 
@@ -1575,7 +1575,7 @@ body {
 
 .small-nav-col .index-left-nav li a span {
 	position: absolute;
-	background: #1FB864;
+	background: var(--theme-color);
 	color: #fff;
 	padding: 13px 10px;
 	left: 50px;
@@ -1596,7 +1596,7 @@ body {
 	position: absolute;
 	pointer-events: none;
 	border-color: rgba(0, 0, 0, 0);
-	border-right-color: #1FB864;
+	border-right-color: var(--theme-color);
 	border-width: 6px;
 	margin-top: -6px;
 }
@@ -1656,7 +1656,7 @@ body {
 }
 
 .breadcrumb a {
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .bacimg {
@@ -1704,7 +1704,7 @@ body {
 }
 
 .robincont h1 i {
-	background-color: #1FB864;
+	background-color: var(--theme-color);
 	height: 5px;
 	width: 150px;
 	margin-left: -75px;
@@ -1732,7 +1732,7 @@ body {
 }
 
 .ptli p span {
-	color: #1FB864;
+	color: var(--theme-color);
 	font-size: 12px;
 	font-weight: bold;
 }
@@ -1789,7 +1789,7 @@ body {
 
 .gbac h3 {
 	font-size: 16px;
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .gbac label {
@@ -1937,8 +1937,8 @@ th.q9 {
 .form-check-input:checked {
 	background-position: right center;
 	background-image: url(../../../images/v1.0/y.svg);
-	background-color: #1FB864;
-	border-color: #1FB864;
+	background-color: var(--theme-color);
+	border-color: var(--theme-color);
 }
 
 .form-check-input {
@@ -1951,7 +1951,7 @@ th.q9 {
 	-moz-appearance: none;
 	-webkit-print-color-adjust: exact;
 	appearance: none;
-	border: 1px solid #1FB864;
+	border: 1px solid var(--theme-color);
 }
 
 .position-static {
@@ -1962,7 +1962,7 @@ th.q9 {
 
 
 .table .opr_a {
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .bs-example {
@@ -1973,7 +1973,7 @@ th.q9 {
 }
 
 .bs-example th {
-	background: #1FB864;
+	background: var(--theme-color);
 	color: #fff;
 	border-bottom: none !important;
 }
@@ -2026,8 +2026,8 @@ th.q9 {
 
 .mypage ul li.active a,
 .mypage ul li.active a:hover {
-	background: #1FB864 !important;
-	border-color: #1FB864;
+	background: var(--theme-color) !important;
+	border-color: var(--theme-color);
 }
 
 .tit .glyphicon {
@@ -2112,8 +2112,8 @@ th.q9 {
 }
 
 .btn-green {
-	background-color: #1FB864;
-	border-color: #1FB864;
+	background-color: var(--theme-color);
+	border-color: var(--theme-color);
 	color: #fff;
 }
 
@@ -2132,7 +2132,7 @@ a.btn-green:focus {
 
 input:active,
 input:focus {
-	border-color: #1FB864 !important;
+	border-color: var(--theme-color) !important;
 }
 
 .rightcont {

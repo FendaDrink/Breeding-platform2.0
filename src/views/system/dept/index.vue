@@ -320,7 +320,7 @@ getList();
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: var(--theme-color);
   margin-top: 10px;
 
   .el-dialog__title {
@@ -518,7 +518,7 @@ getList();
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -539,7 +539,7 @@ getList();
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -566,23 +566,23 @@ getList();
 }
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 :deep(.el-table__header .el-checkbox) {
@@ -635,7 +635,7 @@ getList();
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 
@@ -702,7 +702,7 @@ getList();
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32 !important;
+  background: var(--theme-color) !important;
   margin-top: 10px;
   display: flex;
   align-items: center;

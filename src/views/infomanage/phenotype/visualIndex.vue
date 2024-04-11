@@ -5,7 +5,7 @@
             <el-select placeholder="请选择可视化模块" v-model="visualModule">
                 <el-option label="表型和材料数量&表型分析" value="num"></el-option>
                 <el-option label="性状分析" value="traitAnalysis"></el-option>
-                <el-option label="性状管理" value="traitManage"></el-option>
+                <el-option label="性状与分类" value="traitManage"></el-option>
             </el-select>
         </div>
         <num v-if="visualModule==='num'"></num>

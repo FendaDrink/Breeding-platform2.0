@@ -1,8 +1,6 @@
 // zh.js
 export default {
     phenotype: {
-
-
         index: {
             node_add: '添加子节点',
             node_update: '更新节点',
@@ -299,6 +297,7 @@ export default {
                 uploadImageError: '添加/修改图片失败！',
                 uploadImageSuccess:'上传成功！',
                 uploadImageFail:'上传失败！',
+                updateImageSuccess: '编辑成功！',
                 resetSearch: '已重置！',
 
                 searchSuccess: '查询成功！',
@@ -321,7 +320,6 @@ export default {
                 createFail: '添加节点失败！',
 
                 updateSuccess: '修改成功！',
-                updateFail: '修改失败！',
 
                 node_parent: '请选择父节点！',
                 node_add_success: '添加节点成功！',
