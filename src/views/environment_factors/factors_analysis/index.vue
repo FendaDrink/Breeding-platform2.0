@@ -136,6 +136,12 @@ use([
 
 provide(THEME_KEY);
 
+// vue实例
+const {
+  proxy: { $theme, $modal, $download },
+} = getCurrentInstance();
+
+
 const route = useRoute();
 
 // 环境因子数据
@@ -283,7 +289,7 @@ const option = ref({
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: 'var(--theme-color)', //滑动条颜色
+      fillerColor: $theme.color, //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -297,11 +303,6 @@ const option = ref({
 
 //loading
 const isLoading = ref(true);
-
-// vue实例
-const {
-  proxy: { $modal, $download },
-} = getCurrentInstance();
 
 // 树控件
 const routesData = ref();

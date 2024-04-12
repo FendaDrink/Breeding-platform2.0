@@ -389,6 +389,11 @@ const i18n = useI18n();
 
 const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
+// vue实例
+const {
+  proxy: { $download, $theme, $modal },
+} = getCurrentInstance();
+
 const messages = {
   lastWeek: computed(() => i18n.t('phenotype.showImage.message.lastWeek')).value,
   lastMonth: computed(() => i18n.t('phenotype.showImage.message.lastMonth')).value,
@@ -452,6 +457,7 @@ const messages = {
   treeName:computed(() => i18n.t('phenotype.showImage.rule.treeName')).value,
   description:computed(() => i18n.t('phenotype.showImage.rule.description')).value,
 };
+
 
 const router = useRouter();
 use([
@@ -669,7 +675,7 @@ async function chooseDate() {
         // handleSize: 10,//左右2个滑动条的大小
         moveHandleSize: 0,
         borderColor: "#eee", //滑动通道的边框颜色
-        fillerColor: 'var(--theme-color)', //滑动条颜色
+        fillerColor: $theme.color, //滑动条颜色
         backgroundColor: '#eee',//未选中的滑动条的颜色
         showDataShadow: true,//是否显示数据阴影 默认auto
         rangeMode: ['value', 'value'],
@@ -721,21 +727,8 @@ const cardContainer = ref(null);
 
 const loadingDialogVisible = ref(false);
 
-// vue实例
-const {
-  proxy: { $download },
-} = getCurrentInstance();
-
-const valueFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"; // 时间格式
-
-// vue实例
-const {
-  proxy: { $modal },
-} = getCurrentInstance();
-
 // 加载
 const loading = ref(false);
-const loadingText = ref("加载中...");
 
 //可视化加载
 const isLoading = ref(true);
@@ -1682,7 +1675,7 @@ option.value = {
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: 'var(--theme-color)', //滑动条颜色
+      fillerColor: $theme.color, //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
