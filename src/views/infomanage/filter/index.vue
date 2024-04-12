@@ -59,7 +59,7 @@ export default {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;

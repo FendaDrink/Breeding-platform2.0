@@ -144,7 +144,7 @@ onMounted(() => {
   align-items: center;
 }
 :deep(.el-card__header) {
-  background: #1FB864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   vertical-align: middle;

@@ -87,8 +87,6 @@
                 $t('phenotype.showImage.button.image_update') }}</el-button>
               <el-button type="info" style="margin: 0 10px" @click="downloadSelectedImages" plain class="my-button">{{
                 $t('phenotype.showImage.button.image_download') }}</el-button>
-<!--              <el-button type="info" style="margin: 0 10px" @click="photoAnalyze" class="my-button" plain>{{-->
-<!--                $t('phenotype.showImage.button.image_analyse') }}</el-button>-->
               <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
                 size="large" class="my-button">
                 <p>{{ $t('phenotype.showImage.label.select_all') }}</p>
@@ -124,13 +122,16 @@
               </el-card>
             </div>
 
-            <div v-if="imageSrcList.length === 0 && tree?.getCurrentNode()?.children.length === 0"
+            <div v-if="imageSrcList.length === 0 && tree?.getCurrentNode()?.children.length === 0 && !isImageLoading"
               style="max-height: calc(100vh - 290px);font-size: 20px;">
               {{ $t('phenotype.showImage.dialog.other.noImage') }}
             </div>
-            <div class="image_box img-list" v-if="tree?.getCurrentNode()?.children.length === 0"
-              style="max-height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
-              <div class="imgCard_container">
+            <div class="image_box img-list"
+              v-loading="isImageLoading"
+              element-loading-background="transparent"
+              v-if="tree?.getCurrentNode()?.children.length === 0"
+              style="height: calc(100vh - 320px);width: 100%;overflow-x: hidden;">
+              <div class="imgCard_container" >
                 <el-checkbox-group class="imgCard_container" v-model="checkedPictures" @change="handleSelectionChange">
                   <el-card class="image_item item" :style="{ width: myWidth, height: myHeight }" v-for="(item, index) in imageSrcList.slice(
                     (currentpageNum - 1) * pageSize,
@@ -265,11 +266,11 @@
               :limit="photo.limit" :on-exceed="handleExceed" :on-preview="handlePictureCardPreview"
               :on-error="uploadImageError" :on-success="uploadImageSuccess" :on-change="handleUploadFile"
               :multiple="true">
-              <el-button type="primary">{{ $t('phenotype.showImage.button.upload') }}</el-button>
+              <el-button type="primary green-button">{{ $t('phenotype.showImage.button.upload') }}</el-button>
 
               <template #tip>
                 <div class="el-upload__tip">{{ $t('phenotype.showImage.dialog.tip.t1') }}<span
-                    v-if="dialogStatus === 'updataPhoto'">{{ $t('phenotype.showImage.dialog.tip.t2') }}</span><br />{{
+                    v-if="dialogStatus === 'updatePhoto'">{{ $t('phenotype.showImage.dialog.tip.t2') }}</span><br />{{
                       $t('phenotype.showImage.dialog.tip.t3') }}<br />基因型_2023-09-01
                   23.26.02.png</div>
               </template>
@@ -284,8 +285,7 @@
             </el-upload>
             <div class="dialog-footer">
               <el-button type="success" plain :loading="submitButtonLoading"
-                @click.passive="dialogStatus === 'updataPhoto' ? checkImageName() : confirmEditPhoto()">
-                <!-- {{ dialogStatus === 'updataPhoto' ? '添加' : '修改' }} -->
+                @click.passive="dialogStatus === 'updatePhoto' ? checkImageName() : confirmEditPhoto()">
                 {{ $t('phenotype.showImage.button.save') }}
               </el-button>
               <el-button @click="suspendSubmitImage" type="info" plain>{{ $t('phenotype.showImage.button.cancel')
@@ -302,7 +302,8 @@
                 <el-date-picker format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" clearable
                   v-model="editPhotoInfo.shotTime"
                   :placeholder="$t('phenotype.showImage.dialog.placeholder.imageNewDate')" type="datetime"
-                  prop="treeName" />
+                  prop="treeName"
+                  width="100px"/>
               </el-form-item>
               <el-form-item :label="$t('phenotype.showImage.dialog.label.comment')" prop="remark">
                 <el-input clearable v-model="editPhotoInfo.remark"
@@ -336,7 +337,7 @@
   </div>
 </template>
 
-<script setup name="showImageList">
+<script setup>
 import {
   ref,
   reactive,
@@ -364,8 +365,6 @@ import JSZip, { file } from "jszip";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
 
-
-
 // 引入echarts
 import { use } from "echarts/core";
 import 'echarts/lib/component/dataZoom'
@@ -389,6 +388,11 @@ import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
 
 const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// vue实例
+const {
+  proxy: { $download, $theme, $modal },
+} = getCurrentInstance();
 
 const messages = {
   lastWeek: computed(() => i18n.t('phenotype.showImage.message.lastWeek')).value,
@@ -416,9 +420,10 @@ const messages = {
   uploadLimit: computed(() => i18n.t('phenotype.showImage.message.uploadLimit')).value,
   uploadImageError: computed(() => i18n.t('phenotype.showImage.message.uploadImageError')).value,
   uploadImageSuccess:computed(() => i18n.t('phenotype.showImage.message.uploadImageSuccess')).value,
+  updateImageSuccess:computed(() => i18n.t('phenotype.showImage.message.updateImageSuccess')).value,
   uploadImageFail:computed(() => i18n.t('phenotype.showImage.message.uploadImageFail')).value,
   resetSearch: computed(() => i18n.t('phenotype.showImage.message.resetSearch')).value,
-  searchSuccess: computed(() => i18n.t('phenotype.showImage.message.searchSuccess')),
+  searchSuccess: computed(() => i18n.t('phenotype.showImage.message.searchSuccess')).value,
   searchFail: computed(() => i18n.t('phenotype.showImage.message.searchFail')).value,
   searchNothing: computed(() => i18n.t('phenotype.showImage.message.searchNothing')).value,
   autoUploadSuccess: computed(() => i18n.t('phenotype.showImage.message.autoUploadSuccess')).value,
@@ -435,7 +440,6 @@ const messages = {
   createFail: computed(() => i18n.t('phenotype.showImage.message.createFail')).value,
 
   updateSuccess: computed(() => i18n.t('phenotype.showImage.message.updateSuccess')).value,
-  updateFail: computed(() => i18n.t('phenotype.showImage.message.updateFail')).value,
   node_parent: computed(() => i18n.t('phenotype.showImage.message.node_parent')).value,
   node_add_success: computed(() => i18n.t('phenotype.showImage.message.node_add_success')).value,
   node_add_fail: computed(() => i18n.t('phenotype.showImage.message.node_add_fail')).value,
@@ -671,7 +675,7 @@ async function chooseDate() {
         // handleSize: 10,//左右2个滑动条的大小
         moveHandleSize: 0,
         borderColor: "#eee", //滑动通道的边框颜色
-        fillerColor: '#1FB864', //滑动条颜色
+        fillerColor: $theme.color, //滑动条颜色
         backgroundColor: '#eee',//未选中的滑动条的颜色
         showDataShadow: true,//是否显示数据阴影 默认auto
         rangeMode: ['value', 'value'],
@@ -715,7 +719,7 @@ const props = defineProps({
 //允许的格式
 const acceptType = () => {
   let type = '.jpg,.png'
-  dialogStatus.value === 'updataPhoto' ? type += ',.bmp,.webp,.jpeg,.zip,.rar' : ''
+  dialogStatus.value === 'updatePhoto' ? type += ',.bmp,.webp,.jpeg,.zip,.rar' : ''
   return type;
 }
 
@@ -723,21 +727,8 @@ const cardContainer = ref(null);
 
 const loadingDialogVisible = ref(false);
 
-// vue实例
-const {
-  proxy: { $download },
-} = getCurrentInstance();
-
-const valueFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSX"; // 时间格式
-
-// vue实例
-const {
-  proxy: { $modal },
-} = getCurrentInstance();
-
 // 加载
 const loading = ref(false);
-const loadingText = ref("加载中...");
 
 //可视化加载
 const isLoading = ref(true);
@@ -746,12 +737,17 @@ const isLoading2 = ref(false);
 // 图片
 const imageSrcList = ref([]);
 
+// loading动画
+const isImageLoading = ref(false);
+
 //用于更新imageSrcList
 const imageSrcListCopy = ref([]);
 const updateImageSrcList = async () => {
   const curNode = tree.value.getCurrentNode();
+  isImageLoading.value = true;
   imageSrcList.value = await getImagesBynodeId(curNode.treeId);
   imageSrcListCopy.value = imageSrcList.value;
+  isImageLoading.value = false;
   resetPage();
 }
 
@@ -995,7 +991,7 @@ const photo = reactive({
 function addImage(imageUrl) {
   photo.limit = 20;
   fileList.value = [];
-  dialogStatus.value = "updataPhoto";
+  dialogStatus.value = "updatePhoto";
   imageDialog.value = true;
 }
 
@@ -1426,7 +1422,10 @@ async function uploadImageSuccess(res) {
     $modal.msgError(messages.uploadImageFail);
     return
   } else {
-    $modal.msgSuccess(messages.uploadImageSuccess);
+    dialogStatus === 'uploadPhoto' ?
+        $modal.msgSuccess(messages.uploadImageSuccess)
+        :
+        $modal.msgSuccess(messages.updateImageSuccess)
     checkedPictures.value = [];
   }
   if (fileList.value.every((it) => it.status == "success")) {
@@ -1676,7 +1675,7 @@ option.value = {
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: '#1FB864', //滑动条颜色
+      fillerColor: $theme.color, //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -1697,14 +1696,14 @@ const dialogStatus = ref("create");
 const textMap = {
   create: "添加节点",
   update: "修改节点",
-  updataPhoto: "上传图片",
+  updatePhoto: "上传图片",
   editPhoto: "编辑图片",
 };
 
 const textMaps = {
   create: computed(() => i18n.t('phenotype.showImage.title.node_create')).value,
   update: computed(() => i18n.t('phenotype.showImage.title.node_update')).value,
-  updataPhoto: computed(() => i18n.t('phenotype.showImage.title.image_upload')).value,
+  updatePhoto: computed(() => i18n.t('phenotype.showImage.title.image_upload')).value,
   editPhoto: computed(() => i18n.t('phenotype.showImage.title.image_update')).value,
 };
 
@@ -2054,7 +2053,7 @@ async function rowClick(nodeObj) {
   top: 0;
   left: 0;
   height: 100%;
-  //background-color: #1FB864;
+  //background-color: var(--theme-color);
 }
 
 .progress-text {
@@ -2236,7 +2235,7 @@ async function rowClick(nodeObj) {
   content: "";
   position: absolute;
   top: 0;
-  left: 1;
+  left: 1px;
   right: 0;
   bottom: 0;
   width: 200px;
@@ -2276,7 +2275,7 @@ async function rowClick(nodeObj) {
 :deep(.el-dialog__header) {
   margin-right: 0px;
   padding-right: 16px;
-  background: #0F5C32;
+  background: var(--theme-color);
   margin-top: 10px;
 
   .el-dialog__title {
@@ -2296,12 +2295,17 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-switch.is-checked .el-switch__core) {
-  border-color: #1fb864;
-  background-color: #1fb864;
+  border-color: var(--theme-color);
+  background-color: var(--theme-color);
 }
 </style>
 
 <style lang="scss" scoped>
+
+:deep(.el-date-editor.el-input){
+  width: 100%;
+}
+
 .image_box {
   width: 100%;
   display: flex;
@@ -2315,16 +2319,14 @@ async function rowClick(nodeObj) {
 
 .image_item {
   box-sizing: border-box;
+  height: 186px;
   margin: 10px 5px;
   border-right: 6px solid #E1E1E1;
 }
 
 .img-list {
-  //padding-left: 1%;
-  //padding-right: 1%;
   width: 100%;
   position: relative;
-  right: 0;
 }
 
 .img-list .item {
@@ -2463,11 +2465,6 @@ async function rowClick(nodeObj) {
 
 <!-- 卡片样式 -->
 <style lang="less" scoped>
-.info-card {
-  border: none;
-  width: 400px;
-}
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -2482,7 +2479,7 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
@@ -2509,6 +2506,12 @@ async function rowClick(nodeObj) {
     letter-spacing: 2px;
     height: 60px !important;
   }
+}
+
+.info-card {
+  border: none;
+  border-radius: 50px;
+  width: 400px;
 }
 
 :deep(.el-table__cell) {
@@ -2795,7 +2798,7 @@ async function rowClick(nodeObj) {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -2887,7 +2890,7 @@ async function rowClick(nodeObj) {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 
@@ -3132,7 +3135,7 @@ async function rowClick(nodeObj) {
 }
 
 .underline {
-  background-color: #1FB864;
+  background-color: var(--theme-color);
   height: 5px;
   width: 150px;
   margin-left: -75px;
@@ -3151,7 +3154,7 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
@@ -3268,7 +3271,7 @@ async function rowClick(nodeObj) {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -3302,7 +3305,7 @@ async function rowClick(nodeObj) {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 

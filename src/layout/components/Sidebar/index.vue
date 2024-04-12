@@ -66,7 +66,7 @@ const activeMenu = computed(() => {
 
 <style lang="less" scoped>
 :deep(.sidebar-logo-container){
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
 }
 
 :deep(.sidebar-title){

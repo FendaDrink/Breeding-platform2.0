@@ -610,7 +610,7 @@ canvas{
 }
 
 :deep(.el-card__header) {
-  background: #1FB864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   vertical-align: middle;
@@ -631,7 +631,7 @@ canvas{
   th {
     font-weight: 800;
     font-size: 16PX;
-    background: #1fb864 !important;
+    background: var(--theme-color) !important;
     color:#FFFFFF;
     letter-spacing: 2px;
     height: 40px !important;

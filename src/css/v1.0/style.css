@@ -8,7 +8,7 @@
 .c999{color: #999;}
 .f16{font-size: 16px!important;}
 .f36{font-size: 36px!important;}
-.font-green{color: #1FB864;}
+.font-green{color: var(--theme-color);}
 .font-blue{color: #6a8abe;}
 .flor{float: right !important;}
 .posa{position:absolute; line-height:34px;}
@@ -58,14 +58,14 @@ textarea{resize:none;}
 .sel-col{width: 100%;}
 .nobor{border-left: none !important;border-right: none !important;}
 .tr{text-align: right;}
-.jwcolor{color: #1FB864;}
+.jwcolor{color: var(--theme-color);}
 
 body{
 	font-family: 'Microsoft yahei';
 }
 .page-wrapper{}
 .header-navbar{
-	background: #1FB864;
+	background: var(--theme-color);
     background-clip: padding-box;
     margin: 0;
     min-height: 50px;
@@ -293,7 +293,7 @@ body{
 }
 .index-left-nav > li.openli > a,.index-left-nav > li ul li.openli > a{
 	background-image: url(../../images/v1.0/minus.png);
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 .index-left-nav > li.active > a,
@@ -302,7 +302,7 @@ body{
 .index-left-nav > li > a:focus,
 .index-left-nav > li > a:hover{
 	background-color: #353f4f;
-	color: #1FB864;
+	color: var(--theme-color);
 } 
 .index-left-nav  li.baselink  a{
 	background-image: none;
@@ -317,7 +317,7 @@ body{
 .index-left-nav .sub-menu-list > li.active a,
 .index-left-nav .sub-menu-list > li > a:hover{
 	background-color: #2a323f;
-	color: #1FB864;
+	color: var(--theme-color);
 }
 
 
@@ -368,7 +368,7 @@ body{
 }
 .small-nav-col .index-left-nav li a span{
 	position: absolute;
-    background: #1FB864;
+    background: var(--theme-color);
     color: #fff;
     padding: 13px 10px;
     left: 50px;
@@ -388,7 +388,7 @@ body{
     position: absolute;
     pointer-events: none;
     border-color: rgba(0, 0, 0, 0);
-    border-right-color: #1FB864;
+    border-right-color: var(--theme-color);
     border-width: 6px;
     margin-top: -6px;
 }
@@ -438,7 +438,7 @@ body{
 	margin-bottom:10px;
 }
 .breadcrumb a {
-    color: #1FB864;
+    color: var(--theme-color);
 }
 .bacimg{
 	position: relative;
@@ -478,7 +478,7 @@ body{
 	margin: 30px 0 20px;
 }
 .robincont h1 i{
-	background-color: #1FB864;
+	background-color: var(--theme-color);
 	height: 5px;
 	width: 150px;
 	margin-left: -75px;
@@ -502,7 +502,7 @@ body{
 	margin-bottom: 5px;
 }
 .ptli p span{
-	color: #1FB864;
+	color: var(--theme-color);
 	font-size: 12px;
 	font-weight: bold;
 }
@@ -547,7 +547,7 @@ body{
 }
 .gbac h3{
 	font-size: 16px;
-	color: #1FB864;
+	color: var(--theme-color);
 }
 .gbac label{
 	color: #fff;
@@ -652,8 +652,8 @@ th.q9{width: 180px;}
 .form-check-input:checked {
     background-position: right center;
     background-image: url(../../images/v1.0/y.svg);
-    background-color: #1FB864;
-    border-color: #1FB864;
+    background-color: var(--theme-color);
+    border-color: var(--theme-color);
 }
 .form-check-input {
     height:15px;
@@ -665,7 +665,7 @@ th.q9{width: 180px;}
     -moz-appearance:none;
     -webkit-print-color-adjust:exact;
     appearance:none;
-    border:1px solid #1FB864;
+    border:1px solid var(--theme-color);
 }
 .position-static {
     position: static!important;
@@ -675,7 +675,7 @@ th.q9{width: 180px;}
 
 
 .table .opr_a{
-	color: #1FB864;
+	color: var(--theme-color);
 }
 .bs-example {
     position: relative;
@@ -684,7 +684,7 @@ th.q9{width: 180px;}
     box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.12);
 }
 .bs-example th{
-	background: #1FB864;
+	background: var(--theme-color);
 	color: #fff;
 	border-bottom:none !important;
 }
@@ -729,8 +729,8 @@ th.q9{width: 180px;}
 	margin-bottom: 0 !important;
 }
 .mypage ul li.active a,.mypage ul li.active a:hover{
-	background: #1FB864 !important;
-	border-color:#1FB864;
+	background: var(--theme-color) !important;
+	border-color:var(--theme-color);
 }
 .tit .glyphicon{
 	top: 2px;
@@ -800,8 +800,8 @@ th.q9{width: 180px;}
 	margin:0 0 20px !important;
 }
 .btn-green{
-	background-color: #1FB864;
-    border-color: #1FB864;
+	background-color: var(--theme-color);
+    border-color: var(--theme-color);
     color: #fff;
 }
 a.btn-green:hover{
@@ -815,7 +815,7 @@ a.btn-green:active,a.btn-green:focus{
 	background-color: #009f48;
 }
 input:active,input:focus{
-	border-color: #1FB864 !important;
+	border-color: var(--theme-color) !important;
 }
 
 .rightcont{

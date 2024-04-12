@@ -81,6 +81,13 @@ import {
 import 'echarts/lib/component/dataZoom'
 import { listType } from "@/api/system/type";
 import {useRoute} from "vue-router";
+
+// vue实例
+const {
+  proxy: { $modal,$theme },
+} = getCurrentInstance();
+
+
 const route = useRoute();
 const chartsShow = ref(false);
 const traitValue = ref("");
@@ -442,7 +449,7 @@ const slider = [
     bottom: 18, //图表底部距离
     // handleSize: 10,//左右2个滑动条的大小
     borderColor: "#eee", //滑动通道的边框颜色
-    fillerColor: '#1FB864', //滑动条颜色
+    fillerColor: $theme.color, //滑动条颜色
     backgroundColor: '#eee',//未选中的滑动条的颜色
     showDataShadow: true,//是否显示数据阴影 默认auto
     rangeMode: ['value', 'value'],
@@ -975,7 +982,7 @@ function showBarTrait() {
             }
           }
         },
-        color: '#1FB864'
+        color: $theme.color
       }
     ]
   };
@@ -985,12 +992,6 @@ function showBarTrait() {
   }
   myChart.setOption(barTrait);
 }
-
-
-// vue实例
-const {
-  proxy: { $modal },
-} = getCurrentInstance();
 
 //选择框
 const options = ref([]);
@@ -1034,7 +1035,7 @@ onMounted( () => {
 }
 
 :deep(.el-card__header) {
-  background: #1FB864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   vertical-align: middle;

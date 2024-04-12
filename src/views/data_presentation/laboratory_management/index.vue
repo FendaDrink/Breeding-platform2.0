@@ -64,7 +64,7 @@
                 </div>
               </div>
               <!--  第二部分表单 -->
-              <div class="labotatory_form">
+              <div class="laboratory-table" v-loading="isLaboratoryTableLoading">
                 <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="margin: 30px auto"
                   class="trait-form-table" v-show="laboratorFormShow" stripe>
                   <el-table-column :label="$t('phenotype.laboratory.table.index')" width="80" type="index" align="center" :index="indexMethod" />
@@ -118,13 +118,6 @@ const messages = {
 };
 
 const tableData = reactive([
-  {
-    traitId: 266,
-    traitName: "茎腐病",
-    average: 0.0,
-    maxNum: 0.0,
-    minNum: 0.0,
-  },
 ]);
 
 //用于更新tableData的函数
@@ -134,12 +127,14 @@ function updateTableData(data) {
 
 const traitFileId = ref(1);
 const laboratoryLoading = ref(false);
-
+const isLaboratoryTableLoading = ref(false)
 const chooseLoading = ref(false);
 
 //请求性状信息
 function chooseForm() {
+
   laboratoryLoading.value = true;
+  isLaboratoryTableLoading.value = true
   laboratoryShow.value = true;
   laboratorSearchShow.value = true;
   chooseLoading.value = true;
@@ -167,6 +162,7 @@ function chooseForm() {
           laboratorFormShow.value = true;
 
           updateTableData(res.data);
+          isLaboratoryTableLoading.value = false
           searchLoading.value = false;
           $modal.msgSuccess(messages.search_success);
           console.log(res, "res");
@@ -422,6 +418,9 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
+.laboratory-table{
+  min-height: 300px;
+}
 
 .card-container {
   padding: 0px;
@@ -438,7 +437,7 @@ onMounted(async () => {
   }
 
   h1 i {
-    background-color: #1FB864;
+    background-color: var(--theme-color);
     height: 5px;
     width: 150px;
     margin-left: -75px;
@@ -516,7 +515,7 @@ onMounted(async () => {
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
 :deep(.el-table .el-table__header-wrapper tr th) {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: rgb(255, 255, 255);
 }
 
@@ -537,7 +536,7 @@ onMounted(async () => {
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: #1FB864 !important; //修改默认的背景色
+  background-color: var(--theme-color) !important; //修改默认的背景色
   color: #fff;
 }
 
@@ -564,23 +563,23 @@ onMounted(async () => {
 }
 
 .green-button {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .green-button:hover {
-  background-color: #1FB864 !important;
+  background-color: var(--theme-color) !important;
   color: #fff !important;
-  border: 1px solid #1FB864 !important;
+  border: 1px solid var(--theme-color) !important;
 }
 
 .table_button {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 .table_button:hover {
-  color: #1FB864;
+  color: var(--theme-color);
 }
 
 :deep(.el-table__header .el-checkbox) {
@@ -642,7 +641,7 @@ onMounted(async () => {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
@@ -754,7 +753,7 @@ onMounted(async () => {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
@@ -774,7 +773,7 @@ onMounted(async () => {
 
 <style>
 :root {
-  --el-color-primary: #1FB864;
+  --el-color-primary: var(--theme-color);
 }
 </style>
 
@@ -782,7 +781,6 @@ onMounted(async () => {
 <style lang="less" scoped>
 :deep(.permission-tree) {
   margin: 5px;
-  // background: #f2fbf7;
   min-width: 98%;
   display: inline-block;
   width: auto;

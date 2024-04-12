@@ -62,11 +62,10 @@ const typeList = reactive([
   },
   {
     logo: type4,
-    title: "材料管理",
-    url:"/material_management/info"
+    title: "育种决策",
+    url:"/breed/material"
   },
 ])
-
 
 </script>
 

@@ -94,3 +94,12 @@
 .el-dropdown .el-dropdown-link{
   color: var(--el-color-primary) !important;
 }
+
+
+.el-dialog__headerbtn:hover .el-dialog__close{
+  color: #333 !important;
+}
+
+.el-dialog__close{
+  transition: color 0.3s;
+}

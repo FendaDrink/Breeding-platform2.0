@@ -210,7 +210,7 @@ export default {
 }
 
 :deep(.el-card__header) {
-  background: #1fb864;
+  background: var(--theme-color);
   height: 52px !important;
   display: flex;
   border-top-left-radius: 50px;
@@ -267,7 +267,7 @@ export default {
   }
 
   h1 i {
-    background-color: #1FB864;
+    background-color: var(--theme-color);
     height: 5px;
     width: 150px;
     margin-left: -75px;
@@ -380,7 +380,7 @@ export default {
 //二级节点选择器
 :deep(.el-tree > .el-tree-node > .el-tree-node__children > .el-tree-node > .el-tree-node__content) {
   font-weight: 600;
-  color: #1FB864;
+  color: var(--theme-color);
   height: 26px;
 
   .el-tree-node__label {
