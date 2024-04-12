@@ -18,9 +18,8 @@
 </template>
 
 <script setup>
-import * as echarts from "echarts";
 import {test} from "@/api/tree";
-import {onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import VChart from "vue-echarts";
 import {useRoute} from "vue-router";
 
@@ -29,6 +28,11 @@ const xData = ref(Array.from({ length: 6000 }, (_, index) => index + 1));
 const maxNum = ref(0);
 const data = ref([]);
 const yData = ref([]);
+
+// vue实例
+const {
+  proxy: { $theme },
+} = getCurrentInstance();
 
 const option = ref({
   xAxis: {
@@ -111,7 +115,7 @@ const option = ref({
       bottom: 18, //图表底部距离
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: 'var(--theme-color)', //滑动条颜色
+      fillerColor: $theme.color, //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],

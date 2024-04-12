@@ -81,6 +81,12 @@ use([
 
 provide(THEME_KEY);
 
+// vue实例
+const {
+  proxy: {$theme},
+} = getCurrentInstance();
+
+
 const arrName = ref([])
 const arrCount = ref([])
 
@@ -212,7 +218,7 @@ const option2 = ref({
       // handleSize: 10,//左右2个滑动条的大小
       moveHandleSize: 0,
       borderColor: "#eee", //滑动通道的边框颜色
-      fillerColor: 'var(--theme-color)', //滑动条颜色
+      fillerColor: $theme.color, //滑动条颜色
       backgroundColor: '#eee',//未选中的滑动条的颜色
       showDataShadow: true,//是否显示数据阴影 默认auto
       rangeMode: ['value', 'value'],
@@ -228,12 +234,6 @@ const option2 = ref({
 const isLoading1 = ref(false)
 const isLoading = ref(false)
 
-const cardContainer = ref(null);
-
-// vue实例
-const {
-  proxy: { $modal, $download },
-} = getCurrentInstance();
 
 // 树控件
 const routesData = ref();
@@ -335,7 +335,7 @@ async function getPictureNumber() {
           // handleSize: 10,//左右2个滑动条的大小
           moveHandleSize: 0,
           borderColor: "#eee", //滑动通道的边框颜色
-          fillerColor: 'var(--theme-color)', //滑动条颜色
+          fillerColor: $theme.color, //滑动条颜色
           backgroundColor: '#eee',//未选中的滑动条的颜色
           showDataShadow: true,//是否显示数据阴影 默认auto
           rangeMode: ['value', 'value'],
@@ -1243,7 +1243,7 @@ onMounted(async () => {
   content: "";
   position: absolute;
   top: 0;
-  left: 1;
+  left: 1px;
   right: 0;
   bottom: 0;
   width: 200px;
