@@ -182,7 +182,6 @@ const cityLoading = ref(false);
 //获得地图信息
 function getMaps() {
   getMap().then((res) => {
-    console.log(res, "jjj");
     if (res.code === 200) {
       const mapData = MapOption.series[0].data;
       res.data.forEach((item) => {
@@ -207,15 +206,12 @@ function getMaps() {
     const defaultLocation = "北京";
     // 将 location.value 设置为北京
     location.value = defaultLocation;
-    console.log("1");
     mapcharts.dispatchAction({
       type: "click",
       name: defaultLocation,
     });
-    console.log("2");
   });
   getAllTraitFromFile().then((res) => {
-    console.log(res, "9090");
     res.data.map((item) => {
       states2.value.push(item.traitName);
     });
@@ -223,7 +219,6 @@ function getMaps() {
 }
 
 function formatTableCell(value) {
-  console.log(value, "jhjhk");
   return value || "-"; // 如果值为空，返回'-'
 }
 
@@ -624,6 +619,7 @@ let mapcharts; // 声明一个变量用于保存地图实例
 
 function initCharts() {
   let chinaMap = document.querySelector("#chinaMap");
+  chinaMap.removeAttribute("_echarts_instance_")
   mapcharts = echarts.init(chinaMap); // 保存地图实例到全局变量
   MapOption && mapcharts.setOption(MapOption);
 
@@ -670,7 +666,6 @@ async function search_city() {
           areaData.value.push(item);
         }
       });
-      totalPage.value = areaData.value.length;
       tableData.value = matchedData(areaData.value);
 
       cityLoading.value = false;
@@ -733,16 +728,20 @@ async function search_trait() {
 }
 
 function matchedData(data) {
+  // 筛选出provinceData中的数据
+  const filterData = data.filter(item => Object.keys(provinceData).includes(item));
+  totalPage.value = filterData.length;
   // 根据省份名称匹配经纬度
-  return data.map((province) => (
-      {
-    name: province,
-    type: "Local", // 请替换为真实的数据源类型
-    city: provinceData[province]?.city,
-    longitude: provinceData[province]?.longitude,
-    latitude: provinceData[province]?.latitude,
-    year: "年份", // 请替换为真实的年份
-  }));
+  return filterData.map((province) => (
+    {
+      name: province,
+      type: "Local", // 请替换为真实的数据源类型
+      city: provinceData[province]?.city,
+      longitude: provinceData[province]?.longitude,
+      latitude: provinceData[province]?.latitude,
+      year: "年份", // 请替换为真实的年份
+    }
+  ));
 }
 
 // 在您的 onMounted 函数内
