@@ -302,7 +302,11 @@ const deleteDisabled = ref(false);
 
 // 校验规则
 const rules = reactive({
-  fileName: [{ required: true, message: messages.message_input_fileName, trigger: "blur" }],
+  // 文件名不能含有 - 
+  fileName: [
+    { required: true, message: messages.message_input_fileName, trigger: "blur" },
+    { pattern: /^[^-\s]*$/, message: "文件名不能含有 - ", trigger: "blur" },
+  ],
   description: [
     { required: false, message: "请输入文件描述备注", trigger: "blur" },
   ],
@@ -379,6 +383,9 @@ const handleUploadFile = (file) =>{
 let isNormalFile = 1
 let url = ''
 async function openCreateData() {
+  // 校验表单
+  const valid = await form.value.validate();
+  if (!valid) return;
   dialogFormVisible.value = false;
   // 判断文件大小
   if (uploadFileList.value[0].raw.size > 1024 * 1024 * 50) {

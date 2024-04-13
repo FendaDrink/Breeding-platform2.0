@@ -31,7 +31,7 @@
                 <el-input v-model="queryParams.fileName" :placeholder="$t('environment.index.placeholder_fileName')"
                   clearable @keyup.enter="handleQuery" class="my-input" style="width: 180px; margin-right: 8px;" />
                 <el-button type="primary" @click="handleQuery" icon="search">{{ $t('environment.index.search')
-                }}</el-button>
+                  }}</el-button>
                 <el-button @click="resetQuery" icon="Refresh">{{ $t('environment.index.reset') }}</el-button>
               </div>
 
@@ -53,7 +53,8 @@
                       prop="fileName" />
                     <el-table-column :label="$t('environment.index.table_start')" align="center" prop="start"
                       width="100px" />
-                    <el-table-column :label="$t('environment.index.table_end')" align="center" width="200px" prop="end" />
+                    <el-table-column :label="$t('environment.index.table_end')" align="center" width="200px"
+                      prop="end" />
                     <el-table-column :label="$t('environment.index.table_longitude')" width="90px" align="center"
                       prop="longitude" />
                     <el-table-column :label="$t('environment.index.table_latitude')" width="90px" align="center"
@@ -99,8 +100,8 @@
                       class-name="small-padding fixed-width" width="auto">
                       <template #default="scope">
                         <el-tooltip :content="$t('environment.index.tooltip_histoicalVersions')" placement="top">
-                          <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
-                            icon="timer" class="table_button">
+                          <el-button type="text" size="medium" :loading="downloadLoading"
+                            @click="openHistory(scope.row)" icon="timer" class="table_button">
                           </el-button>
                         </el-tooltip>
                       </template>
@@ -146,11 +147,11 @@
               dialogTreeStatus === 'createNode'
                 ? createTreeData()
                 : updateTreeData()
-            ">
+              ">
               {{ $t('environment.index.save') }}
             </el-button>
             <el-button type="info" plain @click="dialogTreeFormVisible = false">{{ $t('environment.index.cancel')
-            }}</el-button>
+              }}</el-button>
           </div>
         </template>
       </el-dialog>
@@ -204,12 +205,13 @@
           </el-form-item>
         </el-form>
       </el-dialog>
-      <el-dialog :title="$t('environment.index.title_history')" v-model="historyFormVisible" :close-on-click-modal="false"
-        @close="dialogClosed" center draggable width="70%">
+      <el-dialog :title="$t('environment.index.title_history')" v-model="historyFormVisible"
+        :close-on-click-modal="false" @close="dialogClosed" center draggable width="70%">
         <el-table v-loading="historyTableLoading" :data="historyFileList">
           <el-table-column :label="$t('environment.index.table_index')" width="100" type="index" :index="indexMethod" />
           <el-table-column :label="$t('environment.index.table_fileName')" align="center" prop="fileName" />
-          <el-table-column :label="$t('environment.index.table_operate')" align="center" class-name="small-padding fixed-width">
+          <el-table-column :label="$t('environment.index.table_operate')" align="center"
+            class-name="small-padding fixed-width">
             <template #default="scope">
               <el-button class="table_button" size="small" type="text" icon="Download" :loading="downloadLoading"
                 @click="handleDownload(scope.row)">{{ $t('environment.index.download') }}
@@ -222,7 +224,8 @@
         </el-table>
       </el-dialog>
       <el-drawer v-model="drawer" :title="fileName" size="70%">
-        <el-table :data="drawerTableData" stripe :max-height="maxCustomH" :flexible="true" v-loading="drawerTableLoading">
+        <el-table :data="drawerTableData" stripe :max-height="maxCustomH" :flexible="true"
+          v-loading="drawerTableLoading">
           <el-table-column v-for="item in tableProps" :prop="item" :label="item" min-width="120" :key="item" />
         </el-table>
       </el-drawer>
@@ -233,7 +236,7 @@
 <script setup>
 import { ref, getCurrentInstance, nextTick, onMounted, reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
-import { getEnvFileList, delFile, updateFile, getEnvFileHistory,uploadFileEndApi,mergeChunkApi } from '@/api/environmental_management/file';
+import { getEnvFileList, delFile, updateFile, getEnvFileHistory, uploadFileEndApi, mergeChunkApi } from '@/api/environmental_management/file';
 import useUserStore from "@/store/modules/user";
 import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
@@ -246,10 +249,10 @@ import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import axios from "axios";
 const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? zh : en));
 
 const router = useRouter();
 
@@ -355,7 +358,8 @@ const deleteDisabled = ref(false);
 // 校验规则
 const rules = reactive({
   fileName: [
-    { required: true, message: messages.message_input_fileName, trigger: "blur" }
+    { required: true, message: messages.message_input_fileName, trigger: "blur" },
+    { pattern: /^[^-\s]*$/, message: "文件名不能含有 - ", trigger: "blur" },
   ],
   area: [
     { required: true, message: messages.message_area1, trigger: "blue" },
@@ -448,6 +452,9 @@ let isNormalFile = 1
 let url = ''
 // 大文件上传
 async function openCreateData() {
+  // 表单校验
+  const valid = await form.value.validate();
+  if (!valid) return;
   tableLoading.value = true;
   dialogFormVisible.value = false;
   // 判断文件大小
@@ -493,14 +500,14 @@ const createData = async () => {
 const uploadChunk = (formData) => {
   console.log('任务开始');
   return axios.post(
-      `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + getToken(),
-        },
-      }
+    `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: "Bearer " + getToken(),
+      },
+    }
   )
 }
 
@@ -555,7 +562,7 @@ const upLoadHugeFile = async () => {
       formData.append("totalChunks", totalChunks);
       formData.append("currentChunk", i);
       tasks.push(
-          uploadChunk(formData)
+        uploadChunk(formData)
       )
     }
     // 上传分片
@@ -576,13 +583,13 @@ const upLoadHugeFile = async () => {
         remark: dataForm.remark,
         fileName: dataForm.fileName,
         filePath: url,
-        area:dataForm.area,
-        longitude:dataForm.longitude,
-        latitude:dataForm.latitude
+        area: dataForm.area,
+        longitude: dataForm.longitude,
+        latitude: dataForm.latitude
       }
       // 发送文件信息用于后端保存文件
-      await uploadFileSuccess({code: 200, msg: '文件较大，请等待后台处理'})
-      await uploadFileEndApi(params).then(res=>{
+      await uploadFileSuccess({ code: 200, msg: '文件较大，请等待后台处理' })
+      await uploadFileEndApi(params).then(res => {
         $modal.msgSuccess('后台已处理，上传成功');
       })
       tableLoading.value = false;
@@ -647,10 +654,10 @@ const mergeData = async (row) => {
 
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
-  if( response.code === 200 && isNormalFile === 0){
+  if (response.code === 200 && isNormalFile === 0) {
     $modal.msgSuccess(response.msg);
     return;
-  }else if(isNormalFile === 0){
+  } else if (isNormalFile === 0) {
     $modal.msgError(response.msg);
     return;
   }
@@ -1207,6 +1214,7 @@ onMounted(() => {
   .el-button--primary {
     background: rgb(85, 123, 116);
   }
+
   margin:0 auto;
 }
 </style>
@@ -1312,7 +1320,7 @@ onMounted(() => {
   color: #fff;
 }
 </style>
-<style lang="less"  scoped>
+<style lang="less" scoped>
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   /* 0 3px 3px -2px rgba(0, 0, 0, 0.12),
@@ -1436,7 +1444,7 @@ onMounted(() => {
 
 :deep(.el-upload) {
   width: 100%;
-  display:inline-block;
+  display: inline-block;
 }
 
 :deep(.el-upload .el-upload-dragger) {
@@ -1981,4 +1989,5 @@ onMounted(() => {
   .el-tree-node__label {
     font-size: 14px;
   }
-}</style>
+}
+</style>

@@ -19,8 +19,8 @@
                 <el-button plain type="primary" class="filter-item my-button" @click.prevent="addChildNode" icon="plus"
                   v-hasPermi="['system:node:add']">
                   {{ $t('genotype.index.node_add') }}</el-button>
-                <el-button plain type="success" class="filter-item my-button" @click.prevent="updateChildNode" icon="edit"
-                  v-hasPermi="['system:node:update']">{{ $t('genotype.index.node_update') }}</el-button>
+                <el-button plain type="success" class="filter-item my-button" @click.prevent="updateChildNode"
+                  icon="edit" v-hasPermi="['system:node:update']">{{ $t('genotype.index.node_update') }}</el-button>
                 <el-button plain type="danger" class="filter-item my-button" @click.prevent="deleteNode" icon="delete"
                   v-hasPermi="['system:node:remove']">{{ $t('genotype.index.node_delete') }}</el-button>
                 <el-button plain type="info" class="filter-item my-button" @click.prevent="downloadTemplate"
@@ -32,8 +32,9 @@
                   clearable @keyup.enter="handleQuery" class="my-input" style="width: 180px; margin-right: 8px;" />
                 <el-button type="primary" class="my-button" @click="handleQuery" icon="search">{{
                   $t('genotype.index.search') }}</el-button>
-                <el-button @click="resetQuery" class="my-button white-button" icon="Refresh">{{ $t('genotype.index.reset')
-                }}</el-button>
+                <el-button @click="resetQuery" class="my-button white-button" icon="Refresh">{{
+                  $t('genotype.index.reset')
+                  }}</el-button>
               </div>
               <div class="div3">
                 <!-- 操作部分 -->
@@ -44,8 +45,8 @@
                     $t('genotype.index.file_delete') }}</el-button>
                 <el-container style="min-height: calc(100vh - 400px);">
                   <!-- 表格部分 -->
-                  <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe fit
-                    max-height="100%" class="mytable">
+                  <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe
+                    fit max-height="100%" class="mytable">
                     <el-table-column type="selection" width="auto" align="center" fixed="left" />
                     <el-table-column :label="$t('genotype.index.table_index')" width="80" type="index"
                       :index="indexMethod" align="center" />
@@ -140,7 +141,7 @@
               dialogTreeStatus === 'createNode'
                 ? createTreeData()
                 : updateTreeData()
-            ">
+              ">
               {{ $t('genotype.index.save') }}
             </el-button>
             <el-button @click="dialogTreeFormVisible = false" type="info" plain>取消</el-button>
@@ -238,7 +239,7 @@
 </template>
 
 <script setup>
-import {ref, getCurrentInstance, nextTick, onMounted, reactive} from "vue";
+import { ref, getCurrentInstance, nextTick, onMounted, reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
   genoListFile,
@@ -263,7 +264,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? zh : en));
 
 
 const text = {
@@ -295,7 +296,7 @@ const text = {
     node_delete_success: computed(() => i18n.t('genotype.index.message_node_delete_success')).value,
     file_confirm: computed(() => i18n.t('genotype.index.message_file_confirm')).value,
   },
-  rule:{
+  rule: {
     name_require: computed(() => i18n.t('genotype.index.name_require')).value,
 
   }
@@ -365,17 +366,13 @@ const deleteDisabled = ref(false);
 
 // 校验规则
 const rules = reactive({
+  // 文件名必须为 非特殊符号_非特殊符号 
   fileName: [
+    { required: true, message: text.rule.message_fileName, trigger: "blur" },
     {
-      validator: (rule, value, callback) => {
-        if (!value || !value.includes("_")) {
-          callback(new Error(text.rule.name_require));
-        } else {
-          callback();
-        }
-      },
+      pattern: /^[^-]+_[^-]+$/,
+      message: text.rule.name_require,
       trigger: "blur",
-      required: true,
     },
   ],
   description: [
@@ -572,7 +569,7 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  dataForm.fileName =  dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
+  dataForm.fileName = dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
 };
 
 // 文件创建
@@ -588,7 +585,7 @@ const createData = async () => {
     try {
       dialogFormVisible.value = false;
       await upload.value.submit();
-      await uploadFileSuccess({code:200,msg:'上传成功，请等待后台进行处理'});
+      await uploadFileSuccess({ code: 200, msg: '上传成功，请等待后台进行处理' });
     } catch (err) {
       $modal.msgError(err)
     } finally {
@@ -1302,7 +1299,7 @@ onMounted(() => {
   color: #fff;
 }
 </style>
-<style lang="less"  scoped>
+<style lang="less" scoped>
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   /* 0 3px 3px -2px rgba(0, 0, 0, 0.12),
