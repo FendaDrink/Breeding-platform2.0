@@ -7,7 +7,7 @@
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
         <div class="echart_wrapper">
-            <div id="traitPanMap" :loading="isSunBurstChartLoading" style="width: 100%; height: 55vw"></div>
+            <div id="traitPanMap" :loading="isSunBurstChartLoading" style="width: 100%; height: 35vw"></div>
             <div class="trait-form">
                 <el-table
                 :data="
@@ -16,7 +16,6 @@
                     currentpageNum2 * pageSize2
                     )
                 "
-                stripe
                 style="margin: 10px auto"
                 >
                 <el-table-column
@@ -362,7 +361,8 @@ const randomColor = () => {
 }
 
 const sunBurstOption = {
-  backgroundColor: '#f1f6f3',
+  // backgroundColor: '#f1f6f3',
+  height:'100%',
   series: {
     type: 'sunburst',
     color: randomColor(),
@@ -376,7 +376,7 @@ const sunBurstOption = {
     },
     itemStyle: {
       borderWidth: 14,
-      borderColor:'#f1f6f3'
+      // borderColor:'#f1f6f3'
     },
     gap: 50,
     levels: sunburstLevels,
@@ -532,7 +532,7 @@ onMounted(() => {
 .card-container {
   width: 95%;
   border-radius: 50px;
-  background-color: #f1f6f3;
+  //background-color: #f1f6f3;
 }
 
 .card-container .SearchBox-card {

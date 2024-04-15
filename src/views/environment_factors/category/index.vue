@@ -7,7 +7,7 @@
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
       <div class="echart_wrapper">
-        <div id="factorPanMap" style="width: 100%; height: 110vh;margin: 20px 0 100px 0"></div>
+        <div id="factorPanMap" style="width: 100%; height: 35vw;margin: 20px 0 100px 0"></div>
         <div class="factor-form">
           <el-table :data="phenotypeData.slice(
             (currentpageNum2 - 1) * pageSize2,
@@ -337,7 +337,8 @@ const randomColor = () => {
 }
 
 const sunBurstOption = {
-  backgroundColor: '#f1f6f3',
+  // backgroundColor: '#f1f6f3',
+  height:'100%',
   series: {
     type: 'sunburst',
     color: randomColor(),
@@ -351,7 +352,7 @@ const sunBurstOption = {
     },
     itemStyle: {
       borderWidth: 20,
-      borderColor:'#f1f6f3'
+      // borderColor:'#f1f6f3'
     },
     levels: sunburstLevels,
   }
@@ -497,7 +498,7 @@ onMounted(() => {
   align-items: center;
   width: 100%;
   position: relative;
-  background-color: #f1f6f3;
+  //background-color: #f1f6f3;
   //.file-name{
   //  position: absolute;
   //  top: 0;
@@ -530,7 +531,7 @@ onMounted(() => {
   width: 95%;
   margin: 30px auto;
   border-radius: 50px;
-  background-color: #f1f6f3;
+  //background-color: #f1f6f3;
 }
 
 .card-container .SearchBox-card {

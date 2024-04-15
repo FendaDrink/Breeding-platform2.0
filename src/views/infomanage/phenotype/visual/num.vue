@@ -125,6 +125,10 @@ onMounted(() => {
 .phenoNum {
   color: grey;
   font-size: 12px;
+  h1{
+    font-weight: bold;
+  }
+
 }
 
 #PieChart {
