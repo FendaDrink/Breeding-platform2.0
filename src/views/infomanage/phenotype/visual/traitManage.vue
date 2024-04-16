@@ -543,7 +543,7 @@ onMounted(() => {
 
 
 .card-container {
-  width: 95%;
+  width: 100%;
   border-radius: 50px;
   //background-color: #f1f6f3;
 }
