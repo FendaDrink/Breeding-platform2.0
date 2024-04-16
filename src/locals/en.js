@@ -1,13 +1,15 @@
 // en.js
 import enLocale from 'element-plus/lib/locale/lang/en'
 
-import phenptype_en from '../views/infomanage/phenotype/en.js'
+import phenotype_en from './language/phenotype/en.js'
 
-import genotype_en from '../views/infomanage/genotype/en.js'
+import genotype_en from './language/genotype/en.js'
 
-import material_en from '../views/material_management/en.js'
+import material_en from './language/material/en.js'
 
-import environment_en from '../views/environmental_management/en.js'
+import environment_en from './language/environment/en.js'
+
+import phenotypeVisual_en from '@/locals/language/phenotype/phenotypeVisual/en'
 export default {
     // title: 'Genomic breeding decision-making platform',
     title: 'Breeding-platform2.0',
@@ -34,18 +36,20 @@ export default {
     logo: {
         title: 'Breeding-platform2.0'
     },
-    systom: {
+    system: {
         prompt: 'System prompt',
         ok: 'Confirm',
         cancel: 'Cancel',
     },
     ...enLocale,
 
-    ...phenptype_en,
+    ...phenotype_en,
 
     ...genotype_en,
 
     ...material_en,
 
     ...environment_en,
+
+    ...phenotypeVisual_en
 }

@@ -97,11 +97,11 @@
             <div v-if="tree?.getCurrentNode()?.children.length !== 0"
               style="max-height: calc(100vh - 290px); font-size: 20px;">
               <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.description') }}</span>{{
-                form.keyword ? form.keyword : $t('phenotype.showImage.dialog.other.dateSelction_empty') }}
+                form.keyword ? form.keyword : $t('phenotype.showImage.dialog.other.dataSelection_empty') }}
               <br />
               <!-- 选择日期组件 -->
               <div style="margin-top:10px">
-                <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.dateSelction') }}</span>
+                <span style="font-weight: bold;">{{ $t('phenotype.showImage.dialog.other.dataSelection') }}</span>
                 <el-date-picker v-model="value2" type="daterange" unlink-panels
                   :range-separator="$t('phenotype.showImage.dialog.other.to')"
                   :start-placeholder="$t('phenotype.showImage.dialog.other.date_start')"
@@ -399,7 +399,7 @@ const messages = {
   lastMonth: computed(() => i18n.t('phenotype.showImage.message.lastMonth')).value,
   last3Month: computed(() => i18n.t('phenotype.showImage.message.last3Month')).value,
   chooseAll: computed(() => i18n.t('phenotype.showImage.message.chooseAll')).value,
-  chooseAllCancle: computed(() => i18n.t('phenotype.showImage.message.chooseAllCancle')).value,
+  chooseAllCancel: computed(() => i18n.t('phenotype.showImage.message.chooseAllCancel')).value,
   mytool1: computed(() => i18n.t('phenotype.showImage.message.mytool1')).value,
   mytool2: computed(() => i18n.t('phenotype.showImage.message.mytool2')).value,
   noChooseImage: computed(() => i18n.t('phenotype.showImage.message.noChooseImage')).value,
@@ -456,6 +456,7 @@ const messages = {
 
   treeName:computed(() => i18n.t('phenotype.showImage.rule.treeName')).value,
   description:computed(() => i18n.t('phenotype.showImage.rule.description')).value,
+  save:computed(()=>i18n.t('phenotype.visualization.feature.save')).value
 };
 
 
@@ -558,7 +559,7 @@ function changeSelected() {
     else option2.value.legend.selected[key] = true;
   })
   if (!isChooseAll) ElMessage({ message: messages.chooseAll, type: 'success' });
-  else ElMessage({ message: messages.chooseAllCancle, type: 'success' });
+  else ElMessage({ message: messages.chooseAllCancel, type: 'success' });
 }
 
 // 改变图例展开/折叠
@@ -634,7 +635,9 @@ async function chooseDate() {
     },
     toolbox: {
       feature: {
-        saveAsImage: {},
+        saveAsImage: {
+          title:messages.save,
+        },
         //全选/取消全选工具
         myTool1: {
           show: true,
@@ -1646,7 +1649,9 @@ option.value = {
   },
   toolbox: {
     feature: {
-      saveAsImage: {}
+      saveAsImage: {
+        title:messages.save
+      }
     }
   },
   series: [

@@ -93,7 +93,7 @@
                     <el-table-column icon="timer" :label="$t('genotype.index.table_previousVersions')" align="center"
                       class-name="small-padding fixed-width" min-width="auto">
                       <template #default="scope">
-                        <el-tooltip :content="$t('genotype.index.tooltip_histoicalVersions')" placement="top">
+                        <el-tooltip :content="$t('genotype.index.tooltip_historicalVersions')" placement="top">
                           <el-button icon="timer" type="text" size="medium" :loading="downloadLoading"
                             @click="openHistory(scope.row)" class="table_button">
                           </el-button></el-tooltip>

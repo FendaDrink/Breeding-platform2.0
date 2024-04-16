@@ -25,19 +25,19 @@ export default {
   },
   // 弹出提示
   alert(content) {
-    ElMessageBox.alert(content, t('systom.prompt'))
+    ElMessageBox.alert(content, t('system.prompt'))
   },
   // 错误提示
   alertError(content) {
-    ElMessageBox.alert(content, t('systom.prompt'), { type: 'error' })
+    ElMessageBox.alert(content, t('system.prompt'), { type: 'error' })
   },
   // 成功提示
   alertSuccess(content) {
-    ElMessageBox.alert(content, t('systom.prompt'), { type: 'success' })
+    ElMessageBox.alert(content, t('system.prompt'), { type: 'success' })
   },
   // 警告提示
   alertWarning(content) {
-    ElMessageBox.alert(content, t('systom.prompt'), { type: 'warning' })
+    ElMessageBox.alert(content, t('system.prompt'), { type: 'warning' })
   },
   // 通知提示
   notify(content) {
@@ -57,17 +57,17 @@ export default {
   },
   // 确认窗体
   confirm(content) {
-    return ElMessageBox.confirm(content, t('systom.prompt'), {
-      confirmButtonText: t('systom.ok'),
-      cancelButtonText: t('systom.cancel'),
+    return ElMessageBox.confirm(content, t('system.prompt'), {
+      confirmButtonText: t('system.ok'),
+      cancelButtonText: t('system.cancel'),
       type: "warning",
     })
   },
   // 提交内容
   prompt(content) {
-    return ElMessageBox.prompt(content, t('systom.prompt'), {
-      confirmButtonText: t('systom.ok'),
-      cancelButtonText: t('systom.cancel'),
+    return ElMessageBox.prompt(content, t('system.prompt'), {
+      confirmButtonText: t('system.ok'),
+      cancelButtonText: t('system.cancel'),
       type: "warning",
     })
   },

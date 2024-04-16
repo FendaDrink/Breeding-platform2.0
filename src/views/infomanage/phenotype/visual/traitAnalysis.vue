@@ -1,72 +1,72 @@
 <template>
   <div>
     <el-card class="card-container">
-    <template #header>
-      <div class="card-header">
-        <span>性状分析</span>
+      <template #header>
+        <div class="card-header">
+          <span>{{ $t('phenotypeVisual.traitAnalysis.traitAnalysis_header') }}</span>
+        </div>
+      </template>
+      <div style="margin-top: 10px">
+        <div class="chooseBox">
+          <div>
+            <div class="input-title">
+              <h1>{{ $t('phenotypeVisual.traitAnalysis.material_title') }}</h1>
+            </div>
+            <div class="search_table">
+              <el-select v-model="traitValue" filterable :placeholder="$t('phenotypeVisual.traitAnalysis.material_placeholder')">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+              <el-button style="margin-left: 20px !important" @click="search_trait" v-loading="searchLoading"
+                         icon="View" type="primary">{{ $t('phenotypeVisual.traitAnalysis.search_btn') }}</el-button>
+            </div>
+          </div>
+          <div>
+            <div class="input-title">
+              <h1>{{ $t('phenotypeVisual.traitAnalysis.traitType_title') }}</h1>
+            </div>
+            <div class="search_table">
+              <el-select v-model="traitType.id" filterable :placeholder="$t('phenotypeVisual.traitAnalysis.traitType_placeholder')">
+                <el-option v-for="item in traitTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+              <el-button style="margin-left: 20px !important" @click="confirmChooseType" icon="Pointer"
+                         v-loading="chooseLoading" type="primary">{{ $t('phenotypeVisual.traitAnalysis.select_btn') }}</el-button>
+            </div>
+          </div>
+        </div>
+        <!--  可视图表 -->
+        <div class="radarCharts" v-loading="isChartsLoading">
+          <div class="echartsTypeChart" style="margin-bottom:50px; width: 100%;height:650px;"></div>
+        </div>
+        <div class="barCharts">
+          <div class="echartsBarDate" style="margin-bottom:50px; width: 100%;height:600px;"></div>
+          <div class="echartsBarPercent" style="margin-bottom:50px; width: 100%;height:600px;"></div>
+          <div class="echartsBarNum" style="width: 100%;height:600px;"></div>
+        </div>
       </div>
-    </template>
-    <div style="margin-top: 10px">
+    </el-card>
+    <el-card class="card-container">
+      <template #header>
+        <div class="card-header">
+          <span>{{ $t('phenotypeVisual.traitAnalysis.singleMaterialAnalysis_header') }}</span>
+        </div>
+      </template>
       <div class="chooseBox">
         <div>
           <div class="input-title">
-            <h1>请选择材料</h1>
+            <h1>{{ $t('phenotypeVisual.traitAnalysis.trait_title') }}</h1>
           </div>
           <div class="search_table">
-            <el-select v-model="traitValue" filterable placeholder="请选择材料id">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-            <el-button style="margin-left: 20px !important" @click="search_trait" v-loading="searchLoading"
-              icon="View" type="primary">查看</el-button>
-          </div>
-        </div>
-        <div>
-          <div class="input-title">
-            <h1>请选择性状类型</h1>
-          </div>
-          <div class="search_table">
-            <el-select v-model="traitType.id" filterable placeholder="请选择性状类别">
-              <el-option v-for="item in traitTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-            <el-button style="margin-left: 20px !important" @click="confirmChooseType" icon="Pointer"
-              v-loading="chooseLoading" type="primary">选择</el-button>
-          </div>
-        </div>
-      </div>
-      <!--  可视图表 -->
-      <div class="radarCharts" v-loading="isChartsLoading">
-        <div class="echartsTypeChart" style="margin-bottom:50px; width: 100%;height:800px;"></div>
-      </div>
-      <div class="barCharts">
-        <div class="echartsBarDate" style="margin-bottom:50px; width: 100%;height:600px;"></div>
-        <div class="echartsBarPercent" style="margin-bottom:50px; width: 100%;height:600px;"></div>
-        <div class="echartsBarNum" style="width: 100%;height:600px;"></div>
-      </div>
-    </div>
-  </el-card>
-  <el-card class="card-container">
-    <template #header>
-      <div class="card-header">
-        <span>材料单一性状分析</span>
-      </div>
-    </template>
-    <div class="chooseBox">
-        <div>
-          <div class="input-title">
-            <h1>请选择性状</h1>
-          </div>
-          <div class="search_table">
-            <el-select v-model="searchTraitId" filterable placeholder="请输入性状名">
+            <el-select v-model="searchTraitId" filterable :placeholder=" $t('phenotypeVisual.traitAnalysis.trait_placeholder')">
               <el-option v-for="item in allTraits" :key="item.traitId" :label="item.traitName" :value="item.traitId" />
             </el-select>
             <el-button style="margin-left: 20px !important" @click="searchTraitByName" v-loading="searchTraitLoading"
-              icon="View" type="primary">查看</el-button>
+                       icon="View" type="primary">{{ $t('phenotypeVisual.traitAnalysis.search_btn') }}</el-button>
           </div>
         </div>
       </div>
       <div class="echartsBarTrait" style="width: 100%;height:400px;"></div>
-  </el-card>
-</div>
+    </el-card>
+  </div>
 </template>
 
 <script setup>
@@ -87,6 +87,27 @@ const {
   proxy: { $modal,$theme },
 } = getCurrentInstance();
 
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+const titles = {
+  unclassified_trait:computed(()=>i18n.t('phenotypeVisual.index.unclassified_trait')).value,
+  average_value:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.average_value')).value,
+  barChart_title:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.barChart_title')).value,
+}
+
+const message = {
+  select_success:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.select_success')).value,
+  select_failure:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.select_failure')).value,
+  search_success:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.search_success')).value,
+  search_failure:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.search_failure')).value
+}
 
 const route = useRoute();
 const chartsShow = ref(false);
@@ -105,7 +126,7 @@ const isChartsLoading = ref('')
 //当前选择的性状类别
 const traitType = reactive({
   id: -1,
-  name:'未分类性状'
+  name:titles.unclassified_trait
 })
 
 //形状类别
@@ -120,22 +141,22 @@ let traitTypesCopy = reactive([
 //获取性状类别
 const getTraitType = async () => {
   listType(1, 1000)
-    .then((res) => {
-      console.log(res, 'res111');
-      res.rows.forEach((item) => {
-        traitTypes.push({
-          id: item.traitTypeId,
-          name: item.traitTypeName
-        })
-        traitTypesCopy.push({
-          id: item.traitTypeId,
-          name: item.traitTypeName
-        })
+      .then((res) => {
+        console.log(res, 'res111');
+        res.rows.forEach((item) => {
+          traitTypes.push({
+            id: item.traitTypeId,
+            name: item.traitTypeName
+          })
+          traitTypesCopy.push({
+            id: item.traitTypeId,
+            name: item.traitTypeName
+          })
 
+        })
+        traitType.id = traitTypes[0].id
+        traitType.name = traitTypes[0].name
       })
-      traitType.id = traitTypes[0].id
-      traitType.name = traitTypes[0].name
-    })
 }
 
 //更新性状类别
@@ -198,11 +219,11 @@ function isPercentOrDate(data) {
 
 
 function getChartsValueByType(data) {
-  //填充未定义类型  
+  //填充未定义类型
   traitTypes.push({
-      id:null,
-      name:'未分类性状'
-    })
+    id:null,
+    name:titles.unclassified_trait
+  })
   traitTypes.forEach((item) => {
     //获得性状类别
     Object.assign(chartsLabelByType, {
@@ -225,8 +246,8 @@ function getChartsValueByType(data) {
           max: isPercentOrDate(item2.maxNum),
           min: isPercentOrDate(item2.minNum),
         })
-         chartsValueByType[item.id].push(isPercentOrDate(item2.value))
-         chartsAverageByType[item.id].push(isPercentOrDate(item2.average))
+        chartsValueByType[item.id].push(isPercentOrDate(item2.value))
+        chartsAverageByType[item.id].push(isPercentOrDate(item2.average))
       }
     })
   })
@@ -302,9 +323,19 @@ function getChartsValueByFormat(data) {
         chartsValueByFormat.percentLabel.push(item.traitName)
         chartsAverageByFormat.percent.push(myToFixed(parseFloat(item.average)))
       } else if (isNum.test(item.value)){
-        chartsValueByFormat.num.push(myToFixed(item.value))
+        chartsValueByFormat.num.push({
+          value:myToFixed(item.value),
+          itemStyle: {
+            barBorderRadius: [5, 5, 0, 0]
+          }
+        })
         chartsValueByFormat.numLabel.push(item.traitName)
-        chartsAverageByFormat.num.push(myToFixed(item.average))
+        chartsAverageByFormat.num.push({
+          value:myToFixed(item.average),
+          itemStyle: {
+            barBorderRadius: [5, 5, 0, 0]
+          }
+      })
       }
 
     } catch (err) {
@@ -365,6 +396,7 @@ function showTypeChart() {
   echartDom?.removeAttribute("_echarts_instance_")
   const myChart = echarts.init(echartDom)
   const typeChart = {
+    height:'100%',
     tooltip: {
       trigger: 'item',
       formatter: function (params) {
@@ -386,7 +418,7 @@ function showTypeChart() {
       }
     },
     legend: {
-      data: [traitValue.value,'平均值'],
+      data: [traitValue.value,titles.average_value],
       top: 'bottom',
       left: 'left',
       itemHeight: 4,
@@ -428,7 +460,7 @@ function showTypeChart() {
           },
           {
             value: chartsAverageByType[traitType.id],
-            name: '平均值'
+            name: titles.average_value
           }
         ]
       }
@@ -447,7 +479,7 @@ const slider = [
     left: '4%',
     right: '4%',
     bottom: 18, //图表底部距离
-    // handleSize: 10,//左右2个滑动条的大小
+    moveHandleSize:0,
     borderColor: "#eee", //滑动通道的边框颜色
     fillerColor: $theme.color, //滑动条颜色
     backgroundColor: '#eee',//未选中的滑动条的颜色
@@ -517,7 +549,7 @@ function showBarDate() {
       }
     },
     legend: {
-      data: [traitValue.value, '平均值'],
+      data: [traitValue.value, titles.average_value],
       left: 'right',
       top: 'top',
       itemHeight: 25,
@@ -539,7 +571,7 @@ function showBarDate() {
         color: '#4472C4'
       },
       {
-        name: '平均值',
+        name: titles.average_value,
         data: chartsAverageByFormat.date,
         type: 'bar',
         showBackground: true,
@@ -610,7 +642,7 @@ function showBarPercent() {
       }
     },
     legend: {
-      data: [traitValue.value, '平均值'],
+      data: [traitValue.value, titles.average_value],
       left: 'right',
       top: 'top',
       itemHeight: 25,
@@ -629,7 +661,7 @@ function showBarPercent() {
         color: '#4472C4'
       },
       {
-        name: '平均值',
+        name: titles.average_value,
         data: chartsAverageByFormat.percent,
         type: 'bar',
         showBackground: true,
@@ -681,7 +713,7 @@ function showBarNum() {
       min: minNum===maxNum?0:minNum
     },
     title: {
-      text: '数值类性状',
+      text: titles.average_value,
       textStyle: {
         fontSize: 20,
         fontWeight: 'normal',
@@ -689,7 +721,7 @@ function showBarNum() {
       }
     },
     legend: {
-      data: [traitValue.value, '平均值'],
+      data: [traitValue.value, titles.average_value],
       left: 'right',
       top: 'top',
       itemHeight: 25,
@@ -708,7 +740,7 @@ function showBarNum() {
         color: '#4472C4',
       },
       {
-        name: '平均值',
+        name: 'titles.average_value',
         data: chartsAverageByFormat.num,
         type: 'bar',
         showBackground: true,
@@ -784,40 +816,42 @@ function chooseForm() {
   laboratorFormShow.value = false;
   //查询性状信息
   getMaterialIdByFileId(traitFileId.value)
-    .then((res) => {
-      chartsShow.value = true;
-      ChartsLoading.value = false;
-      chooseLoading.value = false;
-      $modal.msgSuccess("选择成功！");
-      states.value = res.data;
-      options.value = states.value.map((item) => {
-        return { value: item, label: item };
-      });
-      traitValue.value = options.value[0].value;
-      const materilId = traitValue.value;
-      const id = traitFileId.value;
-      dataAnalysisByMaterilId(id, materilId)
-        .then((res) => {
-          searchLoading.value = false;
-          laboratorFormShow.value = true;
-          updateTableData(res.data);
-          searchLoading.value = false;
-          $modal.msgSuccess("搜索成功！");
-          console.log(res, "tableDataRes");
-        })
-        .catch((err) => {
-          console.error(err);
-          searchLoading.value = false;
+      .then((res) => {
+        chartsShow.value = true;
+        ChartsLoading.value = false;
+        chooseLoading.value = false;
+        $modal.msgSuccess(message.select_success);
+        states.value = res.data;
+        options.value = states.value.map((item) => {
+          return {value: item, label: item};
         });
-    })
-    .catch((err) => {
-      console.error(err);
-      ChartsLoading.value = false;
-      chooseLoading.value = false;
-    });
+        traitValue.value = options.value[0].value;
+        const materilId = traitValue.value;
+        const id = traitFileId.value;
+        dataAnalysisByMaterilId(id, materilId)
+            .then((res) => {
+              searchLoading.value = false;
+              laboratorFormShow.value = true;
+              updateTableData(res.data);
+              searchLoading.value = false;
+              $modal.msgSuccess(message.search_success);
+              console.log(res, "tableDataRes");
+            })
+            .catch((err) => {
+              console.error(err);
+              searchLoading.value = false;
+            });
+      })
+      .catch((err) => {
+        console.error(err);
+        $modal.msgError(message.select_failure);
+        ChartsLoading.value = false;
+        chooseLoading.value = false;
+      });
   ChartsLoading.value = false;
   chooseLoading.value = false;
 }
+
 //搜索材料
 function search_trait() {
   searchLoading.value = true;
@@ -825,42 +859,44 @@ function search_trait() {
   const materilId = traitValue.value;
   const id = traitFileId.value;
   dataAnalysisByMaterilId(id, materilId)
-    .then((res) => {
-      searchLoading.value = false;
-      laboratorFormShow.value = true;
+      .then((res) => {
+        searchLoading.value = false;
+        laboratorFormShow.value = true;
 
-      updateTableData(res.data);
-      searchLoading.value = false;
-      $modal.msgSuccess("搜索成功！");
-      console.log(res, "res");
-    })
-    .catch((err) => {
-      console.error(err);
-      searchLoading.value = false;
-    });
+        updateTableData(res.data);
+        searchLoading.value = false;
+        $modal.msgSuccess(message.search_success);
+        console.log(res, "res");
+      })
+      .catch((err) => {
+        console.error(err);
+        searchLoading.value = false;
+      });
 }
+
 const laboratorFormShow = ref(false);
 const laboratorSearchShow = ref(true);
 const searchLoading = ref(false);
 const allTraitValue = ref({
-  label:[],
-  value:[]
+  label: [],
+  value: []
 });
 
 //用于更新allTraitValue的函数
 function updateAllTraitValue(data) {
   allTraitValue.value.label = data.map((item) => item.materialId)
-  allTraitValue.value.value = data.map((item,index,arr) =>{
+  allTraitValue.value.value = data.map((item, index, arr) => {
     return {
-          value: isPercentOrDate(item.traitValue),
-          itemStyle: {
-            // 按色相环从红渐变到绿色再渐变到紫色
-            color: (function () {
-              let c = echarts.color.modifyHSL('#5A9BD4', Math.round(360 / arr.length * index));
-              return c;
-            })()
-          }
-        }
+      value: isPercentOrDate(item.traitValue),
+      itemStyle: {
+        // 按色相环从红渐变到绿色再渐变到紫色
+        color: (function () {
+          let c = echarts.color.modifyHSL('#5A9BD4', Math.round(360 / arr.length * index));
+          return c;
+        })(),
+        barBorderRadius: [5, 5, 0, 0]
+      }
+    }
   },)
 }
 
@@ -873,23 +909,23 @@ function searchTraitByName() {
   const traitId = searchTraitId.value
   const id = traitFileId.value
   getDataByTraitId(id, traitId)
-    .then((res) => {
-      if(res.code==200){
+      .then((res) => {
+        if (res.code == 200) {
+          searchTraitLoading.value = false
+          updateAllTraitValue(res.data)
+          $modal.msgSuccess(message.search_success);
+          console.log(res, "res");
+          showBarTrait()
+        } else {
+          searchTraitLoading.value = false
+          $modal.msgError(message.search_failure);
+        }
+      })
+      .catch((err) => {
+        $modal.msgError(message.search_failure);
+        console.log(err);
         searchTraitLoading.value = false
-        updateAllTraitValue(res.data)
-        $modal.msgSuccess("搜索成功！");
-        console.log(res, "res");
-        showBarTrait()
-      }else{
-        searchTraitLoading.value = false
-        $modal.msgError("搜索失败！");
-      }
-    })
-    .catch((err) => {
-      $modal.msgError("搜索失败！");
-      console.log(err);
-      searchTraitLoading.value = false
-    });
+      });
 }
 
 //获取当前显示的性状类别名
@@ -918,7 +954,7 @@ function showBarTrait() {
       formatter: function (params) {
         const timestampRegex = /^\d{10,13}$/
         let value = params.value
-        if(timestampRegex.test(params.value)){
+        if (timestampRegex.test(params.value)) {
           value = formatDate(params.value)
         }
         return params.name + '<br/>' + params.seriesName + ' : ' + value;
@@ -937,13 +973,13 @@ function showBarTrait() {
     yAxis: {
       type: 'value',
       max: maxNum,
-      min: minNum===maxNum?0:minNum,
+      min: minNum === maxNum ? 0 : minNum,
       axisLabel: {
         formatter: function (value) {
           const timestampRegex = /^\d{10,13}$/
-          if(timestampRegex.test(value)){
+          if (timestampRegex.test(value)) {
             return formatDate(value)
-          }else{
+          } else {
             return myToFixed(value)
           }
         }
@@ -970,14 +1006,14 @@ function showBarTrait() {
         data: allTraitValue.value.value,
         type: 'bar',
         showBackground: true,
-        label:{
-          show:true,
-          position:'top',
+        label: {
+          show: true,
+          position: 'top',
           formatter: function (value) {
             const timestampRegex = /^\d{10,13}$/
-            if(timestampRegex.test(value.value)){
+            if (timestampRegex.test(value.value)) {
               return formatDate(value.value)
-            }else{
+            } else {
               return myToFixed(value.value)
             }
           }
@@ -988,7 +1024,7 @@ function showBarTrait() {
   };
   if (allTraitValue.value.value.length > 5) {
     barTrait.dataZoom = slider
-    barTrait.dataZoom[0].end= (12/allTraitValue.value.value.length)*100
+    barTrait.dataZoom[0].end = (12 / allTraitValue.value.value.length) * 100
   }
   myChart.setOption(barTrait);
 }
@@ -999,23 +1035,25 @@ const options = ref([]);
 const states = ref(["110", "110", "120", "900", "800", "700"]);
 
 
-onMounted( () => {
+onMounted(() => {
   chooseForm();
 });
 </script>
 
 <style scoped lang="less">
-.chooseBox{
-    display: flex;
-    justify-content: space-between;
-    width: 80%;
-    margin-bottom: 30px;
-    .input-title {
-      color: grey;
-      font-size: 12px;
+.chooseBox {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin-bottom: 30px;
+
+  .input-title {
+    color: grey;
+    font-size: 12px;
   }
 }
-.canvas{
+
+.canvas {
   margin: 0 auto;
 }
 </style>
@@ -1024,10 +1062,11 @@ onMounted( () => {
 
 <style lang="less" scoped>
 
-.card-container{
+.card-container {
   border-radius: 50px;
   margin-bottom: 50px;
 }
+
 .card-header {
   display: flex;
   justify-content: space-between;

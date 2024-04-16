@@ -35,7 +35,7 @@ export default {
             tooltip_detail: '文件详情',
             tooltip_view: '可视化',
             tooltip_delete: '删除',
-            tooltip_histoicalVersions: '查看历史版本',
+            tooltip_historicalVersions: '查看历史版本',
             tooltip_merge: '合并',
 
             placeholder_fileName: '输入文件名称',
@@ -113,11 +113,11 @@ export default {
             button_cancel: '取消',
 
 
-            label_meterial: '材料名',
+            label_material: '材料名',
             label_phenotype: '表型名',
             label_operation: '操作',
 
-            placeholder_meterial: '请选择材料名',
+            placeholder_material: '请选择材料名',
             placeholder_phenotype: '请选择表型名',
 
             title_update: '修改文件信息',
@@ -246,11 +246,11 @@ export default {
                 },
                 other: {
                     description: '描述信息：',
-                    dateSelction: '日期选择：',
+                    dataSelection: '日期选择：',
                     phenoAnalysis: '表型图片分析',
                     noImage: '暂无图片',
                     noName: '暂无名称',
-                    dateSelction_empty: '描述信息为空！',
+                    dataSelection_empty: '描述信息为空！',
                     date_start: '开始日期',
                     date_end: '结束日期',
                     to: '至',
@@ -267,8 +267,8 @@ export default {
                 lastMonth: '最近一月',
                 last3Month: '最近三月',
                 chooseAll: '已全选！',
-                chooseAllCancle: '已取消全选！',
-                mytool1: '全选/取消全选',
+                chooseAllCancel: '已取消全选！',
+                mytool1: 'message.search_success',
                 mytool2: '展开/收起图例',
                 noChooseImage: '您没有选择图片！',
                 downloadImageConfirm: '是否下载选中的图片？',
@@ -345,8 +345,8 @@ export default {
                 index: '序号',
                 traitName: '性状名',
                 average: '平均值',
-                maxmum: '最大值',
-                minmum: '最小值'
+                maximum: '最大值',
+                minimum: '最小值'
             },
             header: {
                 h1: '表型文件选择',
@@ -365,6 +365,31 @@ export default {
                 get_success: '获取信息成功！'
             }
 
+        },
+        visualization:{
+            select_date:'日期选择',
+            dateRange:{
+                last_week:'最近一周',
+                last_month:'最近一个月',
+                last_threeMonth:'最近三个月'
+            },
+            to:'至',
+            phenoFile:{
+                barChart_title:'文件数量统计',
+                lineChart_title:'文件数量变化统计',
+                phenoFile_header:'表型数据可视化',
+
+            },
+            phenoImage:{
+                barChart_title:'图片数量统计',
+                lineChart_title:'图片数量变化统计',
+                phenoImage_header:'表型图片可视化',
+            },
+            feature:{
+                save:'保存为图片',
+                mytool1:'全选/取消全选',
+                mytool2:'展开/收起图例',
+            },
         }
     }
 }

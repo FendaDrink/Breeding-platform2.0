@@ -76,7 +76,7 @@
                   </el-table-column>
                   <el-table-column :label="$t('phenotype.index.table_previousVersions')" align="center" class-name="small-padding fixed-width" width="auto">
                     <template #default="scope">
-                      <el-tooltip :content="$t('phenotype.index.tooltip_histoicalVersions')" placement="top">
+                      <el-tooltip :content="$t('phenotype.index.tooltip_historicalVersions')" placement="top">
                         <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
                           icon="timer" class="table_button">
                         </el-button></el-tooltip>

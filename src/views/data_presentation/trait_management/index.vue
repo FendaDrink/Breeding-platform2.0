@@ -33,7 +33,7 @@
           </div>
           <div v-else>此节点下无文件</div>
         </el-card>
-        <!-- 
+        <!--
         <div v-show="traitChoosed" class="gene-form">
           <el-card class="card-container">
             <div class="big-wrapper" style="margin-top: 10px">
