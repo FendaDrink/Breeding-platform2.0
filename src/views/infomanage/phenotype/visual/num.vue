@@ -3,15 +3,15 @@
     <el-card class="card-container">
       <template #header>
         <div class="card-header">
-          <span>数量统计&表型分析</span>
+          <span>{{ $t('phenotypeVisual.index.header') }}</span>
         </div>
       </template>
       <div>
         <div class="phenoNum">
-          <h1>表型数量： {{ phenotypeNum }}</h1>
+          <h1>{{ $t('phenotypeVisual.num.phenotype_num') }}： {{ phenotypeNum }}</h1>
         </div>
         <div class="phenoNum">
-          <h1>材料数量： {{ materialNum }}</h1>
+          <h1>{{ $t('phenotypeVisual.num.material_num') }}： {{ materialNum }}</h1>
         </div>
       </div>
       <div id="PieChart" style="width: 100%; height: 500px"></div
@@ -29,6 +29,16 @@ import {
   phenotypeAndMaterialNum,
 } from "@/api/data_presentation/phenotype_management";
 
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+const unclassified_trait = computed(()=>i18n.t('phenotypeVisual.index.unclassified_trait')).value
+
 provide(THEME_KEY);
 
 const data1 = ref({});
@@ -39,10 +49,18 @@ function getData() {
   countByType()
     .then((res) => {
       data1.value = res.data;
-      newData1.value = Object.entries(data1.value).map(([name, value]) => ({
-        value,
-        name,
-      }));
+      for(let key in data1.value){
+        if(key==="未归类性状"){
+          data1.value[unclassified_trait] =data1.value[key];
+          delete data1.value[key];
+        }
+      }
+      newData1.value = Object.entries(data1.value).map(([name, value]) => (
+          {
+            value,
+            name,
+          }
+      ));
       showPieChart();
     })
     .catch((error) => {
@@ -57,7 +75,7 @@ function showPieChart() {
   const myChart = echarts.init(echartDom);
   const option = {
     title: {
-      text: "表型分析",
+      text: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? "表型分析": "Phenotype Analysis",
       left: "center",
     },
     tooltip: {

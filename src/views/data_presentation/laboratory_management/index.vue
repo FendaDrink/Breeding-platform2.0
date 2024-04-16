@@ -31,7 +31,7 @@
                 style="width: 80px">{{ $t('phenotype.laboratory.button.ok') }}</el-button>
             </el-row>
           </div>
-          <div v-else>此节点下无文件</div>
+          <div v-else>{{ $t('phenotype.laboratory.other.noFile') }}</div>
         </el-card>
         <el-card class="card-container" v-show="routerFileShow">
           <h1>{{ $t('phenotype.laboratory.header.h1') }}<i>&nbsp;</i></h1>
@@ -70,8 +70,8 @@
                   <el-table-column :label="$t('phenotype.laboratory.table.index')" width="80" type="index" align="center" :index="indexMethod" />
                   <el-table-column prop="traitName" :label="$t('phenotype.laboratory.table.traitName')" align="center"></el-table-column>
                   <el-table-column prop="average" :label="$t('phenotype.laboratory.table.average')" align="center"></el-table-column>
-                  <el-table-column prop="maxNum" :label="$t('phenotype.laboratory.table.maxmum')" align="center"></el-table-column>
-                  <el-table-column prop="minNum" :label="$t('phenotype.laboratory.table.minmum')" align="center"></el-table-column>
+                  <el-table-column prop="maxNum" :label="$t('phenotype.laboratory.table.maximum')" align="center"></el-table-column>
+                  <el-table-column prop="minNum" :label="$t('phenotype.laboratory.table.minimum')" align="center"></el-table-column>
                 </el-table>
               </div>
             </div>

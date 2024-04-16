@@ -34,7 +34,7 @@ export default {
             tooltip_detail: 'Details',
             tooltip_view: 'View',
             tooltip_delete: 'Delete',
-            tooltip_histoicalVersions: 'View Previous Versions',
+            tooltip_historicalVersions: 'View Previous Versions',
             tooltip_merge: 'Merge',
 
             placeholder_fileName: 'Enter the file name.',
@@ -94,9 +94,9 @@ export default {
             table_operate: 'Operations',
             table_kindId: 'Kind Id',
             table_kindName: 'Kind Name',
-            table_materialId: 'Meterial Id',
+            table_materialId: 'Material Id',
             table_fieldId: 'Field Id',
-            table_controlType: 'Control Tpye',
+            table_controlType: 'Control Type',
             table_father: 'Father',
             table_mother: 'Mother',
             table_remark: 'Remark',
@@ -110,11 +110,11 @@ export default {
             button_cancel: 'cancel',
 
 
-            label_meterial: 'Meterial Name',
+            label_material: 'Material Name',
             label_phenotype: 'Phenotype Name',
             label_operation: 'Operations',
 
-            placeholder_meterial: 'Select the material name.',
+            placeholder_material: 'Select the material name.',
             placeholder_phenotype: 'Select the phenotype name.',
 
             title_update: 'Update File Details',
@@ -213,7 +213,7 @@ export default {
                     imageNewDate: 'New Date: ',
                     comment: 'Comment: ',
 
-                    ip: 'IP Adress: ',
+                    ip: 'IP Address: ',
                     catalog: 'Image catalog: ',
                 },
                 placeholder: {
@@ -229,7 +229,7 @@ export default {
                     imageNewDate: 'Select the new Date.',
                     comment: 'Enter the comment.',
 
-                    ip: 'Enter the IP Adress.',
+                    ip: 'Enter the IP Address.',
                     catalog: 'Enter image catalog.',
                 },
                 message: {
@@ -244,11 +244,11 @@ export default {
                 },
                 other: {
                     description: 'Description: ',
-                    dateSelction: 'Date selection: ',
+                    dataSelection: 'Date selection: ',
                     phenoAnalysis: 'Phenotypic Image Analysis',
                     noImage: 'No Image Yet',
                     noName: 'No Name Yet',
-                    dateSelction_empty: 'The description information is empty!',
+                    dataSelection_empty: 'The description information is empty!',
                     date_start: 'Start Date',
                     date_end: 'End Date',
                     to: 'To',
@@ -266,7 +266,7 @@ export default {
                 lastMonth: "Last Month",
                 last3Month: "Last three Months",
                 chooseAll: "All Selected!",
-                chooseAllCancle: "All Selection Canceled!",
+                chooseAllCancel: "All Selection Canceled!",
                 mytool1: "Select All / Deselect All",
                 mytool2: "Expand/Collapse Legend",
                 noChooseImage: "No images have been selected!",
@@ -340,8 +340,8 @@ export default {
                 index: 'index',
                 traitName: 'Trait Name',
                 average: 'Average',
-                maxmum: 'Maxmun',
-                minmum: 'Minmum',
+                maximum: 'Maximum',
+                minimum: 'Minimum',
             },
             header: {
                 h1: 'Phenotype File Selection',
@@ -356,10 +356,34 @@ export default {
             },
             message: {
                 search_success: 'Search Successfully!',
-                select_success: 'Selcet Successfully!',
+                select_success: 'Select Successfully!',
                 get_success: 'Get the information successfully!'
             }
 
+        },
+        visualization:{
+            select_date:'Data Selection',
+            dateRange:{
+                last_week:'last week',
+                last_month:'last month',
+                last_threeMonth:'last 3 months'
+            },
+            to:'to',
+            phenoFile:{
+                barChart_title:'File Quantity Statistics',
+                lineChart_title:'File Quantity Change Statistics',
+                phenoFile_header:'Phenotypic File Visualization',
+            },
+            phenoImage:{
+                barChart_title:'Picture Quantity Statistics',
+                lineChart_title:'Picture Quantity Change Statistics',
+                phenoImage_header:'Phenotypic Picture Visualization',
+            },
+            feature:{
+                save:'Save As Image',
+                mytool1:'Select All/Deselect All',
+                mytool2:'Expand/Collapse Legend',
+            }
         }
 
     }

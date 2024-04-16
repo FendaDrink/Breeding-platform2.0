@@ -1,8 +1,6 @@
-import { mapGamepadToXbox360Controller } from "@vueuse/core";
-
 // en.js
 export default {
-    genotype: {
+    environment: {
         index: {
             node_add: 'Add Node',
             node_update: 'Update Node',
@@ -23,9 +21,10 @@ export default {
 
             table_index: 'Index',
             table_fileName: 'File Name',
-            table_speciesName: 'Species Name',
-            table_populationName: 'Population Name',
-            table_year: 'Year',
+            table_start:'Start Date',
+            table_end:'End Date',
+            table_longitude:'Longitude',
+            table_latitude:'Latitude',
             table_location: 'Location',
             table_fileStatus: 'Status',
             table_operate: 'Operations',
@@ -34,16 +33,19 @@ export default {
 
 
             tooltip_detail: 'Details',
-            tooltip_view: 'View',
+            tooltip_view1: 'Factor Classification Visualization',
+            tooltip_view2: 'Factor Analysis Visualization',
             tooltip_delete: 'Delete',
-            tooltip_histoicalVersions: 'View Previous Versions',
+            tooltip_historicalVersions: 'View Previous Versions',
             tooltip_merge: 'Merge',
-            tooltip_screen:'Gene Screen',
-            tooltip_heatmap:'Gene Heatmap',
+
 
             placeholder_fileName: 'Enter the file name.',
             placeholder_node: 'Enter the node name.',
-            placeholder_comment: 'Enter the comment',
+            placeholder_comment: 'Enter the comment.',
+            placeholder_location:'Enter the location.',
+            placeholder_longitude:'Enter the longitude.',
+            placeholder_latitude:'Enter the latitude.',
 
             title_create: 'Add A File',
             title_update: 'Update A File',
@@ -58,6 +60,9 @@ export default {
             dialog_fileName: 'File Name: ',
             dialog_comment: 'Comment: ',
             dialog_upload: 'Upload: ',
+            dialog_location:'Location: ',
+            dialog_longitude:'longitude: ',
+            dialog_latitude:'latitude: ',
 
             name_require:'The file name format must be "Species_Population"',
 
@@ -65,7 +70,7 @@ export default {
             message_getListFailed: "Retrieving list failed!",
             message_input_fileName: "File name cannot be empty!",
             message_input_nodeName: "Node name cannot be empty!",
-            message_input_nodeName: "Comment name cannot be empty!",
+            message_input_commentName: "Comment name cannot be empty!",
             message_input_status: "Please select a status!",
             message_input_date: "Please select a date!",
             message_upload_vcf: "Only CSV file format is allowed for upload!",
@@ -77,7 +82,7 @@ export default {
             message_delete_confirm: "Are you sure you want to delete the file?",
             message_delete_success: "Deletion successfully!",
             message_delete_fail: "Deletion failed!",
-            message_update_success: "Update successfully!",
+            message_update_success: "Update !",
             message_update_fail: "Update failed!",
             message_downloading: "Downloading, please wait...",
             message_node_parent: "Please select a parent node!",
@@ -90,10 +95,18 @@ export default {
             message_node_delete_success: "Node deletion successful!",
             message_file_confirm: "Are you sure you want to delete the file?",
 
-
+            message_area1: 'Please enter the region (in Chinese).', 
+            message_area2: 'The region must be entered in Chinese only.', 
+            message_longitude: 'Please enter the longitude value.', 
+            message_latitude: 'Please enter the latitude value.',
+            message_merge_success:'Merge successfully!',
         },
         file: {
             table_operate: 'Operations',
+            table_env:'Environment Id',
+            table_location:'Location',
+            table_date:'Date',
+            table_comment:'Comment',
 
 
             button_search: 'Search',
@@ -105,7 +118,7 @@ export default {
             wait:'File generation in progress, please wait!',
 
 
-            placeholder_meterial: 'Select the material name.',
+            placeholder_material: 'Select the material name.',
 
             title_update: 'Update File Details',
 
@@ -120,11 +133,11 @@ export default {
             button_search: 'Search',
 
             table_index: 'Index',
-            table_traitName: 'Trait Name',
+            table_factorName:'Factor Name',
+            table_name:'Name',
             table_fullName: 'Full Name',
             table_abbreviationName: 'Abbreviation',
             table_remark: 'Remark',
-            table_name: 'Name',
             table_type: 'Type',
             table_location: 'Location',
             table_longitude: 'Longitude',
@@ -136,40 +149,10 @@ export default {
             label_latitude: 'Latitude',
 
 
-            header1: 'Search Traits',
+            header1: 'Search Environmental Factors',
             header2: 'Search Locations',
 
 
         },
-        view: {
-            header:'Chromosome Density Map',
-        },
-
-        filter:{
-            header:'Gene Screen',
-            label:{
-                index:'Index',
-                name:'Material Name',
-                placeholder:'Please select.'
-            },
-            t1:'Chrom: ',
-            t2:'Position: ',
-            t3:'Marker: ',
-            t4:'Info: ',
-        },
-
-        heatmap:{
-            header:'Gene Heatmap',
-            ph:{
-                name:'Material Name',
-                gene:'Genotype',
-                start:'Start Number',
-                end:'End Number',
-            }
-        },
-        pca:{
-            header:'Phenotype File Selection',
-            noFile:'No files under this node.'
-        }
     }
 }

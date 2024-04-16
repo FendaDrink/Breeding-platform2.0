@@ -1,11 +1,11 @@
 <template>
     <div class="outBox">
         <div class="chooseType">
-            <span>表型数据可视化：</span>
-            <el-select placeholder="请选择可视化模块" v-model="visualModule">
-                <el-option label="表型和材料数量&表型分析" value="num"></el-option>
-                <el-option label="性状分析" value="traitAnalysis"></el-option>
-                <el-option label="性状与分类" value="traitManage"></el-option>
+            <span>{{ $t('phenotypeVisual.index.header') }}：</span>
+            <el-select :placeholder="$t('phenotypeVisual.index.label_placehodler')" v-model="visualModule">
+                <el-option :label="$t('phenotypeVisual.index.num_label')" value="num"></el-option>
+                <el-option :label="$t('phenotypeVisual.index.traitAnalysis_label')" value="traitAnalysis"></el-option>
+                <el-option :label="$t('phenotypeVisual.index.traitManage_label')" value="traitManage"></el-option>
             </el-select>
         </div>
         <num v-if="visualModule==='num'"></num>

@@ -86,7 +86,7 @@ export default {
             data2: 'Latest',
             upload: 'Click to Upload',
             submit: 'Submit',
-            canel:'Cancel',
+            cancel:'Cancel',
             confirm:'Confirm',
         },
         

@@ -89,7 +89,7 @@ export default {
             data2:'最新数据',
             upload:'点击上传',
             submit:'提交',
-            canel:'取消',
+            cancel:'取消',
             confirm:'确定',
         },
     

@@ -2,7 +2,7 @@
   <el-card class="card-container">
     <template #header>
       <div class="card-header">
-        <span>性状与分类</span>
+        <span>{{ $t('phenotypeVisual.traitManage.traitManage_header') }}</span>
       </div>
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
@@ -19,7 +19,7 @@
                 style="margin: 10px auto"
                 >
                 <el-table-column
-                    label="序号"
+                    :label="$t('phenotypeVisual.traitManage.table_label.index')"
                     width="80px"
                     type="index"
                     :index="indexMethod"
@@ -29,7 +29,7 @@
                 <el-table-column
                     align="center"
                     prop="traitName"
-                    label="性状名称"
+                    :label="$t('phenotypeVisual.traitManage.table_label.traitName')"
                     min-width="150px"
                 >
                     <template #default="scope">
@@ -39,7 +39,7 @@
                 <el-table-column
                     align="center"
                     prop="fullName"
-                    label="全称"
+                    :label="$t('phenotypeVisual.traitManage.table_label.fullName')"
                     min-width="150px"
                 >
                     <template #default="scope">
@@ -49,7 +49,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="abbreviationName"
-                    label="缩写"
+                    :label="$t('phenotypeVisual.traitManage.table_label.abbreviationName')"
                     align="center"
                     min-width="150px"
                 >
@@ -58,7 +58,7 @@
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="remark" label="备注" min-width="180px" align="center">
+                <el-table-column prop="remark" :label="$t('phenotypeVisual.traitManage.table_label.remark')" min-width="180px" align="center">
                     <template #default="scope">
                     {{ formatTableCell(scope.row.remark) }}
                     </template>
@@ -90,6 +90,19 @@ import {
   selectTraitColByFileId,
 } from "@/api/data_presentation/trait_management";
 
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+const titles = {
+  sunBurstChat_title:computed(()=>i18n.t('phenotypeVisual.traitManage.sunBurstChat_title')),
+  unclassified_factor:computed(()=>i18n.t('phenotypeVisual.traitManage.unclassified_factor'))
+
+}
 //route实例
 const route = useRoute();
 
@@ -139,7 +152,7 @@ const phenotypeData = reactive([
 let _phenotypeData = []
 
 const sunBurstData = reactive({
-  name: "植物性状",
+  name: titles.sunBurstChat_title,
   children: [
   ],
 });
@@ -250,7 +263,7 @@ const createTreeData = (data) => {
     if (!isExist) {
       if (item.traitTypeId == null) {
         traitType.push({
-          name: "未定义因子类别",
+          name: titles.unclassified_factor,
           id: null,
         })
       } else
@@ -629,8 +642,8 @@ canvas{
   border-top: 1px solid #ebeef5;
 
   th {
-    font-weight: 800;
-    font-size: 16PX;
+    font-size: 13px;
+    font-weight: bold;
     background: var(--theme-color) !important;
     color:#FFFFFF;
     letter-spacing: 2px;

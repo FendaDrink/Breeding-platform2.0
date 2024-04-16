@@ -4,9 +4,9 @@
     <el-button style="margin: 20px; margin-left: calc(95% - 30px)" @click="exportFile" type="warning" plain
       size="large">{{ $t('phenotype.file.button_export') }}</el-button>
     <el-form :inline="true" :model="searchForm" class="search-form">
-      <el-form-item :label="$t('phenotype.file.label_meterial')">
+      <el-form-item :label="$t('phenotype.file.label_material')">
         <el-select v-model="searchForm.searchMaterialId" multiple filterable clearable
-          :placeholder="$t('phenotype.file.placeholder_meterial')">
+          :placeholder="$t('phenotype.file.placeholder_material')">
           <el-option v-for="(item, index) in materialoptions" :key="index" :label="item" :value="item">
           </el-option>
         </el-select>

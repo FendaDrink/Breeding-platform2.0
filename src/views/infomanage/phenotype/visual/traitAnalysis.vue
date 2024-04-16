@@ -3,33 +3,33 @@
     <el-card class="card-container">
       <template #header>
         <div class="card-header">
-          <span>性状分析</span>
+          <span>{{ $t('phenotypeVisual.traitAnalysis.traitAnalysis_header') }}</span>
         </div>
       </template>
       <div style="margin-top: 10px">
         <div class="chooseBox">
           <div>
             <div class="input-title">
-              <h1>请选择材料</h1>
+              <h1>{{ $t('phenotypeVisual.traitAnalysis.material_title') }}</h1>
             </div>
             <div class="search_table">
-              <el-select v-model="traitValue" filterable placeholder="请选择材料id">
+              <el-select v-model="traitValue" filterable :placeholder="$t('phenotypeVisual.traitAnalysis.material_placeholder')">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
               <el-button style="margin-left: 20px !important" @click="search_trait" v-loading="searchLoading"
-                         icon="View" type="primary">查看</el-button>
+                         icon="View" type="primary">{{ $t('phenotypeVisual.traitAnalysis.search_btn') }}</el-button>
             </div>
           </div>
           <div>
             <div class="input-title">
-              <h1>请选择性状类型</h1>
+              <h1>{{ $t('phenotypeVisual.traitAnalysis.traitType_title') }}</h1>
             </div>
             <div class="search_table">
-              <el-select v-model="traitType.id" filterable placeholder="请选择性状类别">
+              <el-select v-model="traitType.id" filterable :placeholder="$t('phenotypeVisual.traitAnalysis.traitType_placeholder')">
                 <el-option v-for="item in traitTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
               <el-button style="margin-left: 20px !important" @click="confirmChooseType" icon="Pointer"
-                         v-loading="chooseLoading" type="primary">选择</el-button>
+                         v-loading="chooseLoading" type="primary">{{ $t('phenotypeVisual.traitAnalysis.select_btn') }}</el-button>
             </div>
           </div>
         </div>
@@ -47,20 +47,20 @@
     <el-card class="card-container">
       <template #header>
         <div class="card-header">
-          <span>材料单一性状分析</span>
+          <span>{{ $t('phenotypeVisual.traitAnalysis.singleMaterialAnalysis_header') }}</span>
         </div>
       </template>
       <div class="chooseBox">
         <div>
           <div class="input-title">
-            <h1>请选择性状</h1>
+            <h1>{{ $t('phenotypeVisual.traitAnalysis.trait_title') }}</h1>
           </div>
           <div class="search_table">
-            <el-select v-model="searchTraitId" filterable placeholder="请输入性状名">
+            <el-select v-model="searchTraitId" filterable :placeholder=" $t('phenotypeVisual.traitAnalysis.trait_placeholder')">
               <el-option v-for="item in allTraits" :key="item.traitId" :label="item.traitName" :value="item.traitId" />
             </el-select>
             <el-button style="margin-left: 20px !important" @click="searchTraitByName" v-loading="searchTraitLoading"
-                       icon="View" type="primary">查看</el-button>
+                       icon="View" type="primary">{{ $t('phenotypeVisual.traitAnalysis.search_btn') }}</el-button>
           </div>
         </div>
       </div>
@@ -87,6 +87,27 @@ const {
   proxy: { $modal,$theme },
 } = getCurrentInstance();
 
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+const titles = {
+  unclassified_trait:computed(()=>i18n.t('phenotypeVisual.index.unclassified_trait')).value,
+  average_value:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.average_value')).value,
+  barChart_title:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.barChart_title')).value,
+}
+
+const message = {
+  select_success:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.select_success')).value,
+  select_failure:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.select_failure')).value,
+  search_success:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.search_success')).value,
+  search_failure:computed(()=>i18n.t('phenotypeVisual.traitAnalysis.message.search_failure')).value
+}
 
 const route = useRoute();
 const chartsShow = ref(false);
@@ -105,7 +126,7 @@ const isChartsLoading = ref('')
 //当前选择的性状类别
 const traitType = reactive({
   id: -1,
-  name:'未分类性状'
+  name:titles.unclassified_trait
 })
 
 //形状类别
@@ -201,7 +222,7 @@ function getChartsValueByType(data) {
   //填充未定义类型
   traitTypes.push({
     id:null,
-    name:'未分类性状'
+    name:titles.unclassified_trait
   })
   traitTypes.forEach((item) => {
     //获得性状类别
@@ -397,7 +418,7 @@ function showTypeChart() {
       }
     },
     legend: {
-      data: [traitValue.value,'平均值'],
+      data: [traitValue.value,titles.average_value],
       top: 'bottom',
       left: 'left',
       itemHeight: 4,
@@ -439,7 +460,7 @@ function showTypeChart() {
           },
           {
             value: chartsAverageByType[traitType.id],
-            name: '平均值'
+            name: titles.average_value
           }
         ]
       }
@@ -528,7 +549,7 @@ function showBarDate() {
       }
     },
     legend: {
-      data: [traitValue.value, '平均值'],
+      data: [traitValue.value, titles.average_value],
       left: 'right',
       top: 'top',
       itemHeight: 25,
@@ -550,7 +571,7 @@ function showBarDate() {
         color: '#4472C4'
       },
       {
-        name: '平均值',
+        name: titles.average_value,
         data: chartsAverageByFormat.date,
         type: 'bar',
         showBackground: true,
@@ -621,7 +642,7 @@ function showBarPercent() {
       }
     },
     legend: {
-      data: [traitValue.value, '平均值'],
+      data: [traitValue.value, titles.average_value],
       left: 'right',
       top: 'top',
       itemHeight: 25,
@@ -640,7 +661,7 @@ function showBarPercent() {
         color: '#4472C4'
       },
       {
-        name: '平均值',
+        name: titles.average_value,
         data: chartsAverageByFormat.percent,
         type: 'bar',
         showBackground: true,
@@ -692,7 +713,7 @@ function showBarNum() {
       min: minNum===maxNum?0:minNum
     },
     title: {
-      text: '数值类性状',
+      text: titles.average_value,
       textStyle: {
         fontSize: 20,
         fontWeight: 'normal',
@@ -700,7 +721,7 @@ function showBarNum() {
       }
     },
     legend: {
-      data: [traitValue.value, '平均值'],
+      data: [traitValue.value, titles.average_value],
       left: 'right',
       top: 'top',
       itemHeight: 25,
@@ -719,7 +740,7 @@ function showBarNum() {
         color: '#4472C4',
       },
       {
-        name: '平均值',
+        name: 'titles.average_value',
         data: chartsAverageByFormat.num,
         type: 'bar',
         showBackground: true,
@@ -799,7 +820,7 @@ function chooseForm() {
         chartsShow.value = true;
         ChartsLoading.value = false;
         chooseLoading.value = false;
-        $modal.msgSuccess("选择成功！");
+        $modal.msgSuccess(message.select_success);
         states.value = res.data;
         options.value = states.value.map((item) => {
           return {value: item, label: item};
@@ -813,7 +834,7 @@ function chooseForm() {
               laboratorFormShow.value = true;
               updateTableData(res.data);
               searchLoading.value = false;
-              $modal.msgSuccess("搜索成功！");
+              $modal.msgSuccess(message.search_success);
               console.log(res, "tableDataRes");
             })
             .catch((err) => {
@@ -823,6 +844,7 @@ function chooseForm() {
       })
       .catch((err) => {
         console.error(err);
+        $modal.msgError(message.select_failure);
         ChartsLoading.value = false;
         chooseLoading.value = false;
       });
@@ -843,7 +865,7 @@ function search_trait() {
 
         updateTableData(res.data);
         searchLoading.value = false;
-        $modal.msgSuccess("搜索成功！");
+        $modal.msgSuccess(message.search_success);
         console.log(res, "res");
       })
       .catch((err) => {
@@ -891,16 +913,16 @@ function searchTraitByName() {
         if (res.code == 200) {
           searchTraitLoading.value = false
           updateAllTraitValue(res.data)
-          $modal.msgSuccess("搜索成功！");
+          $modal.msgSuccess(message.search_success);
           console.log(res, "res");
           showBarTrait()
         } else {
           searchTraitLoading.value = false
-          $modal.msgError("搜索失败！");
+          $modal.msgError(message.search_failure);
         }
       })
       .catch((err) => {
-        $modal.msgError("搜索失败！");
+        $modal.msgError(message.search_failure);
         console.log(err);
         searchTraitLoading.value = false
       });
