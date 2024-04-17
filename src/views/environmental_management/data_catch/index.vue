@@ -3,26 +3,26 @@
         <div class="main-content">
             <div class="out-wrapper">
                 <div class="gbac">
-                    <h1>环境信息抓取模块<i>&nbsp;</i></h1>
+                    <h1>{{ $t('environment.dataCatch.upload.header') }}<i>&nbsp;</i></h1>
                     <div class="main-upload">
-                        <div>
-                            <label for="inputHelpBlock">上传环境信息文件</label>
-                            <el-upload class="upload-demo" v-model:file-list="environmentalData" accept=".csv"
-                                action="#" :headers="headers" method="post" :auto-upload="false" multiple :limit="1"
-                                :before-upload="handleBeforeUpload"
-                                drag>
-                                <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                                <div class="el-upload__text">
-                                    点击上传/拖拽文件
-                                </div>
-                            </el-upload>
-                        </div>
-                    </div>
+                      <div>
+                          <label for="inputHelpBlock">{{ $t('environment.dataCatch.upload.title') }}</label>
+                          <el-upload class="upload-demo" v-model:file-list="environmentalData" accept=".csv"
+                              action="#" :headers="headers" method="post" :auto-upload="false" multiple :limit="1"
+                              :before-upload="handleBeforeUpload"
+                              drag>
+                              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                              <div class="el-upload__text">
+                                {{ $t('environment.dataCatch.upload.prompt') }}
+                              </div>
+                          </el-upload>
+                      </div>
+                  </div>
                     <div class="btn" style="text-align: center;">
-                        <el-button type="success" plain style="width: 110px; margin-top: 20px;"
-                        @click="downloadTemplate">下载模版文件</el-button>
+                        <el-button type="success" plain style="margin-top: 20px;"
+                        @click="downloadTemplate">{{ $t('environment.dataCatch.upload.download_btn') }}</el-button>
                         <el-button type="success" @click="submit" plain
-                        style="width: 110px; margin-top: 20px;">提交</el-button>
+                        style="width: 110px; margin-top: 20px;">{{ $t('environment.dataCatch.upload.submit_btn') }}</el-button>
                     </div>
                 </div>
             </div>
@@ -35,19 +35,19 @@
                     <el-icon>
                         <MessageBox />
                     </el-icon>
-                    &nbsp;任务信息展示
+                    &nbsp;{{ $t('environment.dataCatch.table.title') }}
                 </div>
                 <div>
-                    <el-button @click="getEnvironmentalData" type="primary">刷新任务列表</el-button>
+                    <el-button @click="getEnvironmentalData" type="primary">{{ $t('environment.dataCatch.table.refresh_btn') }}</el-button>
                 </div>
             </div>
             <div class="main-data">
                 <el-table v-loading="loading" trigger :data="envCatchDataList">
-                    <el-table-column align="center" label="序号" type="index" width="80"></el-table-column>
-                    <el-table-column label="任务编号" prop="id" align="center" width="180" />
-                    <el-table-column align="center" prop="createBy" label="创建人" />
-                    <el-table-column align="center" prop="createTime" label="创建时间" width="180" />
-                    <el-table-column align="center" label="任务状态" width="150">
+                    <el-table-column align="center" :label="$t('environment.dataCatch.table.index')" type="index" width="80"></el-table-column>
+                    <el-table-column :label="$t('environment.dataCatch.table.indexId')" prop="id" align="center" width="180" />
+                    <el-table-column align="center" prop="createBy" :label="$t('environment.dataCatch.table.createdBy')" />
+                    <el-table-column align="center" prop="createTime" :label="$t('environment.dataCatch.table.createTime')" width="180" />
+                    <el-table-column align="center" :label="$t('environment.dataCatch.table.status')" width="150">
                         <template #default="scope">
                             <div id="status">
                                 <el-icon style="color: #0dbc79;font-size: 25px;" v-show="scope.row.status == 2">
@@ -63,7 +63,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" fixed="right" label="输入文件下载">
+                    <el-table-column align="center" fixed="right" :label="$t('environment.dataCatch.table.inputFile_download')">
                         <template #default="scope">
                             <el-button link type="text" @click="exportFile(scope.row)" style="color: #0dbc79;"
                             >
@@ -71,33 +71,34 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" fixed="right" label="结果下载">
+                    <el-table-column align="center" fixed="right" :label="$t('environment.dataCatch.table.result_download')">
                         <template #default="scope">
                             <el-button link type="text" @click="exportCsv(scope.row)" style="color: #0dbc79;"
                                 v-show="scope.row.status == 2">
-                                导出csv
+                              {{ $t('environment.dataCatch.table_inner.export') }}
                             </el-button>
                             <el-button link type="text" disabled v-show="scope.row.status != 2">
-                                导出csv
+                              {{ $t('environment.dataCatch.table_inner.export') }}
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" fixed="right" label="提示信息">
+                    <el-table-column align="center" fixed="right" :label="$t('environment.dataCatch.table.prompt')">
                         <template #default="scope">
                             <el-popover placement="top" trigger="hover">
                                 <text>{{ scope.row.info===''?'无提示信息':scope.row.info }}</text>
                                 <template #reference>
-                                    <el-button link type="text" style="color: var(--theme-color);">查看提示信息</el-button>
+                                    <el-button link type="text" style="color: var(--theme-color);">
+                                      {{ $t('environment.dataCatch.table_inner.promptInfo') }}</el-button>
                                 </template>
                             </el-popover>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" fixed="right" label="操作">
+                    <el-table-column align="center" fixed="right" :label="$t('environment.dataCatch.table.option')">
                         <template #default="scope">
-                            <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
+                            <el-popconfirm :title="$t('environment.dataCatch.table_inner.del_message')" @confirm='handleDelete(scope.row)'>
                                 <template #reference>
                                     <el-button link type="text" style="color: var(--theme-color);">
-                                        删除
+                                      {{ $t('environment.dataCatch.table_inner.delete') }}
                                     </el-button>
                                 </template>
                             </el-popconfirm>
@@ -126,6 +127,34 @@ import { blobValidate } from '@/utils/param'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { postData, getData, deleteData, downloadResultCsv, downloadFile, downloadTemplateAPI} from '../../../api/environmental_management/data_catch';
 
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+import {MessageBox} from "@element-plus/icons-vue";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+const message = {
+  getSuccess:computed(()=>i18n.t('environment.dataCatch.message.getSuccess')).value,
+  getFailure:computed(()=>i18n.t('environment.dataCatch.message.getFailure')).value,
+  uploadSuccess:computed(()=>i18n.t('environment.dataCatch.message.uploadSuccess')).value,
+  uploadFailure:computed(()=>i18n.t('environment.dataCatch.message.uploadFailure')).value,
+  upload_warning:computed(()=>i18n.t('environment.dataCatch.message.upload_warning')).value,
+  upload_csv:computed(()=>i18n.t('environment.dataCatch.message.upload_csv')).value,
+  saveAs:computed(()=>i18n.t('environment.dataCatch.message.saveAs')).value,
+  download_failure:computed(()=>i18n.t('environment.dataCatch.message.download_failure')).value,
+  export_fail:computed(()=>i18n.t('environment.dataCatch.message.export_fail')).value,
+  error:computed(()=>i18n.t('environment.dataCatch.message.error')).value,
+  del_message:computed(()=>i18n.t('environment.dataCatch.message.del_message')).value,
+  warning:computed(()=>i18n.t('environment.dataCatch.message.warning')).value,
+  confirm:computed(()=>i18n.t('environment.dataCatch.message.confirm')).value,
+  cancel:computed(()=>i18n.t('environment.dataCatch.message.cancel')).value,
+  delSuccess:computed(()=>i18n.t('environment.dataCatch.message.delSuccess')).value,
+  delFailure:computed(()=>i18n.t('environment.dataCatch.message.delFailure')).value,
+}
 const router = useRouter()
 
 const loading = ref(false)
@@ -148,7 +177,7 @@ const handleBeforeUpload = (file) => {
     const fileType = file?.name?.substring(file.name.lastIndexOf(".") + 1);
     const isCsv = fileType === "csv";
     if (!isCsv) {
-        $modal.msgError("请上传.csv文件");
+        $modal.msgError(message.upload_csv);
         return false;
     }
     return isCsv;
@@ -157,13 +186,13 @@ const handleBeforeUpload = (file) => {
 // .csv文件上传
 const submit = () => {
     if (environmentalData.value.length === 0) {
-        ElMessage.warning('请上传文件')
+        ElMessage.warning(message.upload_warning)
         return
     }
     console.log(environmentalData.value[0].name)
     // 文件.csv校验
     if (environmentalData.value[0].name.split('.').pop() !== 'csv') {
-        ElMessage.warning('请上传.csv文件')
+        ElMessage.warning(message.upload_csv)
         return
     }
     const formData = new FormData()
@@ -172,13 +201,13 @@ const submit = () => {
     postData(formData).then(res => {
         console.log(res)
         if (res.code === 200) {
-            ElMessage.success('提交成功')
+            ElMessage.success(message.uploadSuccess)
             environmentalData.value = []
             setTimeout(() => {
               getEnvironmentalData();
             }, 1000)
         } else {
-            ElMessage.error('提交失败')
+            ElMessage.error(message.uploadFailure)
         }
     })
 }
@@ -186,11 +215,11 @@ const submit = () => {
 const getEnvironmentalData = async () => {
     const res = await getData(queryParams.value);
     if (res.code === 200) {
-        ElMessage.success('获取数据成功')
+        ElMessage.success(message.getSuccess)
         envCatchDataList.value = Array.from(res.data.list)
         total.value = res.data.total
     } else {
-        ElMessage.error('获取数据失败')
+        ElMessage.error(message.getFailure)
     }
     console.log(envCatchDataList.value)
 }
@@ -200,7 +229,7 @@ const downloadTemplate = () => {
         const isLogin = blobValidate(res);
         if(isLogin){
             const blob = new Blob([res])
-            saveAs(blob,'模版文件.csv')
+            saveAs(blob,message.saveAs)
         }else{
             const resText = data.text();
             const rspObj = JSON.parse(resText);
@@ -209,14 +238,14 @@ const downloadTemplate = () => {
         }
     }).catch(err => {
         console.log(err)
-        ElMessage.error('下载文件出现错误，请联系管理员！');
+        ElMessage.error(message.download_failure);
     })
 }
 // 下载csv文件
 const exportCsv = (row) => {
     console.log(row)
     if (row.status != 2) {
-        ElMessageBox.alert('任务尚未成功时不能导出csv', '错误', {
+        ElMessageBox.alert(message.export_fail, message.error, {
             // if you want to disable its autofocus
             // autofocus: false,
             confirmButtonText: 'OK',
@@ -240,7 +269,7 @@ const exportCsv = (row) => {
         }
     }).catch(err => {
         console.log(err)
-        ElMessage.error('下载文件出现错误，请联系管理员！');
+        ElMessage.error(message.download_failure);
     })
 }
 // 下载输入文件
@@ -259,27 +288,27 @@ const exportFile = (row) => {
         }
     }).catch(err => {
         console.log(err)
-        ElMessage.error('下载文件出现错误，请联系管理员！');
+        ElMessage.error(message.download_failure);
     })
 }
 // 删除任务
 const handleDelete = async (row) => {
-    ElMessageBox.confirm('确定删除该任务？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    ElMessageBox.confirm(message.del_message, message.warning, {
+        confirmButtonText: message.confirm,
+        cancelButtonText:message.cancel,
         type: 'warning'
     }).then(() => {
         deleteData(row.id).then(res => {
             if (res.code === 200) {
-                ElMessage.success('删除成功')
+                ElMessage.success(message.delSuccess)
                 getEnvironmentalData()
             } else {
-                ElMessage.error('删除失败')
+                ElMessage.error(message.delFailure)
             }
         })
-        console.log('确定')
+        console.log(message.confirm)
     }).catch(() => {
-        console.log('取消')
+        console.log(message.cancel)
     })
 }
 onMounted(() => {
@@ -323,6 +352,10 @@ onMounted(() => {
                     display: flex;
                     justify-content: space-around;
                 }
+              .main-upload{
+                display: flex;
+                justify-content: center;
+              }
             }
         }
     }
@@ -396,27 +429,10 @@ onMounted(() => {
     font-weight: bold;
 }
 
-
-
-
-// :deep(.el-table__header) {
-//   border-bottom: 1px solid black;
-//   border-top: 1px solid #EBEEF5;
-
-//   th {
-//     font-weight: 800;
-//     font-size: 16PX;
-//     background: #FAFAFA !important;
-//     letter-spacing: 2px;
-//     height: 60px !important;
-//   }
-// }
-
 :deep(.el-table__cell) {
     .cell {
         word-break: break-word;
     }
-
 }
 </style>
 
@@ -483,31 +499,6 @@ onMounted(() => {
 .table_button:hover {
     color: var(--theme-color);
 }
-
-// .el-select-dropdown__item.selected {
-//   color: var(--theme-color);
-// }
-
-// .el-input {
-//   --el-input-focus-border-color: var(--theme-color);
-// }
-
-// .el-select {
-//   --el-select-input-focus-border-color: var(--theme-color);
-// }
-
-/* 开关组件 */
-// :deep(.el-switch.is-checked .el-switch__core) {
-//   border-color: var(--theme-color);
-//   background-color: var(--theme-color);
-// }
-
-/* 多选组件 */
-// :deep(.el-checkbox) {
-//   --el-checkbox-checked-input-border-color: var(--theme-color);
-//   --el-checkbox-checked-bg-color: var(--theme-color);
-//   --el-checkbox-input-border-color-hover: var(--theme-color);
-// }
 
 :deep(.el-table__header .el-checkbox) {
     /* Your styles here */

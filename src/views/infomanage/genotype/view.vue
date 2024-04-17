@@ -4,7 +4,7 @@
       <!-- <h1>染色体密度图<i>&nbsp;</i></h1> -->
       <template #header>
         <div class="card-header">
-          <span>染色体密度图</span>
+          <span>{{ $t('genotype.view.header')}}</span>
         </div>
       </template>
       <v-chart style="width: 100%; height: 450px" class="echart" :option="option" autoresize v-loading="isLoading" />
@@ -22,6 +22,14 @@ import {test} from "@/api/tree";
 import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import VChart from "vue-echarts";
 import {useRoute} from "vue-router";
+
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
 const isLoading = ref(true);
 const xData = ref(Array.from({ length: 6000 }, (_, index) => index + 1));

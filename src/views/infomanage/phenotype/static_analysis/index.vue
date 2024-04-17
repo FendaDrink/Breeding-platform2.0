@@ -24,8 +24,8 @@
                 <el-date-picker v-model="value2"
                                 type="daterange"
                                 unlink-panels :range-separator="$t('phenotype.visualization.to')"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期"
+                                :start-placeholder="$t('phenotype.visualization.dateRange.start')"
+                                :end-placeholder="$t('phenotype.visualization.dateRange.end')"
                                 :shortcuts="shortcuts"
                                 :size="size"
                                 style="margin-right: 20px;"
@@ -98,6 +98,7 @@ const dateRange = {
   last_week:computed(()=>i18n.t('phenotype.visualization.dateRange.last_week')).value,
   last_month:computed(()=>i18n.t('phenotype.visualization.dateRange.last_month')).value,
   last_threeMonth:computed(()=>i18n.t('phenotype.visualization.dateRange.last_threeMonth')).value
+
 }
 
 // eChart相关

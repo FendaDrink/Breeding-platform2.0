@@ -169,6 +169,27 @@ export default {
         pca:{
             header:'Phenotype File Selection',
             noFile:'No files under this node.'
+        },
+        visualization:{
+            select_date:'Data Selection',
+            dateRange:{
+                start:'Start Date',
+                end:'End Date',
+                last_week:'last week',
+                last_month:'last month',
+                last_threeMonth:'last 3 months'
+            },
+            to:'to',
+            barChart_title:'File Quantity Statistics',
+            lineChart_title:'File Quantity Change Statistics',
+            header:'Genotype Visualization',
+            feature:{
+                save:'Save As Image',
+                mytool1:'Select All/Deselect All',
+                mytool2:'Expand/Collapse Legend',
+            },
+            chooseAll: "All Selected!",
+            chooseAllCancel: "All Selection Canceled!",
         }
     }
 }

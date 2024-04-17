@@ -154,5 +154,104 @@ export default {
 
 
         },
+        categoryVisual:{
+            sunBurstChat_title:'Environmental Factors',
+            header:'Factor Classification Visualization',
+            unclassified_factor:'Unclassified factor',
+            table_label:{
+                index:'Index',
+                factorName:'Trait Name',
+                fullName:'Full Name',
+                abbreviationName:'Abbreviation',
+                remark:'Remark'
+            }
+        },
+        factorVisual:{
+            factorSelect:{
+                header:'Environmental Factors Selection',
+                file_select:'File Selection',
+                file_select_placeholder:'Please select the file',
+                variable_select:'Environment Variables Selection',
+                variable_select_placeholder:'Please select the environment Factors',
+                select_date:'Date Selection',
+                dateRange:{
+                    start:'Start Date',
+                    end:'End Date',
+                    last_week:'last week',
+                    last_month:'last month',
+                    last_threeMonth:'last 3 months'
+                },
+                to:'to',
+                save:'Save As Image'
+            },
+            analysis_header:'Analysis Visualization'
+        },
+        dataCatch:{
+            upload:{
+                header:'Environment Information Capture Module',
+                title:'Upload environment information file',
+                prompt:'Click Upload/Drag file',
+                download_btn:'Download template file',
+                submit_btn:'Submit'
+            },
+            table:{
+                title:'Task Information Display',
+                refresh_btn:'Refresh task list',
+                index:'Index',
+                indexId:'Task Num',
+                createdBy:'Creator',
+                createTime:'Create Time',
+                status:'Task Status',
+                inputFile_download:'Input file download',
+                result_download:'Result download',
+                prompt:'Prompt',
+                option:'option'
+            },
+            table_inner:{
+                export:'Export CSV',
+                promptInfo:'View prompt',
+                delete:'Delete',
+                del_message:'Confirm delete this task?'
+            },
+            message:{
+                getSuccess:'Obtain data successfully!',
+                getFailure:'Obtain data failed',
+                uploadSuccess:'Submit successfully',
+                uploadFailure:'Submit failed',
+                upload_warning:'Please upload file',
+                upload_csv:'Please upload .csv file',
+                saveAs:'Template_File.csv',
+                download_failure:'Error downloading file, please contact administrator!',
+                export_fail:'You cannot export a csv file if the task is not successful',
+                error:'Error',
+                del_message:'Confirm delete this task?',
+                warning:'Prompt',
+                confirm:'Confirm',
+                cancel:'Cancel',
+                delSuccess:'Delete successfully!',
+                delFailure:'Delete failed!',
+            }
+        },
+        visualization:{
+            select_date:'Data Selection',
+            dateRange:{
+                start:'Start Date',
+                end:'End Date',
+                last_week:'last week',
+                last_month:'last month',
+                last_threeMonth:'last 3 months'
+            },
+            to:'to',
+            barChart_title:'File Quantity Statistics',
+            lineChart_title:'File Quantity Change Statistics',
+            header:'Environmental Visualization',
+            feature:{
+                save:'Save As Image',
+                mytool1:'Select All/Deselect All',
+                mytool2:'Expand/Collapse Legend',
+            },
+            chooseAll: "All Selected!",
+            chooseAllCancel: "All Selection Canceled!",
+        }
     }
 }

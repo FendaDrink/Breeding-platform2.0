@@ -12,16 +12,16 @@
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>环境因子选择</span>
+                <span>{{ $t('environment.factorVisual.factorSelect.header') }}</span>
               </div>
             </template>
             <div class="big-wrapper" style="margin-top: 10px">
               <div class="block" style="display:flex;justify-content: space-between">
                 <!-- 级联选择器 -->
                   <div class="m-4">
-                    <span style="font-weight: bold">文件选择：</span>
+                    <span style="font-weight: bold">{{ $t('environment.factorVisual.factorSelect.file_select') }}：</span>
                     <el-cascader
-                        placeholder="请选择文件"
+                        :placeholder="$t('environment.factorVisual.factorSelect.file_select_placeholder')"
                         :options="fileOptions"
                         :props="{label:'fileName',value:'fileId'}"
                         filterable
@@ -33,9 +33,9 @@
                   </div>
 
                   <div class="m-4">
-                    <span style="font-weight: bold">环境变量选择：</span>
+                    <span style="font-weight: bold">{{ $t('environment.factorVisual.factorSelect.variable_select') }}：</span>
                     <el-cascader
-                        placeholder="请选择环境因子"
+                        :placeholder="$t('environment.factorVisual.factorSelect.variable_select_placeholder')"
                         :options="envOptions"
                         :props="{label:'name',value:'id',children:'chidren'}"
                         filterable
@@ -47,13 +47,13 @@
                   </div>
 
                   <div class="block">
-                    <span style="font-weight: bold">日期选择：</span>
+                    <span style="font-weight: bold">{{ $t('environment.factorVisual.factorSelect.select_date') }}：</span>
                     <el-date-picker
                         v-model="value2"
                         type="daterange"
-                        unlink-panels range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期" :shortcuts="shortcuts"
+                        unlink-panels :range-separator="$t('environment.factorVisual.factorSelect.to')"
+                        :start-placeholder="$t('environment.factorVisual.factorSelect.dateRange.start')"
+                        :end-placeholder="$t('environment.factorVisual.factorSelect.dateRange.start')" :shortcuts="shortcuts"
                         :size="size"
                         style="margin-right: 20px;" @change="changeSlectHandler" />
                   </div>
@@ -61,23 +61,11 @@
             </div>
           </el-card>
 
-          <!-- 日期选择 -->
-<!--          <el-card class="card-container">-->
-<!--            <template #header>-->
-<!--              <div class="card-header">-->
-<!--                <span>日期选择</span>-->
-<!--              </div>-->
-<!--            </template>-->
-<!--            <div class="big-wrapper" style="margin-top: 10px">-->
-
-<!--            </div>-->
-<!--          </el-card>-->
-
           <!-- 可视化 -->
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>分析可视化</span>
+                <span>{{$t('environment.factorVisual.analysis_header')}}</span>
               </div>
             </template>
             <!-- 文件统计 -->
@@ -114,6 +102,22 @@ import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, provide } from "vue";
 import 'echarts/lib/component/dataZoom'
 
+
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+const dateRange = {
+  last_week:computed(()=>i18n.t('environment.factorVisual.dateRange.last_week')).value,
+  last_month:computed(()=>i18n.t('environment.factorVisual.dateRange.last_month')).value,
+  last_threeMonth:computed(()=>i18n.t('environment.factorVisual.dateRange.last_threeMonth')).value
+}
+const saveAsImage = computed(()=>i18n.t('environment.factorVisual.factorSelect.save')).value;
 // 引入接口
 import {
   getEnvFileList,getEnvList,getEnvFactorChange
@@ -181,7 +185,7 @@ const endDate = ref('')
 //日期选择的数据
 const shortcuts = [
   {
-    text: '最近一周',
+    text: dateRange.last_week,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -190,7 +194,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近一个月',
+    text: dateRange.last_month,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -199,7 +203,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近三个月',
+    text: dateRange.last_threeMonth,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -232,7 +236,9 @@ const option = ref({
   },
   toolbox: {
     feature: {
-      saveAsImage: {},
+      saveAsImage: {
+        title:saveAsImage
+      },
     },
   },
   xAxis: {

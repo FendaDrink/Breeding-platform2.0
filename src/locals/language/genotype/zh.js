@@ -167,6 +167,27 @@ export default {
         pca:{
             header:'表型文件选择',
             noFile:'此节点下无文件'
+        },
+        visualization:{
+            select_date:'日期选择',
+            dateRange:{
+                start:'开始日期',
+                end:'结束日期',
+                last_week:'最近一周',
+                last_month:'最近一个月',
+                last_threeMonth:'最近三个月'
+            },
+            to:'至',
+            barChart_title:'文件数量统计',
+            lineChart_title:'文件数量变化统计',
+            header:'基因型可视化',
+            feature:{
+                save:'保存为图片',
+                mytool1:'全选/取消全选',
+                mytool2:'展开/收起图例',
+            },
+            chooseAll: '已全选！',
+            chooseAllCancel: '已取消全选！'
         }
     }
 }

@@ -151,6 +151,7 @@ import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
 const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
+const save = computed(()=>i18n.t('environment.visualization.feature.save')).value;
 // 注册中国地图
 echarts.registerMap("china", chinaData);
 
@@ -406,7 +407,9 @@ const MapOption = {
     left: "right",
     bottom: "0",
     feature: {
-      saveAsImage: {},
+      saveAsImage: {
+        title:save
+      },
     },
   },
 };

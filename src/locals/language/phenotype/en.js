@@ -362,8 +362,10 @@ export default {
 
         },
         visualization:{
-            select_date:'Data Selection',
+            select_date:'Date Selection',
             dateRange:{
+                start:'Start Date',
+                end:'End Date',
                 last_week:'last week',
                 last_month:'last month',
                 last_threeMonth:'last 3 months'

@@ -84,10 +84,10 @@
         <el-table-column fixed="right" label="结果下载">
           <template #default="scope">
             <el-button link type="text" @click="exportPDf(scope.row)" style="color: #0dbc79;"
-              v-show="scope.row.status == 1">
+              v-show="scope.row.status === 1">
               导出pdf
             </el-button>
-            <el-button link type="text" disabled v-show="scope.row.status != 1">
+            <el-button link type="text" disabled v-show="scope.row.status !== 1">
               导出pdf
             </el-button>
           </template>
@@ -161,31 +161,6 @@ const clickPopover = () => {
   showPopover.value = !showPopover.value;
   console.log(showPopover.value);
 };
-
-// function getPopoverContent(info) {
-	// if (info === 'The variation information of your file has non [-1,0,1,2] value, maybe your file has empty value or last row is empty, please check your file!') {
-  //       return '您文件中的变异信息存在非[-1,0,1,2]的值，可能是您的文件存在空值或文件最后一行为空，请检查您的文件！';
-  //     } else if (info === 'The material name you entered was not found in our database, please check it!') {
-  //       return '您输入的材料名称在我们的数据库中找不到，请检查!';
-  //     } else if (info === 'Flag setting error, please contact the administrator!') {
-  //       return 'Flag设置错误，请联系管理员!';
-  //     } else if (info === 'Please press the system test species button!') {
-  //       return '请点击系统测验种按钮!';
-  //     } else if (info === 'Please check the format of your vcf file, null value exists in the file!') {
-  //       return '请检查您的vcf文件格式，文件中存在空值!';
-  //     } else if (info === 'Please check the format of your vcf file, we need your vcf file to have standard header!') {
-  //       return '请检查您的vcf文件的格式，我们需要您的vcf文件有标准的title!';
-  //     } else if (info === 'Your vcf file has empty values, please check your vcf file!') {
-  //       return '您的vcf文件有空值，请检查您的vcf文件!';
-  //     } else if (info === 'Please check the format of your vcf file, we need the format of snp variation is [./.,0/0,0/1,1/1]!') {
-  //       return '请检查您的vcf文件格式，我们需要的变异信息的格式是[./.，0/0,0/1,1/1]!';
-  //     } else if (info === 'Please check your csv file format!') {
-  //       return '请检查您的csv文件格式!';
-  //     } else if (info === 'please check material in your test file!') {
-  //       return '请检查您的测验种文件中的材料名，它不能为0,-1,1,2!';
-  //     }else if (info === 'over!'){
-	//   return "完成!";
-  // }
 
 // 获取育种任务列表
 const getdataList = async () => {
