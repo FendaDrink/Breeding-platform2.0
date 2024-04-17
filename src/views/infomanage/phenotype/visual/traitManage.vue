@@ -101,8 +101,8 @@ const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !loc
 const titles = {
   sunBurstChat_title:computed(()=>i18n.t('phenotypeVisual.traitManage.sunBurstChat_title')),
   unclassified_factor:computed(()=>i18n.t('phenotypeVisual.traitManage.unclassified_factor'))
-
 }
+
 //route实例
 const route = useRoute();
 

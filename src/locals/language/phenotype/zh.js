@@ -369,6 +369,8 @@ export default {
         visualization:{
             select_date:'日期选择',
             dateRange:{
+                start:'开始日期',
+                end:'结束日期',
                 last_week:'最近一周',
                 last_month:'最近一个月',
                 last_threeMonth:'最近三个月'

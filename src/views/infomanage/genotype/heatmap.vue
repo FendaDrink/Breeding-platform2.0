@@ -6,7 +6,7 @@
         <div class="card-header">
         <!--需要修改-->
 <!--          <h1>{{ $t('genotype.heatmap.header') }}<i>&nbsp;</i></h1>-->
-          <span>基因热力图</span>
+          <span>{{ $t('genotype.heatmap.header') }}</span>
         </div>
       </template>
 
@@ -31,6 +31,15 @@
   </div>
 </template>
 
+<script setup>
+  // 国际化相关包
+  import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+  import en from 'element-plus/lib/locale/lang/en' // 英文语言
+  import { useI18n } from 'vue-i18n'
+  import {computed} from "@vue/reactivity";
+  const i18n = useI18n();
+  const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+</script>
 <script>
 import {
   getMaterialInfo,

@@ -13,19 +13,19 @@
           <el-card class="card-container">
             <template #header>
               <div class="card-header">
-                <span>基因型可视化</span>
+                <span>{{ $t('genotype.visualization.header') }}</span>
               </div>
             </template>
             <!-- 文件统计 -->
             <div class="big-wrapper" style="margin-top: 10px;">
               <div class="block">
                 <!-- 日期选择 -->
-                <span style="font-weight: bold;font-size: 18px;color:#606266">日期选择：</span>
+                <span style="font-weight: bold;font-size: 18px;color:#606266">{{ $t('genotype.visualization.select_date') }}：</span>
                 <el-date-picker v-model="value2"
                                 type="daterange"
-                                unlink-panels range-separator="至"
-                                start-placeholder="开始日期"
-                                end-placeholder="结束日期"
+                                unlink-panels :range-separator="$t('genotype.visualization.to')"
+                                :start-placeholder="$t('genotype.visualization.dateRange.start')"
+                                :end-placeholder="$t('genotype.visualization.dateRange.end')"
                                 :shortcuts="shortcuts"
                                 :size="size"
                                 style="margin-right: 20px;"
@@ -50,6 +50,33 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { reactive, onMounted, getCurrentInstance, nextTick, onBeforeMount } from "vue";
+
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+// 日期选择相关
+const dateRange = {
+  last_week:computed(()=>i18n.t('genotype.visualization.dateRange.last_week')).value,
+  last_month:computed(()=>i18n.t('genotype.visualization.dateRange.last_month')).value,
+  last_threeMonth:computed(()=>i18n.t('genotype.visualization.dateRange.last_threeMonth')).value
+}
+
+// eChart相关
+const visualization = {
+  barChart_title:computed(()=>i18n.t('genotype.visualization.barChart_title')).value,
+  lineChart_title:computed(()=>i18n.t('genotype.visualization.lineChart_title')).value,
+  save:computed(()=>i18n.t('genotype.visualization.feature.save')).value,
+  mytool1:computed(()=>i18n.t('genotype.visualization.feature.mytool1')).value,
+  mytool2:computed(()=>i18n.t('genotype.visualization.feature.mytool2')).value,
+  chooseAll:computed(()=>i18n.t('genotype.visualization.chooseAll')).value,
+  chooseAllCancel:computed(()=>i18n.t('genotype.visualization.chooseAllCancel')).value
+}
 
 // 引入echarts
 import { use } from "echarts/core";
@@ -100,7 +127,7 @@ const endDate = ref('')
 //日期选择的数据
 const shortcuts = [
   {
-    text: '最近一周',
+    text: dateRange.last_week,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -109,7 +136,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近一个月',
+    text: dateRange.last_month,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -118,7 +145,7 @@ const shortcuts = [
     },
   },
   {
-    text: '最近三个月',
+    text: dateRange.last_threeMonth,
     value: () => {
       const end = new Date()
       const start = new Date()
@@ -148,7 +175,7 @@ const dateArr = ref([])
 //折线图的数据
 const option2 = ref({
   title: {
-    text: '文件数量变化统计',
+    text: visualization.lineChart_title,
   },
   tooltip: {
     trigger: 'axis',
@@ -174,11 +201,13 @@ const option2 = ref({
   },
   toolbox: {
     feature: {
-      saveAsImage: {},
+      saveAsImage: {
+        title:visualization.save,
+      },
       //全选/取消全选工具
       myTool1: {
         show: true,
-        title: '全选/取消全选',
+        title: visualization.mytool1,
         icon: 'path://M542.127 8c-277.027 0-502.434 225.407-502.434 502.434s225.371 502.434 502.434 502.434 502.434-225.371 502.434-502.434-225.371-502.434-502.434-502.434zM784.582 427.558l-288.598 291.731c-0.223 0.13-0.406 0.309-0.535 0.524 0.135-0.232 0.135-0.087 0.026-0.014-4.519 3.886-10.065 6.708-16.175 8.006 4.896-0.287 0.769 1.622-3.716 2.559 4.234-1.349-0.426-0.381-5.311-0.377-4.843-0.003-9.531-1-13.795-2.803-5.535-3.328-10.364-7.74-14.155-12.956 4.965 7.769 0.452 3.883-2.896-0.879 5.511 6.135 5.474 5.989 5.401 5.916s-0.219-0.109-0.291-0.219l-141.986-145.823c-6.62-6.539-10.72-15.617-10.72-25.652 0-19.911 16.141-36.052 36.052-36.052 10.394 0 19.761 4.399 26.341 11.436l116.347 119.554 262.783-265.648c6.546-6.666 15.654-10.798 25.727-10.798 19.908 0 36.046 16.138 36.046 36.046 0 9.946-4.028 18.951-10.543 25.473z',
         onclick: function () {
           changeSelected()
@@ -186,7 +215,7 @@ const option2 = ref({
       },
       myTool2: {
         show: true,
-        title: '展开/收起图例',
+        title: visualization.mytool2,
         icon: 'path://M729.6 931.2l-416-425.6 416-416c9.6-9.6 9.6-25.6 0-35.2-9.6-9.6-25.6-9.6-35.2 0l-432 435.2c-9.6 9.6-9.6 25.6 0 35.2l432 441.6c9.6 9.6 25.6 9.6 35.2 0C739.2 956.8 739.2 940.8 729.6 931.2z',
         onclick: function () {
           changeUnfold()
@@ -277,7 +306,7 @@ async function getPictureNumber() {
 
     option.value = {
       title: {
-        text: '文件数量统计'
+        text: visualization.barChart_title
       },
       grid: {
         left: '4%',
@@ -292,7 +321,9 @@ async function getPictureNumber() {
       },
       toolbox: {
         feature: {
-          saveAsImage: {}
+          saveAsImage: {
+            title:visualization.save,
+          }
         }
       },
       xAxis: {

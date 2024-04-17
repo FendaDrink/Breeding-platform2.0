@@ -2,7 +2,7 @@
   <el-card class="card-container">
     <template #header>
       <div class="card-header">
-        <span>环境因子与分类</span>
+        <span>{{ $t('environment.categoryVisual.header') }}</span>
       </div>
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
@@ -14,26 +14,26 @@
             currentpageNum2 * pageSize2
           )
             " stripe style="margin: 10px auto">
-            <el-table-column label="序号" width="80px" type="index" :index="indexMethod" align="center" />
+            <el-table-column :label="$t('environment.categoryVisual.table_label.index')" width="80px" type="index" :index="indexMethod" align="center" />
 
-            <el-table-column align="center" prop="factorName" label="环境因子名称" min-width="150px">
+            <el-table-column align="center" prop="factorName" :label="$t('environment.categoryVisual.table_label.factorName')" min-width="150px">
               <template #default="scope">
                 {{ formatTableCell(scope.row.factorName) }}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="factorFullName" label="全称" min-width="150px">
+            <el-table-column align="center" prop="factorFullName" :label="$t('environment.categoryVisual.table_label.fullName')" min-width="150px">
               <template #default="scope">
                 {{ formatTableCell(scope.row.factorFullName) }}
               </template>
 
             </el-table-column>
-            <el-table-column prop="factorAbbreviationName" label="缩写" align="center" min-width="150px">
+            <el-table-column prop="factorAbbreviationName" :label="$t('environment.categoryVisual.table_label.abbreviationName')" align="center" min-width="150px">
               <template #default="scope">
                 {{ formatTableCell(scope.row.factorAbbreviationName) }}
               </template>
             </el-table-column>
 
-            <el-table-column prop="remark" label="备注" min-width="180px" align="center">
+            <el-table-column prop="remark" :label="$t('environment.categoryVisual.table_label.remark')" min-width="180px" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row.remark) }}
               </template>
@@ -61,6 +61,19 @@ import {
   endUpdate,
 } from "@/api/environment_factors/environment_factors";
 
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+const titles = {
+  sunBurstChat_title:computed(()=>i18n.t('environment.categoryVisual.sunBurstChat_title')),
+  unclassified_factor:computed(()=>i18n.t('environment.categoryVisual.unclassified_factor'))
+}
 
 // vue实例
 const {
@@ -97,55 +110,18 @@ let phenotypeData = reactive([
 let _phenotypeData = []
 
 const echartData = reactive({
-  name: "环境因子",
+  name: titles.sunBurstChat_title,
   children: [
   ],
 });
 
 const sunBurstData = reactive({
-  name: "环境因子",
+  name: titles.sunBurstChat_title,
   type: 'ROOT',
   father:null,
   children: [
   ],
 });
-
-
-const pieOption = {
-  title: {
-    text: "环境因子统计",
-  },
-  textStyle: {
-    fontSize: 14
-  },
-  series: [
-    {
-      type: "tree",
-      data: [echartData],
-      top: "15%",
-      bottom: "20%",
-      left: "2%",
-      layout: "radial",
-      symbol: "emptyCircle",
-      symbolSize: 17,
-      initialTreeDepth: 3,
-      animationDurationUpdate: 750,
-      zoom: 1.1,
-      emphasis: {
-        focus: "descendant",
-      },
-      expandAndCollapse: false,
-      itemStyle: {
-        normal: {
-          color: "transparent",
-        },
-      },
-    },
-  ],
-};
-
-const colorByLevel = ["#FF5733", "#FFAB33", "#33FF57", "#33ABFF"];
-
 
 const handleSizeChange2 = (val) => {
   pageSize2.value = val;
@@ -209,10 +185,7 @@ function chooseForm() {
 const getFactorsData = (data) => {
   if (data.length === 0) return []
   const factors = data.rows[0].factors
-  const res = factors.map((item, index) => {
-    return item[`factor_id_${index}`]
-  })
-  return res
+  return factors.map((item, index) => item[`factor_id_${index}`])
 }
 
 //将请求到的形状信息转换为树形结构
@@ -231,7 +204,7 @@ const createTreeData = (data) => {
     if (!isExist) {
       if (item.factorTypeId == null) {
         factorType.push({
-          name: "未定义因子类别",
+          name: titles.unclassified_factor,
           id: null,
         })
       } else
@@ -559,8 +532,8 @@ onMounted(() => {
 
 
   th {
-    font-weight: 800;
-    font-size: 16PX;
+    //font-weight: 800;
+    font-size: 13px;
     background: var(--theme-color) !important;
     letter-spacing: 2px;
     height: 60px !important;
@@ -629,8 +602,7 @@ canvas {
   border-top: 1px solid #ebeef5;
 
   th {
-    font-weight: 800;
-    font-size: 16PX;
+    font-size: 13px;
     background: var(--theme-color) !important;
     color:#fff;
     letter-spacing: 2px;
