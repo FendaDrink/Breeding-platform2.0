@@ -1,0 +1,80 @@
+export default {
+    basic:{
+        button:{
+            add:'Add',
+            update:'Update',
+            delete:'Delete',
+            export:'Export',
+            search:'Search',
+            reset:'Reset',
+            cancel:'Cancel',
+            save:'Save',
+            confirm:'Confirm'
+        },
+        placeholder:{
+            species:'Enter the species name',
+            comment: 'Enter the content',
+            population:'Enter the population name',
+            trait:'Enter the trait type',
+            traitName:'Enter the trait name',
+            fullName:'Enter the full name',
+            abbreviation:'Enter the abbreviation',
+            factorTypeName:'Enter the factor Type Name',
+            factorName:'Enter the factor name',
+        },
+        label:{
+            species: 'Species',
+            comment: 'Comment',
+            population:'Population',
+            trait:'Trait Type',
+            traitName:'Trait Name',
+            fullName:'Full Name',
+            abbreviation:'Abbreviation',
+            factorTypeName:'Factor Type Name',
+            factorName:'Factor Name',
+        },
+        title:{
+            updateSpecies: 'Update Species Information',
+            addSpecies: 'Add Species Information',
+        },
+        message:{
+            update_success: 'Update successfully!',
+            species_exist: 'This species name already exists!',
+            delete_confirm1: 'Are you sure you want to delete the item numbered',
+            delete_confirm2: '?',
+            delete_success: 'Delete successfully!',
+
+
+        },
+        table:{
+            index:'Index',
+            species:'Species',
+            comment:'Comment',
+            operate:'Operations',
+            population:'Population',
+            trait:'Trait Type',
+            traitName:'Trait Name',
+            fullName:'Full Name',
+            abbreviation:'Abbreviation',
+            factorTypeName:'Factor Type Name',
+            factorName:'Factor Name',
+        },
+        rule:{
+            speciesName: 'Species name cannot be empty',
+            creator: 'Creator cannot be empty',
+            createTime: 'Creation time cannot be empty',
+            updater: 'Updater cannot be empty',
+            updateTime: 'Update time cannot be empty',
+            speciesId:'Species ID cannot be empty',
+            populationName:'Population name cannot be empty',
+            traitTypeId:'Trait type ID cannot be empty',
+            traitTypeName:'Trait type name cannot be empty',
+            traitId:'Trait ID cannot be empty',
+            traitName:'Trait name cannot be empty',
+            fullName:'Full name cannot be empty',
+            abbreviation:'Abbreviation cannot be empty',
+            factorTypeName:'Factor type name cannot be empty',
+            factorName:'Factor name cannot be empty',
+        }
+    }
+}

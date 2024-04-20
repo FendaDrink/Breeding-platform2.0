@@ -1,0 +1,46 @@
+export default {
+    decision:{
+        upload:{
+            header:'欢迎使用智能育种平台',
+            placeholder:'请输入材料名称(用多个逗号隔开)和上传材料基因型文件',
+            search:'搜索',
+            prompt:'将.vcf格式文件拖到此处，或',
+            click:'点击上传',
+            cancel:'取消'
+        },
+        table:{
+            title:'育种任务列表',
+            refresh_btn:'刷新任务列表',
+            index:'育种任务id',
+            material_name:'材料名称',
+            createdBy:'创建人',
+            createTime:'创建时间',
+            no_file:'无文件',
+            status:'任务状态',
+            material_geno:'材料基因型',
+            result_download:'结果下载',
+            prompt:'提示信息',
+            option:'操作',
+            export:'导出pdf',
+            promptInfo:'查看提示信息',
+            delete:'删除',
+            del_message:'确定删除该任务？'
+        },
+        message:{
+            upload_vcf:'只能上传vcf格式的文件！',
+            input_materialName:'请输入材料名称！',
+            upload_file:'请先上传文件！',
+            format_error:'材料名称格式不正确！',
+            searching:'搜索中...',
+            searchSuccess:'搜索成功！',
+            template_error:'格式不正确，请下载模板文件比对！',
+            upload_fail: '上传失败！',
+            download_failure:'下载文件出现错误，请联系管理员！',
+            export_fail:'任务尚未成功时不能导出pdf！',
+            error:'错误',
+            deleteSuccess:'删除成功！',
+            querySuccess:'查询成功！',
+            queryFailure:'查询失败！',
+        }
+    }
+}

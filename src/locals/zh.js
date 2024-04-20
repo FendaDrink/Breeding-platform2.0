@@ -11,6 +11,9 @@ import environment_zh from './language/environment/zh.js'
 
 import phenotypeVisual_zh from '@/locals/language/phenotype/phenotypeVisual/zh'
 
+import decision_zh from '@/locals/language/breedDecision/zh';
+
+import information_zh from '@/locals/language/information/zh';
 export default {
     title: '基因组育种决策平台2.0',
     loadingText:'加载中...',
@@ -52,6 +55,10 @@ export default {
 
     ...environment_zh,
 
-    ...phenotypeVisual_zh
+    ...phenotypeVisual_zh,
+
+    ...decision_zh,
+
+    ...information_zh
 
 }
