@@ -33,7 +33,7 @@
 
       <el-table :data="speciesList" @selection-change="handleSelectionChange" :cell-style="emptyHandler">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column :label="$t('basic.table.index')" type="index" width="50" />
+        <el-table-column :label="$t('basic.table.index')" type="index" width="60" />
         <el-table-column :label="$t('basic.table.species')" align="center" prop="speciesName" />
         <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
         <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
@@ -41,7 +41,7 @@
             <el-tooltip :content="$t('basic.button.update')" placement="top">
               <el-button link size="large" type="text" @click="handleUpdate(scope.row)" icon="edit"
                 class="table_button"></el-button></el-tooltip>
-            <el-tooltip :content="$t('basic.update.delete')" placement="top">
+            <el-tooltip :content="$t('basic.button.delete')" placement="top">
               <el-button size="large" type="text" @click="handleDelete(scope.row)" icon="delete"
                 class="table_button"></el-button></el-tooltip>
           </template>

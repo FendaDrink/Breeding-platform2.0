@@ -1,54 +1,54 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="addition" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="所属物种" prop="species_name">
-          <el-select v-model="addition.species_name" class="m-2" placeholder="请选择物种名称" clearable>
+      <el-form :model="addition" ref="queryForm" :inline="true" v-show="showSearch" label-width="88px">
+        <el-form-item :label="$t('basic.label.species')" prop="species_name">
+          <el-select v-model="addition.species_name" class="m-2" :placeholder="$t('basic.placeholder.species')" clearable>
             <el-option v-for="item in species_nameOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="群体名称" prop="population_name">
-          <el-input v-model="addition.population_name" placeholder="请输入群体名称" clearable
+        <el-form-item :label="$t('basic.label.population')" prop="population_name">
+          <el-input v-model="addition.population_name" :placeholder="$t('basic.placeholder.population')" clearable
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          <el-button type="primary" icon="Search" @click="handleQuery">{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh" @click="resetQuery">{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="primary" plain icon="Plus" @click="handleAdd"
-            v-hasPermi="['system:population:add']">新增</el-button>
+            v-hasPermi="['system:population:add']">{{ $t('basic.button.add') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-            v-hasPermi="['system:population:edit']">修改</el-button>
+            v-hasPermi="['system:population:edit']">{{ $t('basic.button.update') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-            v-hasPermi="['system:population:remove']">删除</el-button>
+            v-hasPermi="['system:population:remove']">{{ $t('basic.button.delete') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="warning" plain icon="Download" @click="handleExport"
-            v-hasPermi="['system:population:export']">导出</el-button>
+            v-hasPermi="['system:population:export']">{{ $t('basic.button.export') }}</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="handle_List"></right-toolbar>
       </el-row>
 
       <el-table v-loading="loading" :data="populationList" @selection-change="handleSelectionChange" :cell-style="emptyHandler"> 
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="55" align="center" />
-        <el-table-column label="群体名称" align="center" prop="population_name" />
-        <el-table-column label="所属物种" align="center" prop="species_name" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column type="index" :label="$t('basic.table.index')" width="60" align="center" />
+        <el-table-column :label="$t('basic.table.population')" align="center" prop="population_name" />
+        <el-table-column :label="$t('basic.table.species')" align="center" prop="species_name" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
+            <el-tooltip :content="$t('basic.button.update')" placement="top">
               <el-button link icon="Edit" type="text" @click="handleUpdate(scope.row)"
                 class="table_button"></el-button></el-tooltip>
-            <el-tooltip content="删除" placement="top">
+            <el-tooltip :content="$t('basic.button.delete')" placement="top">
               <el-button link type="text" icon="Delete" @click="handleDelete(scope.row)"
                 class="table_button"></el-button></el-tooltip>
           </template>
@@ -61,26 +61,37 @@
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="物种名称" prop="species_name">
-          <el-select v-model="form.species_name" class="m-2" placeholder="请选择物种名称" clearable>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item :label="$t('basic.label.species')" prop="species_name">
+          <el-select v-model="form.species_name" class="m-2" :placeholder="$t('basic.placeholder.species')" clearable>
             <el-option v-for="item in species_nameOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="群体名称" prop="population_name">
-          <el-input v-model="form.population_name" placeholder="请输入群体名称" />
+        <el-form-item :label="$t('basic.label.population')" prop="population_name">
+          <el-input v-model="form.population_name" :placeholder="$t('basic.label.population')" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.label.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.species')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{ $t('basic.button.confirm') }}</el-button>
+        <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
+
+<script setup>
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+</script>
 
 <script>
 import { download, checkout, listPopulation, SelectPopulation, getPopulation, delPopulation, addPopulation, updatePopulation, getSelectPopulation } from "@/api/system/population";
@@ -126,13 +137,13 @@ export default {
       // 表单校验
       rules: {
         population_name: [
-          { required: true, message: "群体名称不能为空", trigger: "blur" }
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '群体名称不能为空' : 'Population name cannot be empty', trigger: "blur" }
         ],
         speciesId: [
           { required: true, message: "物种ID不能为空", trigger: "blur" }
         ],
         species_name: [
-          { required: true, message: "物种名称不能为空", trigger: "blur" }
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '物种名称不能为空' : 'Species name cannot be empty', trigger: "blur" }
         ],
         createBy: [
           { required: true, message: "创建者不能为空", trigger: "blur" }
@@ -259,7 +270,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加";
+      this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '添加' : 'Add';
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -270,7 +281,7 @@ export default {
         this.form = response.data;
         this.name = this.form.population_name;
         this.open = true;
-        this.title = "修改";
+        this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
       });
     },
     /** 提交按钮 */
@@ -278,10 +289,10 @@ export default {
       console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.population_id != null) {
-            if (this.form.population_name == this.name) {
+          if (this.form.population_id !== null) {
+            if (this.form.population_name === this.name) {
               updatePopulation(this.form).then(response => {
-                this.$modal.msgSuccess("修改成功");
+                this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                 this.open = false;
                 this.handle_List();
               });
@@ -289,14 +300,14 @@ export default {
             else {
               checkout(this.form).then(res => {
                 this.ifAdd = res.data;
-                if (this.ifAdd == 0) {
+                if (this.ifAdd === 0) {
                   updatePopulation(this.form).then(response => {
-                    this.$modal.msgSuccess("修改成功");
+                    this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                     this.open = false;
                     this.handle_List();
                   });
                 }
-                else { this.$modal.msgWarning("该名称已存在！") }
+                else { this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!') }
               })
             }
 
@@ -307,13 +318,13 @@ export default {
               this.ifAdd = res.data
               if (this.ifAdd == 0) {
                 addPopulation(this.form).then(response => {
-                  this.$modal.msgSuccess("新增成功");
+                  this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
                   this.open = false;
                   this.handle_List();
                 });
               }
               else {
-                this.$modal.msgWarning("该名称已存在")
+                this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!')
               }
             })
 
@@ -338,11 +349,11 @@ export default {
         })
       }
 
-      this.$modal.confirm('是否确认删除名称为"' + populationNames + '"的群体？').then(function () {
+      this.$modal.confirm((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '是否确认删除名称为'+" '"+populationNames+"' "+'的群体?' : 'Are you sure you want to delete the item named'+" '"+populationNames+"' "+"?").then(function () {
         return delPopulation(populationIds);
       }).then(() => {
         this.handle_List();
-        this.$modal.msgSuccess("删除成功");
+        this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '删除成功！' : 'Delete successfully!');
       }).catch(() => { });
     },
     /** 导出按钮操作 */
