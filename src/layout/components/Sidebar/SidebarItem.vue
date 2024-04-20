@@ -4,7 +4,7 @@
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <svg-icon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"/>
-          <template #title><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span></template>
+          <template #title><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ menusTitle(onlyOneChild.meta.title) }}</span></template>
         </el-menu-item>
       </app-link>
     </template>
@@ -12,7 +12,7 @@
     <el-sub-menu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template v-if="item.meta" #title>
         <svg-icon :icon-class="item.meta && item.meta.icon" />
-        <span class="menu-title" :title="hasTitle(item.meta.title)">{{ item.meta.title }}</span>
+        <span class="menu-title" :title="hasTitle(item.meta.title)">{{ menusTitle(item.meta.title) }}</span>
       </template>
 
       <sidebar-item
@@ -31,6 +31,8 @@
 import { isExternal } from '@/utils/validate'
 import AppLink from './Link'
 import { getNormalPath } from '@/utils/param'
+import zh from "element-plus/lib/locale/lang/zh-cn";
+import en from "element-plus/lib/locale/lang/en";
 
 const props = defineProps({
   // route object
@@ -50,6 +52,10 @@ const props = defineProps({
 
 const onlyOneChild = ref({});
 
+// 国际化
+const menusTitle = (title) => {
+  return (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? title.split('/')[0] : title.split('/')[1];
+}
 function hasOneShowingChild(children = [], parent) {
   if (!children) {
     children = [];

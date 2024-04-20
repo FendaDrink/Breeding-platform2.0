@@ -1,5 +1,5 @@
 <template>
-  <div class="user-info-head" @click="editCropper()"><img :src="options.img" title="点击上传头像" class="img-circle img-lg" /></div>
+  <div class="user-info-head" @click="editCropper()"><img :src="options.img" :title="$t('profile.userAvatar.title')" class="img-circle img-lg" /></div>
   <el-dialog :title="title" v-model="open" width="800px" append-to-body @opened="modalOpened"  @close="closeDialog">
     <el-row>
       <el-col :xs="24" :md="12" :style="{height: '350px'}">
@@ -26,7 +26,7 @@
       <el-col :lg="2" :md="2">
         <el-upload action="#" :http-request="requestUpload" :show-file-list="false" :before-upload="beforeUpload">
           <el-button>
-            选择
+            {{ $t('profile.userAvatar.select') }}
             <el-icon class="el-icon--right"><Upload /></el-icon>
           </el-button>
         </el-upload>
@@ -44,7 +44,7 @@
         <el-button icon="RefreshRight" @click="rotateRight()"></el-button>
       </el-col>
       <el-col :lg="{span: 2, offset: 6}" :md="2">
-        <el-button type="primary" @click="uploadImg()">提 交</el-button>
+        <el-button type="primary" @click="uploadImg()">{{ $t('profile.userAvatar.submit') }}</el-button>
       </el-col>
     </el-row>
   </el-dialog>
@@ -56,12 +56,29 @@ import { VueCropper } from "vue-cropper";
 import { uploadAvatar } from "@/api/system/user";
 import useUserStore from '@/store/modules/user'
 
+// 国际化相关包
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+import {reactive, ref} from "vue";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+const messageI18n = {
+  update:computed(()=>i18n.t('profile.userAvatar.update')).value,
+  success:computed(()=>i18n.t('profile.userAvatar.success')).value,
+  format_error:computed(()=>i18n.t('profile.userAvatar.format_error')).value,
+  update_success:computed(()=>i18n.t('profile.userAvatar.update_success')).value
+}
 const userStore = useUserStore()
 const { proxy } = getCurrentInstance();
 
 const open = ref(false);
 const visible = ref(false);
-const title = ref("修改头像");
+const title = ref(messageI18n.update);
+
 
 //图片裁剪数据
 const options = reactive({
@@ -100,7 +117,7 @@ function changeScale(num) {
 /** 上传预处理 */
 function beforeUpload(file) {
   if (file.type.indexOf("image/") == -1) {
-    proxy.$modal.msgError("文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件。");
+    proxy.$modal.msgError(messageI18n.format_error);
   } else {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -118,7 +135,7 @@ function uploadImg() {
       open.value = false;
       options.img = import.meta.env.VITE_APP_BASE_API + response.imgUrl;
       userStore.avatar = options.img;
-      proxy.$modal.msgSuccess("修改成功");
+      proxy.$modal.msgSuccess(messageI18n.update_success);
       visible.value = false;
     });
   });
