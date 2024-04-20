@@ -1,7 +1,7 @@
 export default {
     decision:{
         upload:{
-            header:'Welcome to the intelligent breeding platform',
+            header:'Welcome to the Intelligent Breeding Platform',
             placeholder:'Please enter the material name (separated by multiple commas) and upload the material genotype file',
             search:'Search',
             prompt:'Drag the.vcf file here, or',
