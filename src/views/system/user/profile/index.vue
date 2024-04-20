@@ -5,7 +5,7 @@
             <el-card class="box-card">
                <template v-slot:header>
                  <div class="clearfix">
-                   <span>个人信息</span>
+                   <span>{{ $t('profile.index.header')}}</span>
                  </div>
                </template>
                <div>
@@ -14,27 +14,27 @@
                   </div>
                   <ul class="list-group list-group-striped">
                      <li class="list-group-item">
-                        <svg-icon icon-class="user" />用户名称
+                        <svg-icon icon-class="user" />{{ $t('profile.index.userName')}}
                         <div class="pull-right">{{ state.user.userName }}</div>
                      </li>
                      <li class="list-group-item">
-                        <svg-icon icon-class="phone" />手机号码
+                        <svg-icon icon-class="phone" />{{ $t('profile.index.phoneNumber')}}
                         <div class="pull-right">{{ state.user.phonenumber }}</div>
                      </li>
                      <li class="list-group-item">
-                        <svg-icon icon-class="email" />用户邮箱
+                        <svg-icon icon-class="email" />{{ $t('profile.index.email')}}
                         <div class="pull-right">{{ state.user.email }}</div>
                      </li>
                      <li class="list-group-item">
-                        <svg-icon icon-class="tree" />所属部门
+                        <svg-icon icon-class="tree" />{{ $t('profile.index.dept')}}
                         <div class="pull-right" v-if="state.user.dept">{{ state.user.dept.deptName }} / {{ state.postGroup }}</div>
                      </li>
                      <li class="list-group-item">
-                        <svg-icon icon-class="peoples" />所属角色
+                        <svg-icon icon-class="peoples" />{{ $t('profile.index.roleGroup')}}
                         <div class="pull-right">{{ state.roleGroup }}</div>
                      </li>
                      <li class="list-group-item">
-                        <svg-icon icon-class="date" />创建日期
+                        <svg-icon icon-class="date" />{{ $t('profile.index.createTime')}}
                         <div class="pull-right">{{ state.user.createTime }}</div>
                      </li>
                   </ul>
@@ -45,14 +45,14 @@
             <el-card>
                <template v-slot:header>
                  <div class="clearfix">
-                   <span>基本资料</span>
+                   <span>{{ $t('profile.index.userInfo')}}</span>
                  </div>
                </template>
                <el-tabs v-model="activeTab">
-                  <el-tab-pane label="基本资料" name="userinfo">
+                  <el-tab-pane :label="$t('profile.index.userInfo')" name="userinfo">
                      <userInfo :user="state.user" />
                   </el-tab-pane>
-                  <el-tab-pane label="修改密码" name="resetPwd">
+                  <el-tab-pane :label="$t('profile.index.resetPwd')" name="resetPwd">
                      <resetPwd :user="state.user" />
                   </el-tab-pane>
                </el-tabs>
@@ -74,6 +74,17 @@ const state = reactive({
   roleGroup: {},
   postGroup: {}
 });
+
+// 国际化相关包
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+import {reactive, ref} from "vue";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
 
 function getUser() {
   getUserProfile().then(response => {

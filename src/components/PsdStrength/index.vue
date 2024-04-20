@@ -1,17 +1,18 @@
 <template>
-    <div id="tips">
-            <div>
-                <span :class="(password &&(isOne||isTwo||isThree||isFour||isFive||isSix||isSeven))?'colorRed' : 'colorInit'"></span>
-                <span :class="(isTwo||isThree||isFour||isFive||isSix||isSeven)? 'colorRed ': 'colorInit' "></span>
-                <span :class="(isThree||isFour||isFive||isSix||isSeven)? 'colorOrange ' : 'colorInit'"></span>
-                <span :class="(isFour||isFive|isSix||isSeven)? 'colorOrange' : 'colorInit'"></span>
-                <span :class="(isFive||isSix||isSeven)? 'colorGreen': 'colorInit'"></span>
-                <span :class="(isSix|| isSeven)? 'colorGreen' : 'colorInit'"></span>
-                <span :class="isSeven? 'colorSafe' : 'colorInit'"></span>
-                <span v-show="password" class="left5"> {{psdstrength}} </span>
-            </div>
+  <div id="tips">
+    <div>
+      <span
+          :class="(password &&(isOne||isTwo||isThree||isFour||isFive||isSix||isSeven))?'colorRed' : 'colorInit'"></span>
+      <span :class="(isTwo||isThree||isFour||isFive||isSix||isSeven)? 'colorRed ': 'colorInit' "></span>
+      <span :class="(isThree||isFour||isFive||isSix||isSeven)? 'colorOrange ' : 'colorInit'"></span>
+      <span :class="(isFour||isFive|isSix||isSeven)? 'colorOrange' : 'colorInit'"></span>
+      <span :class="(isFive||isSix||isSeven)? 'colorGreen': 'colorInit'"></span>
+      <span :class="(isSix|| isSeven)? 'colorGreen' : 'colorInit'"></span>
+      <span :class="isSeven? 'colorSafe' : 'colorInit'"></span>
+      <span v-show="password" class="left5"> {{ psdstrength }} </span>
     </div>
-  
+  </div>
+
 </template>
 
 <script>
@@ -84,28 +85,29 @@ function checkPassword(str) {
   let totalMark = wholeMark + numMark + caseMark + specialMark + reward;
   let strength = "";
   if (totalMark < 15) {
-    strength = "非常弱";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '非常弱' : 'Very weak';
   } else if (totalMark >= 15 && totalMark < 25) {
-    strength = "弱";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '弱' : 'Weak';
   } else if (totalMark >= 25 && totalMark < 40) {
-    strength = "一般";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '一般' : 'Average';
   } else if (totalMark >= 40 && totalMark < 50) {
-    strength = "强";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '强' : 'Strong';
   } else if (totalMark >= 50 && totalMark < 60) {
-    strength = "非常强";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '非常强' : 'Very strong';
   } else if (totalMark >= 60 && totalMark < 80) {
-    strength = "安全";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '安全' : 'Safe';
   } else {
-    strength = "非常安全";
+    strength = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '非常安全' : 'Very safe';
   }
   return strength;
 }
+
 export default {
   name: "PsdStrength",
   components: {},
-  props:['password'],
-  watch:{
-    password(newVal, oldVal){
+  props: ['password'],
+  watch: {
+    password(newVal, oldVal) {
       this.onPasswordChange(newVal)
     }
   },
@@ -119,12 +121,12 @@ export default {
       isFive: false,
       isSix: false,
       isSeven: false,
-      psdstrength:""
+      psdstrength: ""
     };
   },
   methods: {
     onPasswordChange(val) {
-        
+
       this.isOne = false;
       this.isTwo = false;
       this.isThree = false;
@@ -132,31 +134,31 @@ export default {
       this.isFive = false;
       this.isSix = false;
       this.isSeven = false;
-    //   const psdVal = val.target.value;
+      //   const psdVal = val.target.value;
       const psdVal = val;
-      if(!psdVal) return;
+      if (!psdVal) return;
       const psdStrength = checkPassword(psdVal);
       this.psdstrength = psdStrength;
       switch (psdStrength) {
-        case "非常弱":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '非常弱' : 'Very weak':
           this.is0ne = true;
           break;
-        case "弱":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '弱' : 'Weak':
           this.isTwo = true;
           break;
-        case "一般":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '一般' : 'Average':
           this.isThree = true;
           break;
-        case "强":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '强' : 'Strong':
           this.isFour = true;
           break;
-        case "非常强":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '非常强' : 'Very strong':
           this.isFive = true;
           break;
-        case "安全":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '安全' : 'Safe':
           this.isSix = true;
           break;
-        case "非常安全":
+        case (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? '非常安全' : 'Very safe':
           this.isSeven = true;
           break;
         default:
@@ -164,7 +166,8 @@ export default {
       }
     },
   },
-  created() {},
+  created() {
+  },
 };
 </script>
 
@@ -179,6 +182,7 @@ export default {
   line-height: 20px;
   text-align: center;
 }
+
 .left5 {
   margin-left: 5px;
   float: left;
@@ -186,18 +190,23 @@ export default {
   font-size: 15px;
   line-height: 20px;
 }
+
 .colorRed {
   background-color: red;
 }
+
 .colorOrange {
   background-color: orange;
 }
+
 .colorGreen {
   background-color: #54ec51;
 }
+
 .colorsafe {
   background-color: #52c41a;
 }
+
 .colorInit {
   background: #eeeeee;
 }

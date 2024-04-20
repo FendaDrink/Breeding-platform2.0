@@ -10,6 +10,15 @@ import material_en from './language/material/en.js'
 import environment_en from './language/environment/en.js'
 
 import phenotypeVisual_en from '@/locals/language/phenotype/phenotypeVisual/en'
+
+import decision_en from '@/locals/language/breedDecision/en';
+
+import information_en from '@/locals/language/information/en';
+
+import profile_en from '@/locals/language/system/profile/en';
+
+import layout_en from '@/locals/language/layout/en';
+
 export default {
     // title: 'Genomic breeding decision-making platform',
     title: 'Breeding-platform2.0',
@@ -51,5 +60,13 @@ export default {
 
     ...environment_en,
 
-    ...phenotypeVisual_en
+    ...phenotypeVisual_en,
+
+    ...decision_en,
+
+    ...information_en,
+
+    ...profile_en,
+
+    ...layout_en
 }
