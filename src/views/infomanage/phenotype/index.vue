@@ -730,7 +730,9 @@ async function updateData() {
         })
         .catch((err) => {
           tableLoading.value = false;
-          $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
+          if(err.msg){
+            $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
+          }
         });
   }
 

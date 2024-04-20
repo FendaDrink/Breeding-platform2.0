@@ -3,12 +3,12 @@
     <div ref="upperRef" class="card-container upper">
       <div class="background">
         <div class="main-content" ref="mainContentRef">
-          <div class="main-title" ref="titleRef">欢迎使用智能育种平台</div>
+          <div class="main-title" ref="titleRef">{{ $t('decision.upload.header') }}</div>
           <div class="input-wrapper">
             <div class="input">
               <el-input
                 ref="inputRef"
-                placeholder="请输入材料名称(多个用逗号隔开)和上传材料基因型文件"
+                :placeholder="$t('decision.upload.placeholder')"
                 v-model="textarea2"
                 size="large"
               >
@@ -21,11 +21,11 @@
                         :on-change="handleUploadFile"
                         :before-upload="handleBeforeUpload">
                         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                        <div>将.vcf格式文件拖到此处，或<a href="javascript:;" style="color: var(--theme-color);">点击上传</a></div>
+                        <div>{{ $t('decision.upload.prompt') }}<a href="javascript:;" style="color: var(--theme-color);">{{ $t('decision.upload.click') }}</a></div>
                       </el-upload>
                       <div class="btns">
                         <div class="close">
-                          <el-button type="primary" @click="showPopover=!showPopover" style="width: 80px;"><el-icon><Close /></el-icon>&nbsp;取消</el-button>
+                          <el-button type="primary" @click="showPopover=!showPopover" style="width: 80px;"><el-icon><Close /></el-icon>&nbsp;{{ $t('decision.upload.cancel') }}</el-button>
                         </div>
                       </div>
                     </div>
@@ -38,7 +38,7 @@
                   </el-popover>
                 </template>
                 <template #append>
-                  <el-button @click="submit"><el-icon><Search/></el-icon>&nbsp;&nbsp;搜索</el-button>
+                  <el-button @click="submit"><el-icon><Search/></el-icon>&nbsp;&nbsp;{{ $t('decision.upload.search') }}</el-button>
                 </template>
               </el-input>
             </div>
@@ -55,26 +55,26 @@
     </div>
     <el-card class="card-container lower">
       <div class="card-header">
-        <span>育种任务列表</span>
-        <el-button @click="getdataList" type="primary" size="large" icon="Refresh">刷新任务列表</el-button>
+        <span>{{ $t('decision.table.title') }}</span>
+        <el-button @click="getdataList" type="primary" size="large" icon="Refresh">{{ $t('decision.table.refresh_btn') }}</el-button>
       </div>
       <el-table max-height="70vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
-        <el-table-column prop="id" label="育种任务id"></el-table-column>
-        <el-table-column prop="materialName" label="材料名称"></el-table-column>
-        <el-table-column fixed="right" label="材料基因型">
+        <el-table-column prop="id" :label="$t('decision.table.index')"></el-table-column>
+        <el-table-column prop="materialName" :label="$t('decision.table.material_name')"></el-table-column>
+        <el-table-column fixed="right" :label="$t('decision.table.material_geno')">
           <template #default="scope">
             <el-button v-if="scope.row.genofile != null" link type="text" style="color: #0dbc79;"
-              @click="exportGeno(scope.row.genofile)">
+                       @click="exportGeno(scope.row.genofile)">
               {{ scope.row.genofile.split("\\").pop() }}
             </el-button>
             <el-button v-else link type="text" disabled>
-              无文件
+              {{ $t('decision.table.no_file') }}
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="createBy" label="创建人" />
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="任务状态" width="150">
+        <el-table-column prop="createBy" :label="$t('decision.table.createdBy')" />
+        <el-table-column prop="createTime" :label="$t('decision.table.createTime')" />
+        <el-table-column :label="$t('decision.table.status')" width="150">
           <template #default="scope">
             <div id="status">
               <el-icon style="color: #0dbc79;font-size: 25px;" v-show="scope.row.status == 1">
@@ -89,32 +89,32 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="结果下载">
+        <el-table-column fixed="right" :label="$t('decision.table.result_download')">
           <template #default="scope">
             <el-button link type="text" @click="exportPDf(scope.row)" style="color: #0dbc79;"
-              v-show="scope.row.status == 1">
-              导出pdf
+                       v-show="scope.row.status === 1">
+              {{ $t('decision.table.export') }}
             </el-button>
-            <el-button link type="text" disabled v-show="scope.row.status != 1">
-              导出pdf
+            <el-button link type="text" disabled v-show="scope.row.status !== 1">
+              {{$t('decision.table.export')}}
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="提示信息">
+        <el-table-column fixed="right" :label="$t('decision.table.prompt')">
           <template #default="scope">
             <el-popover placement="top" trigger="hover" :content="scope.row.info?scope.row.info:'无'">
               <template #reference>
-                <el-button link type="text" style="color: var(--theme-color);">查看提示信息</el-button>
+                <el-button link type="text" style="color: var(--theme-color);">{{ $t('decision.table.promptInfo') }}</el-button>
               </template>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作">
+        <el-table-column fixed="right" :label="$t('decision.table.option')">
           <template #default="scope">
-            <el-popconfirm title="确定删除该任务？" @confirm='handleDelete(scope.row)'>
+            <el-popconfirm :title="$t('decision.table.del_message')" @confirm='handleDelete(scope.row)'>
               <template #reference>
                 <el-button link type="text" style="color: var(--theme-color);">
-                  删除
+                  {{ $t('decision.table.delete') }}
                 </el-button>
               </template>
             </el-popconfirm>
@@ -138,6 +138,38 @@ import { getToken } from "@/utils/auth";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { blobValidate } from '@/utils/param'
+
+// 国际化相关包
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+// 国际化相关变量
+const message = {
+  upload_vcf:computed(()=>i18n.t('decision.message.upload_vcf')).value,
+  input_materialName:computed(()=>i18n.t('decision.message.input_materialName')).value,
+  upload_file:computed(()=>i18n.t('decision.message.upload_file')).value,
+  format_error:computed(()=>i18n.t('decision.message.format_error')).value,
+  searching:computed(()=>i18n.t('decision.message.searching')).value,
+  searchSuccess:computed(()=>i18n.t('decision.message.searchSuccess')).value,
+  template_error:computed(()=>i18n.t('decision.message.template_error')).value,
+  upload_fail:computed(()=>i18n.t('decision.message.upload_fail')).value,
+  download_failure:computed(()=>i18n.t('decision.message.download_failure')).value,
+  export_fail:computed(()=>i18n.t('decision.message.export_fail')).value,
+  error:computed(()=>i18n.t('decision.message.error')).value,
+  deleteSuccess:computed(()=>i18n.t('decision.message.deleteSuccess')).value,
+  querySuccess:computed(()=>i18n.t('decision.message.querySuccess')).value,
+  queryFailure:computed(()=>i18n.t('decision.message.queryFailure')).value,
+  searchFailed:computed(()=>i18n.t('decision.message.searchFailed')).value,
+  phenotype:computed(()=>i18n.t('decision.upload.phenotype')).value,
+  genotype:computed(()=>i18n.t('decision.upload.genotype')).value,
+  photos:computed(()=>i18n.t('decision.upload.photos')).value,
+  material:computed(()=>i18n.t('decision.upload.material')).value,
+}
+
 const router = useRouter();
 
 // vue实例
@@ -171,40 +203,15 @@ const clickPopover = () => {
   console.log(showPopover.value);
 };
 
-// function getPopoverContent(info) {
-	// if (info === 'The variation information of your file has non [-1,0,1,2] value, maybe your file has empty value or last row is empty, please check your file!') {
-  //       return '您文件中的变异信息存在非[-1,0,1,2]的值，可能是您的文件存在空值或文件最后一行为空，请检查您的文件！';
-  //     } else if (info === 'The material name you entered was not found in our database, please check it!') {
-  //       return '您输入的材料名称在我们的数据库中找不到，请检查!';
-  //     } else if (info === 'Flag setting error, please contact the administrator!') {
-  //       return 'Flag设置错误，请联系管理员!';
-  //     } else if (info === 'Please press the system test species button!') {
-  //       return '请点击系统测验种按钮!';
-  //     } else if (info === 'Please check the format of your vcf file, null value exists in the file!') {
-  //       return '请检查您的vcf文件格式，文件中存在空值!';
-  //     } else if (info === 'Please check the format of your vcf file, we need your vcf file to have standard header!') {
-  //       return '请检查您的vcf文件的格式，我们需要您的vcf文件有标准的title!';
-  //     } else if (info === 'Your vcf file has empty values, please check your vcf file!') {
-  //       return '您的vcf文件有空值，请检查您的vcf文件!';
-  //     } else if (info === 'Please check the format of your vcf file, we need the format of snp variation is [./.,0/0,0/1,1/1]!') {
-  //       return '请检查您的vcf文件格式，我们需要的变异信息的格式是[./.，0/0,0/1,1/1]!';
-  //     } else if (info === 'Please check your csv file format!') {
-  //       return '请检查您的csv文件格式!';
-  //     } else if (info === 'please check material in your test file!') {
-  //       return '请检查您的测验种文件中的材料名，它不能为0,-1,1,2!';
-  //     }else if (info === 'over!'){
-	//   return "完成!";
-  // }
-
 // 获取育种任务列表
 const getdataList = async () => {
   const res = await getDataListAPI(queryParams.value);
   if (res.code === 200) {
-    $modal.msgSuccess(res.msg);
+    $modal.msgSuccess(message.querySuccess);
     dataList.value = res.rows;
     total.value = res.total;
   } else {
-    $modal.msgError(res.msg);
+    $modal.msgError(message.queryFailure);
   }
 };
 
@@ -216,7 +223,7 @@ const handleBeforeUpload = (file) => {
   const isVcf = fileType === "vcf";
   if (!isVcf) {
     $modal.msgError(
-      "只能上传vcf格式的文件！",
+        message.upload_vcf,
       "error",
       "vab-hey-message-error"
     );
@@ -235,51 +242,50 @@ let textarea2 = ref('');
 
 const submit = async () => {
   if (textarea2.value === ''||textarea2.value.trim() === ''){
-    $modal.msgWarning("请输入材料名称！");
+    $modal.msgWarning(message.input_materialName);
     return;
   }
   if (fileList.value.length === 0) {
-    $modal.msgWarning("请先上传文件！");
+    $modal.msgWarning(message.upload_file);
     return;
   }
   const isRight = /^[\w\s]+(?:,[\w\s]+)*$/.test(textarea2.value);
   if (!isRight) {
-    $modal.msgWarning("材料名称格式不正确！");
+    $modal.msgWarning(message.format_error);
     return;
   }
   let formdata = new FormData();
   formdata.append('genofile', fileList.value[0].raw);
   loading.value=ElMessage({
     type:'warning',
-    message:'搜索中...',
+    message:message.searching,
     duration:0,
   })
   const res = await getEnvAnalyzeList({ param: textarea2.value},formdata);
   if (res.code === 200) {
     loading.value.close()
-    $modal.msgSuccess('搜索成功')
+    $modal.msgSuccess(message.searchSuccess)
     setTimeout(()=>{
       router.go(0)
     },1000)
   } else {
-    $modal.msgError(res.msg);
+    $modal.msgError(message.searchFailed);
   }
 }
 
+// 文件上传成功回调
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
   if (response.code === 200) {
     $modal.msgSuccess(response.msg);
   } else {
-    $modal.msgError("格式不正确，请下载模板文件比对！");
+    $modal.msgError(message.template_error);
   }
-  //$modal.msgSuccess("上传成功");
 }
-
 // 文件上传失败回调
 const uploadFileError = (error, file, fileList) => {
   console.log("File upload error", error);
-  $modal.msgError("上传失败");
+  $modal.msgError(message.upload_fail);
 };
 
 
@@ -306,13 +312,13 @@ function exportGeno(fileUrl) {
 		}
 	}).catch(err => {
 		console.log(err)
-		ElMessage.error('下载文件出现错误，请联系管理员！');
+		ElMessage.error(message.download_failure);
 	})
 }
 function exportPDf(row) {
 	console.log(row)
 	if (row.status != 1) {
-		ElMessageBox.alert('任务尚未成功时不能导出pdf', '错误', {
+    ElMessageBox.alert(message.export_fail, message.error, {
 			// if you want to disable its autofocus
 			// autofocus: false,
 			confirmButtonText: 'OK',
@@ -337,36 +343,13 @@ function exportPDf(row) {
 		}
 	}).catch(err => {
 		console.log(err)
-		ElMessage.error('下载文件出现错误，请联系管理员！');
+    ElMessage.error(message.download_failure);
 	})
-
-
-	// let id = {id:row.id}
-	// console.log(id)
-	// exportPDF(id).then(res => {
-	//   console.log(res)
-	//   const isLogin = blobValidate(res);
-	//   if (isLogin) {
-	//     const blob = new Blob([res])
-	//     saveAs(blob, `基因组预测比较-${id.id}.pdf`)
-	//     pageLoad.value = false
-	//   } else {
-	//     const resText = data.text();
-	//     const rspObj = JSON.parse(resText);
-	//     const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
-	//     ElMessage.error("下载文件出现错误，请联系管理员！");
-	//     pageLoad.value = false
-	//   }
-	// }).catch(err => {
-	//   console.log(err)
-	//   pageLoad.value = false
-	//   ElMessage.error('下载文件出现错误，请联系管理员！');
-	// })
 }
 async function handleDelete(row) {
 	console.log(row)
 	await deleteMar(row.id)
-  ElMessage.success('删除成功')
+  ElMessage.success(message.deleteSuccess)
 	getdataList()
 }
 
@@ -448,19 +431,19 @@ const goTo = (url) => {
 
 const typeList = reactive([
   {
-    title: "表型管理",
+    title: message.phenotype,
     url:"/phenotype/phenotype"
   },
   {
-    title: "基因型管理",
+    title: message.genotype,
     url:"/genotype/geno"
   },
   {
-    title: "图片管理",
+    title: message.photos,
     url:"/admin/info/photos"
   },
   {
-    title: "育种决策",
+    title: message.material,
     url:"/breed/material"
   },
 ])
@@ -649,7 +632,7 @@ const typeList = reactive([
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 220px;
+  height: 200px;
   .upload-demo{
     width: 95%;
     height: 90%;
