@@ -6,7 +6,11 @@ export default {
             search:'Search',
             prompt:'Drag the.vcf file here, or',
             click:'click to upload',
-            cancel:'cancel'
+            cancel:'cancel',
+            phenotype:'Phenotypic Management',
+            genotype:'Genotype Management',
+            photos:'Photos Management',
+            material:'Breeding Decision',
         },
         table:{
             title:'List of breeding tasks',
@@ -41,6 +45,7 @@ export default {
             deleteSuccess:'Delete successfully!',
             querySuccess:'Query successfully!',
             queryFailure:'Query failed!',
+            searchFailed:'Search Failed!'
         }
     }
 }

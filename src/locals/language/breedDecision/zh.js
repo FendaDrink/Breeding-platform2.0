@@ -6,7 +6,11 @@ export default {
             search:'搜索',
             prompt:'将.vcf格式文件拖到此处，或',
             click:'点击上传',
-            cancel:'取消'
+            cancel:'取消',
+            phenotype:'表型管理',
+            genotype:'基因型管理',
+            photos:'图片管理',
+            material:'育种决策',
         },
         table:{
             title:'育种任务列表',
@@ -41,6 +45,7 @@ export default {
             deleteSuccess:'删除成功！',
             querySuccess:'查询成功！',
             queryFailure:'查询失败！',
+            searchFailed:'搜索失败！',
         }
     }
 }

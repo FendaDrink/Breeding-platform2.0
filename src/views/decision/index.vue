@@ -264,7 +264,6 @@ async function uploadFileSuccess(response) {
   } else {
     $modal.msgError(message.template_error);
   }
-  //$modal.msgSuccess("上传成功");
 }
 
 // 文件上传失败回调
