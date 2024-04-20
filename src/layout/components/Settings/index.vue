@@ -43,7 +43,7 @@
     </div>
 
     <div class="drawer-item">
-      <span>{{ $t('layout.settings.theme_style') }}</span>
+      <span>{{ $t('layout.settings.tags_view') }}</span>
       <span class="comp-style">
         <el-switch v-model="tagsView" class="drawer-switch" />
       </span>
