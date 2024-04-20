@@ -19,8 +19,8 @@
                 <el-button plain type="primary" class="filter-item my-button" @click.prevent="addChildNode" icon="plus"
                   v-hasPermi="['system:node:add']">
                   {{ $t('genotype.index.node_add') }}</el-button>
-                <el-button plain type="success" class="filter-item my-button" @click.prevent="updateChildNode" icon="edit"
-                  v-hasPermi="['system:node:update']">{{ $t('genotype.index.node_update') }}</el-button>
+                <el-button plain type="success" class="filter-item my-button" @click.prevent="updateChildNode"
+                  icon="edit" v-hasPermi="['system:node:update']">{{ $t('genotype.index.node_update') }}</el-button>
                 <el-button plain type="danger" class="filter-item my-button" @click.prevent="deleteNode" icon="delete"
                   v-hasPermi="['system:node:remove']">{{ $t('genotype.index.node_delete') }}</el-button>
                 <el-button plain type="info" class="filter-item my-button" @click.prevent="downloadTemplate"
@@ -32,8 +32,9 @@
                   clearable @keyup.enter="handleQuery" class="my-input" style="width: 180px; margin-right: 8px;" />
                 <el-button type="primary" class="my-button" @click="handleQuery" icon="search">{{
                   $t('genotype.index.search') }}</el-button>
-                <el-button @click="resetQuery" class="my-button white-button" icon="Refresh">{{ $t('genotype.index.reset')
-                }}</el-button>
+                <el-button @click="resetQuery" class="my-button white-button" icon="Refresh">{{
+                  $t('genotype.index.reset')
+                  }}</el-button>
               </div>
               <div class="div3">
                 <!-- 操作部分 -->
@@ -44,8 +45,8 @@
                     $t('genotype.index.file_delete') }}</el-button>
                 <el-container style="min-height: calc(100vh - 400px);">
                   <!-- 表格部分 -->
-                  <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe fit
-                    max-height="100%" class="mytable">
+                  <el-table v-loading="tableLoading" :data="fileList" @selection-change="handleSelectionChange" stripe
+                    fit max-height="100%" class="mytable">
                     <el-table-column type="selection" width="auto" align="center" fixed="left" />
                     <el-table-column :label="$t('genotype.index.table_index')" width="80" type="index"
                       :index="indexMethod" align="center" />
@@ -140,7 +141,7 @@
               dialogTreeStatus === 'createNode'
                 ? createTreeData()
                 : updateTreeData()
-            ">
+              ">
               {{ $t('genotype.index.save') }}
             </el-button>
             <el-button @click="dialogTreeFormVisible = false" type="info" plain>取消</el-button>
@@ -178,7 +179,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="success" plain v-if="dialogStatus === 'create'"
-              @click="dialogStatus === 'create' ? createData() : updateData()" :disabled="isDisabled">
+              @click="dialogStatus === 'create' ? openCreateData() : updateData()" :disabled="isDisabled">
               {{ $t('genotype.index.save') }}
             </el-button>
             <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
@@ -238,19 +239,21 @@
 </template>
 
 <script setup>
-import {ref, getCurrentInstance, nextTick, onMounted, reactive} from "vue";
+import { ref, getCurrentInstance, nextTick, onMounted, reactive } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
   genoListFile,
   selectDetailByFileId,
   selectHistoryDetailByFileId,
   delFile,
-  updateFile, genoHistoryListFile,
+  updateFile,
+  genoHistoryListFile,
+  uploadFileEndApi,
+  mergeChunkApi
 } from "@/api/infomanage/genotype";
-import { getJsonByCSV, jsonToTable } from "@/utils/tree";
 import useUserStore from "@/store/modules/user";
+import axios from 'axios'
 import { getToken } from "@/utils/auth";
-import ShowCSVTable from "./ShowCSVTable.vue";
 import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
 import { ElMessage } from "element-plus";
@@ -263,7 +266,7 @@ import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? zh : en));
 
 
 const text = {
@@ -295,7 +298,7 @@ const text = {
     node_delete_success: computed(() => i18n.t('genotype.index.message_node_delete_success')).value,
     file_confirm: computed(() => i18n.t('genotype.index.message_file_confirm')).value,
   },
-  rule:{
+  rule: {
     name_require: computed(() => i18n.t('genotype.index.name_require')).value,
 
   }
@@ -365,17 +368,13 @@ const deleteDisabled = ref(false);
 
 // 校验规则
 const rules = reactive({
+  // 文件名必须为 非特殊符号_非特殊符号 
   fileName: [
+    { required: true, message: text.rule.message_fileName, trigger: "blur" },
     {
-      validator: (rule, value, callback) => {
-        if (!value || !value.includes("_")) {
-          callback(new Error(text.rule.name_require));
-        } else {
-          callback();
-        }
-      },
+      pattern: /^[^-]+_[^-]+$/,
+      message: text.rule.name_require,
       trigger: "blur",
-      required: true,
     },
   ],
   description: [
@@ -384,16 +383,8 @@ const rules = reactive({
   dateTime: [{ required: true, message: "请选择一个日期", trigger: "blur" }],
 });
 
-const dataForm2 = reactive({
-  fileName: "",
-  description: "",
-  dateTime: "",
-  fileStatus: false,
-});
-
 const drawer = ref(false); // 文件详情窗口开启状态
 const fileName = ref(""); // 选中文件名
-const curFileUrl = ref(""); //文件路径
 
 //表单重置
 function resetForm() {
@@ -406,8 +397,6 @@ function resetForm() {
 }
 
 const historyTableLoading = ref(false);
-const drawerTableData = ref([]);
-const tableProps = ref([]);
 const pageSize = ref(15);
 const totalPage = ref(0);
 const currentpageNum = ref(1); //当前页数
@@ -535,17 +524,6 @@ const handleCurrentChange = (val) => {
   fetchData(val, pageSize.value);
 };
 
-//预览
-function modifFile(row) {
-  dialogFormVisible.value = true;
-  form.fileId = row.fileId;
-
-  // 将行的值设置到表单中
-  for (const column of columns.value) {
-    form[column.prop] = row[column.prop];
-  }
-}
-
 
 // 上传实例
 const upload = ref(null);
@@ -572,8 +550,31 @@ const handleBeforeUpload = (file) => {
 const handleUploadFile = (file) => {
   // Handle file upload
   console.log(file);
-  dataForm.fileName =  dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
+  dataForm.fileName = dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
 };
+
+let isNormalFile = 1
+let url = ''
+// 大文件上传
+async function openCreateData() {
+  // 表单校验
+  const valid = await form.value.validate();
+  if (!valid) return;
+  tableLoading.value = true;
+  // 判断文件大小
+  if (uploadFileList.value[0].raw.size > 1024 * 1024 * 30) {
+    isNormalFile = 0;
+  } else {
+    isNormalFile = 1;
+  }
+  if (isNormalFile === 0) {
+    // 是大文件，调用大文件上传接口
+    await upLoadHugeFile();
+  } else {
+    await createData();
+  }
+}
+
 
 // 文件创建
 const createData = async () => {
@@ -588,7 +589,7 @@ const createData = async () => {
     try {
       dialogFormVisible.value = false;
       await upload.value.submit();
-      await uploadFileSuccess({code:200,msg:'上传成功，请等待后台进行处理'});
+      await uploadFileSuccess({ code: 200, msg: '上传成功，请等待后台进行处理' });
     } catch (err) {
       $modal.msgError(err)
     } finally {
@@ -599,6 +600,135 @@ const createData = async () => {
   }
 
 };
+// 分片上传
+const uploadChunk = (formData) => {
+  console.log('任务开始');
+  return axios.post(
+      `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + getToken(),
+        },
+      }
+  )
+}
+
+// 检查文件编码格式
+const chectCharDet = async () => {
+  ElMessage.info('上传文件较大，正在检查文件编码格式...')
+  // 检查分片格式
+  const checkChunk = (chunk) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      let isUTF8 = false
+      reader.onload = (event) => {
+        const fileData = event.target.result;
+        // 遍历字符串，检查是否有汉字
+        const strList = fileData.split('');
+        isUTF8 = strList.some((str) => isZh(str));
+        resolve(isUTF8)
+      }
+      reader.readAsText(chunk);
+    });
+  }
+    const file = uploadFileList.value[0].raw;
+    // 分片大小
+    const chunkSize = 20 * 1024 * 1024; // 5*1MB
+    //分 片数
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    // 创建检查任务
+    let checkTaskList = []
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * chunkSize;
+      const end = Math.min(file.size, start + chunkSize);
+      const chunk = file.slice(start, end);
+      const temp = new File([chunk], file.name);
+      checkTaskList.push(
+          checkChunk(temp)
+      )
+    }
+    const checkRes = await Promise.all(checkTaskList)
+  return !checkRes.some(item=>item)
+}
+
+
+// 判断是否有汉字
+const isZh = (str) => {
+  let re = /[^\u4e00-\u9fa5]/;
+  return !re.test(str);
+};
+
+//大文件分块上传
+const upLoadHugeFile = async () => {
+  const isUTF8 = await chectCharDet()
+  if (!isUTF8) return ElMessage.warning('请将文件转为utf-8编码后进行上传！')
+  ElMessage.info('文件体积较大，正在上传，请耐心等待')
+  return new Promise(async (resolve, reject) => {
+    if (!uploadFileList.value[0]) return;
+    //获取文件并将其修改为file对象
+    const file = uploadFileList.value[0].raw;
+    //分片大小
+    const chunkSize = 20 * 1024 * 1024; // 5*1MB
+    //分片数
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    // 创建分片上传任务
+    const tasks = [];
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * chunkSize;
+      const end = Math.min(file.size, start + chunkSize);
+      const chunk = file.slice(start, end);
+      const temp = new File([chunk], file.name);
+
+      // 创建formData对象
+      const formData = new FormData();
+      formData.append("file", temp);
+      formData.append("totalChunks", totalChunks);
+      formData.append("currentChunk", i);
+      tasks.push(
+          uploadChunk(formData)
+      )
+    }
+    // 上传分片
+    const uploadRes = await Promise.all(tasks);
+    console.log(uploadRes);
+    if (uploadRes.some(item => item.data.code !== 200)) {
+      // 上传失败
+      $modal.msgError('上传失败');
+      return;
+    }
+    // 合并分片
+    try {
+      const mergeRes = await mergeChunkApi(file.name, tree.value.getCurrentNode().treeId, 1)
+      url = mergeRes.data.replace(/\\/g, "/");
+      const params = {
+        treeId: tree.value.getCurrentNode().treeId,
+        status: dataForm.fileStatus ? 1 : 0,
+        remark: dataForm.remark,
+        fileName: dataForm.fileName,
+        filePath: url,
+        area: dataForm.area,
+        longitude: dataForm.longitude,
+        latitude: dataForm.latitude
+      }
+      // 发送文件信息用于后端保存文件
+      await uploadFileSuccess({ code: 200, msg: '文件较大，请等待后台处理' })
+      await uploadFileEndApi(params).then(res => {
+        $modal.msgSuccess('后台已处理，上传成功');
+      })
+      tableLoading.value = false;
+      getList();
+    } catch (err) {
+      $modal.msgError('上传失败');
+      console.error(err);
+    } finally {
+      console.log('合并结束');
+      // 执行成功回调
+      resolve();
+    }
+  })
+}
 
 // 文件上传成功回调
 async function uploadFileSuccess(response) {
@@ -1302,7 +1432,7 @@ onMounted(() => {
   color: #fff;
 }
 </style>
-<style lang="less"  scoped>
+<style lang="less" scoped>
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   /* 0 3px 3px -2px rgba(0, 0, 0, 0.12),

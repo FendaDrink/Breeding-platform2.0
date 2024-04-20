@@ -34,14 +34,21 @@ router.beforeEach((to, from, next) => {
         useUserStore().getInfo().then(() => {
           isRelogin.show = false;
           usePermissionStore().generateRoutes().then(accessRoutes => {
+            let fatherPath = accessRoutes[0].path==='/'?'/':accessRoutes[0].path+'/'
+            let firstPath = fatherPath + accessRoutes[0].children[0].path
+            router.addRoute(accessRoutes) // 动态添加可访问路由表
+            if(to.path === '/index'){
+              next({ path: firstPath, replace: true })
+            }else{
+              // 根据roles权限生成可访问的路由表
+              next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+            }
             // 根据roles权限生成可访问的路由表
             accessRoutes.forEach(route => {
               if (!isHttp(route.path)) {
                 router.addRoute(route); // 动态添加可访问路由表
               }
             });
-            //console.log('accessRoutes', accessRoutes);
-            next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
           });
         }).catch(err => {
           useUserStore().logOut().then(() => {

@@ -57,7 +57,7 @@ export default {
             dialog_comment: '备注：',
             dialog_upload: '上传文件',
 
-            name_require:'文件名格式必须为"物种_群体"',
+            name_require:'文件名格式必须为"物种_群体(不含-)"',
 
             message_fileName: '文件名不能为空',
             message_date: '请选择一个日期',

@@ -1,18 +1,14 @@
 <template>
-  <div class="home_container app-container home">
+  <!-- <div class="home_container app-container home">
     <div class="container-fuild">
-      <!-- 导航 -->
       <div class="header-nav">
-        <!-- 导航logo -->
         <div class="header-nav-logo">
           <img src="@/assets/img/hzauLogo.png" />
         </div>
       </div>
-      <!-- banner -->
       <div class="article_banner">
         <img src="@/assets/img/banner/banner1.jpg" alt="banner" />
       </div>
-      <!-- 科研项目 -->
       <div class="container-stage" style="margin-top: 30px;">
         <div class="stage-row">
           <div class="stage-col" v-for="(item, index) in typeList" @click="goTo(item.url)" :key="index">
@@ -26,7 +22,8 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+  <redirect to="/breed/material-plus"></redirect>
 </template>
 
 <script setup name="Index">
@@ -35,6 +32,10 @@ import type2 from "@/assets/img/2.jpg"
 import type3 from "@/assets/img/3.jpg"
 import type4 from "@/assets/img/4.jpg"
 import {useRouter} from "vue-router";
+
+
+// 重定向到/breed/material-plus
+
 
 const router = useRouter()
 
