@@ -6,7 +6,7 @@ const useAppStore = defineStore(
   {
     state: () => ({
       sidebar: {
-        opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
+        opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : false,
         withoutAnimation: false,
         hide: false
       },

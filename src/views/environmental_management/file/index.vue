@@ -274,13 +274,6 @@ const historyTableLoading = ref(false);
 // 对话框
 const dialogFormVisible = ref(false);
 const dialogStatus = ref("");
-const textMap = {
-  create: "添加文件",
-  update: "修改文件",
-  other: "选择合并文件",
-  createNode: "添加节点",
-  updateNode: "修改节点",
-};
 
 const titles = {
   create: computed(() => i18n.t('environment.index.title_create')),
@@ -351,10 +344,6 @@ const dataForm = reactive({
 
 //删除按钮状态
 const deleteDisabled = ref(false);
-
-
-
-
 // 校验规则
 const rules = reactive({
   fileName: [
