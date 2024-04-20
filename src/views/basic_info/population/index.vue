@@ -1,80 +1,104 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="环境因子类型名称" prop="factorTypeId" label-width="130px">
-          <el-input v-model="queryParams.factorTypeName" placeholder="请输入环境因子类型名称" clearable
-                    @keyup.enter.native="handleQuery" />
+      <el-form :model="addition" ref="queryForm" :inline="true" v-show="showSearch" label-width="88px">
+        <el-form-item :label="$t('basic.label.species')" prop="species_name">
+          <el-select v-model="addition.species_name" class="m-2" :placeholder="$t('basic.placeholder.species')" clearable>
+            <el-option v-for="item in species_nameOptions" :key="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('basic.label.population')" prop="population_name">
+          <el-input v-model="addition.population_name" :placeholder="$t('basic.placeholder.population')" clearable
+            @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search"  @click="handleQuery" >搜索</el-button>
-          <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
+          <el-button type="primary" icon="Search" @click="handleQuery">{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh" @click="resetQuery">{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="primary" plain icon="Plus"  @click="handleAdd" v-hasPermi="['system:type:add']"
-                     >新增</el-button>
+          <el-button type="primary" plain icon="Plus" @click="handleAdd"
+            v-hasPermi="['system:population:add']">{{ $t('basic.button.add') }}</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="success" plain icon="Edit"  :disabled="single" @click="handleUpdate"
-                     v-hasPermi="['system:type:edit']" >修改</el-button>
+          <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+            v-hasPermi="['system:population:edit']">{{ $t('basic.button.update') }}</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="danger" plain icon="delete"  :disabled="multiple" @click="handleDelete"
-                     v-hasPermi="['system:type:remove']" >删除</el-button>
+          <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
+            v-hasPermi="['system:population:remove']">{{ $t('basic.button.delete') }}</el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button type="warning" plain icon="Download"  @click="handleExport"
-                     v-hasPermi="['system:type:export']" >导出</el-button>
+          <el-button type="warning" plain icon="Download" @click="handleExport"
+            v-hasPermi="['system:population:export']">{{ $t('basic.button.export') }}</el-button>
         </el-col>
-        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="handle_List"></right-toolbar>
       </el-row>
 
-      <el-table :data="typeList" @selection-change="handleSelectionChange" :cell-style="emptyHandler">
+      <el-table v-loading="loading" :data="populationList" @selection-change="handleSelectionChange" :cell-style="emptyHandler"> 
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="环境因子类型名称" align="center" prop="factorTypeName" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column type="index" :label="$t('basic.table.index')" width="60" align="center" />
+        <el-table-column :label="$t('basic.table.population')" align="center" prop="population_name" />
+        <el-table-column :label="$t('basic.table.species')" align="center" prop="species_name" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-tooltip placement="top" content="修改">
-            <el-button link  type="text" @click="handleUpdate(scope.row)" class="table_button" icon="edit"></el-button></el-tooltip>
-            <el-tooltip placement="top" content="删除">
-            <el-button  type="text" @click="handleDelete(scope.row)" class="table_button" icon="delete"></el-button></el-tooltip>
+            <el-tooltip :content="$t('basic.button.update')" placement="top">
+              <el-button link icon="Edit" type="text" @click="handleUpdate(scope.row)"
+                class="table_button"></el-button></el-tooltip>
+            <el-tooltip :content="$t('basic.button.delete')" placement="top">
+              <el-button link type="text" icon="Delete" @click="handleDelete(scope.row)"
+                class="table_button"></el-button></el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-                     v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-                     layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
+        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+        layout="total, sizes,prev, pager, next, jumper" @size-change="handle_List" @current-change="handle_List" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
-        <el-form-item label="环境因子类型名称" prop="factorTypeName">
-          <el-input v-model="form.factorTypeName" placeholder="请输入环境因子类型名称" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item :label="$t('basic.label.species')" prop="species_name">
+          <el-select v-model="form.species_name" class="m-2" :placeholder="$t('basic.placeholder.species')" clearable>
+            <el-option v-for="item in species_nameOptions" :key="item" :value="item" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.label.population')" prop="population_name">
+          <el-input v-model="form.population_name" :placeholder="$t('basic.label.population')" />
+        </el-form-item>
+        <el-form-item :label="$t('basic.label.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.species')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{ $t('basic.button.confirm') }}</el-button>
+        <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
+<script setup>
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+</script>
+
 <script>
-import { download, checkout, listType, getType, delType, addType, updateType } from "@/api/factor/type";
+import { download, checkout, listPopulation, SelectPopulation, getPopulation, delPopulation, addPopulation, updatePopulation, getSelectPopulation } from "@/api/system/population";
 import { blobValidate } from '@/utils/param'
 import { saveAs } from 'file-saver'
 export default {
-  name: "Type",
+  name: "Population",
   data() {
     return {
       name: "",
@@ -82,7 +106,7 @@ export default {
       // 遮罩层
       loading: true,
       // 选中数组
-      factorTypeId: [],
+      populationId: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -92,7 +116,7 @@ export default {
       // 总条数
       total: 0,
       // 【请填写功能名称】表格数据
-      typeList: [],
+      populationList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -100,21 +124,26 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        factorTypeName: "",
-        factorId: "",
+        pageSize: 10
       },
+      addition: {
+        species_name: "",
+        population_name: "",
+      },
+      // species_name:null,
+      // population_name: null,
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        factorTypeId: [
-          { required: true, message: "环境因子类型ID不能为空", trigger: "blur" }
-        ], factorTypeName: [
-          { required: true, message: "环境因子类型名称不能为空", trigger: "blur" }
+        population_name: [
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '群体名称不能为空' : 'Population name cannot be empty', trigger: "blur" }
         ],
-        factorId: [
-          { required: true, message: "环境因子ID不能为空", trigger: "blur" }
+        speciesId: [
+          { required: true, message: "物种ID不能为空", trigger: "blur" }
+        ],
+        species_name: [
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '物种名称不能为空' : 'Species name cannot be empty', trigger: "blur" }
         ],
         createBy: [
           { required: true, message: "创建者不能为空", trigger: "blur" }
@@ -128,26 +157,59 @@ export default {
         updateTime: [
           { required: true, message: "更新时间不能为空", trigger: "blur" }
         ],
-      }
+      },
+      //种群名称下拉选项
+      species_nameOptions: [],
+      // 转下划线的字段名集合
+      underlineFields: ["kindId", "kindName", "speciesId", "createBy", "createTime", "updateBy", "updateTime", "remark"]
     };
   },
   created() {
-    this.getList();
+    this.handle_List();
+    this.getSelPopu();
+  },
+  watch: {
+    "form": {
+      handler(newVal, oldVal) {
+        console.log(newVal)
+        console.log(oldVal)
+      },
+      immediate: false,
+      deep: true
+    }
   },
   methods: {
     // 处理空白单元格
     emptyHandler({row,column}){
       row[column.property] = row[column.property] || '-'
     },
+    // 驼峰转下划线
+    toLine(name) {
+      return name.replace(/([A-Z])/g, "_$1").toLowerCase();
+    },
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
-      listType(this.queryParams).then(response => {
+      listPopulation(this.queryParams).then(response => {
         console.log(response)
-        this.typeList = response.rows;
+        this.populationList = response.rows.map(item=>{
+          // 驼峰转下划线
+          let obj = {}
+          for(let key in item){
+            obj[this.toLine(key)] = item[key]
+          }
+          return obj
+        });
         this.total = response.total;
         this.loading = false;
       });
+    },
+    //population下拉框
+    getSelPopu() {
+      getSelectPopulation().then(res => {
+        console.log(res)
+        this.species_nameOptions = res.data
+      })
     },
     // 取消按钮
     cancel() {
@@ -157,9 +219,9 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        asfactorTypeId: null,
-        factorTypeId: null,
-        factorId: null,
+        populationId: null,
+        population_name: null,
+        speciesId: null,
         createBy: null,
         createTime: null,
         updateBy: null,
@@ -167,23 +229,40 @@ export default {
         remark: null
       };
       this.resetForm("form");
+      // this.addition.population_name = ""
+      // this.addition.species_name = ""
+    },
+    /**搜索 */
+    handle_List() {
+      let formdata = new FormData()
+      formdata.append("population_name", this.addition.population_name)
+      formdata.append("species_name", this.addition.species_name)
+      // this.loading = true;
+      SelectPopulation(this.queryParams, formdata).then(response => {
+        console.log(response)
+        this.populationList = response.rows;
+        this.populationList.forEach(item => {
+          if (item.remark === null || !item.remark.length) item.remark = "-"
+        })
+        this.total = response.total;
+        this.loading = false;
+      });
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      // 按照输入框内容过滤数据
       this.queryParams.pageNum = 1;
-      this.getList()
-
+      this.handle_List();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.factorTypeName = ""
+      this.addition.population_name = ""
+      this.addition.species_name = ""
+      this.resetForm("form");
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      console.log(selection)
-      this.factorTypeId = selection.map(item => item.factorTypeId)
+      this.populationId = selection.map(item => item.population_id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -191,18 +270,18 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加";
+      this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '添加' : 'Add';
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const asfactorTypeId = row.factorTypeId || this.factorTypeId
-      getType(asfactorTypeId).then(response => {
-        console.log(response)
+      const populationId = row.population_id || this.populationId[0]
+      console.log(this.populationId,'123')
+      getPopulation(populationId).then(response => {
         this.form = response.data;
-        this.name = this.form.factorTypeName
+        this.name = this.form.population_name;
         this.open = true;
-        this.title = "修改";
+        this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
       });
     },
     /** 提交按钮 */
@@ -210,76 +289,83 @@ export default {
       console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.factorTypeId != null) {
-            if (this.name == this.form.factorTypeName) {
-              updateType(this.form).then(response => {
-                this.$modal.msgSuccess("修改成功");
+          if (this.form.population_id !== null) {
+            if (this.form.population_name === this.name) {
+              updatePopulation(this.form).then(response => {
+                this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                 this.open = false;
-                this.getList();
+                this.handle_List();
               });
             }
             else {
               checkout(this.form).then(res => {
                 this.ifAdd = res.data;
-                if (this.ifAdd == 0) {
-                  updateType(this.form).then(response => {
-                    this.$modal.msgSuccess("修改成功");
+                if (this.ifAdd === 0) {
+                  updatePopulation(this.form).then(response => {
+                    this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                     this.open = false;
-                    this.getList();
+                    this.handle_List();
                   });
                 }
-                else { this.$modal.msgWarning("该名称已存在！") }
+                else { this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!') }
               })
             }
 
 
           } else {
+            // let obj = {"speciesName":this.form.species_name}
             checkout(this.form).then(res => {
-              this.ifAdd = res.data;
+              this.ifAdd = res.data
               if (this.ifAdd == 0) {
-                addType(this.form).then(response => {
-                  this.$modal.msgSuccess("新增成功");
+                addPopulation(this.form).then(response => {
+                  this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
                   this.open = false;
-                  this.getList();
+                  this.handle_List();
                 });
               }
               else {
-                this.$modal.msgWarning("该名称已存在！")
+                this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!')
               }
             })
+
 
           }
         }
       });
     },
+
     /** 删除按钮操作 */
     handleDelete(row) {
-      const asfactorTypeIds = row.factorTypeId || this.factorTypeId;
-      // 获取名称
-      let factorTypeNames = []
-      if (row.factorTypeName) {
-        factorTypeNames = [row.factorTypeName]
-      } else {
-        factorTypeNames = this.typeList.filter(item => this.factorTypeId.includes(item.factorTypeId)).map(item => item.factorTypeName)
+      const populationIds = row.population_id || this.populationId;
+      // 根据id查找要删除的群体名称
+      let populationNames = []
+      if(row.population_id){
+        populationNames.push(row.population_name)
+      }else{
+        this.populationList.forEach(item => {
+          if(this.populationId.includes(item.population_id)){
+            populationNames.push(item.population_name)
+          }
+        })
       }
 
-
-      this.$modal.confirm('是否确认删除名称为"' + factorTypeNames + '"的环境因子类别？').then(function () {
-        return delType(asfactorTypeIds);
+      this.$modal.confirm((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '是否确认删除名称为'+" '"+populationNames+"' "+'的群体?' : 'Are you sure you want to delete the item named'+" '"+populationNames+"' "+"?").then(function () {
+        return delPopulation(populationIds);
       }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
+        this.handle_List();
+        this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '删除成功！' : 'Delete successfully!');
       }).catch(() => { });
     },
     /** 导出按钮操作 */
     handleExport() {
-      const factor_type_id = this.factorTypeId
-      download(factor_type_id).then(res => {
+      const population_id = this.populationId
+      console.log(population_id)
+      download(population_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {
           const blob = new Blob([res])
           // console.log(blob)
-          saveAs(blob, `factor_type${new Date().getTime()}.xlsx`)
+          saveAs(blob, `population${new Date().getTime()}.xlsx`)
         } else {
           const resText = data.text();
           const rspObj = JSON.parse(resText);
@@ -322,9 +408,15 @@ export default {
   padding: 0px !important;
 
   h1 {
-    margin: 0;
+    margin: 0%;
   }
 
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
 
     font-weight: 700;
@@ -597,6 +689,12 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
+
+
+
+
+
+
 .green-button {
   background-color: var(--theme-color) !important;
   color: #fff !important;

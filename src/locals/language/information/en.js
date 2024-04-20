@@ -9,7 +9,8 @@ export default {
             reset:'Reset',
             cancel:'Cancel',
             save:'Save',
-            confirm:'Confirm'
+            confirm:'Confirm',
+            confirmUpdate:'Confirm update'
         },
         placeholder:{
             species:'Enter the species name',
@@ -43,7 +44,12 @@ export default {
             delete_confirm1: 'Are you sure you want to delete the item numbered',
             delete_confirm2: '?',
             delete_success: 'Delete successfully!',
-
+            no_data:'No eligible data!',
+            search_success:'Search successfully!',
+            input_condition:'Please enter the search criteria!',
+            add_success:'Add successfully!',
+            updateBy:'Please modify by character type!',
+            update_fail: 'Update failed!',
 
         },
         table:{

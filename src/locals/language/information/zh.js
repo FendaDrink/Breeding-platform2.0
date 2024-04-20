@@ -9,7 +9,8 @@ export default {
             reset:'重置',
             cancel:'取消',
             save:'保存',
-            confirm:'确定'
+            confirm:'确定',
+            confirmUpdate:'确认修改',
         },
         placeholder:{
             species:'请输入物种名称',
@@ -44,7 +45,12 @@ export default {
             delete_confirm1:'是否确认删除编号为',
             delete_confirm2:'的数据项？',
             delete_success:'删除成功！',
-
+            no_data:'没有符合条件的数据！',
+            search_success:'查询成功！',
+            input_condition:'请输入查询条件！',
+            add_success:'新增成功！',
+            updateBy:'请通过性状类型来修改！',
+            update_fail: '修改失败！',
 
         },
         table:{

@@ -1,80 +1,100 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
-    <el-card>
-      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="100px">
-        <el-form-item label="环境因子类型">
-          <el-select v-model="add.type" class="m-2" placeholder="请选择环境因子类型" clearable>
-            <el-option v-for="item in factorOptions" :key="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="环境因子名称">
-          <el-input v-model="add.name" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
+    <el-card class="card-container">
+      <el-form :model="queryParams" ref="queryForm" size="larger" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form-item :label="$t('basic.label.species')" prop="speciesName">
+          <el-input v-model="queryParams.speciesName" :placeholder="$t('basic.placeholder.species')" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="isSearching" icon="Search"  @click="handleQuery" >搜索</el-button>
-          <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
+          <el-button type="primary" icon="Search" size="larger" @click="handleQuery">{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh" size="larger" @click="resetQuery" plain>{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
+
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="warning" plain  @click="isModify" :loading="isModifing" icon="edit"
-                     v-hasPermi="['system:factor:export']">确认修改</el-button>
+          <el-button type="primary" plain icon="Plus" @click="handleAdd"
+            v-hasPermi="['system:species:add']">{{ $t('basic.button.add') }}</el-button>
         </el-col>
-
+        <el-col :span="1.5">
+          <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+            v-hasPermi="['system:species:edit']">{{ $t('basic.button.update') }}</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
+            v-hasPermi="['system:species:remove']">{{ $t('basic.button.delete') }}</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="warning" plain icon="Download"  @click="handleExport"
+            v-hasPermi="['system:species:export']">{{$t('basic.button.export')}}</el-button>
+        </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange" :cell-style="emptyHandler"
-                @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
+      <el-table :data="speciesList" @selection-change="handleSelectionChange" :cell-style="emptyHandler">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="环境因子名称" align="center" prop="factorName" />
-        <el-table-column label="全称" align="center" prop="factorFullName" />
-        <el-table-column label="缩写" align="center" prop="factorAbbreviationName" />
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.index')" type="index" width="60" />
+        <el-table-column :label="$t('basic.table.species')" align="center" prop="speciesName" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-tooltip :content="$t('basic.button.update')" placement="top">
+              <el-button link size="large" type="text" @click="handleUpdate(scope.row)" icon="edit"
+                class="table_button"></el-button></el-tooltip>
+            <el-tooltip :content="$t('basic.button.delete')" placement="top">
+              <el-button size="large" type="text" @click="handleDelete(scope.row)" icon="delete"
+                class="table_button"></el-button></el-tooltip>
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
-                     v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-                     layout="total, sizes, prev, pager, next, jumper" @size-change="getHigh" @current-change="getHigh" />
+        v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="getList" @current-change="getList" />
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px">
+    <el-dialog :title="title" v-model="open" width="500px" :model-value="open">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="环境因子名称" prop="factorName">
-          <el-input v-model="form.factorName" placeholder="请输入环境因子名称" />
+        <el-form-item :label="$t('basic.table.species')" prop="speciesName">
+          <el-input v-model="form.speciesName" :placeholder="$t('basic.placeholder.species')" />
         </el-form-item>
-        <el-form-item label="全称" prop="factorFullName">
-          <el-input v-model="form.factorFullName" placeholder="请输入全称" />
-        </el-form-item>
-        <el-form-item label="缩写" prop="factorAbbreviationName">
-          <el-input v-model="form.factorAbbreviationName" placeholder="请输入缩写" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.table.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.comment')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{$t('basic.button.confirm')}}</el-button>
+        <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
+<script setup>
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+</script>
+
 <script>
-import { addHigh, selHighLAll, download, getSelect, getLightLine, listFactor,getLightLineAll, addFactor, updateFactor } from "@/api/factor/factor";
+import { download, checkout, listSpecies, getSpecies, delSpecies, addSpecies, updateSpecies } from "@/api/species/species";
 import { blobValidate } from '@/utils/param'
-import { ElMessage } from "element-plus";
 import { saveAs } from 'file-saver'
 export default {
-  name: "Factor",
+  name: "Species",
   data() {
     return {
+      name: "",
+      ifAdd: 0,
       // 遮罩层
       loading: true,
       // 选中数组
-      factorId: [],
+      speciesId: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -84,7 +104,7 @@ export default {
       // 总条数
       total: 0,
       // 【请填写功能名称】表格数据
-      factorList: [],
+      speciesList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -93,71 +113,45 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        speciesName: "",
       },
-      //记录是否第一次查询
-      isFirstSearch: true,
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        factorName: [
-          {required: true, message: "环境因子名称不能为空", trigger: "blur"}
-        ],
-        factorFullName: [
-          {required: true, message: "全称不能为空", trigger: "blur"}
-        ],
-        factorAbbreviationName: [
-          {required: true, message: "缩写不能为空", trigger: "blur"}
+        speciesName: [
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '物种名称不能为空' : 'Species name cannot be empty', trigger: "blur" }
         ],
         createBy: [
-          {required: true, message: "创建者不能为空", trigger: "blur"}
+          { required: true, message: "创建者不能为空", trigger: "blur" }
         ],
         createTime: [
-          {required: true, message: "创建时间不能为空", trigger: "blur"}
+          { required: true, message: "创建者时间不能为空", trigger: "blur" }
         ],
         updateBy: [
-          {required: true, message: "更新者不能为空", trigger: "blur"}
+          { required: true, message: "更新者不能为空", trigger: "blur" }
         ],
         updateTime: [
-          {required: true, message: "更新时间不能为空", trigger: "blur"}
+          { required: true, message: "更新时间不能为空", trigger: "blur" }
         ],
-      },
-      //高亮显示
-      tableRowClassName: '',
-      add: {
-        type: "",
-        name: ""
-      },
-      rowid: [],
-      factorOptions: [],
-      len: "",
-      selectArr: [],
-      //所有选中的数据
-      allSelecArr: {},
-      //是否为第一次查询
-      isFirstSelection: true,
-      //保存每页当前的数据
-      pageSelection: [],
-      //保存上一次的数据
-      lastSelection: [],
-      //加载项
-      isSearching: false,
-      isModifing: false,
-      flen: 0,
-      Tlen: 0,
+      }
     };
   },
   created() {
-    this.getHigh();
-    this.getsel();
+    this.getList();
   },
   methods: {
+    // 处理空白单元格
+    emptyHandler({row,column}){
+      row[column.property] = row[column.property] || '-'
+    },
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
-      let query = { ...this.queryParams, ...this.add }
-      listFactor(query).then(response => {
-        console.log(response);
+      listSpecies(this.queryParams).then(response => {
+        console.log(response)
+        this.speciesList = response.rows;
+        this.total = response.total;
         this.loading = false;
       });
     },
@@ -169,150 +163,134 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        factorId: null,
-        factorName: null,
-        factorFullName: null,
-        factorAbbreviationName: null,
+        speciesId: null,
+        speciesName: null,
         createBy: null,
         createTime: null,
         updateBy: null,
         updateTime: null,
         remark: null
       };
-      this.add.type = ""
-      this.add.name = ""
-      this.len = ""
       this.resetForm("form");
-
-    },
-    // 处理空白单元格
-    emptyHandler({row,column}){
-      row[column.property] = row[column.property] || '-'
-    },
-    getHigh() {
-      this.loading = true;
-      getLightLine({...this.queryParams, ...this.add}).then(response => {
-        const responseData=response.data
-        this.factorList = responseData.data
-        this.total = responseData.total
-        if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
-          ElMessage.warning("没有符合条件的数据")
-        } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
-          ElMessage.success("查询成功")
-        }
-        this.isFirstSelection = true
-        this.isFirstSearch = false
-        this.len = responseData.size
-        const num = this.queryParams.pageNum
-        const size = this.queryParams.pageSize
-        const start = (num - 1) * size
-        this.selectArr = this.factorList.slice(0, this.len)
-        this.$refs.multipleTable.clearSelection();
-        setTimeout(()=>{
-          this.pageSelection = []
-          this.factorList.forEach((item, index) => {
-            if (this.allSelecArr[index + start] && item.factorId == this.allSelecArr[index + start].factorId) {
-              this.$refs.multipleTable.toggleRowSelection(item, true)
-              this.pageSelection.push(index)
-            }
-          });
-          this.isSearching = false
-        },0)
-        this.tableRowClassName = ({row, rowIndex}) => {
-          if (this.allSelecArr[rowIndex + start] && row.factorId == this.allSelecArr[rowIndex + start].factorId) {
-            return "success-row"
-          } else return ""
-        }
-        this.loading = false;
-      })
-    },
-    //查询所有选择的数据
-    getAllSelection() {
-      return new Promise((resolve, reject) => {
-        getLightLineAll({
-          ...this.add,
-          pageNum: 1,
-          pageSize: 1000
-        })
-            .then(res => {
-              const resData = res.data
-              resData.data.slice(0, resData.size).forEach((item, index) => {
-                  this.allSelecArr[index] = item
-                })
-                resolve()
-            });
-      })
     },
     /** 搜索按钮操作 */
-    async handleQuery() {
-      if (this.add.type == "" && this.add.name == "") {
-        ElMessage.warning("请输入查询条件")
-        return
-      }
+    handleQuery() {
       this.queryParams.pageNum = 1;
-      this.isFirstSearch = true;
-      this.isFirstSelection = true
-      this.allSelecArr = {}
-      this.factorId = []
-      this.isSearching = true
-      this.getAllSelection().then(() => {
-        this.getHigh();
-      })
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.add.name = ""
-      this.add.type = ""
-      this.len = ""
-      this.allSelecArr = {}
-      this.factorId = []
-      this.queryParams.pageNum = 1;
-      this.isFirstSearch = true;
-      this.isFirstSelection = true
-      this.getHigh();
+      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.isFirstSelection = false
-      //获取allSelecArr的id数组
-      console.log(this.allSelecArr, "this.allSelecArr111");
-      this.factorId = []
-      for (let key in this.allSelecArr) {
-        this.factorId.push(this.allSelecArr[key].factorId)
+      console.log(selection)
+
+      console.log(this.queryParams)
+      this.speciesId = selection.map(item => {
+        // this.queryParams.speciesId = item.speciesId
+        // this.queryParams.speciesName = item.speciesName
+        return item.speciesId
       }
-      console.log(this.factorId, "this.factorId");
+      )
+
+      this.single = selection.length !== 1
+      this.multiple = !selection.length
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+      this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '添加物种信息' : 'Add Species Information';
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      console.log(row)
+      this.reset();
+      const speciesId = row.speciesId || this.speciesId
+      console.log(speciesId)
+      getSpecies(speciesId).then(response => {
+        this.form = response.data;
+        this.name = this.form.speciesName
+        this.open = true;
+        this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
+      });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.factorId != null) {
-            updateFactor(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
+          if (this.form.speciesId != null) {
+            if (this.form.speciesName === this.name) {
+              updateSpecies(this.form).then(response => {
+                this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
+                this.open = false;
+                this.getList();
+              });
+            }
+            else {
+              checkout(this.form).then(res => {
+                this.ifAdd = res.data;
+                if (this.ifAdd === 0) {
+                  updateSpecies(this.form).then(response => {
+                    this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
+                    this.open = false;
+                    this.getList();
+                  });
+                }
+                else { this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!') }
+              })
+            }
+
+
           } else {
-            addFactor(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+            checkout(this.form).then(res => {
+              this.ifAdd = res.data
+              if (this.ifAdd == 0) {
+                addSpecies(this.form).then(response => {
+                  this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
+                  this.open = false;
+                  this.getList();
+                });
+              }
+              else {
+                this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!')
+              }
+            })
+
           }
         }
       });
     },
-    // /** 删除按钮操作 */
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const speciesIds = row.speciesId || this.speciesId;
+      // 获取名称
+      let speciesNames = []
+      if(row.speciesName){
+        speciesNames.push(row.speciesName)
+      }else{
+        speciesNames = this.speciesList.filter(item => speciesIds.includes(item.speciesId)).map(item => item.speciesName)
+      }
+      this.$modal.confirm((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '是否确认删除名称为'+" '"+speciesNames+"' "+'的物种?' : 'Are you sure you want to delete the item named'+" '"+speciesNames+"' "+"?").then(function () {
+        return delSpecies(speciesIds);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '删除成功！' : 'Delete successfully!');
+      }).catch(() => { });
+    },
     /** 导出按钮操作 */
     handleExport() {
-      const factor_id = this.factorId
-      download(factor_id).then(res => {
+      const species_id = this.speciesId
+      // let formdata = new FormData()
+      // formdata.append("species_id",species_id)
+      download(species_id).then(res => {
         const isLogin = blobValidate(res);
         if (isLogin) {
           const blob = new Blob([res])
           // console.log(blob)
-          saveAs(blob, `factor_classification${new Date().getTime()}.xlsx`)
+          saveAs(blob, `species${new Date().getTime()}.xlsx`)
         } else {
           const resText = data.text();
           const rspObj = JSON.parse(resText);
@@ -320,80 +298,14 @@ export default {
           Message.error(errMsg);
         }
       })
-    },
-    //选中行高亮
-    handleSelect(selection, row) {
-      console.log(selection, "selection");
-      const index = this.factorList.findIndex(item => item.factorId == row.factorId) + (this.queryParams.pageNum - 1) * this.queryParams.pageSize
-      console.log(this.pageSelection, "this.pageSelection计算前");
-      this.lastSelection = this.pageSelection
-      this.pageSelection = selection
-      console.log(this.pageSelection, this.pageSelection.length, "this.pageSelection");
-      console.log(this.lastSelection, this.lastSelection.length, "this.lastSelection");
-      if (this.pageSelection.length > this.lastSelection.length) {
-        this.allSelecArr[index] = row
-      } else {
-        delete this.allSelecArr[index]
-      }
-      console.log(this.allSelecArr, "this.allSelecArr");
-    },
-    //全选数据
-    handleSelectAll(selection) {
-      const start = (this.queryParams.pageNum - 1) * this.queryParams.pageSize
-      if (selection.length == 0) {
-        this.pageSelection = []
-        this.factorList.forEach((item, index) => {
-          delete this.allSelecArr[index + start]
-        })
-      } else {
-        this.pageSelection = selection
-        selection.forEach((item, index) => {
-          this.allSelecArr[index + start] = item
-        })
-      }
-      this.factorId = []
-      for (let key in this.allSelecArr) {
-        this.factorId.push(this.allSelecArr[key].factorId)
-      }
-    },
-    getsel() {
-      getSelect().then(res => {
-        console.log(res)
-        this.factorOptions = res.data
-      })
-    },
-    isModify() {
-      let obj = {
-        list: [],
-        type: ""
-      }
-      obj.list = this.factorId
-      obj.type = this.add.type
-      if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过形状类型来修改！！")
-      } else {
-        this.isModifing = true
-        addHigh(obj).then(res => {
-          if (res.code == 200) {
-            ElMessage.success("修改成功")
-          } else {
-            ElMessage.error("修改失败")
-          }
-          this.resetQuery()
-          this.isModifing = false
-        })
-      }
 
     }
   }
 };
 </script>
-<style>
-.el-table .success-row {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
-}
-</style>
 
+
+<!-- el-dialog的append-to-body属性会导致el-dialog的样式修改失效，先去掉 -->
 <style lang="less" scoped>
 :deep(.el-dialog__header) {
   margin-right: 0px;
@@ -426,6 +338,13 @@ export default {
   h1 {
     margin: 0%;
   }
+
+  // width: 100px; /* 梯形底部宽度 */
+  // height: 0; /* 设置元素本身高度为0，通过边框来构建形状 */
+  // border-top: 60px solid red; /* 这将成为梯形的高度 */
+  // border-right: 0;
+  // border-bottom: 0;
+  // border-right: 100px solid transparent; /* 左侧边框透明以形成斜边 */
   span {
 
     font-weight: 700;
@@ -506,6 +425,7 @@ export default {
   background-color: #fff;
   margin: 0px 20px 20px 20px;
   margin-right: 0px;
+  margin-left: 0px ;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.12);
 
   h1 {
@@ -648,6 +568,7 @@ export default {
 }
 </style>
 
+
 <style lang="less" scoped>
 /* 假设 el-checkbox 是表头中的一个子元素 */
 
@@ -698,6 +619,13 @@ export default {
 :deep(.el-upload .el-upload-dragger) {
   width: 100%;
 }
+
+
+
+
+
+
+
 .green-button {
   background-color: var(--theme-color) !important;
   color: #fff !important;
