@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="showSettings" :withHeader="false" direction="rtl" size="300px">
+  <el-drawer v-model="showSettings" :withHeader="false" direction="rtl" size="350px">
     <div class="setting-drawer-title">
       <h3 class="drawer-title">{{ $t('layout.settings.theme_style') }}</h3>
     </div>
@@ -71,9 +71,10 @@
     </div>
 
     <el-divider />
-
-    <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">{{ $t('layout.settings.save') }}</el-button>
-    <el-button plain icon="Refresh" @click="resetSetting">{{ $t('layout.settings.reset') }}</el-button>
+    <div class="my_btn">
+      <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">{{ $t('layout.settings.save') }}</el-button>
+      <el-button plain icon="Refresh" @click="resetSetting">{{ $t('layout.settings.reset') }}</el-button>
+    </div>
   </el-drawer>
 
 </template>
@@ -190,6 +191,12 @@ defineExpose({
 </script>
 
 <style lang='scss' scoped>
+.my_btn{
+  display: flex;
+  .el-button{
+    width: 150px;
+  }
+}
 .setting-drawer-title {
   margin-bottom: 12px;
   color: rgba(0, 0, 0, 0.85);

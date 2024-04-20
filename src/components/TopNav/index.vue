@@ -7,7 +7,7 @@
     <template v-for="(item, index) in topMenus">
       <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber"
         ><svg-icon :icon-class="item.meta.icon" />
-        {{ item.meta.title }}</el-menu-item
+        {{ menusTitle(item.meta.title) }}</el-menu-item
       >
     </template>
 
@@ -20,7 +20,7 @@
           :key="index"
           v-if="index >= visibleNumber"
           ><svg-icon :icon-class="item.meta.icon" />
-          {{ item.meta.title }}</el-menu-item
+          {{ menusTitle(item.meta.title) }}</el-menu-item
         >
       </template>
     </el-sub-menu>
@@ -40,6 +40,11 @@ const visibleNumber = ref(null);
 const currentIndex = ref(null);
 // 隐藏侧边栏路由
 const hideList = ['/index', '/user/profile'];
+
+// 国际化
+const menusTitle = (title) => {
+  return (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? title.split('/')[0] : title.split('/')[1];
+}
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()

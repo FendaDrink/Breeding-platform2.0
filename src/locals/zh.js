@@ -39,7 +39,7 @@ export default {
         logout: '退出登录',
         setLayout: '布局设置',
         MyAccount: '个人中心',
-        setLanguage: 'ENG'
+        setLanguage: 'ENGLISH'
     },
     logo: {
         title: '基因组育种决策平台2.0'

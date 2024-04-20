@@ -51,8 +51,16 @@ export default{
             veryStrong:'非常强',
             safe:'安全',
             verySafe:'非常安全'
+        },
+        userAvatar:{
+            update:'修改头像',
+            title:'点击上传头像',
+            select:'选择',
+            submit:'提交',
+            success:'修改成功！',
+            format_error:'文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件！',
+            update_success:'修改成功！'
         }
-
     },
 
 

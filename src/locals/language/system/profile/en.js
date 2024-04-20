@@ -51,6 +51,15 @@ export default{
             veryStrong:'Very strong',
             safe:'Safe',
             verySafe:'Very safe'
+        },
+        userAvatar:{
+            update:'Modify avatar',
+            title:'Click to upload avatar',
+            select:'Select',
+            submit:'Submit',
+            success:'Update successfully!',
+            format_error:'File format error, please upload image type, such as: JPG, PNG suffix file!',
+            update_success:'Update successfully!'
         }
 
     }
