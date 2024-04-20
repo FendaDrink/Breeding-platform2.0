@@ -1,26 +1,45 @@
 <template>
-   <el-form ref="pwdRef" :model="user" :rules="rules" label-width="80px">
-      <el-form-item label="旧密码" prop="oldPassword">
-         <el-input v-model="user.oldPassword" placeholder="请输入旧密码" type="password" show-password />
-      </el-form-item>
-      <el-form-item label="新密码" prop="newPassword">
-         <el-input v-model="user.newPassword" placeholder="请输入新密码" type="password" show-password style="margin-bottom:10px"/>
-         <PsdStrength :password="user.newPassword"> </PsdStrength>
-      </el-form-item>
-      <el-form-item label="确认密码" prop="confirmPassword">
-         <el-input v-model="user.confirmPassword" placeholder="请确认密码" type="password" show-password/>
-      </el-form-item>
-      <el-form-item>
-      <el-button type="primary" @click="submit">保存</el-button>
-      <el-button type="danger" @click="close">关闭</el-button>
-      </el-form-item>
-   </el-form>
+  <el-form ref="pwdRef" :model="user" :rules="rules" label-width="120px">
+    <el-form-item :label="$t('profile.resetPwd.oldPwd')" prop="oldPassword">
+      <el-input v-model="user.oldPassword" :placeholder="$t('profile.rule.oldPwd')" type="password" show-password/>
+    </el-form-item>
+    <el-form-item :label="$t('profile.resetPwd.newPwd')" prop="newPassword">
+      <el-input v-model="user.newPassword" :placeholder="$t('profile.rule.newPwd')" type="password" show-password
+                style="margin-bottom:10px"/>
+      <PsdStrength :password="user.newPassword"></PsdStrength>
+    </el-form-item>
+    <el-form-item :label="$t('profile.resetPwd.confirmPwd')" prop="confirmPassword">
+      <el-input v-model="user.confirmPassword" :placeholder="$t('profile.rule.confirmPwd')" type="password"
+                show-password/>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="submit">{{ $t('profile.userInfo.save') }}</el-button>
+      <el-button type="danger" @click="close">{{ $t('profile.userInfo.close') }}</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script setup>
-import { updateUserPwd } from "@/api/system/user";
+import {updateUserPwd} from "@/api/system/user";
+import {computed} from "@vue/reactivity";
+import {useI18n} from "vue-i18n";
+import zh from "element-plus/lib/locale/lang/zh-cn";
+import en from "element-plus/lib/locale/lang/en";
+import {getCurrentInstance, reactive, ref} from "vue";
 
-const { proxy } = getCurrentInstance();
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? zh : en));
+
+const rule = {
+  password: computed(() => i18n.t('profile.rule.password')).value,
+  comPwd: computed(() => i18n.t('profile.rule.comPwd')).value,
+  oldPwd: computed(() => i18n.t('profile.rule.oldPwd')).value,
+  newPwd: computed(() => i18n.t('profile.rule.newPwd')).value,
+  confirmPwd: computed(() => i18n.t('profile.rule.comPwd')).value,
+  length:computed(()=>i18n.t('profile.rule.length')).value,
+  update_success: computed(() => i18n.t('profile.message.update_success')).value,
+}
+const {proxy} = getCurrentInstance();
 
 const user = reactive({
   oldPassword: undefined,
@@ -29,29 +48,37 @@ const user = reactive({
 });
 
 // var ISPWD =/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*,\._\+(){}])[0-9a-zA-Z!@#$%^&*,\\._\+(){}]{11,}$/;
-var ISPWD =/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!?|/@#$%^&*,\._\+(){}])[A-Za-z\d!?|/@#$%^&*,\._\+(){}]{11,}$/;
+var ISPWD = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!?|/@#$%^&*,\._\+(){}])[A-Za-z\d!?|/@#$%^&*,\._\+(){}]{11,}$/;
 // var ISPWD =/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{11,}$/;
 // 密码校验
-const validatePassword = (rule, value, callback) =>{
-   
-   if (!ISPWD.test(value)) {
-      callback(new Error("用户密码必须包含大写字母、小写字母、数字和特殊符号"));
-   } else {
-      callback();
-   }
+const validatePassword = (rule, value, callback) => {
+
+  if (!ISPWD.test(value)) {
+    callback(new Error(rule.password));
+  } else {
+    callback();
+  }
 }
 
 const equalToPassword = (rule, value, callback) => {
   if (user.newPassword !== value) {
-    callback(new Error("两次输入的密码不一致"));
+    callback(new Error(rule.comPwd));
   } else {
     callback();
   }
 };
 const rules = ref({
-  oldPassword: [{ required: true, message: "旧密码不能为空", trigger: "blur" }],
-  newPassword: [{ required: true, message: "新密码不能为空", trigger: "blur" }, { min: 11, message: "用户密码长度必须大于10", trigger: "blur" },{validator: validatePassword, trigger: 'blur' }],
-  confirmPassword: [{ required: true, message: "确认密码不能为空", trigger: "blur" }, { required: true, validator: equalToPassword, trigger: "blur" }]
+  oldPassword: [{required: true, message: rule.oldPwd, trigger: "blur"}],
+  newPassword: [{required: true, message: rule.newPwd, trigger: "blur"}, {
+    min: 11,
+    message: rule.length,
+    trigger: "blur"
+  }, {validator: validatePassword, trigger: 'blur'}],
+  confirmPassword: [{required: true, message: rule.confirmPwd, trigger: "blur"}, {
+    required: true,
+    validator: equalToPassword,
+    trigger: "blur"
+  }]
 });
 
 /** 提交按钮 */
@@ -59,11 +86,13 @@ function submit() {
   proxy.$refs.pwdRef.validate(valid => {
     if (valid) {
       updateUserPwd(user.oldPassword, user.newPassword).then(response => {
-        proxy.$modal.msgSuccess("修改成功");
+        proxy.$modal.msgSuccess(rule.update_success);
       });
     }
   });
-};
+}
+;
+
 /** 关闭按钮 */
 function close() {
   proxy.$tab.closePage();

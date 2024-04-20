@@ -1,0 +1,59 @@
+export default{
+    profile:{
+        index:{
+            header:'个人信息',
+            userName:'用户名称',
+            phoneNumber:'手机号码',
+            email:'用户邮箱',
+            dept:'所属部门',
+            roleGroup:'所属角色',
+            createTime:'创建日期',
+            userInfo:'基本资料',
+            resetPwd:'修改密码'
+        },
+        userInfo:{
+            nickName:'用户昵称',
+            phoneNumber:'手机号码',
+            email:'邮箱',
+            sex:'性别',
+            male:'男',
+            female:'女',
+            save:'保存',
+            close:'关闭'
+        },
+        resetPwd:{
+            oldPwd:'旧密码',
+            newPwd:'新密码',
+            confirmPwd:'确认密码',
+            oldPwd_placeholder:'请输入旧密码',
+            newPwd_placeholder:'请输入新密码',
+            confirmPwd_placeholder:'请确认新密码',
+        },
+        rule:{
+            nickName: '用户昵称不能为空',
+            email:'邮箱地址不能为空',
+            phoneNumber:'手机号码不能为空',
+            password:'用户密码必须包含大写字母、小写字母、数字和特殊符号',
+            comPwd:'两次输入的密码不一致',
+            oldPwd:'旧密码不能为空',
+            newPwd:'新密码不能为空',
+            confirmPwd:'确认密码不能为空',
+            length:'用户密码长度必须大于10'
+        },
+        message:{
+            update_success:'修改成功！',
+        },
+        psdStrength:{
+            veryWeak:'非常弱',
+            weak:'弱',
+            average:'一般',
+            strong:'强',
+            veryStrong:'非常强',
+            safe:'安全',
+            verySafe:'非常安全'
+        }
+
+    },
+
+
+}

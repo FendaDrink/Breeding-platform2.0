@@ -1,7 +1,7 @@
 // zh.js
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 
-import phenptype_zh from './language/phenotype/zh.js'
+import phenoptype_zh from './language/phenotype/zh.js'
 
 import genotype_zh from './language/genotype/zh.js'
 
@@ -14,6 +14,11 @@ import phenotypeVisual_zh from '@/locals/language/phenotype/phenotypeVisual/zh'
 import decision_zh from '@/locals/language/breedDecision/zh';
 
 import information_zh from '@/locals/language/information/zh';
+
+import profile_zh from '@/locals/language/system/profile/zh';
+
+import layout_zh from '@/locals/language/layout/zh';
+
 export default {
     title: '基因组育种决策平台2.0',
     loadingText:'加载中...',
@@ -47,7 +52,7 @@ export default {
 
     ...zhLocale,
     
-    ...phenptype_zh,
+    ...phenoptype_zh,
 
     ...genotype_zh,
 
@@ -59,6 +64,10 @@ export default {
 
     ...decision_zh,
 
-    ...information_zh
+    ...information_zh,
+
+    ...profile_zh,
+
+    ...layout_zh
 
 }

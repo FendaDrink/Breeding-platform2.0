@@ -1,7 +1,7 @@
 <template>
   <el-drawer v-model="showSettings" :withHeader="false" direction="rtl" size="300px">
     <div class="setting-drawer-title">
-      <h3 class="drawer-title">主题风格设置</h3>
+      <h3 class="drawer-title">{{ $t('layout.settings.theme_style') }}</h3>
     </div>
     <div class="setting-drawer-block-checbox">
       <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-dark')">
@@ -26,45 +26,45 @@
       </div>
     </div>
     <div class="drawer-item">
-      <span>主题颜色</span>
+      <span>{{ $t('layout.settings.theme_color') }}</span>
       <span class="comp-style">
         <el-color-picker v-model="theme" :predefine="predefineColors" @change="themeChange"/>
       </span>
     </div>
     <el-divider />
 
-    <h3 class="drawer-title">系统布局配置</h3>
+    <h3 class="drawer-title">{{ $t('layout.settings.system_layout') }}</h3>
 
     <div class="drawer-item">
-      <span>开启 TopNav</span>
+      <span>{{ $t('layout.settings.topNav') }}</span>
       <span class="comp-style">
         <el-switch v-model="topNav" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>开启 Tags-Views</span>
+      <span>{{ $t('layout.settings.theme_style') }}</span>
       <span class="comp-style">
         <el-switch v-model="tagsView" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>固定 Header</span>
+      <span>{{ $t('layout.settings.header') }}</span>
       <span class="comp-style">
         <el-switch v-model="fixedHeader" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>显示 Logo</span>
+      <span>{{ $t('layout.settings.logo') }}</span>
       <span class="comp-style">
         <el-switch v-model="sidebarLogo" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>动态标题</span>
+      <span>{{ $t('layout.settings.dyn_title') }}</span>
       <span class="comp-style">
         <el-switch v-model="dynamicTitle" class="drawer-switch" />
       </span>
@@ -72,8 +72,8 @@
 
     <el-divider />
 
-    <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">保存配置</el-button>
-    <el-button plain icon="Refresh" @click="resetSetting">重置配置</el-button>
+    <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">{{ $t('layout.settings.save') }}</el-button>
+    <el-button plain icon="Refresh" @click="resetSetting">{{ $t('layout.settings.reset') }}</el-button>
   </el-drawer>
 
 </template>
@@ -98,6 +98,19 @@ const sideTheme = ref(settingsStore.sideTheme);
 const storeSettings = computed(() => settingsStore);
 const predefineColors = ref(["#409EFF", "#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"]);
 
+/** 国际化相关 */
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+import { useI18n } from 'vue-i18n'
+import {computed} from "@vue/reactivity";
+
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+const loadingMsg = {
+  save_local:computed(()=>i18n.t('layout.settings.save_local')).value,
+  clear_cache:computed(()=>i18n.t('layout.settings.clear_cache')).value,
+}
 /** 是否需要topnav */
 const topNav = computed({
   get: () => storeSettings.value.topNav,
@@ -149,7 +162,7 @@ function handleTheme(val) {
   sideTheme.value = val;
 }
 function saveSetting() {
-  proxy.$modal.loading("正在保存到本地，请稍候...");
+  proxy.$modal.loading(loadingMsg.save_local);
   let layoutSetting = {
     "topNav": storeSettings.value.topNav,
     "tagsView": storeSettings.value.tagsView,
@@ -163,7 +176,7 @@ function saveSetting() {
   setTimeout(proxy.$modal.closeLoading(), 1000)
 }
 function resetSetting() {
-  proxy.$modal.loading("正在清除设置缓存并刷新，请稍候...");
+  proxy.$modal.loading(loadingMsg.clear_cache);
   localStorage.removeItem("layout-setting")
   setTimeout("window.location.reload()", 1000)
 }

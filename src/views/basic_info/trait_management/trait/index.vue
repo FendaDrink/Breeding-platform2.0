@@ -45,7 +45,7 @@
         <el-table-column :label="$t('basic.table.traitName')" align="center" prop="traitName" />
         <el-table-column :label="$t('basic.table.fullName')" align="center" prop="fullName" />
         <el-table-column :label="$t('basic.table.abbreviation')" align="center" prop="abbreviationName" />
-        <el-table-column :label="$t('comment')" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
         <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip :content="$t('basic.button.update')" placement="top">

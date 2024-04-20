@@ -2,20 +2,20 @@
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
       <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch">
-        <el-form-item label="环境因子名称" prop="factorName">
-          <el-input v-model="queryParams.factorName" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item :label="$t('basic.label.factorName')" prop="factorName">
+          <el-input v-model="queryParams.factorName" :placeholder="$t('basic.placeholder.factorName')" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="全称" prop="factorFullName">
-          <el-input v-model="queryParams.factorFullName" placeholder="请输入全称" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item :label="$t('basic.label.fullName')" prop="factorFullName">
+          <el-input v-model="queryParams.factorFullName" :placeholder="$t('basic.placeholder.fullName')" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="缩写" prop="factorAbbreviationName">
-          <el-input v-model="queryParams.factorAbbreviationName" placeholder="请输入缩写" clearable
+        <el-form-item :label="$t('basic.label.abbreviation')" prop="factorAbbreviationName">
+          <el-input v-model="queryParams.factorAbbreviationName" :placeholder="$t('basic.placeholder.abbreviation')" clearable
                     @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
 
-          <el-button type="primary" icon="Search"  @click="handleQuery" >搜索</el-button>
-          <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
+          <el-button type="primary" icon="Search"  @click="handleQuery" >{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh"  @click="resetQuery" >{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
 
@@ -23,35 +23,35 @@
         <el-col :span="1.5">
 
           <el-button type="primary" plain icon="Plus"  @click="handleAdd" 
-                     v-hasPermi="['system:factor:add']">新增</el-button>
+                     v-hasPermi="['system:factor:add']">{{ $t('basic.button.add') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="success" plain icon="Edit"  :disabled="single" @click="handleUpdate" 
-                     v-hasPermi="['system:factor:edit']">修改</el-button>
+                     v-hasPermi="['system:factor:edit']">{{ $t('basic.button.update') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="danger" plain icon="Delete"  :disabled="multiple" @click="handleDelete" 
-                     v-hasPermi="['system:factor:remove']">删除</el-button>
+                     v-hasPermi="['system:factor:remove']">{{ $t('basic.button.delete') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="warning" plain icon="Download"  @click="handleExport" 
-                     v-hasPermi="['system:factor:export']">导出</el-button>
+                     v-hasPermi="['system:factor:export']">{{ $t('basic.button.export') }}</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
       <el-table :data="factorList" @selection-change="handleSelectionChange" :cell-style="emptyHandler">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="环境因子名称" align="center" prop="factorName" />
-        <el-table-column label="全称" align="center" prop="factorFullName" />
-        <el-table-column label="缩写" align="center" prop="factorAbbreviationName" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column :label="$t('basic.table.index')" type="index" width="60" />
+        <el-table-column :label="$t('basic.table.factorName')" align="center" prop="factorName" />
+        <el-table-column :label="$t('basic.table.fullName')" align="center" prop="factorFullName" />
+        <el-table-column :label="$t('basic.table.abbreviation')" align="center" prop="factorAbbreviationName" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-tooltip placement="top" content="修改">
+            <el-tooltip placement="top" :content="$t('basic.button.update')">
             <el-button link  type="text" @click="handleUpdate(scope.row)" class="table_button" icon="edit"></el-button></el-tooltip>
-            <el-tooltip placement="top" content="删除">
+            <el-tooltip placement="top" :content="$t('basic.button.delete')">
             <el-button  type="text" @click="handleDelete(scope.row)" class="table_button" icon="delete"></el-button></el-tooltip>
           </template>
         </el-table-column>
@@ -64,31 +64,44 @@
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules">
-        <el-form-item label="环境因子名称" prop="factorName">
-          <el-input v-model="form.factorName" placeholder="请输入环境因子名称" />
+        <el-form-item :label="$t('basic.table.factorName')" prop="factorName">
+          <el-input v-model="form.factorName" :placeholder="$t('basic.placeholder.factorName')" />
         </el-form-item>
-        <el-form-item label="全称" prop="factorFullName">
-          <el-input v-model="form.factorFullName" placeholder="请输入全称" />
+        <el-form-item :label="$t('basic.table.fullName')" prop="factorFullName">
+          <el-input v-model="form.factorFullName" :placeholder="$t('basic.placeholder.fullName')" />
         </el-form-item>
-        <el-form-item label="缩写" prop="factorAbbreviationName">
-          <el-input v-model="form.factorAbbreviationName" placeholder="请输入缩写" />
+        <el-form-item :label="$t('basic.table.abbreviation')" prop="factorAbbreviationName">
+          <el-input v-model="form.factorAbbreviationName" :placeholder="$t('basic.placeholder.abbreviation')" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.table.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.comment')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain  @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain  @click="submitForm">{{ $t('basic.button.confirm') }}</el-button>
+        <el-button type="info" plain @click="cancel">{{ $t('basic.button.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
+
+<script setup>
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+</script>
+
 <script>
 import { download, checkout, listFactor, getFactor, delFactor, addFactor, updateFactor } from "@/api/factor/factor";
 import { blobValidate } from '@/utils/param'
 import { saveAs } from 'file-saver'
+import {delType} from "@/api/system/type";
 export default {
   name: "Factor",
   data() {
@@ -126,7 +139,7 @@ export default {
       // 表单校验
       rules: {
         factorName: [
-          { required: true, message: "环境因子名称不能为空", trigger: "blur" }
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '环境因子名称不能为空' : 'Factor name cannot be empty', trigger: "blur" }
         ],
         factorFullName: [
           { required: false, message: "全称不能为空", trigger: "blur" }
@@ -198,7 +211,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加";
+      this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '添加' : 'Add';
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -208,7 +221,7 @@ export default {
         this.form = response.data;
         this.name = this.form.factorName
         this.open = true;
-        this.title = "修改";
+        this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
       });
     },
     /** 提交按钮 */
@@ -217,9 +230,9 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.factorId != null) {
-            if (this.name == this.form.factorName) {
+            if (this.name === this.form.factorName) {
               updateFactor(this.form).then(response => {
-                this.$modal.msgSuccess("修改成功");
+                this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                 this.open = false;
                 this.getList();
               });
@@ -227,28 +240,28 @@ export default {
             else {
               checkout(this.form).then(res => {
                 this.ifAdd = res.data;
-                if (this.ifAdd == 0) {
+                if (this.ifAdd === 0) {
                   updateFactor(this.form).then(response => {
-                    this.$modal.msgSuccess("修改成功");
+                    this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                     this.open = false;
                     this.getList();
                   });
                 }
-                else { this.$modal.msgWarning("该名称已存在！") }
+                else { this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!') }
               })
             }
           } else {
             checkout(this.form).then(res => {
               this.ifAdd = res.data
-              if (this.ifAdd == 0) {
+              if (this.ifAdd === 0) {
                 addFactor(this.form).then(response => {
-                  this.$modal.msgSuccess("新增成功");
+                  this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
                   this.open = false;
                   this.getList();
                 });
               }
               else {
-                this.$modal.msgWarning("该名称已存在！")
+                this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!')
               }
             })
 
@@ -266,11 +279,11 @@ export default {
       } else {
         factorNames = this.factorList.filter(item => this.factorId.includes(item.factorId)).map(item => item.factorName)
       }
-      this.$modal.confirm('是否确认删除名称为"' + factorNames + '"的环境因子？').then(function () {
+      this.$modal.confirm((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '是否确认删除名称为'+" '"+factorNames+"' "+'的环境因子?' : 'Are you sure you want to delete the item named'+" '"+factorNames+"' "+"?").then(function () {
         return delFactor(factorIds);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess("删除成功");
+        this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '删除成功！' : 'Delete successfully!');
       }).catch(() => { });
     },
     /** 导出按钮操作 */

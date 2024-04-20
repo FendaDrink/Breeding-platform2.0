@@ -1,47 +1,47 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="环境因子类型名称" prop="factorTypeId" label-width="130px">
-          <el-input v-model="queryParams.factorTypeName" placeholder="请输入环境因子类型名称" clearable
+      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="108px">
+        <el-form-item :label="$t('basic.label.factorTypeName')" prop="factorTypeId" label-width="148px">
+          <el-input v-model="queryParams.factorTypeName" :placeholder="$t('basic.placeholder.factorTypeName')" clearable
                     @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="Search"  @click="handleQuery" >搜索</el-button>
-          <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
+          <el-button type="primary" icon="Search"  @click="handleQuery" >{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh"  @click="resetQuery" >{{$t('basic.button.reset')}}</el-button>
         </el-form-item>
       </el-form>
 
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="primary" plain icon="Plus"  @click="handleAdd" v-hasPermi="['system:type:add']"
-                     >新增</el-button>
+                     >{{ $t('basic.button.add') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="success" plain icon="Edit"  :disabled="single" @click="handleUpdate"
-                     v-hasPermi="['system:type:edit']" >修改</el-button>
+                     v-hasPermi="['system:type:edit']" >{{ $t('basic.button.update') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="danger" plain icon="delete"  :disabled="multiple" @click="handleDelete"
-                     v-hasPermi="['system:type:remove']" >删除</el-button>
+                     v-hasPermi="['system:type:remove']" >{{ $t('basic.button.delete') }}</el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button type="warning" plain icon="Download"  @click="handleExport"
-                     v-hasPermi="['system:type:export']" >导出</el-button>
+                     v-hasPermi="['system:type:export']" >{{ $t('basic.button.export') }}</el-button>
         </el-col>
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
       <el-table :data="typeList" @selection-change="handleSelectionChange" :cell-style="emptyHandler">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="环境因子类型名称" align="center" prop="factorTypeName" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column :label="$t('basic.table.index')" type="index" width="60" />
+        <el-table-column :label="$t('basic.table.factorTypeName')" align="center" prop="factorTypeName" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.operate')" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-tooltip placement="top" content="修改">
+            <el-tooltip placement="top" :content="$t('basic.button.update')">
             <el-button link  type="text" @click="handleUpdate(scope.row)" class="table_button" icon="edit"></el-button></el-tooltip>
-            <el-tooltip placement="top" content="删除">
+            <el-tooltip placement="top" :content="$t('basic.button.reset')">
             <el-button  type="text" @click="handleDelete(scope.row)" class="table_button" icon="delete"></el-button></el-tooltip>
           </template>
         </el-table-column>
@@ -53,21 +53,33 @@
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
-        <el-form-item label="环境因子类型名称" prop="factorTypeName">
-          <el-input v-model="form.factorTypeName" placeholder="请输入环境因子类型名称" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
+        <el-form-item :label="$t('basic.label.factorTypeName')" prop="factorTypeName">
+          <el-input v-model="form.factorTypeName" :placeholder="$t('basic.placeholder.factorTypeName')" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.label.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.placeholder.comment')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{ $t('basic.button.confirm') }}</el-button>
+        <el-button type="info" plain @click="cancel">{{$t('basic.button.cancel')}}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
+
+<script setup>
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+</script>
+
 
 <script>
 import { download, checkout, listType, getType, delType, addType, updateType } from "@/api/factor/type";
@@ -111,7 +123,7 @@ export default {
         factorTypeId: [
           { required: true, message: "环境因子类型ID不能为空", trigger: "blur" }
         ], factorTypeName: [
-          { required: true, message: "环境因子类型名称不能为空", trigger: "blur" }
+          { required: true, message: (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '环境因子类型名称不能为空' : 'Factor type name cannot be empty', trigger: "blur" }
         ],
         factorId: [
           { required: true, message: "环境因子ID不能为空", trigger: "blur" }
@@ -191,7 +203,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加";
+      this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '添加' : 'Add';
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -202,7 +214,7 @@ export default {
         this.form = response.data;
         this.name = this.form.factorTypeName
         this.open = true;
-        this.title = "修改";
+        this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
       });
     },
     /** 提交按钮 */
@@ -211,9 +223,9 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.factorTypeId != null) {
-            if (this.name == this.form.factorTypeName) {
+            if (this.name === this.form.factorTypeName) {
               updateType(this.form).then(response => {
-                this.$modal.msgSuccess("修改成功");
+                this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                 this.open = false;
                 this.getList();
               });
@@ -221,14 +233,14 @@ export default {
             else {
               checkout(this.form).then(res => {
                 this.ifAdd = res.data;
-                if (this.ifAdd == 0) {
+                if (this.ifAdd === 0) {
                   updateType(this.form).then(response => {
-                    this.$modal.msgSuccess("修改成功");
+                    this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                     this.open = false;
                     this.getList();
                   });
                 }
-                else { this.$modal.msgWarning("该名称已存在！") }
+                else { this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!') }
               })
             }
 
@@ -236,15 +248,15 @@ export default {
           } else {
             checkout(this.form).then(res => {
               this.ifAdd = res.data;
-              if (this.ifAdd == 0) {
+              if (this.ifAdd === 0) {
                 addType(this.form).then(response => {
-                  this.$modal.msgSuccess("新增成功");
+                  this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
                   this.open = false;
                   this.getList();
                 });
               }
               else {
-                this.$modal.msgWarning("该名称已存在！")
+                this.$modal.msgWarning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '该名称已存在！' : 'This species name already exists!')
               }
             })
 
@@ -264,11 +276,11 @@ export default {
       }
 
 
-      this.$modal.confirm('是否确认删除名称为"' + factorTypeNames + '"的环境因子类别？').then(function () {
+      this.$modal.confirm((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '是否确认删除名称为'+" '"+factorTypeNames+"' "+'的环境因子类别?' : 'Are you sure you want to delete the item named'+" '"+factorTypeNames+"' "+"?").then(function () {
         return delType(asfactorTypeIds);
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess("删除成功");
+        this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '删除成功！' : 'Delete successfully!');
       }).catch(() => { });
     },
     /** 导出按钮操作 */

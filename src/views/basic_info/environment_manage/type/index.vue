@@ -1,24 +1,24 @@
 <template>
   <div class="app-container" style="width: 100%;min-height: calc(100vh - 84px);background-color: #eeeeee;">
     <el-card>
-      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="100px">
-        <el-form-item label="环境因子类型">
-          <el-select v-model="add.type" class="m-2" placeholder="请选择环境因子类型" clearable>
+      <el-form :model="queryParams" ref="queryForm"  :inline="true" v-show="showSearch" label-width="140px">
+        <el-form-item :label="$t('basic.label.factorTypeName')">
+          <el-select v-model="add.type" class="m-2" :placeholder="$t('basic.placeholder.factorTypeName')" clearable>
             <el-option v-for="item in factorOptions" :key="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="环境因子名称">
-          <el-input v-model="add.name" placeholder="请输入环境因子名称" clearable @keyup.enter.native="handleQuery" />
+        <el-form-item :label="$t('basic.label.factorName')">
+          <el-input v-model="add.name" :placeholder="$t('basic.placeholder.factorName')" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="isSearching" icon="Search"  @click="handleQuery" >搜索</el-button>
-          <el-button icon="Refresh"  @click="resetQuery" >重置</el-button>
+          <el-button type="primary" :loading="isSearching" icon="Search"  @click="handleQuery" >{{ $t('basic.button.search') }}</el-button>
+          <el-button icon="Refresh"  @click="resetQuery" >{{ $t('basic.button.reset') }}</el-button>
         </el-form-item>
       </el-form>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="warning" plain  @click="isModify" :loading="isModifing" icon="edit"
-                     v-hasPermi="['system:factor:export']">确认修改</el-button>
+                     v-hasPermi="['system:factor:export']">{{ $t('basic.button.confirmUpdate') }}</el-button>
         </el-col>
 
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -27,11 +27,11 @@
       <el-table ref="multipleTable" :data="factorList" v-model="selectArr" @selection-change="handleSelectionChange" :cell-style="emptyHandler"
                 @select="handleSelect" @select-all="handleSelectAll" :row-class-name="tableRowClassName">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" type="index" width="50" />
-        <el-table-column label="环境因子名称" align="center" prop="factorName" />
-        <el-table-column label="全称" align="center" prop="factorFullName" />
-        <el-table-column label="缩写" align="center" prop="factorAbbreviationName" />
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column :label="$t('basic.table.index')" type="index" width="65" />
+        <el-table-column :label="$t('basic.table.factorName')" align="center" prop="factorName" />
+        <el-table-column :label="$t('basic.table.fullName')" align="center" prop="factorFullName" />
+        <el-table-column :label="$t('basic.table.abbreviation')" align="center" prop="factorAbbreviationName" />
+        <el-table-column :label="$t('basic.table.comment')" align="center" prop="remark" />
       </el-table>
 
       <el-pagination v-show="total > 0" :total="total" :page-sizes="[10, 20, 30, 50]" background
@@ -40,27 +40,38 @@
     </el-card>
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" v-model="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="环境因子名称" prop="factorName">
-          <el-input v-model="form.factorName" placeholder="请输入环境因子名称" />
+      <el-form ref="form" :model="form" :rules="rules" label-width="108px">
+        <el-form-item :label="$t('basic.table.factorName')" prop="factorName">
+          <el-input v-model="form.factorName" placeholder="$t('basic.placeholder.factorName')" />
         </el-form-item>
-        <el-form-item label="全称" prop="factorFullName">
-          <el-input v-model="form.factorFullName" placeholder="请输入全称" />
+        <el-form-item :label="$t('basic.table.fullName')" prop="factorFullName">
+          <el-input v-model="form.factorFullName" placeholder="$t('basic.placeholder.fullName')" />
         </el-form-item>
-        <el-form-item label="缩写" prop="factorAbbreviationName">
-          <el-input v-model="form.factorAbbreviationName" placeholder="请输入缩写" />
+        <el-form-item :label="$t('basic.table.abbreviation')" prop="factorAbbreviationName">
+          <el-input v-model="form.factorAbbreviationName" placeholder="$t('basic.placeholder.abbreviation')" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item :label="$t('basic.table.comment')" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :placeholder="$t('basic.table.comment')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" plain @click="submitForm">确 定</el-button>
-        <el-button type="info" plain @click="cancel">取 消</el-button>
+        <el-button type="success" plain @click="submitForm">{{ $t('basic.button.confirm') }}</el-button>
+        <el-button type="info" plain @click="cancel">$t('basic.button.confirm')</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
+
+<script setup>
+import { computed } from "@vue/reactivity";
+import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import en from 'element-plus/lib/locale/lang/en' // 英文语言
+
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n();
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+
+</script>
 
 <script>
 import { addHigh, selHighLAll, download, getSelect, getLightLine, listFactor,getLightLineAll, addFactor, updateFactor } from "@/api/factor/factor";
@@ -195,10 +206,10 @@ export default {
         const responseData=response.data
         this.factorList = responseData.data
         this.total = responseData.total
-        if ((this.add.type || this.add.name) && responseData.size == 0 && this.isFirstSearch) {
-          ElMessage.warning("没有符合条件的数据")
+        if ((this.add.type || this.add.name) && responseData.size === 0 && this.isFirstSearch) {
+          ElMessage.warning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '没有符合条件的数据！' : 'No eligible data!')
         } else if ((this.add.type || this.add.name) && this.isFirstSearch) {
-          ElMessage.success("查询成功")
+          ElMessage.success((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '查询成功！' : 'Search successfully!')
         }
         this.isFirstSelection = true
         this.isFirstSearch = false
@@ -211,7 +222,7 @@ export default {
         setTimeout(()=>{
           this.pageSelection = []
           this.factorList.forEach((item, index) => {
-            if (this.allSelecArr[index + start] && item.factorId == this.allSelecArr[index + start].factorId) {
+            if (this.allSelecArr[index + start] && item.factorId === this.allSelecArr[index + start].factorId) {
               this.$refs.multipleTable.toggleRowSelection(item, true)
               this.pageSelection.push(index)
             }
@@ -219,7 +230,7 @@ export default {
           this.isSearching = false
         },0)
         this.tableRowClassName = ({row, rowIndex}) => {
-          if (this.allSelecArr[rowIndex + start] && row.factorId == this.allSelecArr[rowIndex + start].factorId) {
+          if (this.allSelecArr[rowIndex + start] && row.factorId === this.allSelecArr[rowIndex + start].factorId) {
             return "success-row"
           } else return ""
         }
@@ -245,8 +256,8 @@ export default {
     },
     /** 搜索按钮操作 */
     async handleQuery() {
-      if (this.add.type == "" && this.add.name == "") {
-        ElMessage.warning("请输入查询条件")
+      if (this.add.type === "" && this.add.name === "") {
+        ElMessage.warning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '请输入查询条件！' : 'Please enter the search criteria!')
         return
       }
       this.queryParams.pageNum = 1;
@@ -289,13 +300,13 @@ export default {
         if (valid) {
           if (this.form.factorId != null) {
             updateFactor(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
+              this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功' : 'Update successfully!');
               this.open = false;
               this.getList();
             });
           } else {
             addFactor(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
+              this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功' : 'Add successfully!');
               this.open = false;
               this.getList();
             });
@@ -324,7 +335,7 @@ export default {
     //选中行高亮
     handleSelect(selection, row) {
       console.log(selection, "selection");
-      const index = this.factorList.findIndex(item => item.factorId == row.factorId) + (this.queryParams.pageNum - 1) * this.queryParams.pageSize
+      const index = this.factorList.findIndex(item => item.factorId === row.factorId) + (this.queryParams.pageNum - 1) * this.queryParams.pageSize
       console.log(this.pageSelection, "this.pageSelection计算前");
       this.lastSelection = this.pageSelection
       this.pageSelection = selection
@@ -340,7 +351,7 @@ export default {
     //全选数据
     handleSelectAll(selection) {
       const start = (this.queryParams.pageNum - 1) * this.queryParams.pageSize
-      if (selection.length == 0) {
+      if (selection.length === 0) {
         this.pageSelection = []
         this.factorList.forEach((item, index) => {
           delete this.allSelecArr[index + start]
@@ -369,15 +380,15 @@ export default {
       }
       obj.list = this.factorId
       obj.type = this.add.type
-      if (obj.type == "" || obj.type == null) {
-        ElMessage.warning("请通过形状类型来修改！！")
+      if (obj.type === "" || obj.type == null) {
+        ElMessage.warning((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '请通过性状类型来修改！' : 'Please modify by character type!')
       } else {
         this.isModifing = true
         addHigh(obj).then(res => {
-          if (res.code == 200) {
-            ElMessage.success("修改成功")
+          if (res.code === 200) {
+            ElMessage.success((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!')
           } else {
-            ElMessage.error("修改失败")
+            ElMessage.error((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改失败！' : 'Update failed!')
           }
           this.resetQuery()
           this.isModifing = false
