@@ -157,6 +157,7 @@ export default {
             t4:'基因信息：',
         },
         heatmap:{
+            header:'基因热力图',
             ph:{
                 name:'材料名',
                 gene:'基因型',
