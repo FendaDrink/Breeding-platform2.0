@@ -384,7 +384,7 @@ const updateStyle = (scrollY,initTops,initLefts,targetLefts) => {
 }
 
 
-const scrollAnimation = (dom) =>{
+const scrollAnimation = () =>{
   // 监听滚动条滚动事件
   let scrollY = 0;
   let initTops = [];
