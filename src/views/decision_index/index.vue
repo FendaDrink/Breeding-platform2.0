@@ -384,7 +384,7 @@ const updateStyle = (scrollY,initTops,initLefts,targetLefts) => {
 }
 
 
-const scrollAnimation = () =>{
+const scrollAnimation = (dom) =>{
   // 监听滚动条滚动事件
   let scrollY = 0;
   let initTops = [];
@@ -444,7 +444,7 @@ const typeList = reactive([
   },
   {
     title: message.material,
-    url:"/breed/material-pro"
+    url:"/breed/material"
   },
 ])
 
