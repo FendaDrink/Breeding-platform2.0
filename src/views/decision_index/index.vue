@@ -444,7 +444,7 @@ const typeList = reactive([
   },
   {
     title: message.material,
-    url:"/breed/material-pro"
+    url:"/breed/material"
   },
 ])
 

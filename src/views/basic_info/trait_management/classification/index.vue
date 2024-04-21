@@ -82,6 +82,7 @@ import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
 const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
 
+
 </script>
 
 <script>
