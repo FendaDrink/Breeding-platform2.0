@@ -162,7 +162,7 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
+      window.form = {
         speciesId: null,
         speciesName: null,
         createBy: null,
@@ -211,8 +211,8 @@ export default {
       const speciesId = row.speciesId || this.speciesId
       console.log(speciesId)
       getSpecies(speciesId).then(response => {
-        this.form = response.data;
-        this.name = this.form.speciesName
+        window.form = response.data;
+        this.name = window.form.speciesName
         this.open = true;
         this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
       });
@@ -221,19 +221,19 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.speciesId != null) {
-            if (this.form.speciesName === this.name) {
-              updateSpecies(this.form).then(response => {
+          if (window.form.speciesId != null) {
+            if (window.form.speciesName === this.name) {
+              updateSpecies(window.form).then(response => {
                 this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                 this.open = false;
                 this.getList();
               });
             }
             else {
-              checkout(this.form).then(res => {
+              checkout(window.form).then(res => {
                 this.ifAdd = res.data;
                 if (this.ifAdd === 0) {
-                  updateSpecies(this.form).then(response => {
+                  updateSpecies(window.form).then(response => {
                     this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                     this.open = false;
                     this.getList();
@@ -245,10 +245,10 @@ export default {
 
 
           } else {
-            checkout(this.form).then(res => {
+            checkout(window.form).then(res => {
               this.ifAdd = res.data
-              if (this.ifAdd == 0) {
-                addSpecies(this.form).then(response => {
+              if (this.ifAdd === 0) {
+                addSpecies(window.form).then(response => {
                   this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
                   this.open = false;
                   this.getList();
