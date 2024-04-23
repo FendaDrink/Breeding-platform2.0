@@ -62,17 +62,6 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "@vue/reactivity";
-import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
-import en from 'element-plus/lib/locale/lang/en' // 英文语言
-
-import { useI18n } from 'vue-i18n'
-const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
-
-</script>
-
 <script>
 import { addHigh, selHighLAll, download, getSelect, getLightLine, listFactor,getLightLineAll, addFactor, updateFactor } from "@/api/factor/factor";
 import { blobValidate } from '@/utils/param'

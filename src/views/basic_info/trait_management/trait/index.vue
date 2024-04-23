@@ -86,17 +86,6 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "@vue/reactivity";
-import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
-import en from 'element-plus/lib/locale/lang/en' // 英文语言
-
-import { useI18n } from 'vue-i18n'
-const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
-
-</script>
-
 <script>
 import { download, checkout, listTrait, getTrait, delTrait, addTrait, updateTrait, getSelect } from "@/api/system/trait";
 import { blobValidate } from '@/utils/param'
