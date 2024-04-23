@@ -70,16 +70,7 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "@vue/reactivity";
-import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
-import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
-import { useI18n } from 'vue-i18n'
-const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
-
-</script>
 
 <script>
 import { download, checkout, listSpecies, getSpecies, delSpecies, addSpecies, updateSpecies } from "@/api/species/species";
@@ -116,7 +107,15 @@ export default {
         speciesName: "",
       },
       // 表单参数
-      form: {},
+      form: {
+        speciesId: null,
+        speciesName: null,
+        createBy: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null,
+        remark: null
+      },
       // 表单校验
       rules: {
         speciesName: [
@@ -162,7 +161,7 @@ export default {
     },
     // 表单重置
     reset() {
-      window.form = {
+      this.form = {
         speciesId: null,
         speciesName: null,
         createBy: null,
@@ -211,8 +210,8 @@ export default {
       const speciesId = row.speciesId || this.speciesId
       console.log(speciesId)
       getSpecies(speciesId).then(response => {
-        window.form = response.data;
-        this.name = window.form.speciesName
+        this.form = response.data;
+        this.name = this.form.speciesName
         this.open = true;
         this.title = (localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改' : 'Update';
       });
@@ -221,19 +220,19 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (window.form.speciesId != null) {
-            if (window.form.speciesName === this.name) {
-              updateSpecies(window.form).then(response => {
+          if (this.form.speciesId != null) {
+            if (this.form.speciesName === this.name) {
+              updateSpecies(this.form).then(response => {
                 this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                 this.open = false;
                 this.getList();
               });
             }
             else {
-              checkout(window.form).then(res => {
+              checkout(this.form).then(res => {
                 this.ifAdd = res.data;
                 if (this.ifAdd === 0) {
-                  updateSpecies(window.form).then(response => {
+                  updateSpecies(this.form).then(response => {
                     this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '修改成功！' : 'Update successfully!');
                     this.open = false;
                     this.getList();
@@ -245,10 +244,10 @@ export default {
 
 
           } else {
-            checkout(window.form).then(res => {
+            checkout(this.form).then(res => {
               this.ifAdd = res.data
               if (this.ifAdd === 0) {
-                addSpecies(window.form).then(response => {
+                addSpecies(this.form).then(response => {
                   this.$modal.msgSuccess((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? '新增成功！' : 'Add successfully!');
                   this.open = false;
                   this.getList();
@@ -303,7 +302,6 @@ export default {
   }
 };
 </script>
-
 
 <!-- el-dialog的append-to-body属性会导致el-dialog的样式修改失效，先去掉 -->
 <style lang="less" scoped>
