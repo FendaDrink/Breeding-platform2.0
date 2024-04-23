@@ -84,48 +84,48 @@
       </div>
     </el-card>
     <!-- 经纬度信息 -->
-    <el-card class="card-container">
-      <!-- <h1>根据环境因子搜索地区<i>&nbsp;</i></h1> -->
-      <template #header>
-        <div class="card-header">
-          <span>{{ $t('environment.area.header2') }}</span>
-        </div>
-      </template>
-      <div class="big-wrapper" style="margin-top: 10px">
-        <div class="area_top">
-          <div class="search_table">
-            <el-select v-model="factorName" filterable remote reserve-keyword placeholder="请输入环境因子名"
-                       :remote-method="remoteMethod" :loading="reqLoading">
-              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-            <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">
-              {{ $t('environment.area.button_search') }}
-            </el-button>
-          </div>
-        </div>
-        <div class="area_form">
-          <el-table v-loading="cityLoading" ref="multipleTable" :data="
-            tableData.slice(
-              (currentpageNum - 1) * pageSize,
-              currentpageNum * pageSize
-            )
-          " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"
-                    stripe>
-            <el-table-column prop="name" :label="$t('environment.area.table_name')" align="center"></el-table-column>
-            <el-table-column prop="type" :label="$t('environment.area.table_type')" align="center"></el-table-column>
-            <el-table-column prop="city" :label="$t('environment.area.table_location')" align="center"></el-table-column>
-            <el-table-column prop="longitude" :label="$t('environment.area.table_longitude')" align="center"></el-table-column>
-            <el-table-column prop="latitude" :label="$t('environment.area.table_latitude')" align="center"></el-table-column>
-          </el-table>
-          <div class="demo-pagination-block">
-            <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"
-                           layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange" />
-          </div>
+<!--    <el-card class="card-container">-->
+<!--      &lt;!&ndash; <h1>根据环境因子搜索地区<i>&nbsp;</i></h1> &ndash;&gt;-->
+<!--      <template #header>-->
+<!--        <div class="card-header">-->
+<!--          <span>{{ $t('environment.area.header2') }}</span>-->
+<!--        </div>-->
+<!--      </template>-->
+<!--      <div class="big-wrapper" style="margin-top: 10px">-->
+<!--        <div class="area_top">-->
+<!--          <div class="search_table">-->
+<!--            <el-select v-model="factorName" filterable remote reserve-keyword placeholder="请输入环境因子名"-->
+<!--                       :remote-method="remoteMethod" :loading="reqLoading">-->
+<!--              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value" />-->
+<!--            </el-select>-->
+<!--            <el-button icon="search" @click="search_city" type="success" plain style="margin-left: 25px">-->
+<!--              {{ $t('environment.area.button_search') }}-->
+<!--            </el-button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="area_form">-->
+<!--          <el-table v-loading="cityLoading" ref="multipleTable" :data="-->
+<!--            tableData.slice(-->
+<!--              (currentpageNum - 1) * pageSize,-->
+<!--              currentpageNum * pageSize-->
+<!--            )-->
+<!--          " tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" class="gene-form-table"-->
+<!--                    stripe>-->
+<!--            <el-table-column prop="name" :label="$t('environment.area.table_name')" align="center"></el-table-column>-->
+<!--            <el-table-column prop="type" :label="$t('environment.area.table_type')" align="center"></el-table-column>-->
+<!--            <el-table-column prop="city" :label="$t('environment.area.table_location')" align="center"></el-table-column>-->
+<!--            <el-table-column prop="longitude" :label="$t('environment.area.table_longitude')" align="center"></el-table-column>-->
+<!--            <el-table-column prop="latitude" :label="$t('environment.area.table_latitude')" align="center"></el-table-column>-->
+<!--          </el-table>-->
+<!--          <div class="demo-pagination-block">-->
+<!--            <el-pagination background :total="totalPage" :current-page="currentpageNum" :page-size="pageSize"-->
+<!--                           layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"-->
+<!--                           @current-change="handleCurrentChange" />-->
+<!--          </div>-->
 
-        </div>
-      </div>
-    </el-card>
+<!--        </div>-->
+<!--      </div>-->
+<!--    </el-card>-->
   </el-config-provider>
   </div>
 </template>
@@ -778,7 +778,7 @@ onMounted(() => {
   totalPage.value = tableData.length;
 
   factorName.value = 'PTD1'
-  search_city()
+  // search_city()
 });
 
 // 页面加载时调用 initCharts

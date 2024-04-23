@@ -329,7 +329,7 @@ onMounted(() => {
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-image: url("../../../assets/images/environment.jpg");
+        background-image: url("@/assets/images/environment.jpg");
         background-size: cover;
         border-radius: 10px;
         padding: 20px;

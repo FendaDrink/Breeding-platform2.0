@@ -3,46 +3,47 @@
     <div ref="upperRef" class="card-container upper">
       <div class="background">
         <div class="main-content" ref="mainContentRef">
-          <div class="main-title" ref="titleRef">{{ $t('decision.upload.header') }}</div>
-          <div class="input-wrapper">
-            <div class="input">
-              <el-input
-                  ref="inputRef"
-                  :placeholder="$t('decision.upload.placeholder')"
-                  v-model="textarea2"
-                  size="large"
-              >
-                <template #prepend>
-                  <el-popover :width="400" placement="bottom-start" :visible.sync="showPopover">
-                    <div class="inner-upload">
-                      <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag
-                                 show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
-                                 :on-error="uploadFileError" :on-success="uploadFileSuccess"
-                                 :on-change="handleUploadFile"
-                                 :before-upload="handleBeforeUpload">
-                        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                        <div>{{ $t('decision.upload.prompt') }}<a href="javascript:;" style="color: var(--theme-color);">{{ $t('decision.upload.click') }}</a></div>
-                      </el-upload>
-                      <div class="btns">
-                        <div class="close">
-                          <el-button type="primary" @click="showPopover=!showPopover" style="width: 80px;"><el-icon><Close /></el-icon>&nbsp;{{ $t('decision.upload.cancel') }}</el-button>
-                        </div>
-                      </div>
-                    </div>
-                    <template #reference>
-                      <el-button class="no-inherit" @click="showPopover=!showPopover">
-                        <!-- <el-icon v-if="!showPopover" :color="showPopover?'#fff':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon> -->
-                        <svg t="1710852877805" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1564" width="22" height="22"><path d="M62.659316 898.116869 155.237045 329.102536c1.693495-9.590827 10.725469-16.93495 19.757442-16.93495l713.52591 0 0-84.674752c0-9.590827-7.338479-16.93495-16.93495-16.93495l-429.018743 0L366.923925 120.238148 22.579934 120.238148c-9.596472 0-16.93495 7.344123-16.93495 16.93495L5.644983 881.181918c0 9.590827 7.338479 16.93495 16.93495 16.93495L62.659316 898.116869z" :fill="showPopover?'#ffffff':$theme.color" stroke="white" stroke-width="40" p-id="1565"></path><path d="M998.597574 382.16538 228.057332 382.16538c-9.037619 0-18.063947 7.338479-19.192944 16.370452L121.367144 882.310915c-1.693495 9.037619 4.515987 16.370452 13.54796 16.370452l770.540243 0c9.031974 0 18.063947-7.338479 19.187299-16.370452L1012.145535 398.535832C1013.83903 390.068357 1007.629548 382.16538 998.597574 382.16538z" :fill="showPopover?'#ffffff':$theme.color" stroke="white" stroke-width="40" p-id="1566"></path></svg>
-                      </el-button>
-                    </template>
-                  </el-popover>
-                </template>
-                <template #append>
-                  <el-button @click="submit"><el-icon><Search/></el-icon>&nbsp;&nbsp;{{ $t('decision.upload.search') }}</el-button>
-                </template>
-              </el-input>
-            </div>
-          </div>
+          <div class="main-title" ref="titleRef">{{ $t('decision.upload.header1') }}</div>
+<!--          <div class="input-wrapper">-->
+<!--            <div class="input">-->
+<!--              <el-input-->
+<!--                  ref="inputRef"-->
+<!--                  :placeholder="$t('decision.upload.placeholder')"-->
+<!--                  v-model="textarea2"-->
+<!--                  size="large"-->
+<!--              >-->
+<!--                <template #prepend>-->
+<!--                  <el-popover :width="400" placement="bottom-start" :visible.sync="showPopover">-->
+<!--                    <div class="inner-upload">-->
+<!--                      <el-upload v-model:file-list="fileList" class="upload-demo" ref="upload" :limit="1" accept=".vcf" drag-->
+<!--                                 show-file-list :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"-->
+<!--                                 :on-error="uploadFileError" :on-success="uploadFileSuccess"-->
+<!--                                 :on-change="handleUploadFile"-->
+<!--                                 :before-upload="handleBeforeUpload">-->
+<!--                        <el-icon class="el-icon&#45;&#45;upload"><upload-filled /></el-icon>-->
+<!--                        <div>{{ $t('decision.upload.prompt') }}<a href="javascript:;" style="color: var(&#45;&#45;theme-color);">{{ $t('decision.upload.click') }}</a></div>-->
+<!--                      </el-upload>-->
+<!--                      <div class="btns">-->
+<!--                        <div class="close">-->
+<!--                          <el-button type="primary" @click="showPopover=!showPopover" style="width: 80px;"><el-icon><Close /></el-icon>&nbsp;{{ $t('decision.upload.cancel') }}</el-button>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                    <template #reference>-->
+<!--                      <el-button class="no-inherit" @click="showPopover=!showPopover">-->
+<!--                        &lt;!&ndash; <el-icon v-if="!showPopover" :color="showPopover?'#fff':'#817d7d'" class="no-inherit"><FolderOpened /></el-icon> &ndash;&gt;-->
+<!--                        <svg t="1710852877805" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1564" width="22" height="22"><path d="M62.659316 898.116869 155.237045 329.102536c1.693495-9.590827 10.725469-16.93495 19.757442-16.93495l713.52591 0 0-84.674752c0-9.590827-7.338479-16.93495-16.93495-16.93495l-429.018743 0L366.923925 120.238148 22.579934 120.238148c-9.596472 0-16.93495 7.344123-16.93495 16.93495L5.644983 881.181918c0 9.590827 7.338479 16.93495 16.93495 16.93495L62.659316 898.116869z" :fill="showPopover?'#ffffff':$theme.color" stroke="white" stroke-width="40" p-id="1565"></path><path d="M998.597574 382.16538 228.057332 382.16538c-9.037619 0-18.063947 7.338479-19.192944 16.370452L121.367144 882.310915c-1.693495 9.037619 4.515987 16.370452 13.54796 16.370452l770.540243 0c9.031974 0 18.063947-7.338479 19.187299-16.370452L1012.145535 398.535832C1013.83903 390.068357 1007.629548 382.16538 998.597574 382.16538z" :fill="showPopover?'#ffffff':$theme.color" stroke="white" stroke-width="40" p-id="1566"></path></svg>-->
+<!--                      </el-button>-->
+<!--                    </template>-->
+<!--                  </el-popover>-->
+<!--                </template>-->
+<!--                <template #append>-->
+<!--                  <el-button @click="submit"><el-icon><Search/></el-icon>&nbsp;&nbsp;{{ $t('decision.upload.search') }}</el-button>-->
+<!--                </template>-->
+<!--              </el-input>-->
+<!--            </div>-->
+<!--          </div>-->
+          <div style="height: 3%;"></div>
           <div class="nav-container" ref="navContainerRef">
             <div class="nav-item" v-for="(item, index) in typeList" :key="index" :ref="setNavItemRefs">
               <div class="mask" @click="goTo(item.url)">
@@ -55,77 +56,6 @@
     </div>
     <el-card class="card-container lower">
       <div class="card-header">
-        <span>{{ $t('decision.table.title') }}</span>
-        <el-button @click="getdataList" type="primary" size="large" icon="Refresh">{{ $t('decision.table.refresh_btn') }}</el-button>
-      </div>
-      <el-table max-height="70vh" :data="dataList" :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }">
-        <el-table-column prop="id" :label="$t('decision.table.index')"></el-table-column>
-        <el-table-column prop="materialName" :label="$t('decision.table.material_name')"></el-table-column>
-        <el-table-column fixed="right" :label="$t('decision.table.material_geno')">
-          <template #default="scope">
-            <el-button v-if="scope.row.genofile != null" link type="text" style="color: #0dbc79;"
-                       @click="exportGeno(scope.row.genofile)">
-              {{ scope.row.genofile.split("\\").pop() }}
-            </el-button>
-            <el-button v-else link type="text" disabled>
-              {{ $t('decision.table.no_file') }}
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createBy" :label="$t('decision.table.createdBy')" />
-        <el-table-column prop="createTime" :label="$t('decision.table.createTime')" />
-        <el-table-column :label="$t('decision.table.status')" width="150">
-          <template #default="scope">
-            <div id="status">
-              <el-icon style="color: #0dbc79;font-size: 25px;" v-show="scope.row.status == 1">
-                <SuccessFilled />
-              </el-icon>
-              <el-icon style="font-size: 25px;" v-show="scope.row.status == 0">
-                <Loading />
-              </el-icon>
-              <el-icon style="color: #d32f2f; font-size: 25px;" v-show="scope.row.status == 2">
-                <CircleCloseFilled />
-              </el-icon>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" :label="$t('decision.table.result_download')">
-          <template #default="scope">
-            <el-button link type="text" @click="exportPDf(scope.row)" style="color: #0dbc79;"
-                       v-show="scope.row.status === 1">
-              {{ $t('decision.table.export') }}
-            </el-button>
-            <el-button link type="text" disabled v-show="scope.row.status !== 1">
-              {{$t('decision.table.export')}}
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" :label="$t('decision.table.prompt')">
-          <template #default="scope">
-            <el-popover placement="top" trigger="hover" :content="scope.row.info?scope.row.info:'无'">
-              <template #reference>
-                <el-button link type="text" style="color: var(--theme-color);">{{ $t('decision.table.promptInfo') }}</el-button>
-              </template>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" :label="$t('decision.table.option')">
-          <template #default="scope">
-            <el-popconfirm :title="$t('decision.table.del_message')" @confirm='handleDelete(scope.row)'>
-              <template #reference>
-                <el-button link type="text" style="color: var(--theme-color);">
-                  {{ $t('decision.table.delete') }}
-                </el-button>
-              </template>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container">
-        <el-pagination v-show="total > 0" :total="total" :page-sizes="[ 10, 20, 30, 50]"
-                       v-model:current-page="queryParams.pageNum" v-model:page-size="queryParams.pageSize"
-                       right background layout="total, sizes,prev, pager, next, jumper" @size-change="getdataList"
-                       @current-change="getdataList" />
       </div>
     </el-card>
   </div>
@@ -422,7 +352,7 @@ const scrollAnimation = (dom) =>{
 
 onMounted(() => {
   mountGetDataList();
-  scrollAnimation();
+  // scrollAnimation();
 });
 
 // 销毁时清除监听
@@ -463,10 +393,12 @@ const typeList = reactive([
 .nav-container {
   display: flex;
   justify-content: center;
-  margin: 0 auto;
   position: relative;
   width: 100%;
   height: 200px;
+  scale: 1.2;
+  opacity: 0.85;
+
 }
 
 .nav-item {
@@ -516,14 +448,14 @@ const typeList = reactive([
 </style>
 
 <style lang="scss" scoped>
-
 .background-container{
   width: 100%;
   height: calc(100vh - 51px);
-  background-image: url('@/assets/images/corn.jpg');
+  background-image: url('@/assets/images/environment.jpg');
   background-size: cover;
   overflow: auto;
   // 隐藏滚动条
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -563,7 +495,7 @@ const typeList = reactive([
         // 混合字体颜色
         color:#ffffff;
         margin-bottom: 50px;
-        font-size: 390%;
+        font-size: 350%;
         font-weight: 700;
         text-align: center;
         // color: var(--theme-color);

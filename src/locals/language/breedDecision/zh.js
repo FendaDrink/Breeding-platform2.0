@@ -2,6 +2,7 @@ export default {
     decision:{
         upload:{
             header:'欢迎使用智能育种平台',
+            header1:'基因组育种决策平台',
             placeholder:'请输入材料名称(用多个逗号隔开)和上传材料基因型文件',
             search:'搜索',
             prompt:'将.vcf格式文件拖到此处，或',
