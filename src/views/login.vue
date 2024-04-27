@@ -206,7 +206,7 @@ getCookie();
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url("@/assets/img/banner/banner1.jpg");
+background-image: url("@/assets/images/corn.jpg");
   background-size: cover;
   opacity: 0; // 默认设置为透明
   animation: fadeIn 2s forwards; // 2秒渐显效果
