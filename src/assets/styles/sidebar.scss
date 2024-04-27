@@ -84,6 +84,7 @@
     .sub-menu-title-noDropdown,
     .el-sub-menu__title {
       &:hover {
+        overflow:visible !important;
         background-color: rgba(0, 0, 0, 0.06) !important;
       }
     }

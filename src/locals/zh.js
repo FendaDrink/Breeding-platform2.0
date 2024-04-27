@@ -20,7 +20,7 @@ import profile_zh from '@/locals/language/system/profile/zh';
 import layout_zh from '@/locals/language/layout/zh';
 
 export default {
-    title: '基因组育种决策平台2.0',
+    title: '玉米智能育种决策平台',
     loadingText:'加载中...',
     login: {
         login: '登录',
@@ -42,7 +42,7 @@ export default {
         setLanguage: 'ENGLISH'
     },
     logo: {
-        title: '基因组育种决策平台2.0'
+        title: '玉米智能育种决策平台'
     },
     system: {
         prompt: '系统提示',

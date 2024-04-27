@@ -18,11 +18,11 @@
               </template>
             </el-table-column>
             <el-table-column v-for="(column, index) in columns" :key="column.prop" :label="column.label" :prop="column.prop"
-              :show-overflow-tooltip="true" :width="index === 2 ? '260px' : '120px'" align="center">
+              :show-overflow-tooltip="true" align="center">
               <template #default="scope">
                 {{ formatTableCell(scope.row[column.prop]) }}
               </template></el-table-column>
-            <el-table-column label="..." width="auto">...</el-table-column>
+<!--            <el-table-column label="..." width="auto">...</el-table-column>-->
 
           </el-table>
         </div>
@@ -64,7 +64,7 @@
   </el-config-provider>
   </div>
 </template>
-  
+
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -134,10 +134,12 @@ async function fetchData(pageNumber, pageSize) {
 
         if (res.rows.length > 0) {
           const firstItemKeys = Object.keys(res.rows[0]);
-          const visibleColumns = firstItemKeys.slice(0, 100); // 限制为前100列
+          // const visibleColumns = firstItemKeys.slice(0, 100); // 限制为前100列
+          const visibleColumns = firstItemKeys; // 限制为前100列
 
           visibleColumns.forEach((key) => {
             columnsValue.push({ label: key, prop: key });
+            // console.log(columnsValue)
           });
           // 填充数据
           res.rows.forEach((item) => {
@@ -242,11 +244,12 @@ function chooseForm() {
     .then((res) => {
       const tableDataValue = [];
       const columnsValue = [];
-
+      console.log('res',res.rows)
       totalPage.value = res.total;
       if (res.rows.length > 0) {
         const firstItemKeys = Object.keys(res.rows[0]);
-        const visibleColumns = firstItemKeys.slice(0, 100); // 限制为前100列
+        // const visibleColumns = firstItemKeys.slice(0,100); // 限制为前100列
+        const visibleColumns = firstItemKeys; // 限制为前100列
 
         visibleColumns.forEach((key) => {
           columnsValue.push({ label: key, prop: key });
@@ -260,7 +263,6 @@ function chooseForm() {
           tableDataValue.push(rowData);
         });
       }
-
       columns.value = columnsValue.filter(column => column.label !== 'genotype_id');
       tableData.value = tableDataValue;
       tableLoading.value = false;
@@ -328,7 +330,7 @@ onBeforeRouteLeave(() => {
     });
 });
 </script>
-  
+
 <style lang="less" scoped>
 .demo-pagination-block {
   width: 100%;

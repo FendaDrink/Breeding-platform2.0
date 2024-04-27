@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('基因组育种决策平台');
+const title = ref('玉米智能育种决策平台');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>

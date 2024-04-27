@@ -21,7 +21,7 @@ import layout_en from '@/locals/language/layout/en';
 
 export default {
     // title: 'Genomic breeding decision-making platform',
-    title: 'Breeding-platform2.0',
+    title: 'Breeding-platform',
     loadingText:'Loading...',
     login: {
         login: 'Login',
@@ -43,7 +43,7 @@ export default {
         setLanguage: '中文'
     },
     logo: {
-        title: 'Breeding-platform2.0'
+        title: 'Breeding-platform'
     },
     system: {
         prompt: 'System prompt',

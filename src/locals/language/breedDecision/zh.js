@@ -2,7 +2,7 @@ export default {
     decision:{
         upload:{
             header:'欢迎使用智能育种平台',
-            header1:'基因组育种决策平台',
+            header1:'玉米智能育种决策平台',
             placeholder:'请输入材料名称(用多个逗号隔开)和上传材料基因型文件',
             search:'搜索',
             prompt:'将.vcf格式文件拖到此处，或',
@@ -10,7 +10,7 @@ export default {
             cancel:'取消',
             phenotype:'表型管理',
             genotype:'基因型管理',
-            photos:'图片管理',
+            info:'基本信息管理',
             material:'育种决策',
         },
         table:{
