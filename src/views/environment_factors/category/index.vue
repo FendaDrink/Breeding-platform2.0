@@ -7,7 +7,7 @@
     </template>
     <div class="big-wrapper" style="margin-top: 10px">
       <div class="echart_wrapper">
-        <div id="factorPanMap" style="width: 100%; height: 35vw;margin: 20px 0 100px 0"></div>
+        <div id="factorPanMap" style="width: 100%; height: 70vh;margin: 20px 0 100px 0"></div>
         <div class="factor-form">
           <el-table :data="phenotypeData.slice(
             (currentpageNum2 - 1) * pageSize2,

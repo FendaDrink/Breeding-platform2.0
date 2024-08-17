@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;padding-top: 20px;padding-bottom: 5px;">
+  <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee; padding-top: 20px; padding-bottom: 5px;">
     <el-card class="card-container right-box">
       <!-- <h1>基因热力图<i>&nbsp;</i></h1> -->
       <template #header>
