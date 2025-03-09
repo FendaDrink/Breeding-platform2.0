@@ -120,7 +120,6 @@ export function searchFile(query) {
     method: 'get',
     params: query
   });
-
 }
 
 // 文件详情搜索框
@@ -161,18 +160,28 @@ export function mergeChunkApi(fileName,treeId,isShow){
 }
 
 // 大文件传输完毕确认接口
-export function uploadFileEndApi({treeId,status,remark,fileName,pointStatus,filePath}){
+export function uploadFileEndApi({
+  treeId,
+  filePath,
+}) {
   return request({
-    url:'/sidebarTreeEnv/envFile/loadUp',
-    method:'post',
-    params:{
+    url: "/sidebarTreeEnv/envFile/loadUp",
+    method: "post",
+    params: {
       treeId,
-      status,
-      remark,
-      fileName,
-      pointStatus,
-      filePath
+      filePath,
     },
-    timeout:100000
-  })
+    timeout: 10000,
+  });
+}
+
+// 大文件已上传分片接口
+export function getDoneChunkApi(hash) {
+  return request({
+    url: "/system/picture/doneChunk",
+    method: "get",
+    params: {
+      hash,
+    },
+  });
 }

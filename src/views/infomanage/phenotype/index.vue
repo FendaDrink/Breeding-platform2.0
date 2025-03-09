@@ -1,202 +1,202 @@
 <template>
   <div style="width: 100%; min-height: calc(100vh - 84px); background-color: #eeeeee;">
     <el-config-provider :locale="locale">
-    <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
-      :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
-      <el-aside width="20%" class="mokuai card shadow element-plus-tree"
-        style="min-height: calc(100vh - 180px);border-radius: 8px;padding: 0;margin-top: 0;">
-        <el-tree ref="tree" :data="routesData" :props="defaultProps" node-key="treeId" default-expand-all
-          highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
-          class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
-        </el-tree>
-      </el-aside>
+      <el-container style="padding: 20px; border: 1px solid #eee; height: calc(100vh - 100px)" v-loading="loading"
+        :element-loading-text="loadingText" element-loading-background="rgba(0, 0, 0, 0.8)">
+        <el-aside width="20%" class="mokuai card shadow element-plus-tree"
+          style="min-height: calc(100vh - 180px);border-radius: 8px;padding: 0;margin-top: 0;">
+          <el-tree ref="tree" :data="routesData" :props="defaultProps" node-key="treeId" default-expand-all
+            highlight-current :current-node-key="1" :default-current-node-key="firstLeafNodeKey" @node-click="rowClick"
+            class="permission-tree" :check-strictly="true" :check-on-click-node="true" :expand-on-click-node="false">
+          </el-tree>
+        </el-aside>
 
-      <!-- //右边的盒子 -->
-      <el-container>
-        <el-main width="78%" style="padding: 0; height: calc(100vh - 150px); " class="right-box">
-          <div style="height: auto;">
-            <div class="div1">
+        <!-- //右边的盒子 -->
+        <el-container>
+          <el-main width="78%" style="padding: 0; height: calc(100vh - 150px); " class="right-box">
+            <div style="height: auto;">
+              <div class="div1">
               <el-button icon="plus" type="primary" @click.prevent="addChildNode" plain v-hasPermi="['system:node:add']">
-                {{ $t('phenotype.index.node_add') }}</el-button>
-              <el-button icon="edit" type="success" @click.prevent="updateChildNode" plain
-                v-hasPermi="['system:node:update']">{{ $t('phenotype.index.node_update') }}</el-button>
-              <el-button icon="delete" type="danger" @click.prevent="deleteNode" plain
-                v-hasPermi="['system:node:remove']">{{ $t('phenotype.index.node_delete') }}</el-button>
-              <el-button icon="download" type="info" @click.prevent="downloadTemplate" plain
-                v-hasPermi="['system:node:update']">{{ $t('phenotype.index.template_download') }}</el-button>
-            </div>
-            <div class="div2">
+                  {{ $t('phenotype.index.node_add') }}</el-button>
+                <el-button icon="edit" type="success" @click.prevent="updateChildNode" plain
+                  v-hasPermi="['system:node:update']">{{ $t('phenotype.index.node_update') }}</el-button>
+                <el-button icon="delete" type="danger" @click.prevent="deleteNode" plain
+                  v-hasPermi="['system:node:remove']">{{ $t('phenotype.index.node_delete') }}</el-button>
+                <el-button icon="download" type="info" @click.prevent="downloadTemplate" plain
+                  v-hasPermi="['system:node:update']">{{ $t('phenotype.index.template_download') }}</el-button>
+              </div>
+              <div class="div2">
               <el-input v-model="queryParams.fileName" :placeholder="$t('phenotype.index.placeholder_fileName')" clearable @keyup.enter="handleQuery"
                 class="my-input" style="width: 180px; margin-right: 8px;" />
               <el-button icon="search" type="primary" @click="handleQuery">{{ $t('phenotype.index.search') }}</el-button>
-              <el-button icon="refresh" @click="resetQuery">{{ $t('phenotype.index.reset') }}</el-button>
-            </div>
+                <el-button icon="refresh" @click="resetQuery">{{ $t('phenotype.index.reset') }}</el-button>
+              </div>
 
-            <div class="div3">
-              <!-- 操作部分 -->
+              <div class="div3">
+                <!-- 操作部分 -->
               <el-button icon="plus" type="primary" plain @click="handleAdd"
                 v-hasPermi="['system:logininfor:add']">{{ $t('phenotype.index.file_add') }}</el-button>
-              <el-button icon="delete" type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
-                v-hasPermi="['system:logininfor:remove']">{{ $t('phenotype.index.file_delete') }}</el-button>
-              <!-- 表格部分 -->
-              <el-container style="min-height: calc(100vh - 400px);">
-                <el-table v-loading="tableLoading" max-height="100%" :data="fileList"
-                  @selection-change="handleSelectionChange" stripe fit class="mytable">
-                  <el-table-column type="selection" min-width="55" align="center" fixed="left" />
+                <el-button icon="delete" type="danger" plain @click="handleDelete" :disabled="deleteDisabled"
+                  v-hasPermi="['system:logininfor:remove']">{{ $t('phenotype.index.file_delete') }}</el-button>
+                <el-button icon="delete" type="danger" plain @click="handleReUpload" v-if="reUploadFileHash"
+                  v-hasPermi="['system:logininfor:file_add']">{{ $t('phenotype.index.re_upload_file') }}</el-button>
+                <!-- 表格部分 -->
+                <el-container style="min-height: calc(100vh - 400px);">
+                  <el-table v-loading="tableLoading" max-height="100%" :data="fileList"
+                    @selection-change="handleSelectionChange" stripe fit class="mytable">
+                    <el-table-column type="selection" min-width="55" align="center" fixed="left" />
                   <el-table-column :label="$t('phenotype.index.table_index')" width="80px" type="index" :index="indexMethod" align="center" />
-                  <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
-                  <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
+                    <!-- <el-table-column width='0' label="文件ID" align="center" prop="fileId" />  -->
+                    <!-- <el-table-column label="表型名" align="center" prop="tableName" /> -->
                   <el-table-column :label="$t('phenotype.index.table_fileName')" width="250" align="center" prop="fileName" />
                   <el-table-column :label="$t('phenotype.index.table_speciesName')" align="center" prop="speciesName" width="120px" />
                   <el-table-column :label="$t('phenotype.index.table_populationName')" align="center" width="200px" prop="populationName" />
-                  <el-table-column :label="$t('phenotype.index.table_year')" align="center" prop="year" />
-                  <el-table-column :label="$t('phenotype.index.table_location')" align="center" prop="location" />
+                    <el-table-column :label="$t('phenotype.index.table_year')" align="center" prop="year" />
+                    <el-table-column :label="$t('phenotype.index.table_location')" align="center" prop="location" />
                   <el-table-column :label="$t('phenotype.index.table_fileStatus')" align="center" prop="fileStatus" v-hasPermi="['system:file:remove']"
                     width="120">
-                    <template #default="scope">
-                      <el-switch v-model="fileList[scope.$index].fileStatus" @change="updateFileStatus(scope.row)">
-                      </el-switch>
-                    </template>
-                  </el-table-column>
-                  <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
+                      <template #default="scope">
+                        <el-switch v-model="fileList[scope.$index].fileStatus" @change="updateFileStatus(scope.row)">
+                        </el-switch>
+                      </template>
+                    </el-table-column>
+                    <!-- <el-table-column label="文件时间" align="center" prop="dateTime" /> -->
                   <el-table-column :label="$t('phenotype.index.table_operate')" align="center" class-name="small-padding fixed-width" width="100px">
-                    <template #default="scope">
-                      <el-tooltip :content="$t('phenotype.index.tooltip_detail')" placement="top">
-                        <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
-                          class="table_button">
-                        </el-button></el-tooltip>
-                      <el-tooltip :content="$t('phenotype.index.tooltip_view')" placement="top">
-                        <el-button size="medium" type="text" icon="View" link @click="fileVisual(scope.row)"
-                          class="table_button">
-                        </el-button></el-tooltip>
-                      <el-tooltip :content="$t('phenotype.index.tooltip_delete')" placement="top">
-                        <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
-                          v-hasPermi="['system:file:remove']" class="table_button"></el-button></el-tooltip>
-                    </template>
-                  </el-table-column>
+                      <template #default="scope">
+                        <el-tooltip :content="$t('phenotype.index.tooltip_detail')" placement="top">
+                          <el-button size="medium" type="text" icon="Document" link @click="openfile(scope.row)"
+                            class="table_button">
+                          </el-button></el-tooltip>
+                        <el-tooltip :content="$t('phenotype.index.tooltip_view')" placement="top">
+                          <el-button size="medium" type="text" icon="View" link @click="fileVisual(scope.row)"
+                            class="table_button">
+                          </el-button></el-tooltip>
+                        <el-tooltip :content="$t('phenotype.index.tooltip_delete')" placement="top">
+                          <el-button size="medium" type="text" icon="Delete" @click="deleteFile(scope.row)"
+                            v-hasPermi="['system:file:remove']" class="table_button"></el-button></el-tooltip>
+                      </template>
+                    </el-table-column>
                   <el-table-column :label="$t('phenotype.index.table_previousVersions')" align="center" class-name="small-padding fixed-width" width="auto">
-                    <template #default="scope">
-                      <el-tooltip :content="$t('phenotype.index.tooltip_historicalVersions')" placement="top">
+                      <template #default="scope">
+                        <el-tooltip :content="$t('phenotype.index.tooltip_historicalVersions')" placement="top">
                         <el-button type="text" size="medium" :loading="downloadLoading" @click="openHistory(scope.row)"
                           icon="timer" class="table_button">
-                        </el-button></el-tooltip>
-                    </template>
-                  </el-table-column>
+                          </el-button></el-tooltip>
+                      </template>
+                    </el-table-column>
                   <el-table-column :label="$t('phenotype.index.table_merge')" align="center" class-name="small-padding fixed-width" 
                     min-width="auto">
-                    <template #default="scope">
-                      <el-tooltip :content="$t('phenotype.index.tooltip_merge')" placement="top">
-                        <el-button type="text" icon="set-up" :loading="downloadLoading" @click="mergeFile(scope.row)"
-                          class="table_button">
-                        </el-button></el-tooltip>
-                    </template>
-                  </el-table-column>
-                </el-table></el-container>
+                      <template #default="scope">
+                        <el-tooltip :content="$t('phenotype.index.tooltip_merge')" placement="top">
+                          <el-button type="text" icon="set-up" :loading="downloadLoading" @click="mergeFile(scope.row)"
+                            class="table_button">
+                          </el-button></el-tooltip>
+                      </template>
+                    </el-table-column>
+                  </el-table></el-container>
+              </div>
+
             </div>
 
-          </div>
-
-        </el-main>
-        <!-- 分页 -->
-        <el-footer class="footer">
-          <el-pagination v-show="total > 0" :total="total" v-model:currentPage="queryParams.pageNum"
-            v-model:page-size="queryParams.pageSize" layout="total, sizes, prev, pager, next, jumper"
-            @size-change="getList" @current-change="getList" :background="false" />
-        </el-footer>
+          </el-main>
+          <!-- 分页 -->
+          <el-footer class="footer">
+            <el-pagination v-show="total > 0" :total="total" v-model:currentPage="queryParams.pageNum"
+              v-model:page-size="queryParams.pageSize" layout="total, sizes, prev, pager, next, jumper"
+              @size-change="getList" @current-change="getList" :background="false" />
+          </el-footer>
+        </el-container>
       </el-container>
-    </el-container>
-    <!-- 节点对话框 -->
-    <el-dialog :title="textMaps[dialogTreeStatus]" v-model="dialogTreeFormVisible" center draggable width="30%">
-      <el-form ref="dataTreeForm" :model="treeForm" :rules="treeRules" label-position="left" label-width="110px">
-        <el-form-item :label="$t('phenotype.index.dialog_nodeName')" prop="treeName">
-          <el-input v-model="treeForm.treeName" :placeholder="$t('phenotype.index.placeholder_node')" />
-        </el-form-item>
-        <el-form-item :label="$t('phenotype.index.dialog_status')" prop="isShow">
-          <el-switch v-model="treeForm.isShow" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="success" plain @click.passive="
-            dialogTreeStatus === 'createNode'
-              ? createTreeData()
-              : updateTreeData()
-          ">
-            {{ $t('phenotype.index.save') }}
-          </el-button>
+      <!-- 节点对话框 -->
+      <el-dialog :title="textMaps[dialogTreeStatus]" v-model="dialogTreeFormVisible" center draggable width="30%">
+        <el-form ref="dataTreeForm" :model="treeForm" :rules="treeRules" label-position="left" label-width="110px">
+          <el-form-item :label="$t('phenotype.index.dialog_nodeName')" prop="treeName">
+            <el-input v-model="treeForm.treeName" :placeholder="$t('phenotype.index.placeholder_node')" />
+          </el-form-item>
+          <el-form-item :label="$t('phenotype.index.dialog_status')" prop="isShow">
+            <el-switch v-model="treeForm.isShow" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button type="success" plain @click.passive="
+              dialogTreeStatus === 'createNode'
+                ? createTreeData()
+                : updateTreeData()
+              ">
+              {{ $t('phenotype.index.save') }}
+            </el-button>
           <el-button type="info" plain @click="dialogTreeFormVisible = false">{{ $t('phenotype.index.cancel') }}</el-button>
-        </div>
-      </template>
-    </el-dialog>
-    <el-dialog :title="textMaps[dialogStatus]" v-model="dialogFormVisible" :close-on-click-modal="false"
-      @close="dialogClosed" center draggable width="30%">
-      <el-form ref="form" :rules="rules" :model="dataForm" label-position="left" label-width="100px">
-        <el-form-item :label="$t('phenotype.index.dialog_fileName')" prop="fileName">
-          <el-input v-model="dataForm.fileName" :placeholder="$t('phenotype.index.placeholder_fileName')" />
-        </el-form-item>
-        <el-form-item :label="$t('phenotype.index.dialog_comment')" prop="remark">
-          <el-input v-model="dataForm.remark" :placeholder="$t('phenotype.index.placeholder_comment')" />
-        </el-form-item>
-        <el-form-item :label="$t('phenotype.index.dialog_status')" prop="fileStatus">
-          <el-switch v-model="dataForm.fileStatus" />
-        </el-form-item>
+          </div>
+        </template>
+      </el-dialog>
+      <el-dialog :title="textMaps[dialogStatus]" v-model="dialogFormVisible" :close-on-click-modal="false"
+        @close="dialogClosed" center draggable width="30%">
+        <el-form ref="form" :rules="rules" :model="dataForm" label-position="left" label-width="100px">
+          <el-form-item :label="$t('phenotype.index.dialog_fileName')" prop="fileName">
+            <el-input v-model="dataForm.fileName" :placeholder="$t('phenotype.index.placeholder_fileName')" />
+          </el-form-item>
+          <el-form-item :label="$t('phenotype.index.dialog_comment')" prop="remark">
+            <el-input v-model="dataForm.remark" :placeholder="$t('phenotype.index.placeholder_comment')" />
+          </el-form-item>
+          <el-form-item :label="$t('phenotype.index.dialog_status')" prop="fileStatus">
+            <el-switch v-model="dataForm.fileStatus" />
+          </el-form-item>
         <el-form-item :label="$t('phenotype.index.dialog_upload')" prop="file" v-show="dialogStatus === 'create' || 'other'">
-          <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
-            :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
-            :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
-            :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
-            <el-button type="primary">{{ $t('phenotype.index.upload') }}</el-button>
-            <template #tip>
-              <div class="el-upload__tip">select a file to upload</div>
-            </template>
-          </el-upload>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="success" plain v-if="dialogStatus === 'create'"
-            @click="dialogStatus === 'create' ? openCreateData() : updateData()" :disabled="isDisabled">
-            {{ $t('phenotype.index.save') }}
-          </el-button>
-          <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
-            {{ $t('phenotype.index.merge') }}
-          </el-button>
-          <el-button type="info" plain @click="deleteUploadData()">{{ $t('phenotype.index.cancel') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
+            <el-upload v-model:file-list="uploadFileList" class="upload-demo" ref="upload" :limit="1" accept=".csv"
+              :action="uploadUrl" :auto-upload="false" :headers="{ Authorization: 'Bearer ' + getToken() }"
+              :on-error="uploadFileError" :on-success="uploadFileSuccess" :on-exceed="handleExceed"
+              :on-change="handleUploadFile" :before-upload="handleBeforeUpload">
+              <el-button type="primary">{{ $t('phenotype.index.upload') }}</el-button>
+              <template #tip>
+                <div class="el-upload__tip">select a file to upload</div>
+              </template>
+            </el-upload>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="success" plain v-if="dialogStatus === 'create'"
+              @click="dialogStatus === 'create' ? openCreateData() : updateData()" :disabled="isDisabled">
+              {{ $t('phenotype.index.save') }}
+            </el-button>
+            <el-button type="success" plain v-else @click="mergeData()" :disabled="isDisabled2">
+              {{ $t('phenotype.index.merge') }}
+            </el-button>
+            <el-button type="info" plain @click="deleteUploadData()">{{ $t('phenotype.index.cancel') }}</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     <el-dialog :title="$t('phenotype.index.title_history')" v-model="historyFormVisible" :close-on-click-modal="false" @close="dialogClosed" center
       draggable width="70%">
-      <el-table v-loading="historyTableLoading" :data="historyFileList">
-        <el-table-column :label="$t('phenotype.index.table_index')" width="100" type="index" :index="indexMethod" />
-        <el-table-column :label="$t('phenotype.index.table_fileName')" align="center" prop="fileName" />
+        <el-table v-loading="historyTableLoading" :data="historyFileList">
+          <el-table-column :label="$t('phenotype.index.table_index')" width="100" type="index" :index="indexMethod" />
+          <el-table-column :label="$t('phenotype.index.table_fileName')" align="center" prop="fileName" />
         <el-table-column :label="$t('phenotype.index.table_operate')" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-button class="table_button" size="small" type="text" icon="Download" :loading="downloadLoading"
-              @click="handleDownload(scope.row)">{{ $t('phenotype.index.download') }}
-            </el-button>
+            <template #default="scope">
+              <el-button class="table_button" size="small" type="text" icon="Download" :loading="downloadLoading"
+                @click="handleDownload(scope.row)">{{ $t('phenotype.index.download') }}
+              </el-button>
             <el-button class="table_button" size="small" type="text" icon="Document" @click="openDrawer(scope.row)">{{ $t('phenotype.index.preview') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
-    <el-drawer v-model="drawer" :title="fileName" size="70%">
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
+      <el-drawer v-model="drawer" :title="fileName" size="70%">
       <el-table :data="drawerTableData" stripe :max-height="maxCustomH" :flexible="true" v-loading="drawerTableLoading">
         <el-table-column v-for="item in tableProps" :prop="item" :label="item" min-width="120" :key="item" align="center"/>
-      </el-table>
-    </el-drawer>
-  </el-config-provider>
+        </el-table>
+      </el-drawer>
+    </el-config-provider>
   </div>
 </template>
 
 <script setup name="phenoType">
-import { ref, getCurrentInstance, nextTick, onMounted,watch } from "vue";
+import { ref, getCurrentInstance, nextTick, onMounted, watch } from "vue";
 import { getTree, addNode, updateNode, deleteNodes } from "@/api/tree.js";
 import {
   listFile,
   updateFile,
   delFile,
-  mergeChunkApi,
-  uploadFileEndApi,
   listFileHistory
 } from "@/api/infomanage/phenotype";
 import useUserStore from "@/store/modules/user";
@@ -204,17 +204,15 @@ import { getJsonByCSV, jsonToTable } from '@/utils/tree';
 import { getToken } from "@/utils/auth";
 import { parseTime } from "@/utils/param";
 import { getTreeNodeIdsByNode } from "@/utils/tree";
-import { ElMessage } from "element-plus";
+import { upLoadHugeFile, reUploadHugeFile } from '@/utils/hugeFileUpload'
 import { useRouter } from "vue-router";
-import axios from 'axios'
 import { computed } from "@vue/reactivity";
-
 import zh from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 import en from 'element-plus/lib/locale/lang/en' // 英文语言
 
 import { useI18n } from 'vue-i18n'
 const i18n = useI18n();
-const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang'))  ? zh : en));
+const locale = computed(() => ((localStorage.getItem('lang') === 'zh-CN' || !localStorage.getItem('lang')) ? zh : en));
 
 const messages = {
   message_getListFailed: computed(() => i18n.t('phenotype.index.message_getListFailed')).value,
@@ -313,13 +311,6 @@ const rules = reactive({
   dateTime: [{ required: true, message: messages.message_input_date, trigger: "blur" }],
 });
 
-const dataForm2 = reactive({
-  fileName: "",
-  description: "",
-  dateTime: "",
-  fileStatus: false,
-});
-
 const drawer = ref(false); // 文件详情窗口开启状态
 const fileName = ref(""); // 选中文件名
 const curFileUrl = ref(""); //文件路径
@@ -373,15 +364,12 @@ const handleBeforeUpload = (file) => {
   return isCsv;
 };
 
-const handleUploadFile = (file) =>{
-  // Handle file upload
-  console.log(file);
+const handleUploadFile = (file) => {
   // 获取文件名
-  dataForm.fileName = dataForm.fileName ? dataForm.fileName :file.name.split('.')[0];
+  dataForm.fileName = dataForm.fileName ? dataForm.fileName : file.name.split('.')[0];
 }
 
 let isNormalFile = 1
-let url = ''
 async function openCreateData() {
   // 校验表单
   const valid = await form.value.validate();
@@ -395,9 +383,9 @@ async function openCreateData() {
   }
   if (isNormalFile === 0) {
     // 是大文件，调用大文件上传接口
-    await upLoadHugeFile();
+    handleHugeFileUpload();
   } else {
-    await createData();
+    createData();
   }
 }
 
@@ -406,9 +394,9 @@ const createData = async () => {
   const valid = await form.value.validate();
   if (valid) {
     uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
-    }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
-    }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
-    }&fileName=${dataForm.fileName}&pointStatus=${0}`;
+      }/phenotypeFile/upload?treeId=${tree.value.getCurrentNode().treeId
+      }&fileStatus=${dataForm.fileStatus ? 1 : 0}&remark=${dataForm.remark
+      }&fileName=${dataForm.fileName}&pointStatus=${0}`;
     try {
       await upload.value.submit();
     } catch (err) {
@@ -422,671 +410,569 @@ const createData = async () => {
   }
 }
 
-// 分片上传
-  const uploadChunk = (formData) => {
-    console.log('任务开始');
-    return axios.post(
-        `${import.meta.env.VITE_APP_UPLOAD_URL}/system/picture/uploadChunk`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + getToken(),
-          },
-        }
-    )
-  }
+const reUploadFileHash = ref('')
 
-// 检查文件编码格式
-  const chectCharDet = () => {
-    ElMessage.info('上传文件较大，正在检查文件编码格式...')
-    return new Promise((resolve, reject) => {
-      const file = uploadFileList.value[0].raw;
-      const reader = new FileReader();
-      let isUTF8 = false
-      reader.onload = (event) => {
-        const fileData = event.target.result;
-        // 遍历字符串，检查是否有汉字
-        const strList = fileData.split('');
-        isUTF8 = strList.some((str) => isZh(str));
-        resolve(isUTF8)
-      }
-      reader.readAsText(file);
-    })
-  }
-
-// 判断是否有汉字
-  const isZh = (str) => {
-    let re = /[^\u4e00-\u9fa5]/;
-    if (re.test(str)) return false;
-    return true;
+// 大文件重传
+const handleReUpload = async () => {
+  const endParams = {
+    treeId: tree.value.getCurrentNode().treeId,
+    filePath: undefined,
   };
-
-//大文件分块上传
-  const upLoadHugeFile = async () => {
-    const isUTF8 = await chectCharDet()
-    if (!isUTF8) return ElMessage.warning('请将文件转为utf-8编码后进行上传！')
-    ElMessage.info('文件体积较大，正在上传，请耐心等待')
-    return new Promise(async (reslove, reject) => {
-      if (!uploadFileList.value[0]) return;
-      //获取文件并将其修改为file对象
-      const file = uploadFileList.value[0].raw;
-      //分片大小
-      const chunkSize = 20 * 1024 * 1024; // 20*1MB
-      //分片数
-      const totalChunks = Math.ceil(file.size / chunkSize);
-      // 创建分片上传任务
-      const tasks = [];
-      for (let i = 0; i < totalChunks; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(file.size, start + chunkSize);
-        const chunk = file.slice(start, end);
-        const temp = new File([chunk], file.name);
-
-        // 创建formData对象
-        const formData = new FormData();
-        formData.append("file", temp);
-        formData.append("totalChunks", totalChunks);
-        formData.append("currentChunk", i);
-        tasks.push(
-            uploadChunk(formData)
-        )
-      }
-      // 上传分片
-      const uploadRes = await Promise.all(tasks);
-      if (uploadRes.some(item => item.data.code !== 200)) {
-        // 上传失败
-        $modal.msgError('上传失败');
-        return;
-      }
-      // 合并分片
-      try {
-        const mergeRes = await mergeChunkApi(file.name, tree.value.getCurrentNode().treeId, 1)
-        url = mergeRes.data.replace(/\\/g, "/");
-        const params = {
-          treeId: tree.value.getCurrentNode().treeId,
-          status: dataForm.fileStatus ? 1 : 0,
-          remark: dataForm.remark,
-          fileName: dataForm.fileName,
-          pointStatus: isNormalFile,
-          filePath: url
-        }
-        console.log('params', params);
-        // 发送文件信息用于后端保存文件
-        await uploadFileSuccess({code: 200, msg: '文件较大，请等待后台处理'});
-        await uploadFileEndApi(params).then(res=>{
-          $modal.msgSuccess('后台已处理，上传成功');
-        })
-        tableLoading.value = false;
-        getList();
-      } catch (err) {
-        $modal.msgError('上传失败');
-        console.error(err);
-      } finally {
-        console.log('合并结束');
-        // 执行成功回调
-        reslove();
-      }
-    })
+  try {
+    const res = await reUploadHugeFile(reUploadFileHash.value, endParams)
+    if (res.code === 200) {
+      $modal.msgSuccess("文件已经上传，等待后台处理完成方可查看");
+    }
+  } catch (e) {
+    $modal.msgError(e?.msg || '文件上传失败：未知原因');
+  } finally {
+    getList();
+    reUploadFileHash.value = ''
+    tableLoading.value = false;
   }
-  const tableName = ref("");
+}
+
+
+// 大文件上传
+const handleHugeFileUpload = async () => {
+  if (!uploadFileList.value[0]) return;
+  const file = uploadFileList.value[0].raw;
+  // 文件入库参数, filePath 在合并后由后端返回
+  const endParams = {
+    treeId: tree.value.getCurrentNode().treeId,
+    filePath: undefined,
+  };
+  try {
+    const res = await upLoadHugeFile(file, endParams)
+    if (res.code === 200) {
+      $modal.msgSuccess("文件已经上传，等待后台处理完成方可查看");
+    }
+  } catch (e) {
+    $modal.msgError(e?.msg || '文件上传失败：未知原因');
+  } finally {
+    getList();
+    tableLoading.value = false;
+  }
+}
+const tableName = ref("");
 
 //文件合并
-  function mergeFile(row) {
-    dialogStatus.value = "other";
-    tableName.value = row.tableName;
-    uploadFileList.value = [];
-    // resetForm();
-    dialogFormVisible.value = true;
-    isDisabled2.value = false;
-  }
+function mergeFile(row) {
+  dialogStatus.value = "other";
+  tableName.value = row.tableName;
+  uploadFileList.value = [];
+  // resetForm();
+  dialogFormVisible.value = true;
+  isDisabled2.value = false;
+}
 
 //文件合并
 
-  const mergeData = async () => {
-    const valid = await form.value.validate();
-    dialogFormVisible.value = false;
-    if (valid) {
-      uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
+const mergeData = async () => {
+  const valid = await form.value.validate();
+  dialogFormVisible.value = false;
+  if (valid) {
+    uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
       }/phenotypeFile/merge?tableName=${tableName.value}&remark=${dataForm.remark
       }&fileName=${dataForm.fileName}`;
 
-      $modal.msg(messages.message_upload_wait);
+    $modal.msg(messages.message_upload_wait);
 
-      try {
-        await upload.value.submit();
-      } catch (err) {
-        console.error(error);
-      } finally {
-        isDisabled.value = true;
-        tableLoading.value = false;
-        tableName.value = "";
-        dialogFormVisible.value = false;
-      }
+    try {
+      await upload.value.submit();
+    } catch (err) {
+      console.error(error);
+    } finally {
+      isDisabled.value = true;
+      tableLoading.value = false;
+      tableName.value = "";
+      dialogFormVisible.value = false;
     }
-  };
+  }
+};
 
 // 文件上传成功回调
-  async function uploadFileSuccess(response) {
+async function uploadFileSuccess(response) {
     if( response.code === 200 && isNormalFile === 0){
-      $modal.msgSuccess(response.msg);
-      return;
+    $modal.msgSuccess(response.msg);
+    return;
     }else if(isNormalFile === 0){
-      $modal.msgError(response.msg);
-      return;
-    }
-
-    if (response.code === 200) {
-      $modal.msgSuccess(response.msg);
-    } else {
-      $modal.msgError(response.msg);
-    }
-
-    isDisabled.value = false;
-    const curNode = tree.value.getCurrentNode();
-    //upload.value.clearFiles();
-
-    // getList();
-    rowClick(curNode);
-    dialogFormVisible.value = false;
+    $modal.msgError(response.msg);
+    return;
   }
 
+  if (response.code === 200) {
+    $modal.msgSuccess(response.msg);
+  } else {
+    $modal.msgError(response.msg);
+  }
+
+  isDisabled.value = false;
+  const curNode = tree.value.getCurrentNode();
+
+  // getList();
+  rowClick(curNode);
+  dialogFormVisible.value = false;
+}
+
 // 文件上传失败回调
-  const uploadFileError = (error, file, uploadFileList) => {
-    console.log("File upload error", error);
-    $modal.msgError(i18n.t('phenotype.index.message_upload_fail'));
-  };
+const uploadFileError = (error) => {
+  console.log("File upload error", error);
+  $modal.msgError(i18n.t('phenotype.index.message_upload_fail'));
+};
 
 //更新文件
-  async function updateData() {
-    form.value.validate((valid) => {
-      if (valid) {
-        uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
+async function updateData() {
+  form.value.validate((valid) => {
+    if (valid) {
+      uploadUrl.value = `${import.meta.env.VITE_APP_UPLOAD_URL
         }/phenotypeFile/upload?fileName=${dataForm.fileName}&description=${dataForm.description
         }&fileStatus=${dataForm.fileStatus ? 1 : 0}&treeId=${tree.value.getCurrentNode().treeId
         }&dateTime=${parseTime(dataForm.dateTime)}`;
-        nextTick(async () => {
-          tableLoading.value = false;
-          await upload.value.submit();
-          isDisabled.value = true;
-          getList();
-        });
-      }
-    });
-    dialogFormVisible.value = false;
+      nextTick(async () => {
+        tableLoading.value = false;
+        await upload.value.submit();
+        isDisabled.value = true;
+        getList();
+      });
+    }
+  });
+  dialogFormVisible.value = false;
+  getList();
+  setTimeout(() => {
     getList();
-    setTimeout(() => {
-      getList();
-    }, 4000);
-  }
+  }, 4000);
+}
 
 
 //取消文件对话框
-  function deleteUploadData() {
-    dialogFormVisible.value = false;
-    isDisabled.value = false;
-    /*rules.value = {}; */
-    if (form.value) {
-      form.value.resetFields();
-    }
-    getList();
-  }
-
-//关闭添加文件窗口
-  const dialogClosed = () => {
-    getList();
-  };
-
-  /* const dialogClosed = () => {
+function deleteUploadData() {
+  dialogFormVisible.value = false;
+  isDisabled.value = false;
   if (form.value) {
     form.value.resetFields();
   }
   getList();
-}; */
+}
+
+//关闭添加文件窗口
+const dialogClosed = () => {
+  getList();
+};
+
 
 // 文件替换
-  function handleExceed(files) {
-    upload.value?.clearFiles();
-    const file = files[0];
-    file.uid = genFileId();
-    upload.value?.handleStart(file);
-  }
+function handleExceed(files) {
+  upload.value?.clearFiles();
+  const file = files[0];
+  file.uid = genFileId();
+  upload.value?.handleStart(file);
+}
 
-  /* // 文件修改
-async function updateData() {
-  form.value.validate((valid) => {
-    if (valid) {
-      tableLoading.value = true;
-      updateFile({ ...dataForm, dateTime: parseTime(dataForm.dateTime) })
+
+// 文件表格
+const fileList = ref([]); // 文件列表
+const uploadFileList = ref([]); // 上传文件列表
+const historyFileList = ref([]); //历史文件版本
+const ids = ref([]); // 选中数组
+
+// 打开添加文件对话框
+function handleAdd() {
+  dialogStatus.value = "create";
+  uploadFileList.value = [];
+  resetForm();
+  dialogFormVisible.value = true;
+  isDisabled.value = false;
+}
+
+// 删除文件
+function handleDelete() {
+  if (ids.value.length == 0) {
+    $modal.msg(i18n.t('phenotype.index.message_delete_select'));
+  } else {
+    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+      delFile(ids.value)
         .then((res) => {
-          tableLoading.value = false;
-          dialogFormVisible.value = false;
+          console.log("222");
+          $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
           getList();
         })
         .catch((err) => {
-          loading.value = false;
-          $modal.msgError("修改失败");
+          $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
         });
-    }
-  });
-} */
-
-// 文件表格
-  const fileList = ref([]); // 文件列表
-  const uploadFileList = ref([]); // 上传文件列表
-  const historyFileList = ref([]); //历史文件版本
-  const ids = ref([]); // 选中数组
-  const multiple = ref(false); // 是否多选
-
-// 打开添加文件对话框
-  function handleAdd() {
-    dialogStatus.value = "create";
-    uploadFileList.value = [];
-    resetForm();
-    dialogFormVisible.value = true;
-    isDisabled.value = false;
+    });
   }
+}
 
-// 删除文件
-  function handleDelete() {
-    if (ids.value.length == 0) {
-      $modal.msg(i18n.t('phenotype.index.message_delete_select'));
-    } else {
-      $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
-        delFile(ids.value)
-            .then((res) => {
-              console.log("222");
-              $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
-              getList();
-            })
-            .catch((err) => {
-              $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
-            });
-      });
-    }
-  }
-
-  const allFileId = ref([]);
+const allFileId = ref([]);
 
 // 请求文件列表
-  function getList() {
-    tableLoading.value = true;
-    listFile({
-      ...queryParams,
-      treeId: tree.value.getCurrentNode().treeId,
-      fileStatus: roles[0] === "admin" ? null : 1,
+function getList() {
+  tableLoading.value = true;
+  listFile({
+    ...queryParams,
+    treeId: tree.value.getCurrentNode().treeId,
+    fileStatus: roles[0] === "admin" ? null : 1,
+  })
+    .then((res) => {
+      tableLoading.value = false;
+      reUploadFileHash.value = res.bigfileHash
+      fileList.value = res.rows.map((item) => ({
+        ...item,
+        fileStatus: item.status === 1,
+      }));
+      fileList.value.forEach((item) => {
+        allFileId.value.push(item.fileId);
+      });
+      fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
+      total.value = res.total;
     })
-        .then((res) => {
-          tableLoading.value = false;
-          fileList.value = res.rows.map((item) => ({
-            ...item,
-            fileStatus: item.status === 1,
-          }));
-          fileList.value.forEach((item) => {
-            allFileId.value.push(item.fileId);
-          });
-          fileList.value = fileList.value.filter(item => item.fileName.includes(queryParams.fileName));
-          total.value = res.total;
-        })
-        .catch((err) => {
-          tableLoading.value = false;
-          if(err.msg){
-            $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
-          }
-        });
-  }
+    .catch((err) => {
+      tableLoading.value = false;
+      if (err.msg) {
+        $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
+      }
+    });
+}
 
 // 选择文件项
-  function handleSelectionChange(selection) {
-    ids.value = [];
-    selection.forEach((item) => {
-      ids.value.push(item.fileId);
-    });
-  }
+function handleSelectionChange(selection) {
+  ids.value = [];
+  selection.forEach((item) => {
+    ids.value.push(item.fileId);
+  });
+}
 
 // 更新是否公开选项
-  async function updateFileStatus(row) {
-    updateFile({
-      fileId: row.fileId,
-      status: row.fileStatus,
+async function updateFileStatus(row) {
+  updateFile({
+    fileId: row.fileId,
+    status: row.fileStatus,
+  })
+    .then((res) => {
+      $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
     })
-        .then((res) => {
-          $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
-        })
-        .catch((err) => {
-          $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
-        });
-  }
+    .catch((err) => {
+      $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
+    });
+}
 
 // 下载文件
-  const downloadLoading = ref(false);
-  let downloadTimer = null;
+const downloadLoading = ref(false);
+let downloadTimer = null;
 
-  async function handleDownload(row) {
-    if (downloadLoading.value) {
-      return; // Prevent multiple downloads while in progress
-    }
-    $modal.msg(i18n.t('phenotype.index.message_downloading'));
-    downloadLoading.value = true;
-    try {
-      await $download.resource(row.url);
+async function handleDownload(row) {
+  if (downloadLoading.value) {
+    return; // Prevent multiple downloads while in progress
+  }
+  $modal.msg(i18n.t('phenotype.index.message_downloading'));
+  downloadLoading.value = true;
+  try {
+    await $download.resource(row.url);
 
-      downloadTimer = setTimeout(() => {
-        downloadLoading.value = false;
-        clearTimeout(downloadTimer);
-      }, 5000);
-    } catch (error) {
-      console.log(error);
+    downloadTimer = setTimeout(() => {
       downloadLoading.value = false;
-    }
+      clearTimeout(downloadTimer);
+    }, 5000);
+  } catch (error) {
+    console.log(error);
+    downloadLoading.value = false;
   }
-
-// 修改文件
-  function handleUpdate(row) {
-    dataForm.fileId = row.fileId;
-    dataForm.fileName = row.fileName;
-    dataForm.description = row.description;
-    dataForm.fileStatus = row.fileStatus;
-    dataForm.dateTime = row.dateTime;
-    dialogFormVisible.value = true;
-    dialogStatus.value = "update";
-  }
+}
 
 // 删除文件
-  function deleteFile(row) {
-    $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
-      delFile([row.fileId])
-          .then((res) => {
-            $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
-            getList();
-          })
-          .catch((err) => {
-            $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
-          });
-    });
-  }
+function deleteFile(row) {
+  $modal.confirm(i18n.t('phenotype.index.message_delete_confirm')).then(() => {
+    delFile([row.fileId])
+      .then((res) => {
+        $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
+        getList();
+      })
+      .catch((err) => {
+        $modal.msgError(i18n.t('phenotype.index.message_delete_fail'));
+      });
+  });
+}
 
 //跳转文件详情
-  const openfile = (row) => {
-    console.log(row.tableName, "klkl");
-    router.push({
-      path: "/phenotype/file", // 跳转到的目标页面的路由名称
-      query: {id: row.fileId, tableName: row.tableName},
-    });
-  };
+const openfile = (row) => {
+  console.log(row.tableName, "klkl");
+  router.push({
+    path: "/phenotype/file", // 跳转到的目标页面的路由名称
+    query: { id: row.fileId, tableName: row.tableName },
+  });
+};
 
 //跳转可视化
-  const fileVisual = (row) => {
-    router.push({
-      path: "/phenotype/fileVisual", // 跳转到的目标页面的路由名称
-      query: {id: row.fileId, tableName: row.tableName},
-    });
-  };
+const fileVisual = (row) => {
+  router.push({
+    path: "/phenotype/fileVisual", // 跳转到的目标页面的路由名称
+    query: { id: row.fileId, tableName: row.tableName },
+  });
+};
 
 //查看文件历史版本
-  function openHistory(row) {
-    historyTableLoading.value = true;
-    historyFormVisible.value = true;
-    listFileHistory({
-      ...queryParams,
-      treeId: tree.value.getCurrentNode().treeId,
-      fileStatus: roles[0] === "admin" ? null : 1,
-      tableName: row.tableName,
+function openHistory(row) {
+  historyTableLoading.value = true;
+  historyFormVisible.value = true;
+  listFileHistory({
+    ...queryParams,
+    treeId: tree.value.getCurrentNode().treeId,
+    fileStatus: roles[0] === "admin" ? null : 1,
+    tableName: row.tableName,
+  })
+    .then((res) => {
+      tableLoading.value = false;
+      historyFileList.value = res.rows.map((item) => ({
+        ...item,
+        fileStatus: item.status === 1,
+      }));
+      historyFileList.value.forEach((item) => {
+        allFileId.value.push(item.fileId);
+      });
+      historyTableLoading.value = false;
     })
-        .then((res) => {
-          tableLoading.value = false;
-          historyFileList.value = res.rows.map((item) => ({
-            ...item,
-            fileStatus: item.status === 1,
-          }));
-          historyFileList.value.forEach((item) => {
-            allFileId.value.push(item.fileId);
-          });
-          historyTableLoading.value = false;
-        })
-        .catch((err) => {
-          tableLoading.value = false;
-          historyTableLoading.value = false;
-          $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
-        });
-  }
+    .catch((err) => {
+      tableLoading.value = false;
+      historyTableLoading.value = false;
+      $modal.msgError(i18n.t('phenotype.index.message_getListFailed'));
+    });
+}
 
 // 表单提交
-  const total = ref(2);
-  const queryParams = reactive({
-    pageNum: 1,
-    pageSize: 10,
-    treeId: "",
-    fileId: "",
-    fileName: "",
-    description: "",
-    fileStatus: "",
-    dateTime: "",
-  });
-  const showSearch = ref(true);
-  const queryForm = ref(null); // 查询表单dom元素
-  const handleQuery = async () => {
-    // 查询回调
-    queryParams.treeId = tree.value.getCurrentNode().treeId;
+const total = ref(2);
+const queryParams = reactive({
+  pageNum: 1,
+  pageSize: 10,
+  treeId: "",
+  fileId: "",
+  fileName: "",
+  description: "",
+  fileStatus: "",
+  dateTime: "",
+});
+const handleQuery = async () => {
+  // 查询回调
+  queryParams.treeId = tree.value.getCurrentNode().treeId;
 
-    getList();
-  };
+  getList();
+};
 
-  const resetQuery = () => {
-    queryParams.pageNum = 1;
-    queryParams.pageSize = 10;
-    queryParams.treeId = 0;
-    queryParams.fileId = "";
-    queryParams.fileName = "";
-    queryParams.description = "";
-    queryParams.fileStatus = true;
-    getList();
-  };
+const resetQuery = () => {
+  queryParams.pageNum = 1;
+  queryParams.pageSize = 10;
+  queryParams.treeId = 0;
+  queryParams.fileId = "";
+  queryParams.fileName = "";
+  queryParams.description = "";
+  queryParams.fileStatus = true;
+  getList();
+};
 
 // 树控件
-  const routesData = ref([]);
+const routesData = ref([]);
 
 // 树表单
-  const treeForm = reactive({
-    treeName: "",
-    isShow: true,
-  });
+const treeForm = reactive({
+  treeName: "",
+  isShow: true,
+});
 
-  const dialogTreeFormVisible = ref(false); // 树表单可见
-  const historyFormVisible = ref(false); //历史上传记录表单
-  const dataTreeForm = ref(null); // 树表单dom实例
-  const dialogTreeStatus = ref("createNode");
+const dialogTreeFormVisible = ref(false); // 树表单可见
+const historyFormVisible = ref(false); //历史上传记录表单
+const dataTreeForm = ref(null); // 树表单dom实例
+const dialogTreeStatus = ref("createNode");
 //树表单验证规则
-  const treeRules = reactive({
-    treeName: [
-      {required: true, message: messages.message_input_nodeName, trigger: "blur"},
-    ],
-    isShow: [{required: true, message: messages.message_input_status, trigger: "blur"}],
-  });
+const treeRules = reactive({
+  treeName: [
+    { required: true, message: messages.message_input_nodeName, trigger: "blur" },
+  ],
+  isShow: [{ required: true, message: messages.message_input_status, trigger: "blur" }],
+});
 
 // 树组件节点属性
-  const defaultProps = ref({
-    children: "children",
-    label: "treeName",
+const defaultProps = ref({
+  children: "children",
+  label: "treeName",
+});
+
+const treeType = ref(4); // 树的种类
+const tree = ref(null); // 数的dom实例
+const firstLeafNode = ref(null);
+const firstLeafNodeKey = ref(null);
+
+const getTreeList = () => {
+  getTree(treeType.value, 0, 1).then((res) => {
+    routesData.value = res.data.children;
+    const firstLeafNodeParent = findFirstLeafNodeParent(routesData.value);
+
+    if (firstLeafNodeParent) {
+      nextTick(() => {
+        const treeComponent = tree.value;
+
+        if (treeComponent) {
+          treeComponent.setCurrentKey(firstLeafNodeParent.treeId);
+          rowClick(firstLeafNodeParent);
+        }
+      });
+    }
   });
-
-  const treeType = ref(4); // 树的种类
-  const tree = ref(null); // 数的dom实例
-  const firstLeafNode = ref(null);
-  const firstLeafNodeKey = ref(null);
-
-  const getTreeList = () => {
-    getTree(treeType.value, 0, 1).then((res) => {
-      routesData.value = res.data.children;
-      const firstLeafNodeParent = findFirstLeafNodeParent(routesData.value);
-
-      if (firstLeafNodeParent) {
-        nextTick(() => {
-          const treeComponent = tree.value;
-
-          if (treeComponent) {
-            treeComponent.setCurrentKey(firstLeafNodeParent.treeId);
-            rowClick(firstLeafNodeParent);
-          }
-        });
-      }
-    });
-  };
+};
 
 // 递归查找第一个叶子节点的父节点的函数
-  function findFirstLeafNodeParent(nodes, parentNode = null) {
-    for (const node of nodes) {
-      if (!node.children || node.children.length === 0) {
-        // 如果当前节点是叶子节点，返回其父节点
-        return parentNode;
-      } else {
-        const firstLeafParent = findFirstLeafNodeParent(node.children, node);
-        if (firstLeafParent) {
-          return firstLeafParent;
-        }
+function findFirstLeafNodeParent(nodes, parentNode = null) {
+  for (const node of nodes) {
+    if (!node.children || node.children.length === 0) {
+      // 如果当前节点是叶子节点，返回其父节点
+      return parentNode;
+    } else {
+      const firstLeafParent = findFirstLeafNodeParent(node.children, node);
+      if (firstLeafParent) {
+        return firstLeafParent;
       }
     }
-    return null;
   }
+  return null;
+}
 
 // 递归查找第一个叶子节点的函数
-  function findFirstLeafNode(nodes) {
-    for (const node of nodes) {
-      if (!node.children || node.children.length === 0) {
-        return node;
-      } else {
-        const firstLeaf = findFirstLeafNode(node.children);
-        if (firstLeaf) {
-          return firstLeaf;
-        }
+function findFirstLeafNode(nodes) {
+  for (const node of nodes) {
+    if (!node.children || node.children.length === 0) {
+      return node;
+    } else {
+      const firstLeaf = findFirstLeafNode(node.children);
+      if (firstLeaf) {
+        return firstLeaf;
       }
     }
-    return null;
   }
+  return null;
+}
 
 // 重置树表单
-  function resetTreeForm() {
-    treeForm.treeName = "";
-    treeForm.isShow = true;
-  }
+function resetTreeForm() {
+  treeForm.treeName = "";
+  treeForm.isShow = true;
+}
 
 // 添加节点
-  function addChildNode() {
-    if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
-      $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
-      return;
-    }
-    resetTreeForm();
-    dialogTreeStatus.value = "createNode";
-    dialogTreeFormVisible.value = true;
+function addChildNode() {
+  if (!tree.value.getCurrentNode() && routesData.value.length !== 0) {
+    $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
+    return;
   }
+  resetTreeForm();
+  dialogTreeStatus.value = "createNode";
+  dialogTreeFormVisible.value = true;
+}
 
 // 修改节点
-  function updateChildNode() {
-    if (!tree.value.getCurrentNode()) {
-      $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
-      return;
-    }
-    resetTreeForm();
-    dialogTreeStatus.value = "updateNode";
-    dialogTreeFormVisible.value = true;
+function updateChildNode() {
+  if (!tree.value.getCurrentNode()) {
+    $modal.msgWarning(i18n.t('phenotype.index.message_node_parent'));
+    return;
   }
+  resetTreeForm();
+  dialogTreeStatus.value = "updateNode";
+  dialogTreeFormVisible.value = true;
+}
 
 //下载模板文件
-  function downloadTemplate() {
-    //下载
-    $download.resource(
-        "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\表型数据模板.csv"
-    );
-  }
+function downloadTemplate() {
+  //下载
+  $download.resource(
+    "C:\\Users\\Administrator\\Desktop\\yuzhong2.0\\表型数据模板.csv"
+  );
+}
 
 // 创建树节点
-  function createTreeData() {
-    dataTreeForm.value.validate((valid) => {
-      if (valid) {
-        const id = tree.value.getCurrentNode()
-            ? tree.value.getCurrentNode().treeId
-            : 0;
-        addNode({
-          isShow: treeForm.isShow ? 1 : 0,
-          treeName: treeForm.treeName,
-          parentId: id,
-          treeType: treeType.value,
-        }).then(
-            () => {
-              $modal.msgSuccess(i18n.t('phenotype.index.message_node_add_success'));
-              getTreeList();
-            },
-            () => {
-              $modal.msgError(i18n.t('phenotype.index.message_node_add_fail'));
-            }
-        );
-        dialogTreeFormVisible.value = false;
-      }
-    });
-  }
+function createTreeData() {
+  dataTreeForm.value.validate((valid) => {
+    if (valid) {
+      const id = tree.value.getCurrentNode()
+        ? tree.value.getCurrentNode().treeId
+        : 0;
+      addNode({
+        isShow: treeForm.isShow ? 1 : 0,
+        treeName: treeForm.treeName,
+        parentId: id,
+        treeType: treeType.value,
+      }).then(
+        () => {
+          $modal.msgSuccess(i18n.t('phenotype.index.message_node_add_success'));
+          getTreeList();
+        },
+        () => {
+          $modal.msgError(i18n.t('phenotype.index.message_node_add_fail'));
+        }
+      );
+      dialogTreeFormVisible.value = false;
+    }
+  });
+}
 
 // 更新树节点
-  function updateTreeData() {
-    dataTreeForm.value.validate((valid) => {
-      if (valid) {
-        updateNode({
-          isShow: treeForm.isShow ? 1 : 0,
-          treeName: treeForm.treeName,
-          treeId: tree.value.getCurrentNode().treeId,
-        }).then(
-            () => {
-              $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
-              getTreeList();
-            },
-            () => {
-              $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
-            }
-        );
-        dialogTreeFormVisible.value = false;
-      }
-    });
-  }
+function updateTreeData() {
+  dataTreeForm.value.validate((valid) => {
+    if (valid) {
+      updateNode({
+        isShow: treeForm.isShow ? 1 : 0,
+        treeName: treeForm.treeName,
+        treeId: tree.value.getCurrentNode().treeId,
+      }).then(
+        () => {
+          $modal.msgSuccess(i18n.t('phenotype.index.message_node_update_success'));
+          getTreeList();
+        },
+        () => {
+          $modal.msgError(i18n.t('phenotype.index.message_node_update_fail'));
+        }
+      );
+      dialogTreeFormVisible.value = false;
+    }
+  });
+}
 
 //删除节点
-  function deleteNode() {
-    if (!tree.value.getCurrentNode()) {
-      $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
-      return;
-    }
-    $modal.confirm(i18n.t('phenotype.index.message_node_confirm')).then(() => {
-      const curNode = tree.value.getCurrentNode();
-      const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
-      deleteNodes(curNodeTreeIds).then(() => {
-        $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
-        getTreeList();
-      });
-    });
+function deleteNode() {
+  if (!tree.value.getCurrentNode()) {
+    $modal.msgWarning(i18n.t('phenotype.index.message_node_select'));
+    return;
   }
+  $modal.confirm(i18n.t('phenotype.index.message_node_confirm')).then(() => {
+    const curNode = tree.value.getCurrentNode();
+    const curNodeTreeIds = getTreeNodeIdsByNode(curNode);
+    deleteNodes(curNodeTreeIds).then(() => {
+      $modal.msgSuccess(i18n.t('phenotype.index.message_delete_success'));
+      getTreeList();
+    });
+  });
+}
 
 //树控件点击回调
-  function rowClick(nodeObj) {
-    if (nodeObj.disabled) {
-      return;
-    }
-    /* resetForm(); */
-    treeRules.value = {};
-    /* rules.value = {};  */
-    treeForm.treeName = nodeObj.treeName;
-    if (nodeObj.isShow == 1) {
-      treeForm.isShow == true;
-    } else {
-      treeForm.isShow == false;
-    }
-
-    queryParams.treeId = nodeObj.treeId;
-    resetQuery();
-    getList();
+function rowClick(nodeObj) {
+  if (nodeObj.disabled) {
+    return;
+  }
+  /* resetForm(); */
+  treeRules.value = {};
+  /* rules.value = {};  */
+  treeForm.treeName = nodeObj.treeName;
+  if (nodeObj.isShow == 1) {
+    treeForm.isShow == true;
+  } else {
+    treeForm.isShow == false;
   }
 
-  onMounted(() => {
-    getTreeList();
-  })
+  queryParams.treeId = nodeObj.treeId;
+  resetQuery();
+  getList();
+}
+
+onMounted(() => {
+  getTreeList();
+})
 
 
 
@@ -1132,8 +1018,6 @@ async function updateData() {
   right: 0;
   bottom: 0;
   width: 200px;
-  // background: url(@/assets/img/tree/tree2.jpg) no-repeat center center / cover;
-  // background-color: #f2fbf7;
   opacity: 1;
   width: 100%;
 }
@@ -1291,7 +1175,7 @@ async function updateData() {
   color: #fff;
 }
 </style>
-<style lang="less"  scoped>
+<style lang="less" scoped>
 .shadow {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14);
   /* 0 3px 3px -2px rgba(0, 0, 0, 0.12),

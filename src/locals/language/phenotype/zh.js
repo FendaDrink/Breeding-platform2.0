@@ -15,10 +15,12 @@ export default {
             merge: '合并',
             save: '保存',
             upload: '上传',
-
-
+            
+            
             file_add: '新增',
             file_delete: '删除',
+            re_upload_file:'该文件上传时发生了异常，点击重传?',
+
 
             table_index: '序号',
             table_fileName: '文件名',

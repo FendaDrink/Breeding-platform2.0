@@ -15,9 +15,11 @@ export default {
             merge: 'Merge',
             save: 'Save',
             upload: 'Upload',
-
+            
             file_add: 'Add',
             file_delete: 'Delete',
+            re_upload_file:'This file is broken, reUpload it?',
+
 
             table_index: 'Index',
             table_fileName: 'File Name',
